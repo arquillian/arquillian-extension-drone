@@ -18,17 +18,9 @@ package org.jboss.arquillian.selenium.example;
 
 import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipFile;
-
-import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.importer.ZipImporter;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +37,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
  */
 @RunWith(Arquillian.class)
 @Run(AS_CLIENT)
-public class DefaultSeleniumTestCase
+public class DefaultSeleniumTestCase extends AbstractTestCase
 {
    /**
     * This creates the Selenium driver before invocation of test methods
@@ -66,26 +58,6 @@ public class DefaultSeleniumTestCase
    private static final String LOGOUT_BUTTON = "id=loginForm:logout";;
 
    private static final String TIMEOUT = "15000";
-
-   /**
-    * Loads already existing WAR of Weld Login JSF example
-    * 
-    * @return WebArchive to be tested
-    */
-   @Deployment
-   public static WebArchive createDeployment()
-   {
-      try
-      {
-         ZipFile war = new ZipFile(new File("src/test/resources/weld-login.war"));
-         return ShrinkWrap.create(ZipImporter.class, "weld-login.war").importZip(war).as(WebArchive.class);
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-         throw new RuntimeException("Unable to load testing WAR application");
-      }
-   }
 
    @Test
    public void testLoginAndLogout()

@@ -49,7 +49,6 @@ public class SeleniumServerShutdownHandler implements EventHandler<SuiteEvent>
    public void callback(Context context, SuiteEvent event) throws Exception
    {
       SeleniumServerRunner server = context.get(SeleniumServerRunner.class);
-      System.out.println("Shutdown server called");
       server.stop();
    }
 

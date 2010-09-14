@@ -33,6 +33,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
 import org.jboss.arquillian.selenium.meta.Configuration;
@@ -49,6 +50,8 @@ import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
  */
 public class SeleniumServerRunner
 {
+   private static final Logger log = Logger.getLogger(SeleniumServerRunner.class.getName());
+   
    public static final String SERVER_ENABLE_KEY = "arquillian.selenium.server.enable";
 
    public static final String SERVER_OUTPUT_KEY = "arquillian.selenium.server.output";
@@ -89,6 +92,7 @@ public class SeleniumServerRunner
    {
       if (enabled)
       {
+         log.info("Starting Selenium Server.");
          int port = configuration.getInt(SERVER_PORT_KEY, DEFAULT_SERVER_PORT);
 
          String output = configuration.getString(SERVER_OUTPUT_KEY, DEFAULT_OUTPUT);
@@ -152,6 +156,7 @@ public class SeleniumServerRunner
    {
       if (enabled)
       {
+         log.info("Taking Selenium Server down.");
          // killing server with flush consumer input
          server.kill();
          try
@@ -281,7 +286,7 @@ public class SeleniumServerRunner
 
       public void kill()
       {
-         System.out.println("KILLING: " + process.toString());
+         log.fine("Killing Selenium server, details: " + process.toString());
          process.destroy();
       }
 
