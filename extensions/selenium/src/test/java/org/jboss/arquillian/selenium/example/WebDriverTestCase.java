@@ -68,10 +68,10 @@ public class WebDriverTestCase extends AbstractTestCase
 
       driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
       driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
-      driver.findElement(LOGIN_BUTTON).submit();
+      driver.findElement(LOGIN_BUTTON).click();
       checkElementPresence(LOGGED_IN, "User should be logged in!");
 
-      driver.findElement(LOGOUT_BUTTON).submit();
+      driver.findElement(LOGOUT_BUTTON).click();
       checkElementPresence(LOGGED_OUT, "User should not be logged in!");
 
    }
