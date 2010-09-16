@@ -47,7 +47,6 @@ public abstract class AbstractTestCase
    {
       WebArchive war = ShrinkWrap.create(WebArchive.class, "weld-login.war")
             .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
-            .addLibrary(MavenArtifactResolver.resolve("org.glassfish.web:el-impl:2.2"))
             .addWebResource(new File("src/test/webapp/WEB-INF/beans.xml"), "beans.xml")
             .addWebResource(new File("src/test/webapp/WEB-INF/faces-config.xml"), "faces-config.xml")
             .addWebResource(new File("src/test/resources/import.sql"), ArchivePaths.create("classes/import.sql"))

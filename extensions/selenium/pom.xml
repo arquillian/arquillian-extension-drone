@@ -116,20 +116,6 @@
          <scope>test</scope>
       </dependency>
 
-      <dependency>
-         <groupId>org.glassfish.web</groupId>
-         <artifactId>el-impl</artifactId>
-         <version>${version.el}</version>
-         <scope>test</scope>
-         <exclusions>
-            <exclusion>
-               <groupId>javax.el</groupId>
-               <artifactId>el-api</artifactId>
-            </exclusion>
-         </exclusions>
-      </dependency>
-
-
    </dependencies>
 
    <build>
@@ -190,6 +176,23 @@
                   <directory>src/test/jboss-resources</directory>
                </testResource>
             </testResources>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>default-test</id>
+                        <goals>
+                           <goal>test</goal>
+                        </goals>
+                        <configuration>
+                           <skip>true</skip>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
          </build>
       </profile>
 
@@ -201,11 +204,19 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
-                     </includes>
-                  </configuration>
+                  <executions>
+                     <execution>
+                        <id>htmlunitdriver-test</id>
+                        <goals>
+                           <goal>test</goal>
+                        </goals>
+                        <configuration>
+                           <includes>
+                              <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
                </plugin>
             </plugins>
          </build>
@@ -236,14 +247,22 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <systemPropertyVariables>
-                        <arquillian.selenium.webdriver.implementation>org.openqa.selenium.firefox.FirefoxDriver</arquillian.selenium.webdriver.implementation>
-                     </systemPropertyVariables>
-                     <includes>
-                        <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
-                     </includes>
-                  </configuration>
+                  <executions>
+                     <execution>
+                        <id>legacy-webdriver-test</id>
+                        <goals>
+                           <goal>test</goal>
+                        </goals>
+                        <configuration>
+                           <systemPropertyVariables>
+                              <arquillian.selenium.webdriver.implementation>org.openqa.selenium.firefox.FirefoxDriver</arquillian.selenium.webdriver.implementation>
+                           </systemPropertyVariables>
+                           <includes>
+                              <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
                </plugin>
             </plugins>
          </build>
@@ -265,14 +284,22 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <systemPropertyVariables>
-                        <arquillian.selenium.webdriver.implementation>org.openqa.selenium.firefox.FirefoxDriver</arquillian.selenium.webdriver.implementation>
-                     </systemPropertyVariables>
-                     <includes>
-                        <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
-                     </includes>
-                  </configuration>
+                  <executions>
+                     <execution>
+                        <id>firefoxdriver-test</id>
+                        <goals>
+                           <goal>test</goal>
+                        </goals>
+                        <configuration>
+                           <systemPropertyVariables>
+                              <arquillian.selenium.webdriver.implementation>org.openqa.selenium.firefox.FirefoxDriver</arquillian.selenium.webdriver.implementation>
+                           </systemPropertyVariables>
+                           <includes>
+                              <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
                </plugin>
             </plugins>
          </build>
@@ -296,15 +323,23 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <systemPropertyVariables>
-                        <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
-                     </systemPropertyVariables>
-                     <includes>
-                        <include>org/jboss/arquillian/selenium/example/CustomTestCase.class</include>
-                        <include>org/jboss/arquillian/selenium/example/DefaultSeleniumTestCase.class</include>
-                     </includes>
-                  </configuration>
+                  <executions>
+                     <execution>
+                        <id>defaultselenium-test</id>
+                        <goals>
+                           <goal>test</goal>
+                        </goals>
+                        <configuration>
+                           <systemPropertyVariables>
+                              <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
+                           </systemPropertyVariables>
+                           <includes>
+                              <include>org/jboss/arquillian/selenium/example/CustomTestCase.class</include>
+                              <include>org/jboss/arquillian/selenium/example/DefaultSeleniumTestCase.class</include>
+                           </includes>
+                        </configuration>
+                     </execution>
+                  </executions>
                </plugin>
             </plugins>
          </build>
