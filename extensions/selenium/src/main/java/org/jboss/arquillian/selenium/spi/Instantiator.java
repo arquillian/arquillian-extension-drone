@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.selenium.instantiator;
+package org.jboss.arquillian.selenium.spi;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
 
@@ -35,6 +35,17 @@ import org.jboss.arquillian.selenium.annotation.Selenium;
  */
 public interface Instantiator<T>
 {
+   
+   /**
+    * Returns precedence of this instantiator. If two instantiators for the
+    * same class are found, the one with the highest precedence is used. By 
+    * default, Instantiators provided with Arquillian Selenium extension have
+    * precedence of {@code 0}.
+    * 
+    * @return the precedence for current instantiator
+    */
+   int getPrecedence();
+   
    /**
     * Creates an instance of the driver.
     * 

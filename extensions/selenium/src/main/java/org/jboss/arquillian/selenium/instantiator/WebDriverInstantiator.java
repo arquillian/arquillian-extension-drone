@@ -20,6 +20,7 @@ import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
 import org.jboss.arquillian.selenium.meta.Configuration;
 import org.jboss.arquillian.selenium.meta.OverridableConfiguration;
 import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
+import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -53,6 +54,14 @@ public class WebDriverInstantiator implements Instantiator<WebDriver>
    public WebDriverInstantiator()
    {
       this.configuration = new OverridableConfiguration(new ArquillianConfiguration(), new SystemPropertiesConfiguration());
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.selenium.instantiator.Instantiator#getPrecedence()
+    */
+   public int getPrecedence()
+   {    
+      return 0;
    }
 
    /*

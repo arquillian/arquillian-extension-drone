@@ -31,6 +31,7 @@ import java.util.List;
  * 
  * 
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  * @version $Revision: $
  */
@@ -117,7 +118,7 @@ final class SecurityActions
     * @param arguments The constructor arguments
     * @return a new instance
     * @throws IllegalArgumentException if className, argumentTypes, or arguments
-    *            are null
+    *         are null
     * @throws RuntimeException if any exceptions during creation
     * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
     * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
@@ -170,7 +171,7 @@ final class SecurityActions
             public Process run() throws Exception
             {
                ProcessBuilder builder = new ProcessBuilder(arguments);
-               builder.redirectErrorStream(true);               
+               builder.redirectErrorStream(true);
                return builder.start();
             }
          });
@@ -185,7 +186,7 @@ final class SecurityActions
          {
             throw (IOException) t;
          }
-         else if(t instanceof SecurityException)
+         else if (t instanceof SecurityException)
          {
             throw (SecurityException) t;
          }

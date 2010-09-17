@@ -25,6 +25,7 @@ import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
 import org.jboss.arquillian.selenium.meta.Configuration;
 import org.jboss.arquillian.selenium.meta.OverridableConfiguration;
 import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
+import org.jboss.arquillian.selenium.spi.Instantiator;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 
@@ -64,8 +65,6 @@ public class DefaultSeleniumInstantiator implements Instantiator<DefaultSelenium
     */
    public static final String SPEED_KEY = "arquillian.selenium.speed";
 
-
-
    private static final String DEFAULT_SERVER_HOST = "localhost";
    private static final String DEFAULT_BROWSER = "*firefoxproxy";
    private static final String DEFAULT_URL = "http://localhost:8080";
@@ -76,6 +75,16 @@ public class DefaultSeleniumInstantiator implements Instantiator<DefaultSelenium
    public DefaultSeleniumInstantiator()
    {
       this.configuration = new OverridableConfiguration(new ArquillianConfiguration(), new SystemPropertiesConfiguration());
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.arquillian.selenium.spi.Instantiator#getPrecedence()
+    */
+   public int getPrecedence()
+   {
+      return 0;
    }
 
    /*
