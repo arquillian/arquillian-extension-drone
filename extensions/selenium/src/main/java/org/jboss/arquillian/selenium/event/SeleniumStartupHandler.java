@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.instantiator.InstantiatorUtil;
 import org.jboss.arquillian.selenium.spi.Instantiator;
@@ -68,8 +67,11 @@ public class SeleniumStartupHandler implements EventHandler<ClassEvent>
             break;
 
          Instantiator<?> instantiator = InstantiatorUtil.highest(InstantiatorUtil.filter(context.getServiceLoader().all(Instantiator.class), typeClass));
+         if (instantiator == null)
+         {
+            throw new IllegalArgumentException("No creation method was found for object of type " + typeClass.getName());
+         }
 
-         Validate.notNull(instantiator, "No creation method was found for object of type " + typeClass.getName());
          if (log.isLoggable(Level.FINE))
          {
             log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence " + instantiator.getPrecedence());

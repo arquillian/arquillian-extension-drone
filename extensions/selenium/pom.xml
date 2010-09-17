@@ -46,11 +46,6 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-impl-base</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
          <groupId>org.seleniumhq.selenium</groupId>
          <artifactId>selenium</artifactId>
          <version>${version.selenium}</version>

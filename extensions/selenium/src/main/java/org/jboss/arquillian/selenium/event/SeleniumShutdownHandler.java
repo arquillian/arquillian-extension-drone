@@ -18,7 +18,6 @@ package org.jboss.arquillian.selenium.event;
 
 import java.lang.reflect.Field;
 
-import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.instantiator.InstantiatorUtil;
 import org.jboss.arquillian.selenium.spi.Instantiator;
@@ -58,7 +57,10 @@ public class SeleniumShutdownHandler implements EventHandler<ClassEvent>
    private void clearContext(Context context, TestClass testClass)
    {
       SeleniumHolder holder = context.get(SeleniumHolder.class);
-      Validate.notNull(holder, "There is no Selenium object to be destroyed, was Selenium properly started?");
+      if (holder == null)
+      {
+         throw new IllegalArgumentException("There is no Selenium object to be destroyed, was Selenium properly started?");
+      }
 
       for (Field f : SecurityActions.getFieldsWithAnnotation(testClass.getJavaClass(), Selenium.class))
       {
@@ -69,7 +71,10 @@ public class SeleniumShutdownHandler implements EventHandler<ClassEvent>
          // we do check type safety dynamically
          Instantiator destroyer = InstantiatorUtil.highest(InstantiatorUtil.filter(context.getServiceLoader().all(Instantiator.class), typeClass));
 
-         Validate.notNull(destroyer, "No destroyer method was found for object of type " + typeClass.getName());
+         if (destroyer == null)
+         {
+            throw new IllegalArgumentException("No destroyer method was found for object of type " + typeClass.getName());
+         }
 
          destroyer.destroy(holder.retrieve(typeClass));
          holder.remove(typeClass);
