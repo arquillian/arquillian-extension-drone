@@ -19,7 +19,6 @@ package org.jboss.arquillian.selenium.event;
 import java.lang.reflect.Field;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.selenium.instantiator.InstantiatorUtil;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestClass;
@@ -69,17 +68,10 @@ public class SeleniumShutdownHandler implements EventHandler<ClassEvent>
             break;
 
          // we do check type safety dynamically
-         Instantiator destroyer = InstantiatorUtil.highest(InstantiatorUtil.filter(context.getServiceLoader().all(Instantiator.class), typeClass));
-
-         if (destroyer == null)
-         {
-            throw new IllegalArgumentException("No destroyer method was found for object of type " + typeClass.getName());
-         }
-
-         destroyer.destroy(holder.retrieve(typeClass));
+         Instantiator destroyer = holder.retrieveInstantiator(typeClass);
+         destroyer.destroy(holder.retrieveSelenium(typeClass));
          holder.remove(typeClass);
 
       }
    }
-
 }

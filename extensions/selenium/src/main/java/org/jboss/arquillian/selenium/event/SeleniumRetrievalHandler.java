@@ -58,7 +58,7 @@ public class SeleniumRetrievalHandler implements EventHandler<TestEvent>
          for (Field f : fields)
          {
             f.setAccessible(true);
-            Object value = holder.retrieve(f.getType());
+            Object value = holder.retrieveSelenium(f.getType());
             if (value == null)
             {
                throw new IllegalArgumentException("Retrieved a null from context, which is not a valid Selenium browser");

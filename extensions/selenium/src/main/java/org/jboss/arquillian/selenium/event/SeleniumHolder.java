@@ -19,23 +19,29 @@ package org.jboss.arquillian.selenium.event;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.arquillian.selenium.spi.Instantiator;
+
 /**
  * Holds Selenium object in cache. It is used to store Selenium context between
- * test method calls in Arquillian testing context.
+ * test method calls in Arquillian testing context. Holds Instantiator of given
+ * object as well.
  * 
  * Generic approach allows to have an arbitrary implementation of Selenium,
  * varying from Selenium WebDriver to Cheiron.
  * 
  * Current implementation limits occurrence of the testing browser to one per
- * class.
+ * class. For instance, you can have {#link DefaultSelenium} and {#link WebDriver}
+ * browsers in your test class, but you can't add another WebDriver.
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
+ * @see Instantiator
  */
 public class SeleniumHolder
 {
    // cache holder
-   private Map<Class<?>, Object> cache = new HashMap<Class<?>, Object>();
+   @SuppressWarnings("unchecked")
+   private Map<Class<?>, Tuple> cache = new HashMap<Class<?>, Tuple>();
 
    /**
     * Stores an instance of Selenium in the holder.
@@ -43,9 +49,9 @@ public class SeleniumHolder
     * @param clazz The class of the instance store
     * @param instance The instance to be stored
     */
-   public void hold(Class<?> clazz, Object instance)
+   public <T> void hold(Class<?> clazz, T instance, Instantiator<?> instantiator)
    {
-      cache.put(clazz, instance);
+      cache.put(clazz, new Tuple<T>(instance, instantiator));
    }
 
    /**
@@ -55,9 +61,28 @@ public class SeleniumHolder
     * @param clazz The key used to find the instance
     * @return The instance if found or {@code null} otherwise
     */
-   public <T> T retrieve(Class<T> clazz)
+   public <T> T retrieveSelenium(Class<T> clazz)
    {
-      return clazz.cast(cache.get(clazz));
+      @SuppressWarnings("unchecked")
+      Tuple<T> tuple = cache.get(clazz);
+      if (tuple == null)
+      {
+         return null;
+      }
+
+      return tuple.instance;
+   }
+
+   public <T> Instantiator<T> retrieveInstantiator(Class<T> clazz)
+   {
+      @SuppressWarnings("unchecked")
+      Tuple<T> tuple = cache.get(clazz);
+      if (tuple == null)
+      {
+         return null;
+      }
+
+      return tuple.instantiator;
    }
 
    /**
@@ -80,6 +105,32 @@ public class SeleniumHolder
    public void remove(Class<?> clazz)
    {
       cache.remove(clazz);
+   }
+
+   /**
+    * Holder for both Selenium object and its instantiator
+    * 
+    * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+    * 
+    * @param <T> This of instance stored in pair
+    */
+   private static class Tuple<T>
+   {
+
+      T instance;
+      Instantiator<T> instantiator;
+
+      Tuple(T instance, Instantiator<?> instantiator)
+      {
+         this.instance = instance;
+         this.instantiator = cast(instantiator);
+      }
+
+      @SuppressWarnings("unchecked")
+      private Instantiator<T> cast(Instantiator<?> instantiator)
+      {
+         return (Instantiator<T>) instantiator;
+      }
    }
 
 }

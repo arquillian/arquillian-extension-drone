@@ -77,7 +77,7 @@ public class InstantiatorTestCase extends AbstractTestCase
       SeleniumHolder holder = context.get(SeleniumHolder.class);
       Assert.assertNotNull("Selenium object holder was created in context", holder);
 
-      DefaultSelenium selenium = holder.retrieve(DefaultSelenium.class);
+      DefaultSelenium selenium = holder.retrieveSelenium(DefaultSelenium.class);
 
       Assert.assertTrue("Selenium was instantiated by MockInstantiator", selenium instanceof MockSelenium);
 

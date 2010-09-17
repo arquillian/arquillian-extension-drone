@@ -76,7 +76,7 @@ public class SeleniumStartupHandler implements EventHandler<ClassEvent>
          {
             log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence " + instantiator.getPrecedence());
          }
-         holder.hold(typeClass, typeClass.cast(instantiator.create()));
+         holder.hold(typeClass, typeClass.cast(instantiator.create()), instantiator);
 
       }
       context.add(SeleniumHolder.class, holder);
