@@ -1,0 +1,9 @@
+<arquillian xmlns="http://jboss.com/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.remote_6">
+
+   <jboss:container>
+      <jboss:remoteServerAddress>localhost</jboss:remoteServerAddress>
+      <jboss:remoteServerHttpPort>8080</jboss:remoteServerHttpPort>      
+   </jboss:container>
+
+</arquillian>
