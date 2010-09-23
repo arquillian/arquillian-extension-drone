@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.selenium.meta;
+package org.jboss.arquillian.selenium;
 
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -95,17 +95,6 @@ final class SecurityActions
             }
          }
       }
-   }
-
-   static String getProperty(String key, String defaultValue)
-   {
-      String value = getProperty(key);
-      if (value == null)
-      {
-         return defaultValue;
-      }
-
-      return value;
    }
 
 }

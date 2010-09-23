@@ -20,9 +20,11 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.instantiator.InstantiatorUtil;
 import org.jboss.arquillian.selenium.spi.Instantiator;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.event.suite.ClassEvent;
@@ -34,6 +36,7 @@ import org.jboss.arquillian.spi.event.suite.EventHandler;
  * configuration is found in arquillian.xml file<br/>
  * <br/>
  * <b>Imports:</b><br/> {@link Selenium}<br/>
+ * <br/> @{link {@link Configuration}<br/>
  * <br/>
  * <b>Exports:</b><br/> {@link SeleniumHolder}</br> <br/>
  * 
@@ -59,6 +62,10 @@ public class SeleniumStartupHandler implements EventHandler<ClassEvent>
 
    private void prepareContext(Context context, TestClass testClass)
    {
+      Configuration configuration = context.get(Configuration.class);
+      
+      SeleniumExtensionConfiguration seleniumConfiguration = configuration.getExtensionConfig(SeleniumExtensionConfiguration.class);
+      
       SeleniumHolder holder = new SeleniumHolder();
       for (Field f : SecurityActions.getFieldsWithAnnotation(testClass.getJavaClass(), Selenium.class))
       {
@@ -76,7 +83,7 @@ public class SeleniumStartupHandler implements EventHandler<ClassEvent>
          {
             log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence " + instantiator.getPrecedence());
          }
-         holder.hold(typeClass, typeClass.cast(instantiator.create()), instantiator);
+         holder.hold(typeClass, typeClass.cast(instantiator.create(seleniumConfiguration)), instantiator);
 
       }
       context.add(SeleniumHolder.class, holder);

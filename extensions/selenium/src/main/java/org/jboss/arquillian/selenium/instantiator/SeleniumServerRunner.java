@@ -16,11 +16,6 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.DEFAULT_SERVER_PORT;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.DEFAULT_TIMEOUT;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.SERVER_PORT_KEY;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.TIMEOUT_KEY;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,10 +30,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
-import org.jboss.arquillian.selenium.meta.Configuration;
-import org.jboss.arquillian.selenium.meta.OverridableConfiguration;
-import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 
 /**
  * SeleniumServerRunner allows to run and kill Selenium server, if present on
@@ -51,79 +43,55 @@ import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
 public class SeleniumServerRunner
 {
    private static final Logger log = Logger.getLogger(SeleniumServerRunner.class.getName());
-   
-   public static final String SERVER_ENABLE_KEY = "arquillian.selenium.server.enable";
 
-   public static final String SERVER_OUTPUT_KEY = "arquillian.selenium.server.output";
-
-   public static final String SERVER_CMDLINE_KEY = "arquillian.selenium.server.cmdline";
-
-   public static final String SERVER_CLASSNAME_KEY = "arquillian.selenium.server.classname";
-
-   private static final String DEFAULT_ENABLE = "false";
-   private static final String DEFAULT_OUTPUT = "target/selenium-server-output.log";
-   private static final String DEFAULT_CMDLINE = "";
-   private static final String DEFAULT_CLASSNAME = "org.openqa.selenium.server.SeleniumServer";
-
-   // check Selenium server output to determine if it is started already
-   private static final String SERVER_TOKEN = "Started org.openqa.jetty.jetty.Server";
-
-   private Configuration configuration;
+   private SeleniumExtensionConfiguration configuration;
 
    private JavaRunner server;
    private OutputConsumerThread consumer;
 
    private boolean enabled;
 
-   public SeleniumServerRunner()
+   public SeleniumServerRunner(SeleniumExtensionConfiguration configuration)
    {
-      this.configuration = new OverridableConfiguration(new ArquillianConfiguration(), new SystemPropertiesConfiguration());
-
-      this.enabled = Boolean.parseBoolean(configuration.getString(SERVER_ENABLE_KEY, DEFAULT_ENABLE));
+      this.configuration = configuration;
+      this.enabled = configuration.isServerEnable();
    }
 
    /**
     * Starts Selenium server if enabled in configuration
     * 
     * @throws IOException If Selenium server was not present on path or java
-    *            binary was not found
+    *         binary was not found
     */
    public void start() throws IOException
    {
       if (enabled)
       {
          log.info("Starting Selenium Server.");
-         int port = configuration.getInt(SERVER_PORT_KEY, DEFAULT_SERVER_PORT);
-
-         String output = configuration.getString(SERVER_OUTPUT_KEY, DEFAULT_OUTPUT);
-         String cmdLine = configuration.getString(SERVER_CMDLINE_KEY, DEFAULT_CMDLINE);
-         String className = configuration.getString(SERVER_CLASSNAME_KEY, DEFAULT_CLASSNAME);
-         // timeout in seconds
-         int timeout = configuration.getInt(TIMEOUT_KEY, Integer.parseInt(DEFAULT_TIMEOUT)) / 1000;
 
          String classPath = SecurityActions.getProperty("java.class.path");
 
          List<String> args = new ArrayList<String>();
          args.add("-port");
-         args.add(String.valueOf(port));
+         args.add(String.valueOf(configuration.getServerPort()));
 
          // parse command line arguments
-         StringTokenizer parser = new StringTokenizer(cmdLine, " ");
+         StringTokenizer parser = new StringTokenizer(configuration.getServerCmdline(), " ");
          while (parser.hasMoreTokens())
             args.add(parser.nextToken());
 
-         this.server = new JavaRunner().spawn(className, classPath, args);
+         this.server = new JavaRunner().spawn(configuration.getServerImplementation(), classPath, args);
 
-         OutputStream os = new FileOutputStream(new File(output));
+         OutputStream os = new FileOutputStream(new File(configuration.getServerOutput()));
 
-         this.consumer = new OutputConsumerThread(server.getProcessOutput(), os, SERVER_TOKEN);
+         this.consumer = new OutputConsumerThread(server.getProcessOutput(), os, configuration.getServerToken());
 
          consumer.setDaemon(false);
          consumer.start();
 
          // actively wait until Selenium server is started
          boolean started = false;
-         for (int i = 0; i < timeout; i++)
+         for (int i = 0; i < configuration.getTimeout(); i += 1000)
          {
             if (consumer.isTokenFound())
             {
@@ -143,7 +111,7 @@ public class SeleniumServerRunner
 
          if (!started)
          {
-            throw new RuntimeException("The Selenium server was not started during time limit of " + timeout + " seconds.");
+            throw new RuntimeException("The Selenium server was not started during time limit of " + configuration.getTimeout() + " milliseconds.");
          }
 
       }

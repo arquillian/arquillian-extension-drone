@@ -317,6 +317,8 @@
                         <configuration>
                            <systemPropertyVariables>
                               <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
+                              <!-- this serves to test precedence only -->
+                              <arquillian.selenium.speed>0</arquillian.selenium.speed>
                            </systemPropertyVariables>
                            <includes>
                               <include>org/jboss/arquillian/selenium/example/DefaultSeleniumTestCase.class</include>

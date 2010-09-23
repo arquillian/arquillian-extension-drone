@@ -16,10 +16,7 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
-import org.jboss.arquillian.selenium.meta.Configuration;
-import org.jboss.arquillian.selenium.meta.OverridableConfiguration;
-import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -40,27 +37,18 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  */
 public class WebDriverInstantiator implements Instantiator<WebDriver>
 {
-   /**
-    * The System property key which holds class implementing WebDriver interface
-    */
-   public static final String IMPLEMENTATION_KEY = "arquillian.selenium.webdriver.implementation";
-
-   // default implementation
-   private static final String IMPLEMENTATION_DEFAULT = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
-
-   // configuration object
-   private Configuration configuration;
 
    public WebDriverInstantiator()
    {
-      this.configuration = new OverridableConfiguration(new ArquillianConfiguration(), new SystemPropertiesConfiguration());
    }
-   
-   /* (non-Javadoc)
+
+   /*
+    * (non-Javadoc)
+    * 
     * @see org.jboss.arquillian.selenium.instantiator.Instantiator#getPrecedence()
     */
    public int getPrecedence()
-   {    
+   {
       return 0;
    }
 
@@ -69,11 +57,9 @@ public class WebDriverInstantiator implements Instantiator<WebDriver>
     * 
     * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
     */
-   public WebDriver create()
+   public WebDriver create(SeleniumExtensionConfiguration configuration)
    {
-      String implementation = configuration.getString(IMPLEMENTATION_KEY, IMPLEMENTATION_DEFAULT);
-
-      WebDriver driver = SecurityActions.newInstance(implementation, new Class<?>[0], new Object[0], WebDriver.class);
+      WebDriver driver = SecurityActions.newInstance(configuration.getWebdriverImplementation(), new Class<?>[0], new Object[0], WebDriver.class);
 
       return driver;
    }

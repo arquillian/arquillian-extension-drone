@@ -18,14 +18,17 @@ package org.jboss.arquillian.selenium.instantiator;
 
 import java.util.Arrays;
 
+import org.jboss.arquillian.impl.XmlConfigurationBuilder;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.event.SeleniumHolder;
 import org.jboss.arquillian.selenium.event.SeleniumStartupHandler;
 import org.jboss.arquillian.selenium.example.AbstractTestCase;
 import org.jboss.arquillian.selenium.spi.Instantiator;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.event.suite.TestEvent;
 import org.junit.Assert;
@@ -70,6 +73,8 @@ public class InstantiatorTestCase extends AbstractTestCase
       TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
       TestEvent event = new TestEvent(this, getClass().getMethod("testPrecedence"));
 
+      context.add(Configuration.class, new XmlConfigurationBuilder("arquillian.xml").build());
+      
       SeleniumStartupHandler handler = new SeleniumStartupHandler();
 
       handler.callback(context, event);
@@ -107,7 +112,7 @@ public class InstantiatorTestCase extends AbstractTestCase
        * 
        * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
        */
-      public DefaultSelenium create()
+      public DefaultSelenium create(SeleniumExtensionConfiguration configuration)
       {
          DefaultSelenium selenium = new MockSelenium();
          return selenium;

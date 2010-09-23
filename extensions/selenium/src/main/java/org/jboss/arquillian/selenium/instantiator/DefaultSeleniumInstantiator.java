@@ -16,15 +16,7 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.DEFAULT_SERVER_PORT;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.DEFAULT_TIMEOUT;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.SERVER_PORT_KEY;
-import static org.jboss.arquillian.selenium.instantiator.SeleniumConstants.TIMEOUT_KEY;
-
-import org.jboss.arquillian.selenium.meta.ArquillianConfiguration;
-import org.jboss.arquillian.selenium.meta.Configuration;
-import org.jboss.arquillian.selenium.meta.OverridableConfiguration;
-import org.jboss.arquillian.selenium.meta.SystemPropertiesConfiguration;
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -42,39 +34,9 @@ import com.thoughtworks.selenium.DefaultSelenium;
  */
 public class DefaultSeleniumInstantiator implements Instantiator<DefaultSelenium>
 {
-   /**
-    * Host name of the machine where Selenium server is running
-    */
-   public static final String SERVER_HOST_KEY = "arquillian.selenium.server.host";
-
-   /**
-    * Identification of the browser for needs of Selenium.
-    * 
-    * Use can use variants including path to binary, such as: <i>*firefoxproxy
-    * /opt/firefox-3.0/firefox</i>
-    */
-   public static final String BROWSER_KEY = "arquillian.selenium.browser";
-
-   /**
-    * The URL opened in the browser, which encapsulated the session
-    */
-   public static final String URL_KEY = "arquillian.selenium.url";
-
-   /**
-    * Time delay in milliseconds before each Selenium command is sent
-    */
-   public static final String SPEED_KEY = "arquillian.selenium.speed";
-
-   private static final String DEFAULT_SERVER_HOST = "localhost";
-   private static final String DEFAULT_BROWSER = "*firefoxproxy";
-   private static final String DEFAULT_URL = "http://localhost:8080";
-   private static final String DEFAULT_SPEED = "0";
-
-   private Configuration configuration;
 
    public DefaultSeleniumInstantiator()
    {
-      this.configuration = new OverridableConfiguration(new ArquillianConfiguration(), new SystemPropertiesConfiguration());
    }
 
    /*
@@ -92,19 +54,13 @@ public class DefaultSeleniumInstantiator implements Instantiator<DefaultSelenium
     * 
     * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
     */
-   public DefaultSelenium create()
+   public DefaultSelenium create(SeleniumExtensionConfiguration configuration)
    {
-      String server = configuration.getString(SERVER_HOST_KEY, DEFAULT_SERVER_HOST);
-      int port = configuration.getInt(SERVER_PORT_KEY, DEFAULT_SERVER_PORT);
-      String browser = configuration.getString(BROWSER_KEY, DEFAULT_BROWSER);
-      String url = configuration.getString(URL_KEY, DEFAULT_URL);
-      String speed = configuration.getString(SPEED_KEY, DEFAULT_SPEED);
-      String timeout = configuration.getString(TIMEOUT_KEY, DEFAULT_TIMEOUT);
 
-      DefaultSelenium selenium = new DefaultSelenium(server, port, browser, url);
+      DefaultSelenium selenium = new DefaultSelenium(configuration.getServerHost(), configuration.getServerPort(), configuration.getBrowser(), configuration.getUrl());
       selenium.start();
-      selenium.setSpeed(speed);
-      selenium.setTimeout(timeout);
+      selenium.setSpeed(String.valueOf(configuration.getSpeed()));
+      selenium.setTimeout(String.valueOf(configuration.getTimeout()));
 
       return selenium;
    }

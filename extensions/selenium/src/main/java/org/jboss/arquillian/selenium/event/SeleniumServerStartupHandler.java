@@ -16,7 +16,9 @@
  */
 package org.jboss.arquillian.selenium.event;
 
+import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
 import org.jboss.arquillian.selenium.instantiator.SeleniumServerRunner;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.arquillian.spi.event.suite.SuiteEvent;
@@ -29,12 +31,13 @@ import org.jboss.arquillian.spi.event.suite.SuiteEvent;
  * either in Arquillian configuration or by a system property.
  * 
  * <br/>
- * <b>Exports:</b><br/> {@link SeleniumServerRunner}</br> <br/>
+ * <b>Imports:</b><br/> {@link Configuration}</br/>
+ * <b>Exports:</b><br/> {@link SeleniumServerRunner}<br/>
+ * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  * @see SeleniumServerRunner
- * @see SeleniumServerRunner#SERVER_ENABLE_KEY
  * 
  */
 public class SeleniumServerStartupHandler implements EventHandler<SuiteEvent>
@@ -48,10 +51,13 @@ public class SeleniumServerStartupHandler implements EventHandler<SuiteEvent>
     */
    public void callback(Context context, SuiteEvent event) throws Exception
    {
-      SeleniumServerRunner server = new SeleniumServerRunner();
+      Configuration configuration = context.get(Configuration.class);
+
+      SeleniumExtensionConfiguration seleniumConfiguration = configuration.getExtensionConfig(SeleniumExtensionConfiguration.class);
+
+      SeleniumServerRunner server = new SeleniumServerRunner(seleniumConfiguration);
       server.start();
 
       context.add(SeleniumServerRunner.class, server);
    }
-
 }
