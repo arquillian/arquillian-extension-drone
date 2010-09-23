@@ -59,14 +59,8 @@ public class SeleniumExtensionConfiguration implements ExtensionConfiguration
 
    private int speed = 0;
 
-   /**
-    *
-    */
    private String browser = "*firefoxproxy";
 
-   /**
-    *
-    */
    private String webdriverImplementation = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
 
    // overlay configuration
@@ -145,7 +139,7 @@ public class SeleniumExtensionConfiguration implements ExtensionConfiguration
    }
 
    /**
-    * A name of file where the output of Selenium server is written
+    * A name of file where the output of Selenium server is written to
     * 
     * @return the serverOutput
     */
@@ -218,7 +212,7 @@ public class SeleniumExtensionConfiguration implements ExtensionConfiguration
 
    /**
     * A string which, if found in server's output, determines that server was
-    * property started
+    * properly started
     * 
     * @return the serverToken
     */
