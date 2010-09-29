@@ -419,7 +419,11 @@ public class SeleniumExtensionConfiguration implements ExtensionConfiguration
 
       private <T> T convert(Class<T> clazz, String value)
       {
-         if (Integer.class.equals(clazz) || int.class.equals(clazz))
+         if (String.class.equals(clazz))
+         {
+            return clazz.cast(value);
+         }
+         else if (Integer.class.equals(clazz) || int.class.equals(clazz))
          {
             return clazz.cast(Integer.valueOf(value));
          }
