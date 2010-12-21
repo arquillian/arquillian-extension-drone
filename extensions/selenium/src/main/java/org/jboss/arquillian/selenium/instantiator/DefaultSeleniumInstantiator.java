@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -54,7 +54,7 @@ public class DefaultSeleniumInstantiator implements Instantiator<DefaultSelenium
     * 
     * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
     */
-   public DefaultSelenium create(SeleniumExtensionConfiguration configuration)
+   public DefaultSelenium create(SeleniumConfiguration configuration)
    {
 
       DefaultSelenium selenium = new DefaultSelenium(configuration.getServerHost(), configuration.getServerPort(), configuration.getBrowser(), configuration.getUrl());

@@ -43,7 +43,7 @@ public class DefaultSeleniumTestCase extends AbstractTestCase
     * This creates the Selenium driver before invocation of test methods
     */
    @Selenium
-   private DefaultSelenium driver;
+   private DefaultSelenium driver;   
 
    private static final String USERNAME = "demo";
    private static final String PASSWORD = "demo";

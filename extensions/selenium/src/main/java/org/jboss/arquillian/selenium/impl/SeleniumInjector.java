@@ -14,68 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.selenium.event;
+package org.jboss.arquillian.selenium.impl;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.ClassScoped;
+import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
  * A handler which sets a cached instance of Selenium browser for fields annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/>
- *     {@link Selenium} <br/>
- *     {@link SeleniumHolder} <br/>
+ * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
  * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @see SeleniumHolder
  * @see Selenium
  */
-public class SeleniumRetrievalHandler implements EventHandler<TestEvent>
+public class SeleniumInjector
 {
+   @Inject
+   @ClassScoped
+   private Instance<SeleniumHolder> selenium;
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
-    */
-   public void callback(Context context, TestEvent event) throws Exception
+   public void injectSelenium(@Observes Before event)
    {
-      injectSelenium(context, event.getTestClass().getJavaClass(), event.getTestInstance());
-   }
-
-   private void injectSelenium(Context context, Class<?> clazz, Object testInstance)
-   {
+      Class<?> clazz = event.getTestClass().getJavaClass();
+      Object testInstance = event.getTestInstance();
 
       List<Field> fields = SecurityActions.getFieldsWithAnnotation(clazz, Selenium.class);
-      SeleniumHolder holder = context.get(SeleniumHolder.class);
       try
       {
          for (Field f : fields)
          {
             f.setAccessible(true);
-            Object value = holder.retrieveSelenium(f.getType());
+
+            // omit setting if already set
+            if (f.get(testInstance) != null)
+            {
+               return;
+            }
+
+            Object value = selenium.get().retrieveSelenium(f.getType());
             if (value == null)
             {
                throw new IllegalArgumentException("Retrieved a null from context, which is not a valid Selenium browser");
             }
 
-            // omit setting if already set
-            if (f.get(testInstance) == null)
-            {
-               f.set(testInstance, value);
-            }
+            f.set(testInstance, value);
          }
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not inject members", e);
+         throw new RuntimeException("Could not inject Selenium members", e);
       }
-
    }
-
 }

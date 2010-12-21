@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.selenium.spi;
 
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 
 /**
@@ -58,7 +58,7 @@ public interface Instantiator<T>
     * @param configuration the configuration object for the extension
     * @return Newly created instance of the driver
     */
-   T create(SeleniumExtensionConfiguration configuration);
+   T create(SeleniumConfiguration configuration);
 
    /**
     * Destroys an instance of the driver.

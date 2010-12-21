@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.selenium.event;
+package org.jboss.arquillian.selenium.impl;
 
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import java.io.IOException;
+
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
+import org.jboss.arquillian.selenium.event.SeleniumConfigured;
 import org.jboss.arquillian.selenium.instantiator.SeleniumServerRunner;
 import org.jboss.arquillian.spi.Configuration;
-import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.SuiteEvent;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.InstanceProducer;
+import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 
 /**
- * A handler which starts Selenium server and binds it the current context. The
+ * A handler which starts Selenium server and binds it the suite scope context. The
  * server instance is stored in {@link SeleniumServerRunner}.
  * 
  * The Selenium server run is <i>disabled</i> by default, it must be allowed
- * either in Arquillian configuration or by a system property.
+ * either in the Arquillian Selenium Extension configuration or by a system property.
  * 
  * <br/>
  * <b>Imports:</b><br/> {@link Configuration}</br/>
@@ -40,24 +45,27 @@ import org.jboss.arquillian.spi.event.suite.SuiteEvent;
  * @see SeleniumServerRunner
  * 
  */
-public class SeleniumServerStartupHandler implements EventHandler<SuiteEvent>
+public class SeleniumServerCreator
 {
+   @Inject
+   private Instance<SeleniumConfiguration> seleniumConfiguration;
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @seeorg.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.
-    * arquillian.spi.Context, java.lang.Object)
-    */
-   public void callback(Context context, SuiteEvent event) throws Exception
+   @Inject
+   @SuiteScoped
+   private InstanceProducer<SeleniumServerRunner> seleniumServer;
+
+   public void seleniumServerStartUp(@Observes SeleniumConfigured event) throws IOException
    {
-      Configuration configuration = context.get(Configuration.class);
 
-      SeleniumExtensionConfiguration seleniumConfiguration = configuration.getExtensionConfig(SeleniumExtensionConfiguration.class);
+      if (!seleniumConfiguration.get().isServerEnable())
+      {
+         System.out.println("Not enabled");
+         return;
+      }
 
-      SeleniumServerRunner server = new SeleniumServerRunner(seleniumConfiguration);
+      SeleniumServerRunner server = new SeleniumServerRunner(seleniumConfiguration.get());
       server.start();
 
-      context.add(SeleniumServerRunner.class, server);
+      seleniumServer.set(server);
    }
 }

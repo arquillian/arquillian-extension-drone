@@ -18,20 +18,26 @@ package org.jboss.arquillian.selenium.instantiator;
 
 import java.util.Arrays;
 
-import org.jboss.arquillian.impl.XmlConfigurationBuilder;
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.core.ManagerImpl;
+import org.jboss.arquillian.impl.core.context.ClassContextImpl;
+import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
+import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.impl.core.spi.context.ClassContext;
+import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.selenium.event.SeleniumHolder;
-import org.jboss.arquillian.selenium.event.SeleniumStartupHandler;
 import org.jboss.arquillian.selenium.example.AbstractTestCase;
+import org.jboss.arquillian.selenium.impl.SeleniumCreator;
+import org.jboss.arquillian.selenium.impl.SeleniumDestroyer;
+import org.jboss.arquillian.selenium.impl.SeleniumHolder;
 import org.jboss.arquillian.selenium.spi.Instantiator;
-import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ServiceLoader;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -55,10 +61,36 @@ public class InstantiatorTestCase extends AbstractTestCase
    @Mock
    private ServiceLoader serviceLoader;
 
-   // injection point
    @Selenium
-   @SuppressWarnings("unused")
-   private DefaultSelenium seleniumField;
+   DefaultSelenium unused;
+
+   private ManagerImpl manager;
+
+   @Before
+   public void create()
+   {
+      manager = ManagerBuilder.from()
+            .context(SuiteContextImpl.class)
+            .context(ClassContextImpl.class)
+            .extensions(SeleniumCreator.class, SeleniumDestroyer.class)
+            .create();
+
+      manager.getContext(ApplicationContext.class).getObjectStore().add(ServiceLoader.class, serviceLoader);
+
+      manager.getContext(SuiteContext.class).activate();
+      manager.getContext(SuiteContext.class).getObjectStore().add(SeleniumConfiguration.class, new SeleniumConfiguration());
+      manager.getContext(ClassContext.class).activate(this.getClass());
+   }
+
+   @After
+   public void destroy()
+   {
+      manager.getContext(ClassContext.class).deactivate();
+      manager.getContext(ClassContext.class).destroy(this.getClass());
+
+      manager.getContext(SuiteContext.class).deactivate();
+      manager.getContext(SuiteContext.class).destroy();
+   }
 
    @Test
    @SuppressWarnings("unchecked")
@@ -70,21 +102,18 @@ public class InstantiatorTestCase extends AbstractTestCase
                   new WebDriverInstantiator(),
                   new MockInstantiator()));
 
-      TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
-      TestEvent event = new TestEvent(this, getClass().getMethod("testPrecedence"));
+      manager.fire(new BeforeClass(this.getClass()));
 
-      context.add(Configuration.class, new XmlConfigurationBuilder("arquillian.xml").build());
-      
-      SeleniumStartupHandler handler = new SeleniumStartupHandler();
-
-      handler.callback(context, event);
-
-      SeleniumHolder holder = context.get(SeleniumHolder.class);
+      SeleniumHolder holder = manager.getContext(ClassContext.class).getObjectStore().get(SeleniumHolder.class);
       Assert.assertNotNull("Selenium object holder was created in context", holder);
 
       DefaultSelenium selenium = holder.retrieveSelenium(DefaultSelenium.class);
-
       Assert.assertTrue("Selenium was instantiated by MockInstantiator", selenium instanceof MockSelenium);
+      manager.fire(new AfterClass(this.getClass()));
+
+      holder = manager.getContext(ClassContext.class).getObjectStore().get(SeleniumHolder.class);
+
+      Assert.assertNull("Selenium was removed from context", holder.retrieveSelenium(DefaultSelenium.class));
 
    }
 
@@ -112,7 +141,7 @@ public class InstantiatorTestCase extends AbstractTestCase
        * 
        * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
        */
-      public DefaultSelenium create(SeleniumExtensionConfiguration configuration)
+      public DefaultSelenium create(SeleniumConfiguration configuration)
       {
          DefaultSelenium selenium = new MockSelenium();
          return selenium;

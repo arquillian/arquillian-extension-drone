@@ -36,7 +36,7 @@ import org.jboss.arquillian.spi.ExtensionConfiguration;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
-public class SeleniumExtensionConfiguration implements ExtensionConfiguration
+public class SeleniumConfiguration 
 {
 
    private int serverPort = 14444;
@@ -59,7 +59,7 @@ public class SeleniumExtensionConfiguration implements ExtensionConfiguration
 
    private int speed = 0;
 
-   private String browser = "*firefoxproxy";
+   private String browser = "*firefox";
 
    private String webdriverImplementation = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
 

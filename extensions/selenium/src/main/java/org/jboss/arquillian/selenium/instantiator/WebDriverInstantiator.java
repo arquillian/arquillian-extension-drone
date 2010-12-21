@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -57,7 +57,7 @@ public class WebDriverInstantiator implements Instantiator<WebDriver>
     * 
     * @see org.jboss.arquillian.selenium.instantiator.Instantiator#create()
     */
-   public WebDriver create(SeleniumExtensionConfiguration configuration)
+   public WebDriver create(SeleniumConfiguration configuration)
    {
       WebDriver driver = SecurityActions.newInstance(configuration.getWebdriverImplementation(), new Class<?>[0], new Object[0], WebDriver.class);
 

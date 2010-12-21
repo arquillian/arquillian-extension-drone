@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.selenium.SeleniumExtensionConfiguration;
+import org.jboss.arquillian.selenium.SeleniumConfiguration;
 
 /**
  * SeleniumServerRunner allows to run and kill Selenium server, if present on
@@ -44,17 +44,17 @@ public class SeleniumServerRunner
 {
    private static final Logger log = Logger.getLogger(SeleniumServerRunner.class.getName());
 
-   private SeleniumExtensionConfiguration configuration;
+   private SeleniumConfiguration configuration;
 
    private JavaRunner server;
    private OutputConsumerThread consumer;
 
-   private boolean enabled;
+   private boolean running;
 
-   public SeleniumServerRunner(SeleniumExtensionConfiguration configuration)
+   public SeleniumServerRunner(SeleniumConfiguration configuration)
    {
       this.configuration = configuration;
-      this.enabled = configuration.isServerEnable();
+      this.running = false;
    }
 
    /**
@@ -65,55 +65,50 @@ public class SeleniumServerRunner
     */
    public void start() throws IOException
    {
-      if (enabled)
+      log.info("Starting Selenium Server.");
+
+      String classPath = SecurityActions.getProperty("java.class.path");
+
+      List<String> args = new ArrayList<String>();
+      args.add("-port");
+      args.add(String.valueOf(configuration.getServerPort()));
+
+      // parse command line arguments
+      StringTokenizer parser = new StringTokenizer(configuration.getServerCmdline(), " ");
+      while (parser.hasMoreTokens())
+         args.add(parser.nextToken());
+
+      this.server = new JavaRunner().spawn(configuration.getServerImplementation(), classPath, args);
+
+      OutputStream os = new FileOutputStream(new File(configuration.getServerOutput()));
+
+      this.consumer = new OutputConsumerThread(server.getProcessOutput(), os, configuration.getServerToken());
+
+      consumer.setDaemon(false);
+      consumer.start();
+
+      // actively wait until Selenium server is started
+      for (int i = 0; i < configuration.getTimeout(); i += 1000)
       {
-         log.info("Starting Selenium Server.");
-
-         String classPath = SecurityActions.getProperty("java.class.path");
-
-         List<String> args = new ArrayList<String>();
-         args.add("-port");
-         args.add(String.valueOf(configuration.getServerPort()));
-
-         // parse command line arguments
-         StringTokenizer parser = new StringTokenizer(configuration.getServerCmdline(), " ");
-         while (parser.hasMoreTokens())
-            args.add(parser.nextToken());
-
-         this.server = new JavaRunner().spawn(configuration.getServerImplementation(), classPath, args);
-
-         OutputStream os = new FileOutputStream(new File(configuration.getServerOutput()));
-
-         this.consumer = new OutputConsumerThread(server.getProcessOutput(), os, configuration.getServerToken());
-
-         consumer.setDaemon(false);
-         consumer.start();
-
-         // actively wait until Selenium server is started
-         boolean started = false;
-         for (int i = 0; i < configuration.getTimeout(); i += 1000)
+         if (consumer.isTokenFound())
          {
-            if (consumer.isTokenFound())
-            {
-               started = true;
-               break;
-            }
-
-            try
-            {
-               Thread.sleep(1000);
-            }
-            catch (InterruptedException e)
-            {
-               throw new RuntimeException("The thread was interrupted while waiting for Selenium server startup", e);
-            }
+            running = true;
+            break;
          }
 
-         if (!started)
+         try
          {
-            throw new RuntimeException("The Selenium server was not started during time limit of " + configuration.getTimeout() + " milliseconds.");
+            Thread.sleep(1000);
          }
+         catch (InterruptedException e)
+         {
+            throw new RuntimeException("The thread was interrupted while waiting for Selenium server startup", e);
+         }
+      }
 
+      if (!running)
+      {
+         throw new RuntimeException("The Selenium server was not started during time limit of " + configuration.getTimeout() + " milliseconds.");
       }
    }
 
@@ -122,20 +117,26 @@ public class SeleniumServerRunner
     */
    public void stop()
    {
-      if (enabled)
+      log.info("Taking Selenium Server down.");
+      // killing server with flush consumer input
+      server.kill();
+      try
       {
-         log.info("Taking Selenium Server down.");
-         // killing server with flush consumer input
-         server.kill();
-         try
-         {
-            consumer.join();
-         }
-         catch (InterruptedException e)
-         {
-            throw new RuntimeException("The flushing thread was interrupted before finished");
-         }
+         consumer.join();
+         running = false;
       }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException("The flushing thread was interrupted before finished");
+      }
+   }
+
+   /**
+    * @return the running
+    */
+   public boolean isRunning()
+   {
+      return running;
    }
 
    /**

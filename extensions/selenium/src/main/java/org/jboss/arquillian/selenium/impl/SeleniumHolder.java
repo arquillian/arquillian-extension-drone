@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.selenium.event;
+package org.jboss.arquillian.selenium.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
  * object as well.
  * 
  * Generic approach allows to have an arbitrary implementation of Selenium,
- * varying from Selenium WebDriver to Cheiron.
+ * varying from Selenium WebDriver to Ajocado.
  * 
  * Current implementation limits occurrence of the testing browser to one per
  * class. For instance, you can have {#link DefaultSelenium} and {#link WebDriver}
