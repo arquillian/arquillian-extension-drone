@@ -69,11 +69,7 @@ public class InstantiatorTestCase extends AbstractTestCase
    @Before
    public void create()
    {
-      manager = ManagerBuilder.from()
-            .context(SuiteContextImpl.class)
-            .context(ClassContextImpl.class)
-            .extensions(SeleniumCreator.class, SeleniumDestroyer.class)
-            .create();
+      manager = ManagerBuilder.from().context(SuiteContextImpl.class).context(ClassContextImpl.class).extensions(SeleniumCreator.class, SeleniumDestroyer.class).create();
 
       manager.getContext(ApplicationContext.class).getObjectStore().add(ServiceLoader.class, serviceLoader);
 
@@ -90,17 +86,14 @@ public class InstantiatorTestCase extends AbstractTestCase
 
       manager.getContext(SuiteContext.class).deactivate();
       manager.getContext(SuiteContext.class).destroy();
+      manager.shutdown();
    }
 
    @Test
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings("rawtypes")
    public void testPrecedence() throws Exception
    {
-      Mockito.when(serviceLoader.all(Instantiator.class))
-            .thenReturn(Arrays.<Instantiator> asList(
-                  new DefaultSeleniumInstantiator(),
-                  new WebDriverInstantiator(),
-                  new MockInstantiator()));
+      Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new DefaultSeleniumInstantiator(), new WebDriverInstantiator(), new MockInstantiator()));
 
       manager.fire(new BeforeClass(this.getClass()));
 
@@ -150,7 +143,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see org.jboss.arquillian.selenium.instantiator.Instantiator#destroy(java.lang.Object)
+       * @see
+       * org.jboss.arquillian.selenium.instantiator.Instantiator#destroy(java
+       * .lang.Object)
        */
       public void destroy(DefaultSelenium instance)
       {
@@ -159,6 +154,7 @@ public class InstantiatorTestCase extends AbstractTestCase
 
    /**
     * Mock Selenium to test custom instantiator
+    * 
     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
     * 
     */
@@ -177,6 +173,7 @@ public class InstantiatorTestCase extends AbstractTestCase
 
    /**
     * Mock command processor to mimic Selenium's behaviour
+    * 
     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
     * 
     */
@@ -186,7 +183,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#doCommand(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#doCommand(java.lang.String,
+       * java.lang.String[])
        */
       public String doCommand(String command, String[] args)
       {
@@ -196,7 +195,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getBoolean(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getBoolean(java.lang.String,
+       * java.lang.String[])
        */
       public boolean getBoolean(String string, String[] strings)
       {
@@ -206,7 +207,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getBooleanArray(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getBooleanArray(java.lang
+       * .String, java.lang.String[])
        */
       public boolean[] getBooleanArray(String string, String[] strings)
       {
@@ -216,7 +219,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getNumber(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getNumber(java.lang.String,
+       * java.lang.String[])
        */
       public Number getNumber(String string, String[] strings)
       {
@@ -226,7 +231,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getNumberArray(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getNumberArray(java.lang
+       * .String, java.lang.String[])
        */
       public Number[] getNumberArray(String string, String[] strings)
       {
@@ -236,7 +243,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getRemoteControlServerLocation()
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getRemoteControlServerLocation
+       * ()
        */
       public String getRemoteControlServerLocation()
       {
@@ -246,7 +255,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getString(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getString(java.lang.String,
+       * java.lang.String[])
        */
       public String getString(String string, String[] strings)
       {
@@ -256,7 +267,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#getStringArray(java.lang.String, java.lang.String[])
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#getStringArray(java.lang
+       * .String, java.lang.String[])
        */
       public String[] getStringArray(String string, String[] strings)
       {
@@ -266,7 +279,9 @@ public class InstantiatorTestCase extends AbstractTestCase
       /*
        * (non-Javadoc)
        * 
-       * @see com.thoughtworks.selenium.CommandProcessor#setExtensionJs(java.lang.String)
+       * @see
+       * com.thoughtworks.selenium.CommandProcessor#setExtensionJs(java.lang
+       * .String)
        */
       public void setExtensionJs(String extensionJs)
       {

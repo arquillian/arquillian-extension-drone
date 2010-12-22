@@ -57,6 +57,7 @@ public class SeleniumConfiguratonCreatorTestCase
    {
       manager.getContext(SuiteContext.class).deactivate();
       manager.getContext(SuiteContext.class).destroy();
+      manager.shutdown();
    }
 
    @Test
