@@ -40,13 +40,15 @@ public class InstantiatorUtil
    private static final Logger log = Logger.getLogger(InstantiatorUtil.class.getName());
 
    /**
-    * Checks what instantiators in the collection can instantiate {@code needle} and return a list with their instance
+    * Checks what instantiators in the collection can instantiate {@code needle}
+    * and return a list with their instance
+    * 
     * @param <T> Type of needle
     * @param collection The collection to be filtered
     * @param needle The class type which we want to instantiate
     * @return A list of instantiators which can instantiate given class
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public static <T> List<Instantiator<T>> filter(Collection<Instantiator> collection, Class<T> needle)
    {
 
@@ -81,9 +83,11 @@ public class InstantiatorUtil
 
    /**
     * Sorts a list of instantiators and returns the one with highest precedence
+    * 
     * @param <T> A type to be instantiated
     * @param list A list of instantiators to sort
-    * @return The instantiator with highest priority or {@code null} if list was empty
+    * @return The instantiator with highest priority or {@code null} if list was
+    *         empty
     */
    public static <T> Instantiator<T> highest(List<Instantiator<T>> list)
    {
@@ -105,15 +109,17 @@ public class InstantiatorUtil
    }
 
    /**
-    * Checks what instantiators can instantiate {@code needle}, sorts them and returns
-    * the one which the highest precedence
+    * Checks what instantiators can instantiate {@code needle}, sorts them and
+    * returns the one which the highest precedence
+    * 
     * @param <T> A type to be instantiated
     * @param collection A list of instantiators to sort
     * @param needle The class type which we want to instantiate
-    * @return The instantiator with highest priority or {@code null} if list was empty
+    * @return The instantiator with highest priority or {@code null} if list was
+    *         empty
     * @return
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings("rawtypes")
    public static <T> Instantiator<T> highest(Collection<Instantiator> collection, Class<T> needle)
    {
       return highest(filter(collection, needle));
