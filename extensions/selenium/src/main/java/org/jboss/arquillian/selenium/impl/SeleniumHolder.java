@@ -40,7 +40,7 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
 public class SeleniumHolder
 {
    // cache holder
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings("rawtypes")
    private Map<Class<?>, Tuple> cache = new HashMap<Class<?>, Tuple>();
 
    /**

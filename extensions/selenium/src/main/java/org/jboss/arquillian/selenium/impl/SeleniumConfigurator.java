@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.event.SeleniumConfigured;
-import org.jboss.arquillian.selenium.instantiator.SeleniumServerRunner;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.InstanceProducer;

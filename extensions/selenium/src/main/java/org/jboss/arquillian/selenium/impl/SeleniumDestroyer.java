@@ -21,13 +21,13 @@ import java.lang.reflect.Field;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.jboss.arquillian.spi.core.Instance;
-import org.jboss.arquillian.spi.core.annotation.ClassScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields annotated with {@link Selenium}. <br/>
+ * A handler which sets a cached instance of Selenium browser for fields
+ * annotated with {@link Selenium}. <br/>
  * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
  * <br/>
  * 
@@ -38,12 +38,11 @@ import org.jboss.arquillian.spi.event.suite.AfterClass;
 public class SeleniumDestroyer
 {
    @Inject
-   @ClassScoped
    private Instance<SeleniumHolder> selenium;
 
    @SuppressWarnings("unchecked")
    public void destroySelenium(@Observes AfterClass event)
-   {        
+   {
       Class<?> clazz = event.getTestClass().getJavaClass();
       for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Selenium.class))
       {
@@ -54,6 +53,7 @@ public class SeleniumDestroyer
          }
 
          // we do check type safety dynamically
+         @SuppressWarnings("rawtypes")
          Instantiator destroyer = selenium.get().retrieveInstantiator(typeClass);
          destroyer.destroy(selenium.get().retrieveSelenium(typeClass));
          selenium.get().remove(typeClass);

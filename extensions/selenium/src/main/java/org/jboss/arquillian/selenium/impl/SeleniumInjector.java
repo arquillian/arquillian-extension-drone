@@ -21,13 +21,13 @@ import java.util.List;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.spi.core.Instance;
-import org.jboss.arquillian.spi.core.annotation.ClassScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields annotated with {@link Selenium}. <br/>
+ * A handler which sets a cached instance of Selenium browser for fields
+ * annotated with {@link Selenium}. <br/>
  * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
  * <br/>
  * 
@@ -38,7 +38,6 @@ import org.jboss.arquillian.spi.event.suite.Before;
 public class SeleniumInjector
 {
    @Inject
-   @ClassScoped
    private Instance<SeleniumHolder> selenium;
 
    public void injectSelenium(@Observes Before event)
