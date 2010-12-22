@@ -17,19 +17,21 @@
 package org.jboss.arquillian.selenium.impl;
 
 import org.jboss.arquillian.selenium.SeleniumConfiguration;
-import org.jboss.arquillian.selenium.instantiator.SeleniumServerRunner;
+import org.jboss.arquillian.selenium.event.SeleniumServerStopped;
 import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * A handler which destroys Selenium server.
  * 
  * The Selenium server run is <i>disabled</i> by default, it must be allowed
- * either in the Arquillian Selenium Extension configuration or by a system property.
+ * either in the Arquillian Selenium Extension configuration or by a system
+ * property.
  * 
  * <br/>
  * <b>Imports:</b><br/> {@link Configuration}</br/> {@link SeleniumServerRunner}<br/>
@@ -46,8 +48,10 @@ public class SeleniumServerDestroyer
    private Instance<SeleniumConfiguration> seleniumConfiguration;
 
    @Inject
-   @SuiteScoped
-   private Instance<SeleniumServerRunner> seleniumServer;
+   private Instance<SeleniumServer> seleniumServer;
+
+   @Inject
+   private Event<SeleniumServerStopped> afterStop;
 
    public void seleniumServerShutDown(@Observes AfterSuite event)
    {
@@ -57,6 +61,7 @@ public class SeleniumServerDestroyer
       }
 
       seleniumServer.get().stop();
+      afterStop.fire(new SeleniumServerStopped());
    }
 
 }

@@ -76,25 +76,22 @@
          <version>${version.selenium}</version>
          <scope>provided</scope>
       </dependency>
+      
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-simple</artifactId>
          <version>${version.slf4j}</version>
          <scope>test</scope>
       </dependency>
+      
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
-      </dependency>
-
-      <!-- we are using a Weld based example -->
+      
+      <!-- we are using a Weld based example for testing -->
       <dependency>
          <groupId>javax.enterprise</groupId>
          <artifactId>cdi-api</artifactId>
@@ -115,6 +112,7 @@
          <version>${version.jpa}</version>
          <scope>test</scope>
       </dependency>
+      
 
       <!-- external dependencies -->
       <dependency>
@@ -147,7 +145,7 @@
                   <goals>
                      <goal>test</goal>
                   </goals>
-                  <configuration>
+                  <configuration><!-- <skipTests>true</skipTests> -->
                      <includes>
                         <include>org/jboss/arquillian/selenium/instantiator/*.class</include>
                         <include>org/jboss/arquillian/selenium/impl/*.class</include>

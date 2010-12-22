@@ -17,22 +17,21 @@
 package org.jboss.arquillian.selenium.impl;
 
 import org.jboss.arquillian.impl.core.ManagerBuilder;
-import org.jboss.arquillian.impl.core.ManagerImpl;
-import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.event.SeleniumConfigured;
-import org.jboss.arquillian.selenium.instantiator.SeleniumServerRunner;
+import org.jboss.arquillian.selenium.event.SeleniumServerStarted;
+import org.jboss.arquillian.selenium.event.SeleniumServerStopped;
+import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openqa.selenium.server.SeleniumServer;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 
@@ -41,7 +40,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * 
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SeleniumServerTestCase
+public class SeleniumServerTestCase extends AbstractManagerTestBase
 {
    @Spy
    SeleniumConfiguration seleniumConfiguration = new SeleniumConfiguration();
@@ -49,42 +48,27 @@ public class SeleniumServerTestCase
    @Selenium
    DefaultSelenium unused;
 
-   private ManagerImpl manager;
-
-   @Before
-   public void create()
-   {
-      manager = ManagerBuilder.from()
-            .context(SuiteContextImpl.class)
-            .extensions(SeleniumServerCreator.class, SeleniumServerDestroyer.class)
-            .create();
-
-      manager.getContext(SuiteContext.class).activate();
-      manager.getContext(SuiteContext.class).getObjectStore().add(SeleniumConfiguration.class, seleniumConfiguration);
-   }
-
-   @After
-   public void destroy()
-   {
-      manager.getContext(SuiteContext.class).deactivate();
-      manager.getContext(SuiteContext.class).destroy();
-   }
-
    @Test
    public void serverCreatedAndDestroyed() throws Exception
    {
+      bind(SuiteScoped.class, SeleniumConfiguration.class, seleniumConfiguration);
       Mockito.when(seleniumConfiguration.isServerEnable()).thenReturn(true);
 
-      manager.fire(new SeleniumConfigured());
+      fire(new SeleniumConfigured());
 
-      SeleniumServerRunner server = manager.getContext(SuiteContext.class).getObjectStore().get(SeleniumServerRunner.class);
+      SeleniumServer server = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServer.class);
 
       Assert.assertNotNull("Selenium server object is present in context", server);
-      Assert.assertTrue("Selenium server is running", server.isRunning());
+      assertEventFired(SeleniumServerStarted.class, 1);
 
-      manager.fire(new AfterSuite());
+      fire(new AfterSuite());
 
-      server = manager.getContext(SuiteContext.class).getObjectStore().get(SeleniumServerRunner.class);
-      Assert.assertFalse("Selenium server is not running", server.isRunning());
+      assertEventFired(SeleniumServerStopped.class, 1);
+   }
+
+   @Override
+   protected void addExtensions(ManagerBuilder builder)
+   {
+      builder.extensions(SeleniumServerCreator.class, SeleniumServerDestroyer.class);
    }
 }
