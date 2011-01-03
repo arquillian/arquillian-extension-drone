@@ -1,15 +1,8 @@
-<arquillian xmlns="http://jboss.com/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.remote_6"
-   xmlns:selenium="urn:arq:org.jboss.arquillian.selenium">
-
-   <jboss:container>
-      <jboss:remoteServerAddress>localhost</jboss:remoteServerAddress>
-      <jboss:remoteServerHttpPort>8080</jboss:remoteServerHttpPort>      
-   </jboss:container>
-   
-   <selenium:extension>
-      <!-- a delay after each selenium command, it is overridden in system  properties -->
-      <selenium:speed>5000</selenium:speed>
-   </selenium:extension>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<arquillian>
+  <extension qualifier="selenium">
+    <configuration>
+      <property name="speed">5000</property>      
+    </configuration>
+  </extension>
 </arquillian>

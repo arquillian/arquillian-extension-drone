@@ -16,13 +16,11 @@
  */
 package org.jboss.arquillian.selenium.instantiator;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.List;
 
 /**
  * SecurityActions
@@ -118,7 +116,7 @@ final class SecurityActions
     * @param arguments The constructor arguments
     * @return a new instance
     * @throws IllegalArgumentException if className, argumentTypes, or arguments
-    *         are null
+    *            are null
     * @throws RuntimeException if any exceptions during creation
     * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
     * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
@@ -159,96 +157,6 @@ final class SecurityActions
       {
          // Reconstruct so we get some useful information
          throw new ClassCastException("Incorrect expected type, " + expectedType.getName() + ", defined for " + obj.getClass().getName());
-      }
-   }
-
-   static Process spawnProcess(final List<String> arguments) throws IOException
-   {
-      try
-      {
-         Process process = AccessController.doPrivileged(new PrivilegedExceptionAction<Process>()
-         {
-            public Process run() throws Exception
-            {
-               ProcessBuilder builder = new ProcessBuilder(arguments);
-               builder.redirectErrorStream(true);
-               return builder.start();
-            }
-         });
-         return process;
-      }
-      // Unwrap
-      catch (final PrivilegedActionException pae)
-      {
-         final Throwable t = pae.getCause();
-         // Rethrow
-         if (t instanceof IOException)
-         {
-            throw (IOException) t;
-         }
-         else if (t instanceof SecurityException)
-         {
-            throw (SecurityException) t;
-         }
-         else
-         {
-            // No other checked Exception thrown by Class.getConstructor
-            try
-            {
-               throw (RuntimeException) t;
-            }
-            // Just in case we've really messed up
-            catch (final ClassCastException cce)
-            {
-               throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-            }
-         }
-      }
-   }
-
-   static String getProperty(final String key)
-   {
-      try
-      {
-         String value = AccessController.doPrivileged(new PrivilegedExceptionAction<String>()
-         {
-            public String run()
-            {
-               return System.getProperty(key);
-            }
-         });
-         return value;
-      }
-      // Unwrap
-      catch (final PrivilegedActionException pae)
-      {
-         final Throwable t = pae.getCause();
-         // Rethrow
-         if (t instanceof SecurityException)
-         {
-            throw (SecurityException) t;
-         }
-         if (t instanceof NullPointerException)
-         {
-            throw (NullPointerException) t;
-         }
-         else if (t instanceof IllegalArgumentException)
-         {
-            throw (IllegalArgumentException) t;
-         }
-         else
-         {
-            // No other checked Exception thrown by System.getProperty
-            try
-            {
-               throw (RuntimeException) t;
-            }
-            // Just in case we've really messed up
-            catch (final ClassCastException cce)
-            {
-               throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-            }
-         }
       }
    }
 

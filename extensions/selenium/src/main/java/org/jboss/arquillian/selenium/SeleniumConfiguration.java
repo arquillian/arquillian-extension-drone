@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.selenium;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.impl.configuration.api.ExtensionDef;
 import org.jboss.arquillian.spi.ExtensionConfiguration;
 
 /**
@@ -29,7 +36,7 @@ import org.jboss.arquillian.spi.ExtensionConfiguration;
  * following rules:
  * <ol>
  * <li>Prefix {@code arquillian.selenium} is added</li>
- * <li>{@code get} part of name is removed</li>
+ * <li>the {@code get} of method name is removed</li>
  * <li>Upper case letters are replaced with dot and their lower case equivalent</li>
  * </ol>
  * 
@@ -41,6 +48,9 @@ import org.jboss.arquillian.spi.ExtensionConfiguration;
  */
 public class SeleniumConfiguration
 {
+   private static final String EXTENSION_QUALIFIER = "selenium";
+
+   private static final String PROPERTY_PREFIX = "arquillian.selenium.";
 
    private int serverPort = 14444;
 
@@ -60,8 +70,36 @@ public class SeleniumConfiguration
 
    private String webdriverImplementation = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
 
-   // overlay configuration
-   private SystemPropertyConfiguration override = new SystemPropertyConfiguration();
+   /**
+    * Creates a default Selenium configuration
+    */
+   public SeleniumConfiguration()
+   {
+      new ConfigurationMapper(PROPERTY_PREFIX, Collections.<String, String> emptyMap()).map(this);
+   }
+
+   /**
+    * Creates a Selenium configuration using properties available in
+    * {@link ArquillianDescriptor}. Still, system based properties have priority
+    * over these.
+    * 
+    * @param descriptorConfiguration
+    * @see ArquillianDescriptor
+    */
+   public SeleniumConfiguration(ArquillianDescriptor arquillianDescriptor)
+   {
+      Map<String, String> nameValuePairs = Collections.emptyMap();
+      for (ExtensionDef extension : arquillianDescriptor.getExtensions())
+      {
+         if (EXTENSION_QUALIFIER.equals(extension.getExtensionName()))
+         {
+            nameValuePairs = extension.getExtensionProperties();
+            break;
+         }
+      }
+
+      new ConfigurationMapper(PROPERTY_PREFIX, nameValuePairs).map(this);
+   }
 
    /**
     * A port where Selenium server is started/running
@@ -70,12 +108,6 @@ public class SeleniumConfiguration
     */
    public int getServerPort()
    {
-      Integer value = override.get(Integer.class, "serverPort");
-      if (value != null)
-      {
-         return value.intValue();
-      }
-
       return serverPort;
    }
 
@@ -94,12 +126,6 @@ public class SeleniumConfiguration
     */
    public String getServerHost()
    {
-      String value = override.get(String.class, "serverHost");
-      if (value != null)
-      {
-         return value;
-      }
-
       return serverHost;
    }
 
@@ -118,12 +144,6 @@ public class SeleniumConfiguration
     */
    public String getServerOutput()
    {
-      String value = override.get(String.class, "serverOutput");
-      if (value != null)
-      {
-         return value;
-      }
-
       return serverOutput;
    }
 
@@ -142,12 +162,6 @@ public class SeleniumConfiguration
     */
    public boolean isServerEnable()
    {
-      Boolean value = override.get(Boolean.class, "serverEnable");
-      if (value != null)
-      {
-         return value.booleanValue();
-      }
-
       return serverEnable;
    }
 
@@ -160,30 +174,6 @@ public class SeleniumConfiguration
    }
 
    /**
-    * The URL opened in the browser, which encapsulates the session
-    * 
-    * @return the url
-    */
-   public String getUrl()
-   {
-      String value = override.get(String.class, "url");
-      if (value != null)
-      {
-         return value;
-      }
-
-      return url;
-   }
-
-   /**
-    * @param url the url to set
-    */
-   public void setUrl(String url)
-   {
-      this.url = url;
-   }
-
-   /**
     * Time limit in milliseconds which determines operation failed, either for
     * executing Selenium command or starting Selenium server
     * 
@@ -191,12 +181,6 @@ public class SeleniumConfiguration
     */
    public int getTimeout()
    {
-      Integer value = override.get(Integer.class, "timeout");
-      if (value != null)
-      {
-         return value.intValue();
-      }
-
       return timeout;
    }
 
@@ -215,12 +199,6 @@ public class SeleniumConfiguration
     */
    public int getSpeed()
    {
-      Integer value = override.get(Integer.class, "speed");
-      if (value != null)
-      {
-         return value.intValue();
-      }
-
       return speed;
    }
 
@@ -242,12 +220,6 @@ public class SeleniumConfiguration
     */
    public String getBrowser()
    {
-      String value = override.get(String.class, "browser");
-      if (value != null)
-      {
-         return value;
-      }
-
       return browser;
    }
 
@@ -267,12 +239,6 @@ public class SeleniumConfiguration
     */
    public String getWebdriverImplementation()
    {
-      String value = override.get(String.class, "webdriverImplementation");
-      if (value != null)
-      {
-         return value;
-      }
-
       return webdriverImplementation;
    }
 
@@ -285,32 +251,91 @@ public class SeleniumConfiguration
    }
 
    /**
-    * Retrieves a configuration from System properties.
-    * 
-    * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-    * 
+    * @param url the url to set
     */
-   private static class SystemPropertyConfiguration
+   public void setUrl(String url)
    {
-      private static final String PROPERTY_PREFIX = "arquillian.selenium.";
+      this.url = url;
+   }
+
+   /**
+    * @return the url
+    */
+   public String getUrl()
+   {
+      return url;
+   }
+
+   // UTILITY HELPER
+
+   private static final class ConfigurationMapper
+   {
+      private final String systemPropertyPrefix;
+      private final Map<String, String> nameValuePairs;
+
+      public ConfigurationMapper(String systemPropertyPrefix, Map<String, String> nameValuePairs)
+      {
+         this.systemPropertyPrefix = systemPropertyPrefix;
+         this.nameValuePairs = nameValuePairs;
+      }
+
+      public void map(Object object)
+      {
+         mapFromArquillianDescriptor(object);
+         mapFromSystemProperties(object);
+      }
 
       /**
-       * Gets a property of given type from System properties
+       * Fills configuration using properties available in ArquillianDescriptor
        * 
-       * @param <T>
-       * @param clazz The resulting class
-       * @param key The name of property as named in extension configuration
-       * @return Either property value converted to a given class or
-       *         {@code null}
+       * @param descriptorConfiguration Map of properties
        */
-      public <T> T get(Class<T> clazz, String key)
+      private void mapFromArquillianDescriptor(Object object)
       {
+         List<Field> fields = SecurityActions.getFieldsWithAnnotation(object.getClass());
+         for (Field f : fields)
+         {
+            System.err.println(f.getName() + ":" + box(f.getType()) + " '" + nameValuePairs.get(f.getName()) + "'");
 
-         String value = SecurityActions.getProperty(keyTransform(key));
-         if (value == null)
-            return null;
+            if (nameValuePairs.containsKey(f.getName()))
+            {
+               try
+               {
+                  f.set(object, convert(box(f.getType()), nameValuePairs.get(f.getName())));
+               }
+               catch (Exception e)
+               {
+                  e.printStackTrace();
+                  e.getCause().printStackTrace();
+                  throw new RuntimeException("Could not map Arquillian Selenium extension configuration from ArquillianDescriptor: ", e);
+               }
+            }
+         }
+      }
 
-         return convert(clazz, value);
+      /**
+       * Fills configuration using System properties
+       */
+      private void mapFromSystemProperties(Object object)
+      {
+         List<Field> fields = SecurityActions.getFieldsWithAnnotation(object.getClass());
+         for (Field f : fields)
+         {
+            String value = SecurityActions.getProperty(keyTransform(f.getName()));
+            if (value != null)
+            {
+               System.err.println(f.getName() + ":" + box(f.getType()) + " '" + value + "'");
+               try
+               {
+                  f.set(object, convert(box(f.getType()), value));
+               }
+               catch (Exception e)
+               {
+                  e.printStackTrace();
+                  throw new RuntimeException("Could not map Arquillian Selenium extension configuration from System properties", e);
+               }
+            }
+         }
       }
 
       /**
@@ -325,7 +350,7 @@ public class SeleniumConfiguration
        */
       private String keyTransform(String propertyName)
       {
-         StringBuilder sb = new StringBuilder(PROPERTY_PREFIX);
+         StringBuilder sb = new StringBuilder(systemPropertyPrefix);
 
          for (int i = 0; i < propertyName.length(); i++)
          {
@@ -343,25 +368,78 @@ public class SeleniumConfiguration
          return sb.toString();
       }
 
+      private Class<?> box(Class<?> primitive)
+      {
+         if (!primitive.isPrimitive())
+         {
+            return primitive;
+         }
+
+         if (int.class.equals(primitive))
+         {
+            return Integer.class;
+         }
+         else if (long.class.equals(primitive))
+         {
+            return Long.class;
+         }
+         else if (float.class.equals(primitive))
+         {
+            return Float.class;
+         }
+         else if (double.class.equals(primitive))
+         {
+            return Double.class;
+         }
+         else if (short.class.equals(primitive))
+         {
+            return Short.class;
+         }
+         else if (boolean.class.equals(primitive))
+         {
+            return Boolean.class;
+         }
+         else if (char.class.equals(primitive))
+         {
+            return Character.class;
+         }
+         else if (byte.class.equals(primitive))
+         {
+            return Byte.class;
+         }
+
+         throw new IllegalArgumentException("Unknown primitive type " + primitive);
+      }
+
+      /**
+       * A helper converting method.
+       * 
+       * Converts string to a class of given type
+       * 
+       * @param <T> Type of returned value
+       * @param clazz Type of desired value
+       * @param value String value to be converted
+       * @return Value converted to a appropriate type
+       */
       private <T> T convert(Class<T> clazz, String value)
       {
          if (String.class.equals(clazz))
          {
             return clazz.cast(value);
          }
-         else if (Integer.class.equals(clazz) || int.class.equals(clazz))
+         else if (Integer.class.equals(clazz))
          {
             return clazz.cast(Integer.valueOf(value));
          }
-         else if (Double.class.equals(clazz) || double.class.equals(clazz))
+         else if (Double.class.equals(clazz))
          {
             return clazz.cast(Double.valueOf(value));
          }
-         else if (Long.class.equals(clazz) || long.class.equals(clazz))
+         else if (Long.class.equals(clazz))
          {
             return clazz.cast(Long.valueOf(value));
          }
-         else if (Boolean.class.equals(clazz) || boolean.class.equals(clazz))
+         else if (Boolean.class.equals(clazz))
          {
             return clazz.cast(Boolean.valueOf(value));
          }
@@ -369,5 +447,4 @@ public class SeleniumConfiguration
          throw new IllegalArgumentException("Unable to convert value " + value + "to a class: " + clazz.getName());
       }
    }
-
 }

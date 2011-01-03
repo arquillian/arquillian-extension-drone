@@ -54,7 +54,7 @@ public class SeleniumServerTestCase extends AbstractManagerTestBase
       bind(SuiteScoped.class, SeleniumConfiguration.class, seleniumConfiguration);
       Mockito.when(seleniumConfiguration.isServerEnable()).thenReturn(true);
 
-      fire(new SeleniumConfigured());
+      fire(new SeleniumConfigured(seleniumConfiguration));
 
       SeleniumServer server = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServer.class);
 

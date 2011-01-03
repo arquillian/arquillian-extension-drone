@@ -16,16 +16,15 @@
  */
 package org.jboss.arquillian.selenium.impl;
 
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
-import org.jboss.arquillian.impl.core.ManagerImpl;
-import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.annotation.Selenium;
+import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
-import org.junit.After;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -34,39 +33,30 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
-public class SeleniumConfiguratonCreatorTestCase
+public class SeleniumConfiguratonCreatorTestCase extends AbstractManagerTestBase
 {
    @Selenium
    DefaultSelenium unused;
 
-   private ManagerImpl manager;
-
-   @Before
-   public void create()
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.selenium.impl.AbstractManagerTestBase#addExtensions(org.jboss.arquillian.impl.core.ManagerBuilder)
+    */
+   @Override
+   protected void addExtensions(ManagerBuilder builder)
    {
-      manager = ManagerBuilder.from()
-            .context(SuiteContextImpl.class)
-            .extensions(SeleniumConfigurator.class)
-            .create();
-
-      manager.getContext(SuiteContext.class).activate();
-   }
-
-   @After
-   public void destroy()
-   {
-      manager.getContext(SuiteContext.class).deactivate();
-      manager.getContext(SuiteContext.class).destroy();
-      manager.shutdown();
+      builder.extension(SeleniumConfigurator.class);
    }
 
    @Test
    public void configurationWasCreated() throws Exception
    {
-      manager.fire(new BeforeSuite());
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+      fire(new BeforeSuite());
 
-      SeleniumConfiguration selConf = manager.getContext(SuiteContext.class).getObjectStore().get(SeleniumConfiguration.class);
+      SeleniumConfiguration selConf = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumConfiguration.class);
 
       Assert.assertNotNull("Selenium configuration was created in context", selConf);    
    }
+
+
 }
