@@ -172,13 +172,6 @@
             </dependency>
          </dependencies>
 
-         <build>
-            <testResources>
-               <testResource>
-                  <directory>src/test/jboss-resources</directory>
-               </testResource>
-            </testResources>
-         </build>
       </profile>
 
       <profile>
