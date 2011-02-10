@@ -25,13 +25,15 @@ import org.jboss.arquillian.selenium.annotation.ContextPath;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields annotated with {@link Selenium}. <br/>
+ * A handler which sets a cached instance of Selenium browser for fields
+ * annotated with {@link Selenium}. <br/>
  * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
  * <br/>
  * 
@@ -61,8 +63,7 @@ public class ContextPathInjector
          throw new IllegalStateException("Unable to retrieve context path for current deployment");
       }
 
-      URI uri = protocol.get().getContext(HTTPContext.class).getBaseURI();
-
+      URI uri = getSingularContextPath(protocol.get().getContext(HTTPContext.class));
       try
       {
          for (Field f : fields)
@@ -87,8 +88,10 @@ public class ContextPathInjector
             {
                f.set(testInstance, uri);
             }
-
-            throw new IllegalStateException("Unable to inject context path to a object of type " + f.getType() + ", it can be injected only to String and URL based fields");
+            else
+            {
+               throw new IllegalStateException("Unable to inject context path to a object of type " + f.getType() + ", it can be injected only to String, URL and URI based fields");
+            }
          }
       }
       catch (Exception e)
@@ -97,4 +100,25 @@ public class ContextPathInjector
       }
 
    }
+
+   private URI getSingularContextPath(HTTPContext context) throws IllegalStateException
+   {
+      if (context == null || context.getServlets() == null || context.getServlets().size() == 0)
+      {
+         throw new IllegalStateException("Unable to retrieve context path for current deployment, no context or servlets found");
+      }
+
+      List<Servlet> servlets = context.getServlets();
+      String candidate = servlets.get(0).getContextRoot();
+      for (Servlet servlet : servlets)
+      {
+         if (!candidate.equals(servlet.getContextRoot()))
+         {
+            throw new IllegalStateException("Unable to determine context path for current deployment, multiple servlets present in the deployment");
+         }
+      }
+
+      return servlets.get(0).getBaseURI();
+   }
+
 }

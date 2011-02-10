@@ -18,8 +18,11 @@ package org.jboss.arquillian.selenium.example;
 
 import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
 
+import java.net.URI;
+
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.selenium.annotation.ContextPath;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,12 +42,12 @@ import com.thoughtworks.selenium.DefaultSelenium;
 @Run(AS_CLIENT)
 public class DefaultSeleniumTestCase extends AbstractTestCase
 {
-   /**
-    * This creates the Selenium driver before invocation of test methods
-    */
-   @Selenium
-   private DefaultSelenium driver;   
-
+   // load selenium driver
+   @Selenium DefaultSelenium driver;   
+   
+   // Load context path to the test
+   @ContextPath URI contextPath;
+   
    private static final String USERNAME = "demo";
    private static final String PASSWORD = "demo";
 
@@ -62,7 +65,9 @@ public class DefaultSeleniumTestCase extends AbstractTestCase
    @Test
    public void testLoginAndLogout()
    {
-      driver.open("http://localhost:8080/weld-login/home.jsf");
+      Assert.assertNotNull("Path is not null", contextPath);
+      
+      driver.open(contextPath + "/home.jsf");
 
       driver.type(USERNAME_FIELD, USERNAME);
       driver.type(PASSWORD_FIELD, PASSWORD);

@@ -43,12 +43,9 @@ import org.openqa.selenium.WebDriver;
 @Run(AS_CLIENT)
 public class WebDriverTestCase extends AbstractTestCase
 {
-   /**
-    * This creates the Selenium driver before invocation of test methods
-    */
-   @Selenium
-   private WebDriver driver;
-
+   // create WebDriver
+   @Selenium WebDriver driver;
+   
    private static final String USERNAME = "demo";
    private static final String PASSWORD = "demo";
 
