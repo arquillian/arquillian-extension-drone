@@ -65,6 +65,10 @@ public class SeleniumConfiguration
    private int timeout = 60000;
 
    private int speed = 0;
+   
+   private boolean maximize = false;
+   
+   private boolean captureNetworkTraffic = false;
 
    private String browser = "*firefox";
 
@@ -266,6 +270,40 @@ public class SeleniumConfiguration
       return url;
    }
 
+   /**
+    * @return the maximize
+    */
+   public boolean isMaximize()
+   {
+      return maximize;
+   }
+
+   /**
+    * @param maximize the maximize to set
+    */
+   public void setMaximize(boolean maximize)
+   {
+      this.maximize = maximize;
+   }
+
+   /**
+    * @return the captureNetworkTraffic
+    */
+   public boolean isCaptureNetworkTraffic()
+   {
+      return captureNetworkTraffic;
+   }
+
+   /**
+    * @param captureNetworkTraffic the captureNetworkTraffic to set
+    */
+   public void setCaptureNetworkTraffic(boolean captureNetworkTraffic)
+   {
+      this.captureNetworkTraffic = captureNetworkTraffic;
+   }
+
+
+   
    // UTILITY HELPER
 
    private static final class ConfigurationMapper

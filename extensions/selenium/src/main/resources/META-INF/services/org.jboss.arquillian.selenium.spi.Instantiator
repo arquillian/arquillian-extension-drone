@@ -1,2 +1,3 @@
 org.jboss.arquillian.selenium.instantiator.DefaultSeleniumInstantiator
 org.jboss.arquillian.selenium.instantiator.WebDriverInstantiator
+org.jboss.arquillian.selenium.instantiator.AjocadoInstantiator
