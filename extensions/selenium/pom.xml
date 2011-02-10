@@ -59,6 +59,12 @@
          <artifactId>arquillian-ajocado-impl</artifactId>
          <version>${version.ajocado}</version>
          <optional>true</optional>
+         <exclusions>
+            <exclusion>
+               <groupId>org.testng</groupId>
+               <artifactId>testng</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
 
       <dependency>
@@ -107,6 +113,26 @@
 
    </dependencies>
 
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>default-test</id>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skipTests>true</skipTests>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
    <profiles>
    
       <!-- default test which are not container dependent -->
@@ -121,6 +147,12 @@
                <groupId>org.seleniumhq.selenium</groupId>
                <artifactId>selenium</artifactId>
                <version>${version.selenium}</version>
+               <exclusions>
+                  <exclusion>
+                     <groupId>org.testng</groupId>
+                     <artifactId>testng</artifactId>
+                  </exclusion>
+               </exclusions>
             </dependency>
             <dependency>
                <groupId>org.seleniumhq.selenium</groupId>
@@ -142,6 +174,7 @@
                            <goal>test</goal>
                         </goals>
                         <configuration>
+                           <skipTests>false</skipTests>
                            <includes>
                               <include>org/jboss/arquillian/selenium/instantiator/*.class</include>
                               <include>org/jboss/arquillian/selenium/impl/*.class</include>
@@ -327,6 +360,7 @@
                         </goals>
                         <configuration>
                            <systemPropertyVariables>
+                              <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
                            </systemPropertyVariables>
                            <includes>
                               <include>org/jboss/arquillian/selenium/example/AjocadoTestCase.class</include>
