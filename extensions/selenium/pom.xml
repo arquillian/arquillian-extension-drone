@@ -23,10 +23,9 @@
 
    <properties>
       <!-- Versioning -->
-      <version.jboss_60>6.0.0.20100721-M4</version.jboss_60>
-      <version.selenium>2.0a5</version.selenium>
+      <version.jboss_60>6.0.0.20101110-CR1</version.jboss_60>
+      <version.selenium>2.0b1</version.selenium>
       <version.webdriver>0.9.7376</version.webdriver>
-      <version.selenium.standalone>1.0.3</version.selenium.standalone>
       <version.slf4j>1.5.10</version.slf4j>
 
       <!-- example dependencies -->
@@ -53,28 +52,13 @@
       <dependency>
          <groupId>org.seleniumhq.selenium</groupId>
          <artifactId>selenium</artifactId>
-         <version>${version.selenium}</version>
-         <scope>provided</scope>
-         <exclusions>
-            <exclusion>
-               <artifactId>selenium-firefox-driver</artifactId>
-               <groupId>org.seleniumhq.selenium</groupId>
-            </exclusion>
-            <exclusion>
-               <artifactId>selenium-ie-driver</artifactId>
-               <groupId>org.seleniumhq.selenium</groupId>
-            </exclusion>
-            <exclusion>
-               <artifactId>selenium-chrome-driver</artifactId>
-               <groupId>org.seleniumhq.selenium</groupId>
-            </exclusion>
-         </exclusions>
+         <version>${version.selenium}</version>      
       </dependency>
       <dependency>
          <groupId>org.seleniumhq.selenium</groupId>
          <artifactId>selenium-server</artifactId>
          <version>${version.selenium}</version>
-         <scope>provided</scope>
+         <optional>true</optional>
       </dependency>
       
       <dependency>
@@ -139,17 +123,18 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.7.2</version>
             <executions>
                <execution>
                   <id>default-test</id>
                   <goals>
                      <goal>test</goal>
                   </goals>
-                  <configuration><!-- <skipTests>true</skipTests> -->
+                  <configuration><!-- <skipTests>true</skipTests> --><!-- 
                      <includes>
                         <include>org/jboss/arquillian/selenium/instantiator/*.class</include>
                         <include>org/jboss/arquillian/selenium/impl/*.class</include>
-                     </includes>
+                     </includes> -->
                   </configuration>
                </execution>
             </executions>
@@ -291,20 +276,14 @@
             uses legacy Selenium 2.0 DefaultSelenium driver with
             starting/stopping Selenium Server automatically
          -->
-         <id>defaultselenium</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.seleniumhq.selenium</groupId>
-               <artifactId>selenium-server</artifactId>
-               <version>${version.selenium}</version>
-            </dependency>
-         </dependencies>
+         <id>defaultselenium</id>        
 
          <build>
             <plugins>
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-surefire-plugin</artifactId>
+                  <version>2.7.2</version>
                   <executions>
                      <execution>
                         <id>defaultselenium-test</id>
