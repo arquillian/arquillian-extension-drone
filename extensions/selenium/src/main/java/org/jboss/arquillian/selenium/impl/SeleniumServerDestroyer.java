@@ -18,7 +18,6 @@ package org.jboss.arquillian.selenium.impl;
 
 import org.jboss.arquillian.selenium.SeleniumConfiguration;
 import org.jboss.arquillian.selenium.event.SeleniumServerStopped;
-import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;

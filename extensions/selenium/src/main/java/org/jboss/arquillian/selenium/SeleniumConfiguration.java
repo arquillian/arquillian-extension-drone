@@ -295,8 +295,6 @@ public class SeleniumConfiguration
          List<Field> fields = SecurityActions.getFieldsWithAnnotation(object.getClass());
          for (Field f : fields)
          {
-            System.err.println(f.getName() + ":" + box(f.getType()) + " '" + nameValuePairs.get(f.getName()) + "'");
-
             if (nameValuePairs.containsKey(f.getName()))
             {
                try
@@ -305,8 +303,6 @@ public class SeleniumConfiguration
                }
                catch (Exception e)
                {
-                  e.printStackTrace();
-                  e.getCause().printStackTrace();
                   throw new RuntimeException("Could not map Arquillian Selenium extension configuration from ArquillianDescriptor: ", e);
                }
             }
@@ -324,14 +320,12 @@ public class SeleniumConfiguration
             String value = SecurityActions.getProperty(keyTransform(f.getName()));
             if (value != null)
             {
-               System.err.println(f.getName() + ":" + box(f.getType()) + " '" + value + "'");
                try
                {
                   f.set(object, convert(box(f.getType()), value));
                }
                catch (Exception e)
                {
-                  e.printStackTrace();
                   throw new RuntimeException("Could not map Arquillian Selenium extension configuration from System properties", e);
                }
             }
