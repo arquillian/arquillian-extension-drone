@@ -47,14 +47,14 @@ public abstract class AbstractTestCase
    {
       WebArchive war = ShrinkWrap.create(WebArchive.class, "weld-login.war")
             .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
-            .addWebResource(new File("src/test/webapp/WEB-INF/beans.xml"), "beans.xml")
-            .addWebResource(new File("src/test/webapp/WEB-INF/faces-config.xml"), "faces-config.xml")
-            .addWebResource(new File("src/test/resources/import.sql"), ArchivePaths.create("classes/import.sql"))
-            .addResource(new File("src/test/webapp/index.html"), ArchivePaths.create("index.html"))
-            .addResource(new File("src/test/webapp/home.xhtml"), ArchivePaths.create("home.xhtml"))
-            .addResource(new File("src/test/webapp/template.xhtml"), ArchivePaths.create("template.xhtml"))
-            .addResource(new File("src/test/webapp/users.xhtml"), ArchivePaths.create("users.xhtml"))
-            .addManifestResource(new File("src/test/resources/META-INF/persistence.xml"))
+            .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"), "beans.xml")
+            .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"), "faces-config.xml")
+            .addAsWebInfResource(new File("src/test/resources/import.sql"), ArchivePaths.create("classes/import.sql"))
+            .addAsWebResource(new File("src/test/webapp/index.html"), ArchivePaths.create("index.html"))
+            .addAsWebResource(new File("src/test/webapp/home.xhtml"), ArchivePaths.create("home.xhtml"))
+            .addAsWebResource(new File("src/test/webapp/template.xhtml"), ArchivePaths.create("template.xhtml"))
+            .addAsWebResource(new File("src/test/webapp/users.xhtml"), ArchivePaths.create("users.xhtml"))
+            .addAsManifestResource(new File("src/test/resources/META-INF/persistence.xml"))
             .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
 
       return war;
