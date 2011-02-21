@@ -19,8 +19,8 @@ package org.jboss.arquillian.selenium.impl;
 import java.io.IOException;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
-import org.jboss.arquillian.selenium.event.SeleniumConfigured;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
+import org.jboss.arquillian.selenium.event.SeleniumServerConfigured;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
@@ -30,41 +30,28 @@ import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 
 /**
- * A handler which starts Selenium server and binds it the suite scope context.
- * The server instance is stored in {@link SeleniumServerRunner}.
  * 
- * The Selenium server run is <i>disabled</i> by default, it must be allowed
- * either in the Arquillian Selenium Extension configuration or by a system
- * property.
- * 
- * <br/>
- * <b>Imports:</b><br/> {@link Configuration}</br/> <b>Exports:</b><br/>
- * {@link SeleniumServerRunner}<br/>
- * <br/>
- * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
- * @see SeleniumServerRunner
- * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ *
  */
-public class SeleniumConfigurator
+public class SeleniumServerConfigurator
 {
    @Inject
    @SuiteScoped
-   private InstanceProducer<SeleniumConfiguration> seleniumConfiguration;
+   private InstanceProducer<SeleniumServerConfiguration> seleniumServerConfiguration;
 
    @Inject
    private Instance<ArquillianDescriptor> arquillianDesc;
 
    @Inject
-   private Event<SeleniumConfigured> afterConfiguration;
+   private Event<SeleniumServerConfigured> afterConfiguration;
 
    public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException
    {
-      SeleniumConfiguration selConf = new SeleniumConfiguration(arquillianDesc.get());
+      SeleniumServerConfiguration configuration = new SeleniumServerConfiguration(arquillianDesc.get());
 
-      seleniumConfiguration.set(selConf);
+      seleniumServerConfiguration.set(configuration);
 
-      afterConfiguration.fire(new SeleniumConfigured(selConf));
+      afterConfiguration.fire(new SeleniumServerConfigured(configuration));
    }
 }

@@ -34,11 +34,11 @@ import org.jboss.arquillian.spi.event.suite.Before;
 /**
  * A handler which sets a cached instance of Selenium browser for fields
  * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
+ * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
  * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see SeleniumHolder
+ * @see WebTestContext
  * @see Selenium
  */
 public class ContextPathInjector

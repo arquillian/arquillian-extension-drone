@@ -19,32 +19,26 @@ package org.jboss.arquillian.selenium.impl;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
-import org.jboss.arquillian.selenium.annotation.Selenium;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
-public class SeleniumConfiguratonCreatorTestCase extends AbstractManagerTestBase
+public class SeleniumServerConfiguratonCreatorTestCase extends AbstractManagerTestBase
 {
-   @Selenium
-   DefaultSelenium unused;
-
    /* (non-Javadoc)
     * @see org.jboss.arquillian.selenium.impl.AbstractManagerTestBase#addExtensions(org.jboss.arquillian.impl.core.ManagerBuilder)
     */
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extension(SeleniumConfigurator.class);
+      builder.extension(SeleniumServerConfigurator.class);
    }
 
    @Test
@@ -53,7 +47,7 @@ public class SeleniumConfiguratonCreatorTestCase extends AbstractManagerTestBase
       bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
       fire(new BeforeSuite());
 
-      SeleniumConfiguration selConf = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumConfiguration.class);
+      SeleniumServerConfiguration selConf = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServerConfiguration.class);
 
       Assert.assertNotNull("Selenium configuration was created in context", selConf);    
    }

@@ -18,9 +18,8 @@ package org.jboss.arquillian.selenium.impl;
 
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
-import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.selenium.event.SeleniumConfigured;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
+import org.jboss.arquillian.selenium.event.SeleniumServerConfigured;
 import org.jboss.arquillian.selenium.event.SeleniumServerStarted;
 import org.jboss.arquillian.selenium.event.SeleniumServerStopped;
 import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
@@ -33,8 +32,6 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.server.SeleniumServer;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
@@ -43,18 +40,15 @@ import com.thoughtworks.selenium.DefaultSelenium;
 public class SeleniumServerTestCase extends AbstractManagerTestBase
 {
    @Spy
-   SeleniumConfiguration seleniumConfiguration = new SeleniumConfiguration();
-
-   @Selenium
-   DefaultSelenium unused;
-
+   SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
+   
    @Test
    public void serverCreatedAndDestroyed() throws Exception
    {
-      bind(SuiteScoped.class, SeleniumConfiguration.class, seleniumConfiguration);
-      Mockito.when(seleniumConfiguration.isServerEnable()).thenReturn(true);
+      bind(SuiteScoped.class, SeleniumServerConfiguration.class, configuration);
+      Mockito.when(configuration.isEnable()).thenReturn(true);
 
-      fire(new SeleniumConfigured(seleniumConfiguration));
+      fire(new SeleniumServerConfigured(configuration));
 
       SeleniumServer server = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServer.class);
 
@@ -69,6 +63,6 @@ public class SeleniumServerTestCase extends AbstractManagerTestBase
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extensions(SeleniumServerCreator.class, SeleniumServerDestroyer.class);
+      builder.extensions(SeleniumServerCreator.class, SeleniumServerDestructor.class);
    }
 }

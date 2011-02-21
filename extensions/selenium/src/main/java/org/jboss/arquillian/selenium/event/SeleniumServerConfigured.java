@@ -16,20 +16,21 @@
  */
 package org.jboss.arquillian.selenium.event;
 
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
 
 /**
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
-public class SeleniumConfigured
+public class SeleniumServerConfigured
 {
-   private SeleniumConfiguration configuration;
+   private SeleniumServerConfiguration configuration;
 
    /**
     * 
     */
-   public SeleniumConfigured(SeleniumConfiguration configuration)
+   public SeleniumServerConfigured(SeleniumServerConfiguration configuration)
    {
       this.setConfiguration(configuration);
    }
@@ -37,7 +38,7 @@ public class SeleniumConfigured
    /**
     * @param configuration the configuration to set
     */
-   public void setConfiguration(SeleniumConfiguration configuration)
+   public void setConfiguration(SeleniumServerConfiguration configuration)
    {
       this.configuration = configuration;
    }
@@ -45,7 +46,7 @@ public class SeleniumConfigured
    /**
     * @return the configuration
     */
-   public SeleniumConfiguration getConfiguration()
+   public SeleniumServerConfiguration getConfiguration()
    {
       return configuration;
    }

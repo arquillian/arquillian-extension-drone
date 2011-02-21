@@ -22,17 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.arquillian.selenium.spi.Instantiator;
-
 /**
  * ContextPath annotation is used to inject URL where your test is deployed into your test.
  * 
  * Object of type String or URL can be marked with this annotation
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @version $Revision: 1.0 $
- * 
- * @see Instantiator
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })

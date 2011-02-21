@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.selenium.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -28,17 +29,17 @@ import org.jboss.arquillian.spi.event.suite.Before;
 /**
  * A handler which sets a cached instance of Selenium browser for fields
  * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
+ * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
  * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see SeleniumHolder
+ * @see WebTestContext
  * @see Selenium
  */
-public class SeleniumInjector
+public class WebTestInjector
 {
    @Inject
-   private Instance<SeleniumHolder> selenium;
+   private Instance<WebTestContext> webTestContext;
 
    public void injectSelenium(@Observes Before event)
    {
@@ -50,18 +51,19 @@ public class SeleniumInjector
       {
          for (Field f : fields)
          {
-            f.setAccessible(true);
-
             // omit setting if already set
             if (f.get(testInstance) != null)
             {
                return;
             }
 
-            Object value = selenium.get().retrieveSelenium(f.getType());
+            Class<?> typeClass = f.getType();
+            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+            Object value = webTestContext.get().get(typeClass, qualifier);
             if (value == null)
             {
-               throw new IllegalArgumentException("Retrieved a null from context, which is not a valid Selenium browser");
+               throw new IllegalArgumentException("Retrieved a null from context, which is not a valid Web Test browser object");
             }
 
             f.set(testInstance, value);
@@ -69,7 +71,7 @@ public class SeleniumInjector
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not inject Selenium members", e);
+         throw new RuntimeException("Could not inject Web Test members", e);
       }
    }
 }

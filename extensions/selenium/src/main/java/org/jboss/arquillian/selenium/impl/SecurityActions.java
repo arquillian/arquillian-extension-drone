@@ -26,6 +26,9 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.arquillian.selenium.annotation.Default;
+import org.jboss.arquillian.selenium.spi.Qualifier;
+
 /**
  * SecurityActions
  * 
@@ -199,6 +202,30 @@ final class SecurityActions
          }
       });
       return declaredAccessableFields;
+   }
+   
+   static final Class<? extends Annotation> getQualifier(Field field)
+   {
+      List<Class<? extends Annotation>> candidates = new ArrayList<Class<? extends Annotation>>();
+
+      for (Annotation a : field.getAnnotations())
+      {
+         if (a.annotationType().isAnnotationPresent(Qualifier.class))
+         {
+            candidates.add(a.annotationType());
+         }
+      }
+
+      if (candidates.isEmpty())
+      {
+         return Default.class;
+      }
+      else if (candidates.size() == 1)
+      {
+         return candidates.get(0);
+      }
+
+      throw new IllegalStateException("Unable to determine Qualifier for field: " + field.getName() + ", multiple Qualifier annotations were present");
    }
 
    // -------------------------------------------------------------------------------||

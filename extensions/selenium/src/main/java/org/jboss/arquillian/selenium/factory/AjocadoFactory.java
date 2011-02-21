@@ -1,30 +1,29 @@
 /**
  * 
  */
-package org.jboss.arquillian.selenium.instantiator;
+package org.jboss.arquillian.selenium.factory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.arquillian.ajocado.browser.Browser;
 import org.jboss.arquillian.ajocado.encapsulated.JavaScript;
 import org.jboss.arquillian.ajocado.framework.AjaxSelenium;
+import org.jboss.arquillian.ajocado.framework.AjaxSeleniumContext;
 import org.jboss.arquillian.ajocado.framework.AjaxSeleniumImpl;
-import org.jboss.arquillian.ajocado.framework.AjaxSeleniumProxy;
+import org.jboss.arquillian.ajocado.framework.AjocadoConfigurationContext;
 import org.jboss.arquillian.ajocado.locator.ElementLocationStrategy;
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.selenium.configuration.ArquillianAjocadoConfiguration;
+import org.jboss.arquillian.selenium.spi.Configurator;
+import org.jboss.arquillian.selenium.spi.Destructor;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class AjocadoInstantiator implements Instantiator<AjaxSelenium>
+public class AjocadoFactory implements Configurator<AjaxSelenium>, Instantiator<AjaxSelenium>, Destructor<AjaxSelenium>
 {
 
    /*
@@ -41,26 +40,41 @@ public class AjocadoInstantiator implements Instantiator<AjaxSelenium>
     * (non-Javadoc)
     * 
     * @see
-    * org.jboss.arquillian.selenium.spi.Instantiator#create(org.jboss.arquillian
-    * .selenium.SeleniumConfiguration)
+    * org.jboss.arquillian.selenium.spi.Destructor#destroyInstance(java.lang
+    * .Object)
     */
-   public AjaxSelenium create(SeleniumConfiguration configuration)
+   public void destroyInstance(AjaxSelenium instance)
    {
-      URL url = convertStringToURL(configuration.getUrl());
+      AjaxSeleniumContext.set(null);
+      instance.close();
+      instance.stop();
+      instance = null;
+   }
 
-      AjaxSelenium selenium = new AjaxSeleniumImpl(configuration.getServerHost(), configuration.getServerPort(), new Browser(configuration.getBrowser()), url);
-      AjaxSeleniumProxy.setCurrentContext(selenium);
+   /*
+    * (non-Javadoc)
+    * 
+    * @see
+    * org.jboss.arquillian.selenium.spi.Instantiator#createInstance(java.lang
+    * .Object)
+    */
+   public AjaxSelenium createInstance(Object conf)
+   {
+      Validate.isInstanceOf(conf, ArquillianAjocadoConfiguration.class, "AjaxSelenium expects ArquillianAjocadoConfiguration class, see: " + ArquillianAjocadoConfiguration.class.getName());
+      ArquillianAjocadoConfiguration configuration = (ArquillianAjocadoConfiguration) conf;
 
-      selenium.enableNetworkTrafficCapturing(configuration.isCaptureNetworkTraffic());
+      AjaxSelenium selenium = new AjaxSeleniumImpl(configuration.getSeleniumHost(), configuration.getSeleniumPort(), configuration.getBrowser(), configuration.getContextRoot());
+      AjaxSeleniumContext.set(selenium);
+
+      selenium.enableNetworkTrafficCapturing(configuration.isSeleniumNetworkTrafficEnabled());
       selenium.start();
 
       loadCustomLocationStrategies(selenium);
       initializeExtensions(selenium);
 
-      selenium.setSpeed(configuration.getSpeed());
-      selenium.setTimeout(configuration.getTimeout());
+      selenium.setSpeed(configuration.getSeleniumSpeed());
 
-      if (configuration.isMaximize())
+      if (configuration.isSeleniumMaximize())
       {
          selenium.windowFocus();
          selenium.windowMaximize();
@@ -73,30 +87,14 @@ public class AjocadoInstantiator implements Instantiator<AjaxSelenium>
     * (non-Javadoc)
     * 
     * @see
-    * org.jboss.arquillian.selenium.spi.Instantiator#destroy(java.lang.Object)
+    * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org
+    * .jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
     */
-   public void destroy(AjaxSelenium instance)
+   public Object createConfiguration(ArquillianDescriptor descriptor)
    {
-      AjaxSeleniumProxy.setCurrentContext(null);
-      instance.close();
-      instance.stop();
-      instance = null;
-   }
-
-   private URL convertStringToURL(String url)
-   {
-      try
-      {
-         return new URI(url).toURL();
-      }
-      catch (MalformedURLException e)
-      {
-         throw new IllegalArgumentException("Unable to spawn Ajocado's AjaxSelenium on a malformed URL", e);
-      }
-      catch (URISyntaxException e)
-      {
-         throw new IllegalArgumentException("Unable to spawn Ajocado's AjaxSelenium on malformed URL", e);
-      }
+      ArquillianAjocadoConfiguration configuration = new ArquillianAjocadoConfiguration(descriptor);
+      AjocadoConfigurationContext.set(configuration);
+      return configuration;
    }
 
    private void loadCustomLocationStrategies(AjaxSelenium selenium)

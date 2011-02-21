@@ -22,8 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.arquillian.selenium.spi.Instantiator;
-
 /**
  * Selenium annotation is used to inject Selenium WebDriver, Cheiron or other
  * browser implementation into your test.
@@ -34,7 +32,6 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @version $Revision: 1.0 $
  * 
- * @see Instantiator
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })

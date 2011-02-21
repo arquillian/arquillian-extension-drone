@@ -20,12 +20,14 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.jboss.arquillian.selenium.impl.ContextPathInjector;
-import org.jboss.arquillian.selenium.impl.SeleniumConfigurator;
-import org.jboss.arquillian.selenium.impl.SeleniumCreator;
-import org.jboss.arquillian.selenium.impl.SeleniumDestroyer;
-import org.jboss.arquillian.selenium.impl.SeleniumInjector;
+import org.jboss.arquillian.selenium.impl.SeleniumServerConfigurator;
+import org.jboss.arquillian.selenium.impl.WebTestConfigurator;
+import org.jboss.arquillian.selenium.impl.WebTestCreator;
+import org.jboss.arquillian.selenium.impl.WebTestDestroyer;
+import org.jboss.arquillian.selenium.impl.WebTestInjector;
 import org.jboss.arquillian.selenium.impl.SeleniumServerCreator;
-import org.jboss.arquillian.selenium.impl.SeleniumServerDestroyer;
+import org.jboss.arquillian.selenium.impl.SeleniumServerDestructor;
+import org.jboss.arquillian.selenium.impl.WebTestRegistrar;
 import org.jboss.arquillian.spi.Profile;
 
 /**
@@ -44,17 +46,18 @@ public class SeleniumProfile implements Profile
    {
       return Arrays.asList
          (            
-
                   // selenium extension
-                  SeleniumConfigurator.class,
+                  SeleniumServerConfigurator.class,
                   SeleniumServerCreator.class,
-                  SeleniumServerDestroyer.class,
+                  SeleniumServerDestructor.class,
 
-                  SeleniumCreator.class,
-                  SeleniumInjector.class,
-                  SeleniumDestroyer.class,
-
-                  ContextPathInjector.class
+                  // generic testing framework support 
+                  WebTestRegistrar.class,
+                  WebTestConfigurator.class,
+                  WebTestCreator.class,
+                  WebTestInjector.class,
+                  ContextPathInjector.class,
+                  WebTestDestroyer.class
          );
    }
 

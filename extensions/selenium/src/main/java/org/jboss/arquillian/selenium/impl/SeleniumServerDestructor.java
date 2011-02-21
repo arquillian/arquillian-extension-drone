@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.selenium.impl;
 
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.selenium.event.SeleniumServerStopped;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
@@ -26,25 +26,14 @@ import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.openqa.selenium.server.SeleniumServer;
 
 /**
- * A handler which destroys Selenium server.
  * 
- * The Selenium server run is <i>disabled</i> by default, it must be allowed
- * either in the Arquillian Selenium Extension configuration or by a system
- * property.
- * 
- * <br/>
- * <b>Imports:</b><br/> {@link Configuration}</br/> {@link SeleniumServerRunner}<br/>
- * <br/>
- * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
- * @see SeleniumServerRunner
- * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ *
  */
-public class SeleniumServerDestroyer
+public class SeleniumServerDestructor
 {
    @Inject
-   private Instance<SeleniumConfiguration> seleniumConfiguration;
+   private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
 
    @Inject
    private Instance<SeleniumServer> seleniumServer;
@@ -54,7 +43,7 @@ public class SeleniumServerDestroyer
 
    public void seleniumServerShutDown(@Observes AfterSuite event)
    {
-      if (!seleniumConfiguration.get().isServerEnable())
+      if (!seleniumServerConfiguration.get().isEnable())
       {
          return;
       }

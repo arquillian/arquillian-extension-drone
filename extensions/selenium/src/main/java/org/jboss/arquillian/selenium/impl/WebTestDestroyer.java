@@ -16,10 +16,13 @@
  */
 package org.jboss.arquillian.selenium.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.selenium.spi.Instantiator;
+import org.jboss.arquillian.selenium.spi.Destructor;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
@@ -28,17 +31,22 @@ import org.jboss.arquillian.spi.event.suite.AfterClass;
 /**
  * A handler which sets a cached instance of Selenium browser for fields
  * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link SeleniumHolder} <br/>
+ * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
  * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see SeleniumHolder
+ * @see WebTestContext
  * @see Selenium
  */
-public class SeleniumDestroyer
+public class WebTestDestroyer
 {
+   private static final Logger log = Logger.getLogger(WebTestDestroyer.class.getName());
+
    @Inject
-   private Instance<SeleniumHolder> selenium;
+   private Instance<WebTestRegistry> registry;
+
+   @Inject
+   private Instance<WebTestContext> webTestContext;
 
    @SuppressWarnings("unchecked")
    public void destroySelenium(@Observes AfterClass event)
@@ -47,16 +55,22 @@ public class SeleniumDestroyer
       for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Selenium.class))
       {
          Class<?> typeClass = f.getType();
-         if (!selenium.get().contains(typeClass))
-         {
-            continue;
-         }
+         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-         // we do check type safety dynamically
+         // must be defined as raw because instance type to be destroyer cannot
+         // be determined in compile time
          @SuppressWarnings("rawtypes")
-         Instantiator destroyer = selenium.get().retrieveInstantiator(typeClass);
-         destroyer.destroy(selenium.get().retrieveSelenium(typeClass));
-         selenium.get().remove(typeClass);
+         Destructor destructor = registry.get().getDestructor(typeClass);
+         if (destructor == null)
+         {
+            throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
+         }
+         if (log.isLoggable(Level.FINE))
+         {
+            log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence " + destructor.getPrecedence());
+         }
+         destructor.destroyInstance(webTestContext.get().get(typeClass, qualifier));
+         webTestContext.get().remove(typeClass, qualifier);
       }
    }
 

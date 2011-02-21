@@ -18,8 +18,8 @@ package org.jboss.arquillian.selenium.impl;
 
 import java.io.IOException;
 
-import org.jboss.arquillian.selenium.SeleniumConfiguration;
-import org.jboss.arquillian.selenium.event.SeleniumConfigured;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
+import org.jboss.arquillian.selenium.event.SeleniumServerConfigured;
 import org.jboss.arquillian.selenium.event.SeleniumServerStarted;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
@@ -32,15 +32,15 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * A handler which starts Selenium server and binds it the suite scope context.
- * The server instance is stored in {@link SeleniumServerRunner}.
+ * The server instance is stored in {@link SeleniumServer}.
  * 
  * The Selenium server run is <i>disabled</i> by default, it must be allowed
  * either in the Arquillian Selenium Extension configuration or by a system
  * property.
  * 
  * <br/>
- * <b>Imports:</b><br/> {@link Configuration}</br/> <b>Exports:</b><br/>
- * {@link SeleniumServerRunner}<br/>
+ * <b>Imports:</b><br/> {@link SeleniumServerConfiguration}</br/> <b>Exports:</b><br/>
+ * {@link SeleniumServer}<br/>
  * <br/>
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
@@ -51,7 +51,7 @@ import org.openqa.selenium.server.SeleniumServer;
 public class SeleniumServerCreator
 {
    @Inject
-   private Instance<SeleniumConfiguration> seleniumConfiguration;
+   private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
 
    @Inject
    private Event<SeleniumServerStarted> afterStart;
@@ -60,19 +60,19 @@ public class SeleniumServerCreator
    @SuiteScoped
    private InstanceProducer<SeleniumServer> seleniumServer;
 
-   public void seleniumServerStartUp(@Observes SeleniumConfigured event) throws IOException
+   public void seleniumServerStartUp(@Observes SeleniumServerConfigured event) throws IOException
    {
 
-      if (!seleniumConfiguration.get().isServerEnable())
+      if (!seleniumServerConfiguration.get().isEnable())
       {
          return;
       }
-      
-      SeleniumConfiguration configuration = seleniumConfiguration.get();
+
+      SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
 
       RemoteControlConfiguration rcc = new RemoteControlConfiguration();
-      rcc.setPort(configuration.getServerPort());
-      rcc.setLogOutFileName(configuration.getServerOutput());
+      rcc.setPort(configuration.getPort());
+      rcc.setLogOutFileName(configuration.getOutput());
 
       try
       {

@@ -21,7 +21,7 @@ import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.selenium.annotation.Selenium;
-import org.jboss.arquillian.selenium.instantiator.WebDriverInstantiator;
+import org.jboss.arquillian.selenium.factory.WebDriverFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.openqa.selenium.WebDriver;
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
- * @see WebDriverInstantiator
+ * @see WebDriverFactory
  */
 @RunWith(Arquillian.class)
 @Run(AS_CLIENT)
