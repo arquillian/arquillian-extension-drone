@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * ContextPath annotation is used to inject URL where your test is deployed into your test.
  * 
- * Object of type String or URL can be marked with this annotation
+ * Object of type String, URI or URL can be marked with this annotation
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

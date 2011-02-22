@@ -6,6 +6,8 @@ package org.jboss.arquillian.selenium.event;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
+
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
@@ -14,12 +16,12 @@ public class WebTestConfigured
 {
    private Class<? extends Annotation> qualifier;
    private Field injected;
-   private Object configuration;   
+   private WebTestConfiguration<?> configuration;
 
    /**
     * 
     */
-   public WebTestConfigured(Field injected, Class<? extends Annotation> qualifier, Object configuration)
+   public WebTestConfigured(Field injected, Class<? extends Annotation> qualifier, WebTestConfiguration<?> configuration)
    {
       this.injected = injected;
       this.qualifier = qualifier;
@@ -61,7 +63,7 @@ public class WebTestConfigured
    /**
     * @param configuration the configuration to set
     */
-   public void setConfiguration(Object configuration)
+   public void setConfiguration(WebTestConfiguration<?> configuration)
    {
       this.configuration = configuration;
    }
@@ -69,7 +71,7 @@ public class WebTestConfigured
    /**
     * @return the configuration
     */
-   public Object getConfiguration()
+   public WebTestConfiguration<?> getConfiguration()
    {
       return configuration;
    }

@@ -7,7 +7,7 @@ package org.jboss.arquillian.selenium.spi;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface Instantiator<T> extends Sortable
+public interface Instantiator<T, C extends WebTestConfiguration<C>> extends Sortable
 {
    /**
     * Creates an instance of the driver.
@@ -20,5 +20,5 @@ public interface Instantiator<T> extends Sortable
     * @param configuration the configuration object for the extension
     * @return Newly created instance of the driver
     */
-   T createInstance(Object configuration);
+   T createInstance(C configuration);
 }

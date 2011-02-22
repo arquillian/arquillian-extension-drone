@@ -23,7 +23,7 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class AjocadoFactory implements Configurator<AjaxSelenium>, Instantiator<AjaxSelenium>, Destructor<AjaxSelenium>
+public class AjocadoFactory implements Configurator<AjaxSelenium, ArquillianAjocadoConfiguration>, Instantiator<AjaxSelenium, ArquillianAjocadoConfiguration>, Destructor<AjaxSelenium>
 {
 
    /*
@@ -58,11 +58,8 @@ public class AjocadoFactory implements Configurator<AjaxSelenium>, Instantiator<
     * org.jboss.arquillian.selenium.spi.Instantiator#createInstance(java.lang
     * .Object)
     */
-   public AjaxSelenium createInstance(Object conf)
-   {
-      Validate.isInstanceOf(conf, ArquillianAjocadoConfiguration.class, "AjaxSelenium expects ArquillianAjocadoConfiguration class, see: " + ArquillianAjocadoConfiguration.class.getName());
-      ArquillianAjocadoConfiguration configuration = (ArquillianAjocadoConfiguration) conf;
-
+   public AjaxSelenium createInstance(ArquillianAjocadoConfiguration configuration)
+   {  
       AjaxSelenium selenium = new AjaxSeleniumImpl(configuration.getSeleniumHost(), configuration.getSeleniumPort(), configuration.getBrowser(), configuration.getContextRoot());
       AjaxSeleniumContext.set(selenium);
 
@@ -83,6 +80,8 @@ public class AjocadoFactory implements Configurator<AjaxSelenium>, Instantiator<
       return selenium;
    }
 
+   
+   
    /*
     * (non-Javadoc)
     * 
@@ -90,7 +89,7 @@ public class AjocadoFactory implements Configurator<AjaxSelenium>, Instantiator<
     * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org
     * .jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
     */
-   public Object createConfiguration(ArquillianDescriptor descriptor)
+   public ArquillianAjocadoConfiguration createConfiguration(ArquillianDescriptor descriptor)
    {
       ArquillianAjocadoConfiguration configuration = new ArquillianAjocadoConfiguration(descriptor);
       AjocadoConfigurationContext.set(configuration);

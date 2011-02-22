@@ -9,7 +9,7 @@ import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface Configurator<T> extends Sortable
+public interface Configurator<T,C extends WebTestConfiguration<C>> extends Sortable
 {  
-   Object createConfiguration(ArquillianDescriptor descriptor);
+   C createConfiguration(ArquillianDescriptor descriptor);
 }

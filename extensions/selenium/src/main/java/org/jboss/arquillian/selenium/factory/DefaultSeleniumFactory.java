@@ -15,7 +15,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class DefaultSeleniumFactory implements Configurator<DefaultSelenium>, Instantiator<DefaultSelenium>, Destructor<DefaultSelenium>
+public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, SeleniumConfiguration>, Instantiator<DefaultSelenium, SeleniumConfiguration>, Destructor<DefaultSelenium>
 {
 
    /*
@@ -48,11 +48,8 @@ public class DefaultSeleniumFactory implements Configurator<DefaultSelenium>, In
     * org.jboss.arquillian.selenium.spi.Instantiator#createInstance(java.lang
     * .Object)
     */
-   public DefaultSelenium createInstance(Object conf)
+   public DefaultSelenium createInstance(SeleniumConfiguration configuration)
    {
-      Validate.isInstanceOf(conf, SeleniumConfiguration.class, "DefaultSelenium expects SeleniumConfiguration class, see: " + SeleniumConfiguration.class.getName());
-      SeleniumConfiguration configuration = (SeleniumConfiguration) conf;
-
       DefaultSelenium selenium = new DefaultSelenium(configuration.getServerHost(), configuration.getServerPort(), configuration.getBrowser(), configuration.getUrl());
       selenium.start();
       selenium.setSpeed(String.valueOf(configuration.getSpeed()));

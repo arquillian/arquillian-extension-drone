@@ -36,7 +36,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  * @see HtmlUnitDriver
  * @see WebDriver
  */
-public class WebDriverFactory implements Configurator<WebDriver>, Instantiator<WebDriver>, Destructor<WebDriver>
+public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver>
 {
    /*
     * (non-Javadoc)
@@ -68,11 +68,8 @@ public class WebDriverFactory implements Configurator<WebDriver>, Instantiator<W
     * org.jboss.arquillian.selenium.spi.Instantiator#createInstance(java.lang
     * .Object)
     */
-   public WebDriver createInstance(Object conf)
+   public WebDriver createInstance(WebDriverConfiguration configuration)
    {
-      Validate.isInstanceOf(conf, WebDriverConfiguration.class, "WebDriver expects WebDriverConfiguration class, see: " + WebDriverConfiguration.class.getName());
-      WebDriverConfiguration configuration = (WebDriverConfiguration) conf;
-
       WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0], WebDriver.class);
       return driver;
    }
@@ -84,7 +81,7 @@ public class WebDriverFactory implements Configurator<WebDriver>, Instantiator<W
     * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org
     * .jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
     */
-   public Object createConfiguration(ArquillianDescriptor descriptor)
+   public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor)
    {
       return new WebDriverConfiguration(descriptor);
    }

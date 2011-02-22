@@ -105,7 +105,7 @@ public class QualifierTestCase extends AbstractTestCase
       Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*testbrowser", configuration.getBrowser());
    }
 
-   class MockConfigurator implements Configurator<DefaultSelenium>
+   class MockConfigurator implements Configurator<DefaultSelenium,SeleniumConfiguration>
    {
 
       /*
@@ -125,7 +125,7 @@ public class QualifierTestCase extends AbstractTestCase
        * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(
        * org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
        */
-      public Object createConfiguration(ArquillianDescriptor descriptor)
+      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor)
       {
          SeleniumConfiguration configuration = new SeleniumConfiguration();
          configuration.setBrowser("*testbrowser");

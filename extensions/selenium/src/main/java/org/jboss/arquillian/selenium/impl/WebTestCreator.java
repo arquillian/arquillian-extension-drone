@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.event.WebTestConfigured;
 import org.jboss.arquillian.selenium.spi.Instantiator;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
@@ -48,14 +49,16 @@ public class WebTestCreator
    @Inject
    private Instance<WebTestContext> webTestContext;
 
+   @SuppressWarnings("unchecked")
    public void createWebTestBrowser(@Observes WebTestConfigured event)
    {
       Field field = event.getInjected();
       Class<?> typeClass = field.getType();
       Class<? extends Annotation> qualifier = event.getQualifier();
-      Object configuration = event.getConfiguration();
+      WebTestConfiguration<?> configuration = event.getConfiguration();
 
-      Instantiator<?> instantiator = registry.get().getInstantiator(typeClass);
+      @SuppressWarnings("rawtypes")
+      Instantiator instantiator = registry.get().getInstantiator(typeClass);
 
       if (instantiator == null)
       {

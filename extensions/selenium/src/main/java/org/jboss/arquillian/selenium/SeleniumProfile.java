@@ -19,6 +19,7 @@ package org.jboss.arquillian.selenium;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.selenium.impl.ContextPathInjector;
 import org.jboss.arquillian.selenium.impl.SeleniumServerConfigurator;
 import org.jboss.arquillian.selenium.impl.WebTestConfigurator;
@@ -31,6 +32,10 @@ import org.jboss.arquillian.selenium.impl.WebTestRegistrar;
 import org.jboss.arquillian.spi.Profile;
 
 /**
+ * Defines a profile used to launch Arquillian extensions.
+ * 
+ * Currently supports only {@link RunModeType}.AS_CLIENT.
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */

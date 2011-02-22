@@ -19,6 +19,7 @@ package org.jboss.arquillian.selenium.configuration;
 import java.util.Collections;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 
 /**
  * A configuration for Selenium extension.
@@ -41,7 +42,7 @@ import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
-public class SeleniumConfiguration
+public class SeleniumConfiguration implements WebTestConfiguration<SeleniumConfiguration>
 {
    private static final String EXTENSION_QUALIFIER = "selenium";
 

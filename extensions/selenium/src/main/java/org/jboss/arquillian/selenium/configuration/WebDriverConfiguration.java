@@ -6,12 +6,13 @@ package org.jboss.arquillian.selenium.configuration;
 import java.util.Collections;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class WebDriverConfiguration
+public class WebDriverConfiguration implements WebTestConfiguration<WebDriverConfiguration>
 {
    private static final String EXTENSION_QUALIFIER = "webdriver";
 

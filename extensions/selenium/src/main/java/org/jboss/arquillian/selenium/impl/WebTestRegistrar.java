@@ -50,7 +50,7 @@ public class WebTestRegistrar
       List<Configurator> list = new ArrayList<Configurator>(serviceLoader.get().all(Configurator.class));
       Collections.sort(list, SORTABLE_COMPARATOR);
 
-      for (Configurator<?> configurator : list)
+      for (Configurator<?,?> configurator : list)
       {
          Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
          if (type != null)
@@ -66,7 +66,7 @@ public class WebTestRegistrar
       List<Instantiator> list = new ArrayList<Instantiator>(serviceLoader.get().all(Instantiator.class));
       Collections.sort(list, SORTABLE_COMPARATOR);
 
-      for (Instantiator<?> instantiator : list)
+      for (Instantiator<?,?> instantiator : list)
       {
          Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
          if (type != null)

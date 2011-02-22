@@ -13,12 +13,13 @@ import java.util.Collections;
 import org.jboss.arquillian.ajocado.browser.Browser;
 import org.jboss.arquillian.ajocado.framework.AjocadoConfiguration;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class ArquillianAjocadoConfiguration implements AjocadoConfiguration
+public class ArquillianAjocadoConfiguration implements AjocadoConfiguration, WebTestConfiguration<ArquillianAjocadoConfiguration>
 {
    public static final String EXTENSION_QUALIFIER = "ajocado";
 

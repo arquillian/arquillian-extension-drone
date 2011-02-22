@@ -11,6 +11,7 @@ import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.selenium.event.WebTestConfigured;
 import org.jboss.arquillian.selenium.spi.Configurator;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
@@ -55,13 +56,13 @@ public class WebTestConfigurator
          Class<?> typeClass = f.getType();
          Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
          
-         Configurator<?> configurator = registry.get().getConfigurator(typeClass);
+         Configurator<?,?> configurator = registry.get().getConfigurator(typeClass);
          if (configurator == null)
          {
             throw new IllegalArgumentException("No configurator was found for object of type " + typeClass.getName());
          }
 
-         Object configuration = configurator.createConfiguration(arquillianDescriptor.get());
+         WebTestConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get());
          webTestContext.get().add(configuration.getClass(), qualifier, configuration);
          afterConfiguration.fire(new WebTestConfigured(f, qualifier, configuration));
       }

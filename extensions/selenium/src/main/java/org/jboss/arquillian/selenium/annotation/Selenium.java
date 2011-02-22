@@ -22,12 +22,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.jboss.arquillian.selenium.spi.Configurator;
+import org.jboss.arquillian.selenium.spi.Destructor;
+import org.jboss.arquillian.selenium.spi.Instantiator;
+
 /**
- * Selenium annotation is used to inject Selenium WebDriver, Cheiron or other
- * browser implementation into your test.
+ * Selenium annotation is used to inject Selenium's WebDriver, Selenium's DefaultSelenium, 
+ * Arquillian Ajocado's AjaxSelenium or other browser implementation into your test.
  * 
- * Object of any type can be marked with this annotation, however an instantiator
- * must exist to create its instance during setup.
+ * To extends support to different web test framework, implements following interfaces
+ * {@link Configurator}, {@link Instantiator} and {@link Destructor}.  
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @version $Revision: 1.0 $
