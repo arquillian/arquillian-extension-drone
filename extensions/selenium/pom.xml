@@ -19,11 +19,11 @@
    <groupId>org.jboss.arquillian.extension</groupId>
    <artifactId>arquillian-selenium</artifactId>
    <name>Arquillian Extension Selenium</name>
-   <description>Extension adding Selenium functionality to Arquillian</description>
+   <description>Extension adding Web Test Framework (Ajocado, Selenium, WebDriver) functionality to Arquillian</description>
 
    <properties>
       <!-- Versioning -->
-      <version.ajocado>1.0.0-SNAPSHOT</version.ajocado>
+      <version.ajocado>1.0.0.Alpha1</version.ajocado>
       <version.jboss_60>6.0.0.Final</version.jboss_60>
       <version.selenium>2.0b1</version.selenium>
       <version.slf4j>1.5.10</version.slf4j>
@@ -302,6 +302,7 @@
                         <configuration>
                            <systemPropertyVariables>
                               <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
+                              <!-- <arquillian.ajocado.browser>*firefox /opt/firefox-3.0/bin/firefox</arquillian.ajocado.browser> -->
                            </systemPropertyVariables>
                            <includes>
                               <include>org/jboss/arquillian/selenium/example/AjocadoTestCase.class</include>
