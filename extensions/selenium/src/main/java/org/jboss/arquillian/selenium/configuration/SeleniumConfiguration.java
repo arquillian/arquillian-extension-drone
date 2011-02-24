@@ -16,37 +16,24 @@
  */
 package org.jboss.arquillian.selenium.configuration;
 
-import java.util.Collections;
+import java.lang.annotation.Annotation;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 
 /**
- * A configuration for Selenium extension.
+ * Configuration for Selenium. This configuration can be fetched from Arquillian
+ * Descriptor and overridden by System properties.
  * 
- * Allows grabbing configuration from XML configuration file as well as from
- * System properties.
  * 
- * As for System properties, they take precedence before XML configuration and
- * they are mapped in such way, that property name is transformed using
- * following rules:
- * <ol>
- * <li>Prefix {@code arquillian.selenium} is added</li>
- * <li>the {@code get} of method name is removed</li>
- * <li>Upper case letters are replaced with dot and their lower case equivalent</li>
- * </ol>
- * 
- * Example: {@code getServerPort} is mapped to
- * {@code arquillian.selenium.server.port} property name.
- * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @see ArquillianDescriptor
+ * @see ConfigurationMapper
  * 
  */
 public class SeleniumConfiguration implements WebTestConfiguration<SeleniumConfiguration>
 {
-   private static final String EXTENSION_QUALIFIER = "selenium";
-
-   private static final String PROPERTY_PREFIX = "arquillian.selenium.";
+   public static final String CONFIGURATION_NAME = "selenium";
 
    private int serverPort = 14444;
 
@@ -61,24 +48,35 @@ public class SeleniumConfiguration implements WebTestConfiguration<SeleniumConfi
    private String browser = "*firefox";
 
    /**
-    * Creates a default Selenium configuration
+    * Creates default Selenium Configuration
     */
    public SeleniumConfiguration()
    {
-      new ConfigurationMapper(Collections.<String, String> emptyMap(), PROPERTY_PREFIX).map(this);
    }
 
-   /**
-    * Creates a Selenium configuration using properties available in
-    * {@link ArquillianDescriptor}. Still, system based properties have priority
-    * over these.
+   /*
+    * (non-Javadoc)
     * 
-    * @param descriptorConfiguration
-    * @see ArquillianDescriptor
+    * @see
+    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName
+    * ()
     */
-   public SeleniumConfiguration(ArquillianDescriptor arquillianDescriptor)
+   public String getConfigurationName()
    {
-      new ConfigurationMapper(arquillianDescriptor, EXTENSION_QUALIFIER, PROPERTY_PREFIX).map(this);
+      return CONFIGURATION_NAME;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see
+    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
+    * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
+    */
+   public SeleniumConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
+   {
+      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
    }
 
    /**

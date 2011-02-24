@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.selenium.factory;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.selenium.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.selenium.spi.Configurator;
@@ -79,11 +81,12 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
     * 
     * @see
     * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org
-    * .jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
+    * .jboss.arquillian.impl.configuration.api.ArquillianDescriptor,
+    * java.lang.Class)
     */
-   public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor)
+   public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
    {
-      return new WebDriverConfiguration(descriptor);
+      return new WebDriverConfiguration().configure(descriptor, qualifier);
    }
 
 }

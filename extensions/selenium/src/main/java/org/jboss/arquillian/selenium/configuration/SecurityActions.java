@@ -17,6 +17,7 @@
 package org.jboss.arquillian.selenium.configuration;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -55,7 +56,7 @@ final class SecurityActions
    // --------------------------------------------------------------||
    // -------------------------------------------------------------------------------||
 
-   static List<Field> getFieldsWithAnnotation(final Class<?> source)
+   static List<Field> getAccessableFields(final Class<?> source)
    {
       List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>()
       {
@@ -64,6 +65,11 @@ final class SecurityActions
             List<Field> foundFields = new ArrayList<Field>();
             for (Field field : source.getDeclaredFields())
             {
+               // omit final fields
+               if(Modifier.isFinal(field.getModifiers())) {
+                  continue;
+               }
+               
                if (!field.isAccessible())
                {
                   field.setAccessible(true);

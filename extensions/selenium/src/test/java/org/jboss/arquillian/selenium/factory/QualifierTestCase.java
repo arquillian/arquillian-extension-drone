@@ -1,8 +1,22 @@
-/**
- * 
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.arquillian.selenium.factory;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
@@ -37,7 +51,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
- * Tests Instantiator precedence and its retrieval chain.
+ * Tests Configurator precedence and its retrieval chain, uses qualifier as well
  * 
  * 
  * 
@@ -60,8 +74,14 @@ public class QualifierTestCase extends AbstractTestCase
    {
       manager = ManagerBuilder.from().context(SuiteContextImpl.class).context(ClassContextImpl.class).extensions(WebTestRegistrar.class, WebTestConfigurator.class).create();
 
+      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+         .extension("selenium-different")
+            .property("browser", "*testbrowser")
+            .property("url", "http://localhost:8888");
+      
+      
       manager.getContext(ApplicationContext.class).getObjectStore().add(ServiceLoader.class, serviceLoader);
-      manager.getContext(ApplicationContext.class).getObjectStore().add(ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+      manager.getContext(ApplicationContext.class).getObjectStore().add(ArquillianDescriptor.class, desc);
 
       manager.getContext(SuiteContext.class).activate();
       manager.getContext(ClassContext.class).activate(this.getClass());
@@ -103,6 +123,9 @@ public class QualifierTestCase extends AbstractTestCase
       Assert.assertNotNull("SeleniumConfiguration is stored with @Different qualifier", configuration);
       
       Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*testbrowser", configuration.getBrowser());
+      Assert.assertEquals("SeleniumConfiguration has http://127.0.0.1:8080 as url", "http://127.0.0.1:8080", configuration.getUrl());
+      
+      
    }
 
    class MockConfigurator implements Configurator<DefaultSelenium,SeleniumConfiguration>
@@ -118,17 +141,15 @@ public class QualifierTestCase extends AbstractTestCase
          return 10;
       }
 
-      /*
-       * (non-Javadoc)
-       * 
-       * @see
-       * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(
-       * org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
        */
-      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor)
+      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
       {
+         System.setProperty("arquillian.selenium.different.url", "http://127.0.0.1:8080");
+         
          SeleniumConfiguration configuration = new SeleniumConfiguration();
-         configuration.setBrowser("*testbrowser");
+         configuration.configure(descriptor, qualifier);
          return configuration;
       }
 

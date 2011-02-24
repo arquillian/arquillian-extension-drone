@@ -234,7 +234,7 @@
                         </goals>
                         <configuration>
                            <systemPropertyVariables>
-                              <arquillian.selenium.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver</arquillian.selenium.webdriver.implementation.class>
+                              <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver</arquillian.webdriver.implementation.class>
                            </systemPropertyVariables>
                            <includes>
                               <include>org/jboss/arquillian/selenium/example/WebDriverTestCase.class</include>

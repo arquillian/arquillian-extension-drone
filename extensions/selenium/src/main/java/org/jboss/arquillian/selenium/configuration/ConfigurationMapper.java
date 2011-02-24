@@ -1,58 +1,113 @@
-/**
- * 
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.arquillian.selenium.configuration;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.configuration.api.ExtensionDef;
+import org.jboss.arquillian.selenium.spi.WebTestConfiguration;
 
+/**
+ * Utility which maps Arquillian Descriptor and System Properties to a
+ * configuration.
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @see WebTestConfiguration
+ */
 public class ConfigurationMapper
 {
-   private String systemPropertyPrefix;
    private Map<String, String> nameValuePairs;
 
-   public ConfigurationMapper(ArquillianDescriptor descriptor, String extensionQualifier, String systemPropertyPrefix)
+   private ConfigurationMapper()
    {
-      this.nameValuePairs = getNameValuePairs(descriptor, extensionQualifier);
-      this.systemPropertyPrefix = systemPropertyPrefix;
+      this(Collections.<String, String> emptyMap());
    }
 
-   public ConfigurationMapper(Map<String, String> nameValuePairs, String systemPropertyPrefix)
+   private ConfigurationMapper(Map<String, String> nameValuePairs)
    {
       this.nameValuePairs = nameValuePairs;
-      this.systemPropertyPrefix = systemPropertyPrefix;
-   }
-
-   public void map(Object object)
-   {
-      mapFromArquillianDescriptor(object);
-      mapFromSystemProperties(object);
    }
 
    /**
-    * Fills configuration using properties available in ArquillianDescriptor
+    * Maps a configuration using Arquillian Descriptor file
     * 
-    * @param descriptorConfiguration Map of properties
+    * @param <T> Type of the configuration
+    * @param descriptor Arquillian Descriptor
+    * @param configuration Configuration object
+    * @param qualifier Qualifier annotation
+    * @return Configured configuration
     */
-   private void mapFromArquillianDescriptor(Object object)
+   public static <T extends WebTestConfiguration<T>> T fromArquillianDescriptor(ArquillianDescriptor descriptor, T configuration, Class<? extends Annotation> qualifier)
    {
-      List<Field> fields = SecurityActions.getFieldsWithAnnotation(object.getClass());
+      String descriptorQualifier = configuration.getConfigurationName();
+      String qualifierName = qualifier.getSimpleName().toLowerCase();
+
+      ConfigurationMapper mapper = new ConfigurationMapper();
+      mapper.setNameValuePairs(descriptor, descriptorQualifier, qualifierName);
+
+      return mapper.mapFromArquillianDescriptor(configuration);
+   }
+
+   /**
+    * Maps a configuration using System Properties
+    * 
+    * @param <T> Type of the configuration
+    * @param configuration Configuration object
+    * @param qualifier Qualifier annotation
+    * @return Configured configuration
+    */
+   public static <T extends WebTestConfiguration<T>> T fromSystemConfiguration(T configuration, Class<? extends Annotation> qualifier)
+   {
+
+      String descriptorQualifier = configuration.getConfigurationName();
+      String qualifierName = qualifier.getSimpleName().toLowerCase();
+
+      ConfigurationMapper mapper = new ConfigurationMapper();
+      return mapper.mapFromSystemProperties(configuration, descriptorQualifier, qualifierName);
+   }
+
+   /**
+    * Maps configuration values from Arquillian Descriptor
+    * 
+    * @param <T> A type of configuration
+    * @param configuration Configuration object
+    * @return Configured configuration of given type
+    */
+   private <T extends WebTestConfiguration<T>> T mapFromArquillianDescriptor(T configuration)
+   {
+      List<Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
       for (Field f : fields)
       {
          if (nameValuePairs.containsKey(f.getName()))
          {
             try
             {
-               f.set(object, convert(box(f.getType()), nameValuePairs.get(f.getName())));
+               f.set(configuration, convert(box(f.getType()), nameValuePairs.get(f.getName())));
             }
             catch (Exception e)
             {
@@ -60,65 +115,135 @@ public class ConfigurationMapper
             }
          }
       }
+      return configuration;
    }
 
    /**
-    * Fills configuration using System properties
+    * Maps configuration values from System properties
+    * 
+    * @param <T> A type of configuration
+    * @param configuration Configuration object
+    * @param descriptorQualifier A qualifier used for extension configuration in
+    *           the descriptor
+    * @param qualifierName Name of the qualifier passed
+    * @return Configured configuration of given type
     */
-   private void mapFromSystemProperties(Object object)
+   private <T extends WebTestConfiguration<T>> T mapFromSystemProperties(T configuration, String descriptorQualifier, String qualifierName)
    {
-      List<Field> fields = SecurityActions.getFieldsWithAnnotation(object.getClass());
-      for (Field f : fields)
+      System.out.println("Configuration:" + configuration.getClass().getName() + " descriptor: " + descriptorQualifier + " qualifier: " + qualifierName);
+      
+      List<Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
+
+      String fullQualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append("-").append(qualifierName).append(".").toString();
+
+      // get fields with qualifier included
+      Map<Field, String> fieldValuePairs = getFieldValuePairs(fields, fullQualifiedPrefix);
+      // get fields without qualifier included
+      if (fieldValuePairs.isEmpty())
       {
-         String value = SecurityActions.getProperty(keyTransform(f.getName()));
-         if (value != null)
+         String prefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".").toString();
+         fieldValuePairs = getFieldValuePairs(fields, prefix);
+      }
+
+      for (Map.Entry<Field, String> entry : fieldValuePairs.entrySet())
+      {
+         try
          {
-            try
-            {
-               f.set(object, convert(box(f.getType()), value));
-            }
-            catch (Exception e)
-            {
-               throw new RuntimeException("Could not map Arquillian Selenium extension configuration from System properties", e);
-            }
+            entry.getKey().set(configuration, convert(box(entry.getKey().getType()), entry.getValue()));
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException("Could not map Arquillian Selenium extension configuration from System properties", e);
          }
       }
+
+      return configuration;
+
    }
 
-   private Map<String, String> getNameValuePairs(ArquillianDescriptor descriptor, String extensionQualifier)
+   /**
+    * Maps fields to values using System configuration properties
+    * 
+    * @param fields Fields to be mapped
+    * @param prefix System property prefix
+    * @return Mapped values
+    */
+   private Map<Field, String> getFieldValuePairs(Collection<Field> fields, String prefix)
    {
-      Map<String, String> nameValuePairs = Collections.emptyMap();
-      for (ExtensionDef extension : descriptor.getExtensions())
+      Map<Field, String> fieldValuePairs = new HashMap<Field, String>();
+      for (Field f : fields)
       {
-         if (extensionQualifier.equals(extension.getExtensionName()))
+         String fieldName = keyTransform(new StringBuilder(prefix).append(f.getName()));
+         
+         System.out.println("Field transformed: " + fieldName);
+         
+         String value = SecurityActions.getProperty(fieldName);
+         if (value != null)
          {
-            nameValuePairs = extension.getExtensionProperties();
-            break;
+            fieldValuePairs.put(f, value);
          }
       }
-      return nameValuePairs;
+      return fieldValuePairs;
+
+   }
+
+   /**
+    * Parses Arquillian Descriptor into property name - value pairs
+    * 
+    * @param descriptor An Arquillian Descriptor
+    * @param descriptorQualifier A qualifier used for extension configuration in
+    *           the descriptor
+    * @param qualifierName Name of the qualifier passed
+    */
+   private void setNameValuePairs(ArquillianDescriptor descriptor, String descriptorQualifier, String qualifierName)
+   {
+      String fullDescriptorQualifier = new StringBuilder(descriptorQualifier).append("-").append(qualifierName).toString();
+
+      ExtensionDef match = null;
+      for (ExtensionDef extension : descriptor.getExtensions())
+      {
+         if (fullDescriptorQualifier.equals(extension.getExtensionName()))
+         {
+            this.nameValuePairs = extension.getExtensionProperties();
+            return;
+         }
+         else if (descriptorQualifier.equals(extension.getExtensionName()))
+         {
+            match = extension;
+         }
+      }
+
+      // found generic only
+      if (match != null)
+      {
+         this.nameValuePairs = match.getExtensionProperties();
+         return;
+      }
    }
 
    /**
     * Maps a field name to a property.
     * 
-    * Replaces camel case with a dot ('.') and lower case character, adds a
-    * prefix of "arquillian.selenium" e.g. {@code serverName} is transformed to
-    * {@code arquillian.selenium.server.name}
+    * Replaces camel case with a dot ('.') and lower case character, replaces
+    * other non digit and non letter characters with a dot (').
     * 
-    * @param propertyName The name of field
+    * @param fieldName The name of field
     * @return Corresponding property name
     */
-   private String keyTransform(String propertyName)
+   private String keyTransform(String fieldName)
    {
-      StringBuilder sb = new StringBuilder(systemPropertyPrefix);
+      StringBuilder sb = new StringBuilder();
 
-      for (int i = 0; i < propertyName.length(); i++)
+      for (int i = 0; i < fieldName.length(); i++)
       {
-         char c = propertyName.charAt(i);
+         char c = fieldName.charAt(i);
          if (Character.isUpperCase(c))
          {
             sb.append('.').append(Character.toLowerCase(c));
+         }
+         else if (!Character.isLetterOrDigit(c))
+         {
+            sb.append('.');
          }
          else
          {
@@ -129,6 +254,17 @@ public class ConfigurationMapper
       return sb.toString();
    }
 
+   private String keyTransform(StringBuilder fieldName)
+   {
+      return keyTransform(fieldName.toString());
+   }
+
+   /**
+    * A helper boxing method. Returns boxed class for a primitive class
+    * 
+    * @param primitive A primitive class
+    * @return Boxed class if class was primitive, unchanged class in other cases
+    */
    private Class<?> box(Class<?> primitive)
    {
       if (!primitive.isPrimitive())

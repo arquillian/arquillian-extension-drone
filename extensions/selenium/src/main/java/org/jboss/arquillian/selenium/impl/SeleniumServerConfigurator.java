@@ -19,6 +19,7 @@ package org.jboss.arquillian.selenium.impl;
 import java.io.IOException;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.selenium.annotation.Default;
 import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.selenium.event.SeleniumServerConfigured;
 import org.jboss.arquillian.spi.core.Event;
@@ -32,7 +33,7 @@ import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 /**
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
 public class SeleniumServerConfigurator
 {
@@ -48,7 +49,8 @@ public class SeleniumServerConfigurator
 
    public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException
    {
-      SeleniumServerConfiguration configuration = new SeleniumServerConfiguration(arquillianDesc.get());
+      SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
+      configuration.configure(arquillianDesc.get(), Default.class);
 
       seleniumServerConfiguration.set(configuration);
 

@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.selenium.factory;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
@@ -126,15 +127,11 @@ public class PrecedenceTestCase extends AbstractTestCase
          return 10;
       }
 
-      /*
-       * (non-Javadoc)
-       * 
-       * @see
-       * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(
-       * org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor)
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
        */
-      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor)
-      {
+      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
+      {       
          SeleniumConfiguration configuration = new SeleniumConfiguration();
          configuration.setBrowser("*testbrowser");
          return configuration;
