@@ -22,25 +22,39 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.selenium.annotation.Selenium;
+import org.jboss.arquillian.selenium.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.selenium.spi.Destructor;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.openqa.selenium.server.SeleniumServer;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields
- * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
- * <br/>
+ * Destructor of Web Test instance. Disposes instance of every field annotated
+ * with {@link Selenium}
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see WebTestContext
- * @see Selenium
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfiguration}</li>
+ * <li>{@link SeleniumServer}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link AfterClass}</li>
+ * </ol>
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * 
  */
-public class WebTestDestroyer
+public class WebTestDestructor
 {
-   private static final Logger log = Logger.getLogger(WebTestDestroyer.class.getName());
+   private static final Logger log = Logger.getLogger(WebTestDestructor.class.getName());
 
    @Inject
    private Instance<WebTestRegistry> registry;
@@ -60,7 +74,7 @@ public class WebTestDestroyer
          // must be defined as raw because instance type to be destroyer cannot
          // be determined in compile time
          @SuppressWarnings("rawtypes")
-         Destructor destructor = registry.get().getDestructor(typeClass);
+         Destructor destructor = registry.get().getDestructorFor(typeClass);
          if (destructor == null)
          {
             throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());

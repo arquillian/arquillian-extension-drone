@@ -24,19 +24,14 @@ import org.jboss.arquillian.selenium.spi.Configurator;
 import org.jboss.arquillian.selenium.spi.Destructor;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
- * Instantiates Selenium WebDriver implementation. Allows user to specify driver
- * class which be used during testing either by Arquillian configuration or a
- * system property.
+ * Factory which combines {@link Configurator}, {@link Instantiator} and
+ * {@link Destructor} for Selenium WebDriver browser object called
+ * {@link WebDriver}.
  * 
- * Default implementation is HtmlUnitDriver.
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
- * @see HtmlUnitDriver
- * @see WebDriver
  */
 public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver>
 {

@@ -27,6 +27,10 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
 import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
+ * Factory which combines {@link Configurator}, {@link Instantiator} and
+ * {@link Destructor} for Selenium browser object called
+ * {@link DefaultSelenium}.
+ * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */

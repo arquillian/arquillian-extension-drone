@@ -31,6 +31,35 @@ import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 
 /**
+ * Configurator of Selenium Server Configuration
+ * 
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link ArquillianDescriptor}</li>
+ * </ol>
+ * 
+ * <p>
+ * Produces:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfiguration}</li>
+ * </ol>
+ * 
+ * <p>
+ * Fires:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfigured}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link BeforeSuite}</li>
+ * </ol>
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 

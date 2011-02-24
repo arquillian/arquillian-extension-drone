@@ -23,18 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jboss.arquillian.selenium.annotation.Default;
 
 /**
- * Holds Selenium object in cache. It is used to store Selenium context between
- * test method calls in Arquillian testing context. Holds Instantiator of given
- * object as well.
+ * Holder of Web Test tool context. It is able to store different instances of
+ * Web Tool as well as their configurations and to retrieve them during testing.
  * 
- * Generic approach allows to have an arbitrary implementation of Selenium,
- * varying from Selenium WebDriver to Ajocado.
- * 
- * Current implementation limits occurrence of the testing browser to one per
- * class. For instance, you can have {#link DefaultSelenium} and {#link
- * WebDriver} browsers in your test class, but you can't add another WebDriver.
- * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
 public class WebTestContext
@@ -42,49 +34,93 @@ public class WebTestContext
    // cache holder
    private Map<QualifiedKey, Object> cache = new ConcurrentHashMap<QualifiedKey, Object>();
 
-   public <T> T get(Class<T> type)
+   /**
+    * Gets object stored under {@link Default} qualifier and given key
+    * 
+    * @param <T> Type of the object
+    * @param key Key used to find the object
+    * @return Object stored under given qualified key
+    */
+   public <T> T get(Class<T> key)
    {
-      return type.cast(cache.get(new QualifiedKey(type, Default.class)));
+      return key.cast(cache.get(new QualifiedKey(key, Default.class)));
    }
 
-   public <T> T get(Class<T> type, Class<? extends Annotation> qualifier)
+   /**
+    * Gets object stored under given qualifier and given key
+    * 
+    * @param <T> Type of the object
+    * @param key Key used to find the object
+    * @param qualifier Qualifier used to find the object
+    * @return Object stored under given qualified key
+    */
+   public <T> T get(Class<T> key, Class<? extends Annotation> qualifier)
    {
-      return type.cast(cache.get(new QualifiedKey(type, qualifier)));
+      return key.cast(cache.get(new QualifiedKey(key, qualifier)));
    }
 
-   public <T> WebTestContext add(Class<T> type, T instance)
+   /**
+    * Adds object under given key and {@link Default} qualifier
+    * 
+    * @param <T> Type of the object
+    * @param key Key used to store the object
+    * @param instance Object to be stored
+    * @return Modified context
+    */
+   public <T> WebTestContext add(Class<T> key, T instance)
    {
-      cache.put(new QualifiedKey(type, Default.class), instance);
+      cache.put(new QualifiedKey(key, Default.class), instance);
       return this;
    }
 
-   public <T> WebTestContext add(Class<?> type, Class<? extends Annotation> qualifier, T instance)
+   /**
+    * Adds object under given key and given qualifier
+    * 
+    * @param <T> Type of the object
+    * @param key Key used to store the object
+    * @param qualifier Qualifier used to store the object
+    * @param instance Object to be stored
+    * @return Modified context
+    */
+   public <T> WebTestContext add(Class<?> key, Class<? extends Annotation> qualifier, T instance)
    {
-      cache.put(new QualifiedKey(type, qualifier), instance);
+      cache.put(new QualifiedKey(key, qualifier), instance);
       return this;
    }
 
-   public WebTestContext remove(Class<?> type)
+   /**
+    * Removes object under given key and {@link Default} qualifier
+    * 
+    * @param key Key used to find the object
+    * @return Modified context
+    */
+   public WebTestContext remove(Class<?> key)
    {
-      cache.remove(new QualifiedKey(type, Default.class));
+      cache.remove(new QualifiedKey(key, Default.class));
       return this;
    }
 
-   public WebTestContext remove(Class<?> type, Class<? extends Annotation> qualifier)
+   /**
+    * Removes object under given key and given qualifier
+    * 
+    * @param key Key used to find the object
+    * @param qualifier Qualifier used to find the object
+    * @return Modified context
+    */
+   public WebTestContext remove(Class<?> key, Class<? extends Annotation> qualifier)
    {
-      cache.remove(new QualifiedKey(type, qualifier));
+      cache.remove(new QualifiedKey(key, qualifier));
       return this;
    }
 
-   
    private static class QualifiedKey
    {
-      private Class<?> type;
+      private Class<?> key;
       private Class<? extends Annotation> qualifier;
 
-      public QualifiedKey(Class<?> type, Class<? extends Annotation> qualifier)
+      public QualifiedKey(Class<?> key, Class<? extends Annotation> qualifier)
       {
-         this.type = type;
+         this.key = key;
          this.qualifier = qualifier;
       }
 
@@ -99,7 +135,7 @@ public class WebTestContext
          final int prime = 31;
          int result = 1;
          result = prime * result + ((qualifier == null) ? 0 : qualifier.hashCode());
-         result = prime * result + ((type == null) ? 0 : type.hashCode());
+         result = prime * result + ((key == null) ? 0 : key.hashCode());
          return result;
       }
 
@@ -125,18 +161,16 @@ public class WebTestContext
          }
          else if (!qualifier.equals(other.qualifier))
             return false;
-         if (type == null)
+         if (key == null)
          {
-            if (other.type != null)
+            if (other.key != null)
                return false;
          }
-         else if (!type.equals(other.type))
+         else if (!key.equals(other.key))
             return false;
          return true;
       }
 
    }
-
- 
 
 }

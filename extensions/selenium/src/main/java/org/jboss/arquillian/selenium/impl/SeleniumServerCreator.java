@@ -31,21 +31,37 @@ import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 
 /**
- * A handler which starts Selenium server and binds it the suite scope context.
- * The server instance is stored in {@link SeleniumServer}.
+ * Creator of Selenium Server instance
  * 
- * The Selenium server run is <i>disabled</i> by default, it must be allowed
- * either in the Arquillian Selenium Extension configuration or by a system
- * property.
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfiguration}</li>
+ * </ol>
  * 
- * <br/>
- * <b>Imports:</b><br/> {@link SeleniumServerConfiguration}</br/> <b>Exports:</b><br/>
- * {@link SeleniumServer}<br/>
- * <br/>
+ * <p>
+ * Produces:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServer}</li>
+ * </ol>
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * <p>
+ * Fires:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerStarted}</li>
+ * </ol>
  * 
- * @see SeleniumServerRunner
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfigured}</li>
+ * </ol>
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
 public class SeleniumServerCreator

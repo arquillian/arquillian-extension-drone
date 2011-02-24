@@ -103,7 +103,7 @@ public class PrecedenceTestCase extends AbstractTestCase
       WebTestRegistry registry = manager.getContext(SuiteContext.class).getObjectStore().get(WebTestRegistry.class);
       Assert.assertNotNull("Web Test registry was created in the context", registry);
 
-      Assert.assertTrue("Configurator is of mock type", registry.getConfigurator(DefaultSelenium.class) instanceof MockConfigurator);
+      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(DefaultSelenium.class) instanceof MockConfigurator);
 
       manager.fire(new BeforeClass(this.getClass()));
 

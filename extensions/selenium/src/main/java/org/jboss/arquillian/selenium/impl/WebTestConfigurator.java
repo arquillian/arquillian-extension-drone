@@ -34,6 +34,38 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 
 /**
+ * Configurator of Web Test Configuration. Creates a configuration for every
+ * field annotated with {@link Selenium}.
+ * 
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link ArquillianDescriptor}</li>
+ * <li>{@link WebTestRegistry}</li>
+ * </ol>
+ * 
+ * <p>
+ * Produces:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestContext}</li>
+ * </ol>
+ * 
+ * <p>
+ * Fires:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestConfigured}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link BeforeClass}</li>
+ * </ol>
+ * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
@@ -68,8 +100,8 @@ public class WebTestConfigurator
       {
          Class<?> typeClass = f.getType();
          Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
-         
-         Configurator<?,?> configurator = registry.get().getConfigurator(typeClass);
+
+         Configurator<?, ?> configurator = registry.get().getConfiguratorFor(typeClass);
          if (configurator == null)
          {
             throw new IllegalArgumentException("No configurator was found for object of type " + typeClass.getName());

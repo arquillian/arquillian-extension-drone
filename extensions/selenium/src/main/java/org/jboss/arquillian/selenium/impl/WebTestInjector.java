@@ -27,14 +27,25 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields
- * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
- * <br/>
+ * Injector of Web Test instance. Injects existing instance into every field
+ * annotated with {@link Selenium}.
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see WebTestContext
- * @see Selenium
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestContext}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link Before}</li>
+ * </ol>
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * 
  */
 public class WebTestInjector
 {

@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.List;
 
 import org.jboss.arquillian.selenium.annotation.ContextPath;
-import org.jboss.arquillian.selenium.annotation.Selenium;
 import org.jboss.arquillian.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.spi.client.protocol.metadata.Servlet;
@@ -32,14 +31,19 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields
- * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
- * <br/>
+ * Injector of a full Web Application Path ({@code
+ * http:// $context.root}/${context.path}}) into the fields annotated with
+ * {@link ContextPath}
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see WebTestContext
- * @see Selenium
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link ProtocolMetaData}</li>
+ * </ol>
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * 
  */
 public class ContextPathInjector
 {

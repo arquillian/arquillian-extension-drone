@@ -26,9 +26,32 @@ import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.openqa.selenium.server.SeleniumServer;
 
 /**
+ * Destructor of Selenium Server instance
+ * 
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerConfiguration}</li>
+ * <li>{@link SeleniumServer}</li>
+ * </ol>
+ * 
+ * <p>
+ * Fires:
+ * </p>
+ * <ol>
+ * <li>{@link SeleniumServerStopped}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link AfterSuite}</li>
+ * </ol>
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
 public class SeleniumServerDestructor
 {

@@ -1,5 +1,18 @@
-/**
- * 
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.arquillian.selenium.impl;
 
@@ -23,6 +36,31 @@ import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 
 /**
+ * Registar of factories. Registers every {@link Configurator},
+ * {@link Instantiator} and {@link Destructor} found via SPI. Only ones with
+ * highes precedence are kept. See {@link Sortable#getPrecedence()}
+ * 
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link ServiceLoader}</li>
+ * </ol>
+ * 
+ * <p>
+ * Produces:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestRegistry}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link BeforeSuite}</li>
+ * </ol>
+ * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
@@ -50,12 +88,12 @@ public class WebTestRegistrar
       List<Configurator> list = new ArrayList<Configurator>(serviceLoader.get().all(Configurator.class));
       Collections.sort(list, SORTABLE_COMPARATOR);
 
-      for (Configurator<?,?> configurator : list)
+      for (Configurator<?, ?> configurator : list)
       {
          Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
          if (type != null)
          {
-            webTestRegistry.get().registerConfigurator(type, configurator);
+            webTestRegistry.get().registerConfiguratorFor(type, configurator);
          }
       }
    }
@@ -66,12 +104,12 @@ public class WebTestRegistrar
       List<Instantiator> list = new ArrayList<Instantiator>(serviceLoader.get().all(Instantiator.class));
       Collections.sort(list, SORTABLE_COMPARATOR);
 
-      for (Instantiator<?,?> instantiator : list)
+      for (Instantiator<?, ?> instantiator : list)
       {
          Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
          if (type != null)
          {
-            webTestRegistry.get().registerInstantiator(type, instantiator);
+            webTestRegistry.get().registerInstantiatorFor(type, instantiator);
          }
       }
    }
@@ -87,7 +125,7 @@ public class WebTestRegistrar
          Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
          if (type != null)
          {
-            webTestRegistry.get().registerDestructor(type, destructor);
+            webTestRegistry.get().registerDestructorFor(type, destructor);
          }
       }
    }
@@ -97,9 +135,9 @@ public class WebTestRegistrar
       for (Type interfaceType : clazz.getGenericInterfaces())
       {
          if (interfaceType instanceof ParameterizedType)
-         {  
+         {
             ParameterizedType ptype = (ParameterizedType) interfaceType;
-            if (rawType.isAssignableFrom((Class<?>)ptype.getRawType()))
+            if (rawType.isAssignableFrom((Class<?>) ptype.getRawType()))
             {
                return (Class<?>) ptype.getActualTypeArguments()[0];
             }

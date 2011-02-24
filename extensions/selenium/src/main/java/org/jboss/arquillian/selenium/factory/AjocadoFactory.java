@@ -34,6 +34,9 @@ import org.jboss.arquillian.selenium.spi.Destructor;
 import org.jboss.arquillian.selenium.spi.Instantiator;
 
 /**
+ * Factory which combines {@link Configurator}, {@link Instantiator} and {@link Destructor} for Arquillian Ajocado
+ * browser object called {@link AjaxSelenium}.
+ * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */

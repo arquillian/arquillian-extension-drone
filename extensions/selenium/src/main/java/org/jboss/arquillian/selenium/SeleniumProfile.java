@@ -24,7 +24,7 @@ import org.jboss.arquillian.selenium.impl.ContextPathInjector;
 import org.jboss.arquillian.selenium.impl.SeleniumServerConfigurator;
 import org.jboss.arquillian.selenium.impl.WebTestConfigurator;
 import org.jboss.arquillian.selenium.impl.WebTestCreator;
-import org.jboss.arquillian.selenium.impl.WebTestDestroyer;
+import org.jboss.arquillian.selenium.impl.WebTestDestructor;
 import org.jboss.arquillian.selenium.impl.WebTestInjector;
 import org.jboss.arquillian.selenium.impl.SeleniumServerCreator;
 import org.jboss.arquillian.selenium.impl.SeleniumServerDestructor;
@@ -62,7 +62,7 @@ public class SeleniumProfile implements Profile
                   WebTestCreator.class,
                   WebTestInjector.class,
                   ContextPathInjector.class,
-                  WebTestDestroyer.class
+                  WebTestDestructor.class
          );
    }
 

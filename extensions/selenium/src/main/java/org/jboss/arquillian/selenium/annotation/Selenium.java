@@ -34,8 +34,6 @@ import org.jboss.arquillian.selenium.spi.Instantiator;
  * {@link Configurator}, {@link Instantiator} and {@link Destructor}.  
  * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @version $Revision: 1.0 $
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })

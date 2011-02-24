@@ -30,14 +30,26 @@ import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 
 /**
- * A handler which sets a cached instance of Selenium browser for fields
- * annotated with {@link Selenium}. <br/>
- * <b>Imports:</b><br/> {@link Selenium} <br/> {@link WebTestContext} <br/>
- * <br/>
+ * Creator of Web Test instance. Creates a instance for every field annotated
+ * with {@link Selenium}.
  * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see WebTestContext
- * @see Selenium
+ * <p>
+ * Consumes:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestRegistry}</li>
+ * <li>{@link WebTestContext}</li>
+ * </ol>
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ol>
+ * <li>{@link WebTestConfigured}</li>
+ * </ol>
+ * 
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * 
  */
 public class WebTestCreator
 {
@@ -58,7 +70,7 @@ public class WebTestCreator
       WebTestConfiguration<?> configuration = event.getConfiguration();
 
       @SuppressWarnings("rawtypes")
-      Instantiator instantiator = registry.get().getInstantiator(typeClass);
+      Instantiator instantiator = registry.get().getInstantiatorFor(typeClass);
 
       if (instantiator == null)
       {
