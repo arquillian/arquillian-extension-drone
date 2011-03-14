@@ -206,7 +206,7 @@ public class ConfigurationMapper
             this.nameValuePairs = extension.getExtensionProperties();
             if (log.isLoggable(Level.FINE))
             {
-               log.fine("Using <extension qualifier=\"" + extension.getExtensionProperties() + "\"> for Drone Configuration");
+               log.fine("Using <extension qualifier=\"" + extension.getExtensionName() + "\"> for Drone Configuration");
             }
             return;
          }
@@ -222,7 +222,7 @@ public class ConfigurationMapper
          this.nameValuePairs = match.getExtensionProperties();
          if (log.isLoggable(Level.FINE))
          {
-            log.fine("Using <extension qualifier=\"" + match.getExtensionProperties() + "\"> for Drone Configuration");
+            log.fine("Using <extension qualifier=\"" + match.getExtensionName() + "\"> for Drone Configuration");
          }
          return;
       }

@@ -32,7 +32,7 @@
       <!-- Versioning -->
       <version.ajocado>1.0.0.Alpha1</version.ajocado>
       <version.jboss_60>6.0.0.Final</version.jboss_60>
-      <version.selenium>2.0b1</version.selenium>
+      <version.selenium>2.0b2</version.selenium>
       <version.slf4j>1.5.10</version.slf4j>
 
       <!-- example dependencies -->
@@ -67,17 +67,12 @@
          <scope>provided</scope>
       </dependency>
 
+      <!-- add following selenium dependencies (including any slf4j impl) to your pom file into test scope -->
       <dependency>
          <groupId>org.seleniumhq.selenium</groupId>
-         <artifactId>selenium</artifactId>
+         <artifactId>selenium-remote-control</artifactId>
          <version>${version.selenium}</version>
-         <scope>provided</scope>
-         <exclusions>
-            <exclusion>
-               <groupId>org.testng</groupId>
-               <artifactId>testng</artifactId>
-            </exclusion>
-         </exclusions>
+         <scope>provided</scope>        
       </dependency>
       <dependency>
          <groupId>org.seleniumhq.selenium</groupId>
@@ -85,20 +80,28 @@
          <version>${version.selenium}</version>
          <scope>provided</scope>
       </dependency>
-
-      <!-- test dependencies -->
-
+      
+      <!-- required to run Selenium Server -->
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-simple</artifactId>
          <version>${version.slf4j}</version>
          <scope>test</scope>
       </dependency>
+      
+
+      <!-- test dependencies -->
 
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+      
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>         
          <scope>test</scope>
       </dependency>
 
@@ -133,7 +136,7 @@
       </dependency>
       
 
-      <!-- external dependencies -->
+      <!-- external dependencies -->      
       <dependency>
          <groupId>org.mockito</groupId>
          <artifactId>mockito-all</artifactId>
@@ -226,15 +229,6 @@
       <!-- uses Selenium 2.0 FirefoxDriver -->
       <profile>
          <id>firefoxdriver</id>
-
-         <dependencies>
-            <dependency>
-               <artifactId>selenium-firefox-driver</artifactId>
-               <groupId>org.seleniumhq.selenium</groupId>
-               <version>${version.selenium}</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
 
          <build>
             <plugins>
