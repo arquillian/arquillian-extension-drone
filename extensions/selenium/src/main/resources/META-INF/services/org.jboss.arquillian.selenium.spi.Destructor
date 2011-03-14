@@ -1,3 +1,0 @@
-org.jboss.arquillian.selenium.factory.DefaultSeleniumFactory
-org.jboss.arquillian.selenium.factory.WebDriverFactory
-org.jboss.arquillian.selenium.factory.AjocadoFactory

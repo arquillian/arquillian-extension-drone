@@ -1,0 +1,3 @@
+org.jboss.arquillian.drone.factory.DefaultSeleniumFactory
+org.jboss.arquillian.drone.factory.WebDriverFactory
+org.jboss.arquillian.drone.factory.AjocadoFactory

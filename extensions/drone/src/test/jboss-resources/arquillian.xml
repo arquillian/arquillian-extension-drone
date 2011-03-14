@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<arquillian>
+  
+  <!-- this configuration will be bound to Ajocado -->
+  <extension qualifier="ajocado">
+    <configuration>
+      <!-- maximize window of the browser -->
+      <property name="seleniumMaximize">true</property>      
+    </configuration>
+  </extension>
+  
+  <!-- see similar concept for other Arquillian Drone enabled frameworks -->
+  <!-- 
+       for @Drone framework of type DefaultSelenium (see SeleniumConfiguration),
+       make delay between each command is sent 6000ms
+       
+       This configuration is bound to every field annotated by Annotation @OneShot (case insensitive) 
+       which is meta-annotated with @Qualifier
+       
+       @Drone @OneShot DefaultSelenium foo1;
+       @Drone @Oneshot DefaultSelenium foo2;
+  -->  
+  <!--    
+  <extension qualifier="selenium-oneshot">
+    <configuration>      
+      <property name="speed">6000</property>      
+    </configuration>
+  </extension>
+   -->
+  
+</arquillian>

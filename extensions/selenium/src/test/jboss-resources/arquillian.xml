@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<arquillian>
-  <extension qualifier="selenium">
-    <configuration>
-      <property name="speed">5000</property>      
-    </configuration>
-  </extension>
-</arquillian>
