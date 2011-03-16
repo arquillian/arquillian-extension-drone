@@ -43,7 +43,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.FIELD })
+@Target( { ElementType.FIELD, ElementType.PARAMETER })
 @Inherited
 public @interface Drone
 {

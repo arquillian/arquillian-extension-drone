@@ -20,15 +20,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.jboss.arquillian.api.RunModeType;
-import org.jboss.arquillian.drone.impl.ContextPathInjector;
-import org.jboss.arquillian.drone.impl.SeleniumServerConfigurator;
-import org.jboss.arquillian.drone.impl.SeleniumServerCreator;
-import org.jboss.arquillian.drone.impl.SeleniumServerDestructor;
 import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneCreator;
 import org.jboss.arquillian.drone.impl.DroneDestructor;
-import org.jboss.arquillian.drone.impl.DroneInjector;
 import org.jboss.arquillian.drone.impl.DroneRegistrar;
+import org.jboss.arquillian.drone.impl.SeleniumServerConfigurator;
+import org.jboss.arquillian.drone.impl.SeleniumServerCreator;
+import org.jboss.arquillian.drone.impl.SeleniumServerDestructor;
 import org.jboss.arquillian.spi.Profile;
 
 /**
@@ -60,8 +58,6 @@ public class DroneProfile implements Profile
                   DroneRegistrar.class,
                   DroneConfigurator.class,
                   DroneCreator.class,
-                  DroneInjector.class,
-                  ContextPathInjector.class,
                   DroneDestructor.class
          );
    }

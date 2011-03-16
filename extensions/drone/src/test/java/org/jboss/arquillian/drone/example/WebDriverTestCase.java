@@ -44,7 +44,7 @@ import org.openqa.selenium.WebDriver;
 public class WebDriverTestCase extends AbstractTestCase
 {
    // create WebDriver
-   @Drone WebDriver driver;
+   //@Drone WebDriver driver;
    
    private static final String USERNAME = "demo";
    private static final String PASSWORD = "demo";
@@ -59,22 +59,22 @@ public class WebDriverTestCase extends AbstractTestCase
    private static final By LOGOUT_BUTTON = By.id("loginForm:logout");
 
    @Test
-   public void testLoginAndLogout()
+   public void testLoginAndLogout(@Drone WebDriver driver)
    {
       driver.get("http://localhost:8080/weld-login/home.jsf");
 
       driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
       driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
       driver.findElement(LOGIN_BUTTON).click();
-      checkElementPresence(LOGGED_IN, "User should be logged in!");
+      checkElementPresence(driver, LOGGED_IN, "User should be logged in!");
 
       driver.findElement(LOGOUT_BUTTON).click();
-      checkElementPresence(LOGGED_OUT, "User should not be logged in!");
+      checkElementPresence(driver, LOGGED_OUT, "User should not be logged in!");
 
    }
 
    // check is element is presence on page, fails otherwise
-   private void checkElementPresence(By by, String errorMsg)
+   private void checkElementPresence(WebDriver driver, By by, String errorMsg)
    {
       try
       {

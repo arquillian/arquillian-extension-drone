@@ -18,34 +18,37 @@ package org.jboss.arquillian.drone.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.drone.annotation.Drone;
-import org.jboss.arquillian.drone.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.openqa.selenium.server.SeleniumServer;
+import org.jboss.arquillian.spi.util.Validate;
 
 /**
  * Destructor of drone instances. Disposes instance of every field annotated
- * with {@link Drone}
+ * with {@link Drone}. Disposes Drones created for method arguments as well.
  * 
  * <p>
  * Consumes:
  * </p>
  * <ol>
- * <li>{@link SeleniumServerConfiguration}</li>
- * <li>{@link SeleniumServer}</li>
+ * <li>{@link DroneContext}</li>
+ * <li>{@link DroneRegistry}</li>
+ * <li>{@link MethodContext}</li>
  * </ol>
  * 
  * <p>
  * Observes:
  * </p>
  * <ol>
+ * <li>{@link After}</li>
  * <li>{@link AfterClass}</li>
  * </ol>
  * 
@@ -60,10 +63,13 @@ public class DroneDestructor
    private Instance<DroneRegistry> registry;
 
    @Inject
-   private Instance<DroneContext> webTestContext;
+   private Instance<DroneContext> droneContext;
+
+   @Inject
+   private Instance<MethodContext> methodContext;
 
    @SuppressWarnings("unchecked")
-   public void destroySelenium(@Observes AfterClass event)
+   public void destroyClassScopedDrone(@Observes AfterClass event)
    {
       Class<?> clazz = event.getTestClass().getJavaClass();
       for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class))
@@ -71,21 +77,56 @@ public class DroneDestructor
          Class<?> typeClass = f.getType();
          Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-         // must be defined as raw because instance type to be destroyer cannot
-         // be determined in compile time
          @SuppressWarnings("rawtypes")
-         Destructor destructor = registry.get().getDestructorFor(typeClass);
-         if (destructor == null)
-         {
-            throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
-         }
-         if (log.isLoggable(Level.FINE))
-         {
-            log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence " + destructor.getPrecedence());
-         }
-         destructor.destroyInstance(webTestContext.get().get(typeClass, qualifier));
-         webTestContext.get().remove(typeClass, qualifier);
+         Destructor destructor = getDestructorFor(typeClass);         
+         destructor.destroyInstance(droneContext.get().get(typeClass, qualifier));
+         droneContext.get().remove(typeClass, qualifier);
       }
+   }
+
+   @SuppressWarnings("unchecked")
+   public void destroyMethodScopedDrone(@Observes After event)
+   {
+      Method method = event.getTestMethod();
+      Class<?>[] parameterTypes = method.getParameterTypes();
+      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+      for (int i = 0; i < parameterTypes.length; i++)
+      {
+         if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class))
+         {
+            Validate.notNull(methodContext.get(), "Drone registry should not be null");
+            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
+
+            @SuppressWarnings("rawtypes")
+            Destructor destructor = getDestructorFor(parameterTypes[i]);
+
+            DroneContext context = methodContext.get().get(method);
+            Validate.notNull(context, "Method context should not be null");
+            
+            destructor.destroyInstance(context.get(parameterTypes[i], qualifier));
+            context.remove(parameterTypes[i], qualifier);
+         }
+      }
+
+   }
+
+   @SuppressWarnings("rawtypes")
+   private Destructor getDestructorFor(Class<?> typeClass)
+   {
+      // must be defined as raw because instance type to be destroyer cannot
+      // be determined in compile time
+      Destructor destructor = registry.get().getDestructorFor(typeClass);
+      if (destructor == null)
+      {
+         throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
+      }
+      if (log.isLoggable(Level.FINE))
+      {
+         log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence " + destructor.getPrecedence());
+      }
+
+      return destructor;
    }
 
 }

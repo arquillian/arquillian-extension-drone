@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.factory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.jboss.arquillian.drone.annotation.Drone;
@@ -28,6 +29,7 @@ import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneContext;
 import org.jboss.arquillian.drone.impl.DroneRegistrar;
 import org.jboss.arquillian.drone.impl.DroneRegistry;
+import org.jboss.arquillian.drone.impl.MethodContext;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
@@ -66,7 +68,8 @@ public class QualifierTestCase extends AbstractTestCase
    @Mock
    private ServiceLoader serviceLoader;
 
-   @Drone @Different
+   @Drone
+   @Different
    DefaultSelenium unused;
 
    private ManagerImpl manager;
@@ -78,10 +81,10 @@ public class QualifierTestCase extends AbstractTestCase
 
       ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
          .extension("selenium-different")
-            .property("browser", "*testbrowser")
-            .property("url", "http://localhost:8888");
-      
-      
+            .property("browser", "*testbrowser").property("url", "http://localhost:8888")
+         .extension("selenium-methodargumentone")
+            .property("browser", "*footestbrowser");
+
       manager.getContext(ApplicationContext.class).getObjectStore().add(ServiceLoader.class, serviceLoader);
       manager.getContext(ApplicationContext.class).getObjectStore().add(ArquillianDescriptor.class, desc);
 
@@ -104,7 +107,8 @@ public class QualifierTestCase extends AbstractTestCase
    @SuppressWarnings("rawtypes")
    public void testQualifer() throws Exception
    {
-      Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockConfigurator()));
+      Mockito.when(serviceLoader.all(Configurator.class))
+         .thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockConfigurator()));
 
       manager.fire(new BeforeSuite());
 
@@ -118,19 +122,57 @@ public class QualifierTestCase extends AbstractTestCase
       DroneContext context = manager.getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
       Assert.assertNotNull("Drone object holder was created in the context", context);
 
-      SeleniumConfiguration configuration = context.get(SeleniumConfiguration.class);      
+      SeleniumConfiguration configuration = context.get(SeleniumConfiguration.class);
       Assert.assertNull("There is no SeleniumConfiguration with @Default qualifier", configuration);
-      
+
       configuration = context.get(SeleniumConfiguration.class, Different.class);
       Assert.assertNotNull("SeleniumConfiguration is stored with @Different qualifier", configuration);
-      
+
       Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*testbrowser", configuration.getBrowser());
       Assert.assertEquals("SeleniumConfiguration has http://127.0.0.1:8080 as url", "http://127.0.0.1:8080", configuration.getUrl());
-      
-      
-   }
 
-   class MockConfigurator implements Configurator<DefaultSelenium,SeleniumConfiguration>
+   }
+/*
+   @Test
+   @SuppressWarnings("rawtypes")
+   public void testMethodQualifer(@Drone @MethodArgumentOne DefaultSelenium unused) throws Exception
+   {
+      Mockito.when(serviceLoader.all(Configurator.class))
+         .thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockConfigurator()));
+
+      manager.fire(new BeforeSuite());
+
+      DroneRegistry registry = manager.getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+      Assert.assertNotNull("Drone registry was created in the context", registry);
+
+      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(DefaultSelenium.class) instanceof MockConfigurator);
+
+      manager.fire(new BeforeClass(this.getClass()));
+
+      
+      DroneContext dc = manager.getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+      Assert.assertNotNull("Drone object holder was created in the context", dc);
+      MethodContext mc = manager.getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
+      Assert.assertNotNull("Method context object holder was created in the context", mc);
+
+      Method thisMethod = this.getClass().getMethod("testMethodQualifier", DefaultSelenium.class);
+      manager.fire(new org.jboss.arquillian.spi.event.suite.After(this, thisMethod));
+      
+      DroneContext context = mc.get(thisMethod);
+      Assert.assertNotNull("Method context was stored", context);
+      
+      SeleniumConfiguration configuration = context.get(SeleniumConfiguration.class);
+      Assert.assertNull("There is no SeleniumConfiguration with @Default qualifier", configuration);
+
+      configuration = context.get(SeleniumConfiguration.class, MethodArgumentOne.class);
+      Assert.assertNotNull("SeleniumConfiguration is stored with @MethodArgumentOne qualifier", configuration);
+
+      Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*footestbrowser", configuration.getBrowser());
+      Assert.assertEquals("SeleniumConfiguration has http://127.0.0.1:8080 as url", "http://127.0.0.1:8080", configuration.getUrl());
+
+   }
+*/   
+   class MockConfigurator implements Configurator<DefaultSelenium, SeleniumConfiguration>
    {
 
       /*
@@ -143,13 +185,18 @@ public class QualifierTestCase extends AbstractTestCase
          return 10;
       }
 
-      /* (non-Javadoc)
-       * @see org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
+      /*
+       * (non-Javadoc)
+       * 
+       * @see
+       * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(
+       * org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor,
+       * java.lang.Class)
        */
       public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
       {
          System.setProperty("arquillian.selenium.different.url", "http://127.0.0.1:8080");
-         
+
          SeleniumConfiguration configuration = new SeleniumConfiguration();
          configuration.configure(descriptor, qualifier);
          return configuration;

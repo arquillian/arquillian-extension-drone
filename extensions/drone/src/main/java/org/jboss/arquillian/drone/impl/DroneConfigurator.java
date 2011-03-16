@@ -50,6 +50,7 @@ import org.jboss.arquillian.spi.event.suite.BeforeClass;
  * </p>
  * <ol>
  * <li>{@link DroneContext}</li>
+ * <li>{@link MethodContext}</li>
  * </ol>
  * 
  * <p>
@@ -73,20 +74,25 @@ public class DroneConfigurator
 {
    @Inject
    @ClassScoped
-   private InstanceProducer<DroneContext> webTestContext;
+   private InstanceProducer<DroneContext> droneContext;
 
+   @Inject
+   @ClassScoped
+   private InstanceProducer<MethodContext> methodContext;
+   
    @Inject
    private Instance<ArquillianDescriptor> arquillianDescriptor;
 
    @Inject
    private Instance<DroneRegistry> registry;
-
+   
    @Inject
    private Event<DroneConfigured> afterConfiguration;
 
-   public void configureWebTest(@Observes BeforeClass event)
+   public void configureDrone(@Observes BeforeClass event)
    {
-
+      methodContext.set(new MethodContext());
+      
       // check if any field is @Drone annotated
       List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
       if (fields.isEmpty())
@@ -94,8 +100,7 @@ public class DroneConfigurator
          return;
       }
 
-      DroneContext context = new DroneContext();
-      webTestContext.set(context);
+      droneContext.set(new DroneContext());
       for (Field f : fields)
       {
          Class<?> typeClass = f.getType();
@@ -108,7 +113,7 @@ public class DroneConfigurator
          }
 
          DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-         webTestContext.get().add(configuration.getClass(), qualifier, configuration);
+         droneContext.get().add(configuration.getClass(), qualifier, configuration);
          afterConfiguration.fire(new DroneConfigured(f, qualifier, configuration));
       }
 

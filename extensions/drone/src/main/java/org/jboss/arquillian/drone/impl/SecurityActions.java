@@ -203,12 +203,38 @@ final class SecurityActions
       });
       return declaredAccessableFields;
    }
-   
-   static final Class<? extends Annotation> getQualifier(Field field)
+
+   static boolean isAnnotationPresent(final Annotation[] annotations, final Class<? extends Annotation> needle)
    {
+      for (Annotation a : annotations)
+      {
+         if (a.annotationType() == needle)
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   static final Class<? extends Annotation> getQualifier(final Field field)
+   {
+      Annotation[] annotations = AccessController.doPrivileged(new PrivilegedAction<Annotation[]>()
+      {
+         public Annotation[] run()
+         {
+            return field.getAnnotations();
+         }
+      });
+
+      return getQualifier(annotations);
+   }
+
+   static final Class<? extends Annotation> getQualifier(Annotation[] annotations)
+   {
+
       List<Class<? extends Annotation>> candidates = new ArrayList<Class<? extends Annotation>>();
 
-      for (Annotation a : field.getAnnotations())
+      for (Annotation a : annotations)
       {
          if (a.annotationType().isAnnotationPresent(Qualifier.class))
          {
@@ -225,7 +251,7 @@ final class SecurityActions
          return candidates.get(0);
       }
 
-      throw new IllegalStateException("Unable to determine Qualifier for field: " + field.getName() + ", multiple Qualifier annotations were present");
+      throw new IllegalStateException("Unable to determine Qualifier, multiple (" + candidates.size() + ") Qualifier annotations were present");
    }
 
    // -------------------------------------------------------------------------------||

@@ -33,7 +33,7 @@ import org.jboss.arquillian.drone.spi.Qualifier;
  * @see Qualifier
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Documented
 @Qualifier
 public @interface Default
