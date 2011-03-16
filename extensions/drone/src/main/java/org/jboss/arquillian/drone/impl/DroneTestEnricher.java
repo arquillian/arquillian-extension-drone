@@ -228,7 +228,7 @@ public class DroneTestEnricher implements TestEnricher
       Instantiator instantiator = regs.getInstantiatorFor(type);
       
       // store in map if not stored already
-      DroneContext dc = methodContext.get().getOrCreate(method, new DroneContext());      
+      DroneContext dc = methodContext.get().getOrCreate(method);      
       
       DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
       dc.add(configuration.getClass(), qualifier, configuration);      

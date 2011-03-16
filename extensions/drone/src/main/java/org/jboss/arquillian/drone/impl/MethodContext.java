@@ -31,10 +31,11 @@ public class MethodContext
     * @param value Context for method
     * @return Actual context for method
     */
-   public DroneContext getOrCreate(Method key, DroneContext value)
+   public DroneContext getOrCreate(Method key)
    {
-      DroneContext dc = cache.putIfAbsent(key, value);
-      return dc==null ? value : dc;
+      DroneContext newContext = new DroneContext();      
+      DroneContext dc = cache.putIfAbsent(key, new DroneContext());
+      return dc==null ? newContext : dc;
    }
 
    /**
