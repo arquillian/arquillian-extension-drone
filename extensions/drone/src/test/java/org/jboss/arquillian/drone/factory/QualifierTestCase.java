@@ -26,6 +26,9 @@ import org.jboss.arquillian.drone.impl.DroneRegistrar;
 import org.jboss.arquillian.drone.impl.DroneRegistry;
 import org.jboss.arquillian.drone.impl.DroneTestEnricher;
 import org.jboss.arquillian.drone.impl.MethodContext;
+import org.jboss.arquillian.drone.mockdrone.MockDroneConfiguration;
+import org.jboss.arquillian.drone.mockdrone.MockDroneFactory;
+import org.jboss.arquillian.drone.mockdrone.MockDroneInstance;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
@@ -51,7 +54,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Tests Configurator precedence and its retrieval chain, uses qualifier as well
+ * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
+ * 
+ * Additionally tests DroneTestEnricher
+ * 
  * 
  * 
  * 
