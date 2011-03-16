@@ -68,15 +68,14 @@ public class DroneRegistrar
 {
    @Inject
    @SuiteScoped
-   private InstanceProducer<DroneRegistry> webTestRegistry;
+   private InstanceProducer<DroneRegistry> dronetRegistry;
 
    @Inject
    private Instance<ServiceLoader> serviceLoader;
 
    public void register(@Observes BeforeSuite event)
    {
-      DroneRegistry registry = new DroneRegistry();
-      webTestRegistry.set(registry);
+      dronetRegistry.set(new DroneRegistry());
       registerConfigurators();
       registerInstantiators();
       registerDestructors();
@@ -93,7 +92,7 @@ public class DroneRegistrar
          Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
          if (type != null)
          {
-            webTestRegistry.get().registerConfiguratorFor(type, configurator);
+            dronetRegistry.get().registerConfiguratorFor(type, configurator);
          }
       }
    }
@@ -109,7 +108,7 @@ public class DroneRegistrar
          Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
          if (type != null)
          {
-            webTestRegistry.get().registerInstantiatorFor(type, instantiator);
+            dronetRegistry.get().registerInstantiatorFor(type, instantiator);
          }
       }
    }
@@ -125,7 +124,7 @@ public class DroneRegistrar
          Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
          if (type != null)
          {
-            webTestRegistry.get().registerDestructorFor(type, destructor);
+            dronetRegistry.get().registerDestructorFor(type, destructor);
          }
       }
    }

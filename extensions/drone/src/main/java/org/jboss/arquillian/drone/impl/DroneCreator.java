@@ -59,7 +59,7 @@ public class DroneCreator
    private Instance<DroneRegistry> registry;
 
    @Inject
-   private Instance<DroneContext> webTestContext;
+   private Instance<DroneContext> droneContext;
 
    @SuppressWarnings("unchecked")
    public void createWebTestBrowser(@Observes DroneConfigured event)
@@ -81,6 +81,6 @@ public class DroneCreator
          log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence " + instantiator.getPrecedence());
       }
 
-      webTestContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
+      droneContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
    }
 }

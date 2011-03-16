@@ -188,8 +188,8 @@
                         <configuration>
                            <skipTests>false</skipTests>
                            <includes>
-                              <include>org/jboss/arquillian/drone/factory/*.class</include>
-                              <include>org/jboss/arquillian/drone/impl/*.class</include>
+                              <include>org/jboss/arquillian/drone/factory/*TestCase.class</include>
+                              <include>org/jboss/arquillian/drone/impl/*TestCase.class</include>
                            </includes>
                         </configuration>
                      </execution>

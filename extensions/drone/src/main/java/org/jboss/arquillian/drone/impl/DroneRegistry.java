@@ -35,7 +35,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  */
 public class DroneRegistry
 {
-   private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, DroneRegistry.RegistryValue>();
+   private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
 
    /**
     * Gets configurator for given object type

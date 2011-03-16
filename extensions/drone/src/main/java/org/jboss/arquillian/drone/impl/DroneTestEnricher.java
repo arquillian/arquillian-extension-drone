@@ -42,7 +42,7 @@ import org.jboss.arquillian.spi.util.Validate;
 
 /**
  * Enriches test with drone instance and context path. Injects existing instance
- * into every field annotated with {@link Drone}. Handles enrichements for method 
+ * into every field annotated with {@link Drone}. Handles enrichements for method
  * arguments as well.
  * 
  * <p>
@@ -63,7 +63,7 @@ import org.jboss.arquillian.spi.util.Validate;
 public class DroneTestEnricher implements TestEnricher
 {
    private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());
-   
+
    @Inject
    private Instance<DroneContext> droneContext;
 
@@ -107,6 +107,11 @@ public class DroneTestEnricher implements TestEnricher
       {
          if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class))
          {
+            if (log.isLoggable(Level.FINE))
+            {
+               log.fine("Resolving method " + method.getName() + " argument at position " + i);
+            }
+
             Validate.notNull(registry.get(), "Drone registry should not be null");
             Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
@@ -223,23 +228,24 @@ public class DroneTestEnricher implements TestEnricher
    {
       DroneRegistry regs = registry.get();
       ArquillianDescriptor desc = arquillianDescriptor.get();
-      
+
       Configurator configurator = regs.getConfiguratorFor(type);
       Instantiator instantiator = regs.getInstantiatorFor(type);
-      
-      // store in map if not stored already
-      DroneContext dc = methodContext.get().getOrCreate(method);      
-      
-      DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
-      dc.add(configuration.getClass(), qualifier, configuration);      
 
-      Object instance = instantiator.createInstance(configuration);      
+      // store in map if not stored already
+      DroneContext dc = methodContext.get().getOrCreate(method);
+
+      DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
+      dc.add(configuration.getClass(), qualifier, configuration);
+
+      Object instance = instantiator.createInstance(configuration);
       dc.add(type, qualifier, instance);
-      
-      if(log.isLoggable(Level.FINE)) {
+
+      if (log.isLoggable(Level.FINE))
+      {
          log.fine("Stored method lifecycle based Drone instance, type: " + type.getName() + ", qualifier: " + qualifier.getName() + ", instanceClass: " + instance.getClass());
       }
-      
+
       return instance;
    }
 }

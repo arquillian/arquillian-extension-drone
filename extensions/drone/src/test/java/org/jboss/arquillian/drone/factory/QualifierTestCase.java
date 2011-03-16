@@ -16,43 +16,39 @@
  */
 package org.jboss.arquillian.drone.factory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.jboss.arquillian.drone.annotation.Drone;
-import org.jboss.arquillian.drone.configuration.SeleniumConfiguration;
-import org.jboss.arquillian.drone.example.AbstractTestCase;
-import org.jboss.arquillian.drone.factory.DefaultSeleniumFactory;
-import org.jboss.arquillian.drone.factory.WebDriverFactory;
 import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneContext;
 import org.jboss.arquillian.drone.impl.DroneRegistrar;
 import org.jboss.arquillian.drone.impl.DroneRegistry;
+import org.jboss.arquillian.drone.impl.DroneTestEnricher;
 import org.jboss.arquillian.drone.impl.MethodContext;
 import org.jboss.arquillian.drone.spi.Configurator;
+import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
-import org.jboss.arquillian.impl.core.ManagerImpl;
+import org.jboss.arquillian.impl.core.context.ApplicationContextImpl;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
-import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well
@@ -63,41 +59,41 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * 
  */
 @RunWith(MockitoJUnitRunner.class)
-public class QualifierTestCase extends AbstractTestCase
+public class QualifierTestCase
 {
+   private static final String DIFFERENT_FIELD = "ArquillianDescriptor @Different";
+   private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
+
    @Mock
    private ServiceLoader serviceLoader;
 
-   @Drone
-   @Different
-   DefaultSelenium unused;
+   private Manager manager;
 
-   private ManagerImpl manager;
-
-   @Before
-   public void create()
+   @org.junit.Before
+   public void createManager()
    {
-      manager = ManagerBuilder.from().context(SuiteContextImpl.class).context(ClassContextImpl.class).extensions(DroneRegistrar.class, DroneConfigurator.class).create();
+      manager = ManagerBuilder.from()
+            .context(ApplicationContextImpl.class)
+            .context(SuiteContextImpl.class)
+            .context(ClassContextImpl.class)
+            .extensions(DroneRegistrar.class, DroneConfigurator.class, DroneTestEnricher.class).create();
 
       ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-         .extension("selenium-different")
-            .property("browser", "*testbrowser").property("url", "http://localhost:8888")
-         .extension("selenium-methodargumentone")
-            .property("browser", "*footestbrowser");
+            .extension("mockdrone-different")
+            .property("field", DIFFERENT_FIELD)
+            .extension("mockdrone-methodargumentone")
+            .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
-      manager.getContext(ApplicationContext.class).getObjectStore().add(ServiceLoader.class, serviceLoader);
-      manager.getContext(ApplicationContext.class).getObjectStore().add(ArquillianDescriptor.class, desc);
+      manager.bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+      manager.bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
       manager.getContext(SuiteContext.class).activate();
-      manager.getContext(ClassContext.class).activate(this.getClass());
+
    }
 
-   @After
-   public void destroy()
+   @org.junit.After
+   public void destroyManager()
    {
-      manager.getContext(ClassContext.class).deactivate();
-      manager.getContext(ClassContext.class).destroy(this.getClass());
-
       manager.getContext(SuiteContext.class).deactivate();
       manager.getContext(SuiteContext.class).destroy();
       manager.shutdown();
@@ -107,101 +103,87 @@ public class QualifierTestCase extends AbstractTestCase
    @SuppressWarnings("rawtypes")
    public void testQualifer() throws Exception
    {
+      manager.getContext(ClassContext.class).activate(EnrichedClass.class);
+
       Mockito.when(serviceLoader.all(Configurator.class))
-         .thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockConfigurator()));
+            .thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockDroneFactory()));
 
       manager.fire(new BeforeSuite());
 
       DroneRegistry registry = manager.getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
       Assert.assertNotNull("Drone registry was created in the context", registry);
 
-      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(DefaultSelenium.class) instanceof MockConfigurator);
+      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(MockDroneInstance.class) instanceof MockDroneFactory);
 
-      manager.fire(new BeforeClass(this.getClass()));
+      manager.fire(new BeforeClass(EnrichedClass.class));
 
       DroneContext context = manager.getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
       Assert.assertNotNull("Drone object holder was created in the context", context);
 
-      SeleniumConfiguration configuration = context.get(SeleniumConfiguration.class);
-      Assert.assertNull("There is no SeleniumConfiguration with @Default qualifier", configuration);
+      MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
+      Assert.assertNull("There is no MockDroneConfiguration with @Default qualifier", configuration);
 
-      configuration = context.get(SeleniumConfiguration.class, Different.class);
-      Assert.assertNotNull("SeleniumConfiguration is stored with @Different qualifier", configuration);
+      configuration = context.get(MockDroneConfiguration.class, Different.class);
+      Assert.assertNotNull("MockDroneConfiguration is stored with @Different qualifier", configuration);
 
-      Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*testbrowser", configuration.getBrowser());
-      Assert.assertEquals("SeleniumConfiguration has http://127.0.0.1:8080 as url", "http://127.0.0.1:8080", configuration.getUrl());
+      Assert.assertEquals("MockDroneConfiguration field is set via System properties", MockDroneFactory.FIELD_OVERRIDE, configuration.getField());
 
+      manager.getContext(ClassContext.class).deactivate();
+      manager.getContext(ClassContext.class).destroy(EnrichedClass.class);
    }
-/*
+
    @Test
    @SuppressWarnings("rawtypes")
-   public void testMethodQualifer(@Drone @MethodArgumentOne DefaultSelenium unused) throws Exception
+   public void testMethodQualifer() throws Exception
    {
+      TestEnricher testEnricher = new DroneTestEnricher();
+
+      manager.getContext(ClassContext.class).activate(MethodEnrichedClass.class);
+
       Mockito.when(serviceLoader.all(Configurator.class))
-         .thenReturn(Arrays.<Configurator> asList(new DefaultSeleniumFactory(), new WebDriverFactory(), new MockConfigurator()));
+            .thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
+      Mockito.when(serviceLoader.all(Instantiator.class))
+            .thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
+      Mockito.when(serviceLoader.all(Destructor.class))
+            .thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
+      Mockito.when(serviceLoader.all(TestEnricher.class))
+            .thenReturn(Arrays.<TestEnricher> asList(testEnricher));
 
       manager.fire(new BeforeSuite());
 
       DroneRegistry registry = manager.getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
       Assert.assertNotNull("Drone registry was created in the context", registry);
 
-      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(DefaultSelenium.class) instanceof MockConfigurator);
+      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(MockDroneInstance.class) instanceof MockDroneFactory);
 
-      manager.fire(new BeforeClass(this.getClass()));
+      manager.fire(new BeforeClass(MethodEnrichedClass.class));
 
-      
-      DroneContext dc = manager.getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-      Assert.assertNotNull("Drone object holder was created in the context", dc);
       MethodContext mc = manager.getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
       Assert.assertNotNull("Method context object holder was created in the context", mc);
 
-      Method thisMethod = this.getClass().getMethod("testMethodQualifier", DefaultSelenium.class);
-      manager.fire(new org.jboss.arquillian.spi.event.suite.After(this, thisMethod));
-      
-      DroneContext context = mc.get(thisMethod);
-      Assert.assertNotNull("Method context was stored", context);
-      
-      SeleniumConfiguration configuration = context.get(SeleniumConfiguration.class);
-      Assert.assertNull("There is no SeleniumConfiguration with @Default qualifier", configuration);
+      Object instance = new MethodEnrichedClass();
+      Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDroneInstance.class);
 
-      configuration = context.get(SeleniumConfiguration.class, MethodArgumentOne.class);
-      Assert.assertNotNull("SeleniumConfiguration is stored with @MethodArgumentOne qualifier", configuration);
-
-      Assert.assertEquals("SeleniumConfiguration has *testbrowser set as browser", "*footestbrowser", configuration.getBrowser());
-      Assert.assertEquals("SeleniumConfiguration has http://127.0.0.1:8080 as url", "http://127.0.0.1:8080", configuration.getUrl());
-
+      manager.inject(testEnricher);
+      Object[] parameters = testEnricher.resolve(testMethod);
+      testMethod.invoke(instance, parameters);
    }
-*/   
-   class MockConfigurator implements Configurator<DefaultSelenium, SeleniumConfiguration>
+
+   static class EnrichedClass
+   {
+      @Drone
+      @Different
+      MockDroneInstance unused;
+   }
+
+   static class MethodEnrichedClass
    {
 
-      /*
-       * (non-Javadoc)
-       * 
-       * @see org.jboss.arquillian.selenium.spi.Sortable#getPrecedence()
-       */
-      public int getPrecedence()
+      public void testMethodEnrichment(@Drone @MethodArgumentOne MockDroneInstance unused)
       {
-         return 10;
+         Assert.assertNotNull("Mock drone instance was created", unused);
+         Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD, unused.getField());
       }
-
-      /*
-       * (non-Javadoc)
-       * 
-       * @see
-       * org.jboss.arquillian.selenium.spi.Configurator#createConfiguration(
-       * org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor,
-       * java.lang.Class)
-       */
-      public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-      {
-         System.setProperty("arquillian.selenium.different.url", "http://127.0.0.1:8080");
-
-         SeleniumConfiguration configuration = new SeleniumConfiguration();
-         configuration.configure(descriptor, qualifier);
-         return configuration;
-      }
-
    }
 
 }
