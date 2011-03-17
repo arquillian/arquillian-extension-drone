@@ -42,7 +42,7 @@ public abstract class AbstractTestCase
     * 
     * @return WebArchive to be tested
     */
-   @Deployment
+   @Deployment(testable = false)
    public static WebArchive createDeployment()
    {
       WebArchive war = ShrinkWrap.create(WebArchive.class, "weld-login.war")

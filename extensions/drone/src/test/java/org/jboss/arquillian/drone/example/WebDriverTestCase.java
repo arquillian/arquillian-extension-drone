@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.drone.example;
 
-import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
-
-import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.factory.WebDriverFactory;
 import org.jboss.arquillian.junit.Arquillian;
@@ -40,7 +37,6 @@ import org.openqa.selenium.WebDriver;
  * @see WebDriverFactory
  */
 @RunWith(Arquillian.class)
-@Run(AS_CLIENT)
 public class WebDriverTestCase extends AbstractTestCase
 {
    // create WebDriver

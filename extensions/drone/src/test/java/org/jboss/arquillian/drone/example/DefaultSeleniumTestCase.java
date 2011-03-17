@@ -16,11 +16,8 @@
  */
 package org.jboss.arquillian.drone.example;
 
-import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
-
 import java.net.URI;
 
-import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.drone.annotation.ContextPath;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
@@ -39,7 +36,6 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * 
  */
 @RunWith(Arquillian.class)
-@Run(AS_CLIENT)
 public class DefaultSeleniumTestCase extends AbstractTestCase
 {
    // load selenium driver

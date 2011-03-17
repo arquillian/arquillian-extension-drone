@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneCreator;
 import org.jboss.arquillian.drone.impl.DroneDestructor;
@@ -69,7 +68,7 @@ public class DroneProfile implements Profile
     */
    public Collection<Class<?>> getContainerProfile()
    {
-      throw new IllegalArgumentException("Arquillian Selenium extension cannot be run in incontainer mode, please annotate class with @RunAs(AS_CLIENT) annotation");
+      throw new IllegalArgumentException("Arquillian Selenium extension cannot be run in incontainer mode, please annotate class with @RunAsClient annotation or set @Deployment(managed = false)");
    }
 
 }

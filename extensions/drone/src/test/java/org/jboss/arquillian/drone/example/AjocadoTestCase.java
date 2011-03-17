@@ -21,14 +21,12 @@ import static org.jboss.arquillian.ajocado.Ajocado.waitModel;
 import static org.jboss.arquillian.ajocado.guard.request.RequestTypeGuardFactory.waitHttp;
 import static org.jboss.arquillian.ajocado.locator.LocatorFactory.id;
 import static org.jboss.arquillian.ajocado.locator.LocatorFactory.xp;
-import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
 
 import java.net.URL;
 
 import org.jboss.arquillian.ajocado.framework.AjaxSelenium;
 import org.jboss.arquillian.ajocado.locator.IdLocator;
 import org.jboss.arquillian.ajocado.locator.XpathLocator;
-import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.drone.annotation.ContextPath;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
@@ -45,7 +43,6 @@ import org.junit.runner.RunWith;
  * 
  */
 @RunWith(Arquillian.class)
-@Run(AS_CLIENT)
 public class AjocadoTestCase extends AbstractTestCase
 {
    // load ajocado driver
