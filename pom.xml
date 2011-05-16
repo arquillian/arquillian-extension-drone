@@ -56,7 +56,6 @@
       <module>drone-selenium-server</module>
       <module>drone-selenium</module>
       <module>drone-webdriver</module>
-      <module>drone-ajocado</module>
    </modules>
 
 </project>
