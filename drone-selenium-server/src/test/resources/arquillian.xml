@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<arquillian>
+
+   <!-- this configuration will be bound to Selenium Server -->
+   <extension qualifier="selenium-server">
+      <configuration>
+         <property name="port">14567</property>
+         <property name="enable">true</property>
+      </configuration>
+   </extension>
+
+</arquillian>

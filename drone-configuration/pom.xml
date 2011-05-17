@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  vi:ts=2:sw=2:expandtab:
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <!-- Parent -->
+   <parent>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-parent</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <!-- Model Version -->
+   <modelVersion>4.0.0</modelVersion>
+
+   <!-- Artifact Configuration -->
+   <artifactId>arquillian-drone-configuration</artifactId>
+   <name>Arquillian Drone Extension Configuration Parser</name>
+
+   <developers>
+      <developer>
+         <name>Karel Piwko</name>
+         <email>kpiwko@redhat.com</email>
+      </developer>
+   </developers>
+
+   <!-- Dependencies -->
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.arquillian.extension</groupId>
+         <artifactId>arquillian-drone-api</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.extension</groupId>
+         <artifactId>arquillian-drone-spi</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
+      <!-- Arquillian dependencies -->
+      <dependency>
+         <groupId>org.jboss.arquillian.core</groupId>
+         <artifactId>arquillian-core-spi</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.test</groupId>
+         <artifactId>arquillian-test-spi</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.config</groupId>
+         <artifactId>arquillian-config-api</artifactId>
+      </dependency>
+
+      <!-- test dependencies -->
+      <dependency>
+         <groupId>org.jboss.arquillian.junit</groupId>
+         <artifactId>arquillian-junit-core</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.config</groupId>
+         <artifactId>arquillian-config-impl-base</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <!-- external dependencies -->
+      <dependency>
+         <groupId>org.mockito</groupId>
+         <artifactId>mockito-all</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+   </dependencies>
+
+</project>
