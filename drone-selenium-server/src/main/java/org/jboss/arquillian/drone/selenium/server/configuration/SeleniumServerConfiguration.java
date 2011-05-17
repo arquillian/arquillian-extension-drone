@@ -40,7 +40,7 @@ public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumS
 
    private String output = "target/selenium-configuration-output.log";
 
-   private boolean enable = false;
+   private boolean enable = true;
 
    /**
     * Creates default Selenium Server Configuration

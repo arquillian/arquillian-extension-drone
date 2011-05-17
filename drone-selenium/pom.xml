@@ -181,9 +181,6 @@
                            <goal>test</goal>
                         </goals>
                         <configuration>
-                           <systemPropertyVariables>
-                              <arquillian.selenium.server.enable>true</arquillian.selenium.server.enable>
-                           </systemPropertyVariables>
                            <includes>
                               <include>org/jboss/arquillian/drone/selenium/example/DefaultSeleniumTestCase.class
                               </include>
