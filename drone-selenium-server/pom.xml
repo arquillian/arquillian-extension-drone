@@ -94,14 +94,14 @@
          <artifactId>arquillian-test-impl-base</artifactId>
          <scope>test</scope>
          <classifier>tests</classifier>
-         <version>1.0.0-SNAPSHOT</version>
+         <version>${version.arquillian_core}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.core</groupId>
          <artifactId>arquillian-core-impl-base</artifactId>
          <scope>test</scope>
          <classifier>tests</classifier>
-         <version>1.0.0-SNAPSHOT</version>
+         <version>${version.arquillian_core}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.config</groupId>

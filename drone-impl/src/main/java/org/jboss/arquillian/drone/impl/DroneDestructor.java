@@ -28,8 +28,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Destructor;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
 /**
  * Destructor of drone instances. Disposes instance of every field annotated

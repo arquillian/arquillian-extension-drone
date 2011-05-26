@@ -30,8 +30,8 @@ import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.event.DroneConfigured;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
  * Configurator of Drone Configuration. Creates a configuration for every

@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.drone.impl.mockdrone;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-
-import java.lang.annotation.Annotation;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>

@@ -16,8 +16,10 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import org.jboss.arquillian.api.ArquillianResource;
-import org.jboss.arquillian.api.Deployment;
+import java.io.File;
+import java.net.URI;
+
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.example.webapp.Credentials;
 import org.jboss.arquillian.drone.webdriver.example.webapp.LoggedIn;
@@ -25,6 +27,7 @@ import org.jboss.arquillian.drone.webdriver.example.webapp.Login;
 import org.jboss.arquillian.drone.webdriver.example.webapp.User;
 import org.jboss.arquillian.drone.webdriver.example.webapp.Users;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -34,9 +37,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-
-import java.io.File;
-import java.net.URI;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.

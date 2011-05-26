@@ -26,8 +26,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.event.DroneConfigured;
-import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
  * Creator of drone instances. Creates a instance for every field annotated

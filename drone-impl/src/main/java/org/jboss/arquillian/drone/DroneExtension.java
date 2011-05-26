@@ -23,7 +23,7 @@ import org.jboss.arquillian.drone.impl.DroneCreator;
 import org.jboss.arquillian.drone.impl.DroneDestructor;
 import org.jboss.arquillian.drone.impl.DroneRegistrar;
 import org.jboss.arquillian.drone.impl.DroneTestEnricher;
-import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>

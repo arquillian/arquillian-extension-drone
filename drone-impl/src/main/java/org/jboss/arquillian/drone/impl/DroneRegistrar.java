@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -25,15 +32,8 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.Sortable;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * Registar of factories. Registers every {@link Configurator},

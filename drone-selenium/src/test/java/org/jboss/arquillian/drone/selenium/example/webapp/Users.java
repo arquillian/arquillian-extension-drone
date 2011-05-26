@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.drone.selenium.example.webapp;
 
-import org.jboss.shrinkwrap.descriptor.example.User;
-
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -25,6 +23,8 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.jboss.shrinkwrap.descriptor.example.User;
 
 
 public class Users

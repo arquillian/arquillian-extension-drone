@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.selenium.server.impl;
 
+import java.io.IOException;
+
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -27,8 +29,6 @@ import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerStarted;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
-
-import java.io.IOException;
 
 /**
  * Creator of Selenium Server instance

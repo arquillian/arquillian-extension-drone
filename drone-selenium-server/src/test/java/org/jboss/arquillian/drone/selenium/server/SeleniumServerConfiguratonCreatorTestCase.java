@@ -16,19 +16,19 @@
  */
 package org.jboss.arquillian.drone.selenium.server;
 
+import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.selenium.server.impl.SeleniumServerConfigurator;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>

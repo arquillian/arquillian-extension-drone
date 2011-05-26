@@ -22,7 +22,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerStopped;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.openqa.selenium.server.SeleniumServer;
 
 /**

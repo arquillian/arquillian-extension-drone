@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -24,14 +31,7 @@ import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.spi.TestEnricher;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * Enriches test with drone instance and context path. Injects existing instance

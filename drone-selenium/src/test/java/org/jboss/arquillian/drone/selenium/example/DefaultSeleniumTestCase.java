@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.drone.selenium.example;
 
-import com.thoughtworks.selenium.DefaultSelenium;
+import java.io.File;
+import java.net.URI;
 
-import org.jboss.arquillian.api.ArquillianResource;
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.annotation.Drone;
 import org.jboss.arquillian.drone.selenium.example.webapp.Credentials;
 import org.jboss.arquillian.drone.selenium.example.webapp.LoggedIn;
@@ -27,6 +27,7 @@ import org.jboss.arquillian.drone.selenium.example.webapp.Login;
 import org.jboss.arquillian.drone.selenium.example.webapp.User;
 import org.jboss.arquillian.drone.selenium.example.webapp.Users;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -34,8 +35,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.net.URI;
+import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
  * Tests Arquillian Drone extension against Weld Login example.

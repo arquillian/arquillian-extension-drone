@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.selenium.server.impl;
 
+import java.io.IOException;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -25,10 +27,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.annotation.Default;
 import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-
-import java.io.IOException;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * Configurator of Selenium Server Configuration

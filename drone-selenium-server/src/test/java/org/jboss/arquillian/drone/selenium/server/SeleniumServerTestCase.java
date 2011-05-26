@@ -16,15 +16,17 @@
  */
 package org.jboss.arquillian.drone.selenium.server;
 
+import java.util.List;
+
 import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerStarted;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerStopped;
 import org.jboss.arquillian.drone.selenium.server.impl.SeleniumServerCreator;
 import org.jboss.arquillian.drone.selenium.server.impl.SeleniumServerDestructor;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,8 +36,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.server.SeleniumServer;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
