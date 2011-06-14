@@ -20,7 +20,7 @@ import java.io.File;
 import java.net.URI;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.drone.annotation.Drone;
+import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.selenium.example.webapp.Credentials;
 import org.jboss.arquillian.drone.selenium.example.webapp.LoggedIn;
 import org.jboss.arquillian.drone.selenium.example.webapp.Login;
@@ -41,19 +41,19 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * Tests Arquillian Drone extension against Weld Login example.
  * <p/>
  * Uses legacy Selenium driver bound to Firefox browser.
- *
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(Arquillian.class)
 public class DefaultSeleniumTestCase
 {
    // load selenium driver
-   @Drone DefaultSelenium driver;
+   @Drone
+   DefaultSelenium driver;
 
    // Load context path to the test
    @ArquillianResource
    URI contextPath;
-
 
    private static final String USERNAME = "demo";
    private static final String PASSWORD = "demo";
@@ -71,7 +71,7 @@ public class DefaultSeleniumTestCase
 
    /**
     * Creates a WAR of a Weld based application using ShrinkWrap
-    *
+    * 
     * @return WebArchive to be tested
     */
    @Deployment(testable = false)
@@ -89,7 +89,7 @@ public class DefaultSeleniumTestCase
             .addAsResource(new File("src/test/resources/META-INF/persistence.xml"), ArchivePaths.create("META-INF/persistence.xml"))
             .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
 
-      //war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
+      // war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
 
       return war;
    }
@@ -112,7 +112,7 @@ public class DefaultSeleniumTestCase
       driver.click(LOGOUT_BUTTON);
       driver.waitForPageToLoad(TIMEOUT);
       Assert.assertTrue("User should not be logged in!", driver.isElementPresent(LOGGED_OUT));
-      
+
    }
 
 }

@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.configuration;
 
-import org.jboss.arquillian.drone.annotation.Qualifier;
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

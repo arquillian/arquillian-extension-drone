@@ -26,7 +26,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.drone.annotation.Drone;
+import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.event.DroneConfigured;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;

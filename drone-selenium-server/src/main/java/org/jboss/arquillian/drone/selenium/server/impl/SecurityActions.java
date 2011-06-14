@@ -26,8 +26,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.arquillian.drone.annotation.Default;
-import org.jboss.arquillian.drone.annotation.Qualifier;
+import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * SecurityActions

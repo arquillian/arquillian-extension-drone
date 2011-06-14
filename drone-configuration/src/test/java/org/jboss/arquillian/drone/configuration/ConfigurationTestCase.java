@@ -17,7 +17,7 @@
 package org.jboss.arquillian.drone.configuration;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.drone.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Test;

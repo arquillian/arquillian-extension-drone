@@ -20,7 +20,7 @@ import java.io.File;
 import java.net.URI;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.drone.annotation.Drone;
+import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.example.webapp.Credentials;
 import org.jboss.arquillian.drone.webdriver.example.webapp.LoggedIn;
 import org.jboss.arquillian.drone.webdriver.example.webapp.Login;

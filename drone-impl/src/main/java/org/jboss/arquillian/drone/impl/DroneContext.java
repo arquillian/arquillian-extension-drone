@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.arquillian.drone.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.Default;
 
 /**
  * Holder of Drone context. It is able to store different instances of
