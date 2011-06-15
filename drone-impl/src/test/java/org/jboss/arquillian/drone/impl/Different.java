@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.arquillian.drone.annotation.Qualifier;
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>

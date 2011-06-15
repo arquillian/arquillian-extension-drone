@@ -24,7 +24,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.drone.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration;
 import org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
