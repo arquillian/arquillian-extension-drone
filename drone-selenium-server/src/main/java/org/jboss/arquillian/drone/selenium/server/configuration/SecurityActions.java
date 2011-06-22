@@ -35,97 +35,77 @@ import java.util.List;
  * 
  * @version $Revision: $
  */
-final class SecurityActions
-{
+final class SecurityActions {
 
-   // -------------------------------------------------------------------------------||
-   // Constructor
-   // ------------------------------------------------------------------||
-   // -------------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------||
+    // Constructor
+    // ------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------||
 
-   /**
-    * No instantiation
-    */
-   private SecurityActions()
-   {
-      throw new UnsupportedOperationException("No instantiation");
-   }
+    /**
+     * No instantiation
+     */
+    private SecurityActions() {
+        throw new UnsupportedOperationException("No instantiation");
+    }
 
-   // -------------------------------------------------------------------------------||
-   // Utility Methods
-   // --------------------------------------------------------------||
-   // -------------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------||
+    // Utility Methods
+    // --------------------------------------------------------------||
+    // -------------------------------------------------------------------------------||
 
-   static List<Field> getAccessableFields(final Class<?> source)
-   {
-      List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>()
-      {
-         public List<Field> run()
-         {
-            List<Field> foundFields = new ArrayList<Field>();
-            for (Field field : source.getDeclaredFields())
-            {
-               // omit final fields
-               if(Modifier.isFinal(field.getModifiers())) {
-                  continue;
-               }
-               
-               if (!field.isAccessible())
-               {
-                  field.setAccessible(true);
-               }
-               foundFields.add(field);
+    static List<Field> getAccessableFields(final Class<?> source) {
+        List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
+            public List<Field> run() {
+                List<Field> foundFields = new ArrayList<Field>();
+                for (Field field : source.getDeclaredFields()) {
+                    // omit final fields
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        continue;
+                    }
+
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    foundFields.add(field);
+                }
+                return foundFields;
             }
-            return foundFields;
-         }
-      });
-      return declaredAccessableFields;
-   }
+        });
+        return declaredAccessableFields;
+    }
 
-   static String getProperty(final String key)
-   {
-      try
-      {
-         String value = AccessController.doPrivileged(new PrivilegedExceptionAction<String>()
-         {
-            public String run()
-            {
-               return System.getProperty(key);
+    static String getProperty(final String key) {
+        try {
+            String value = AccessController.doPrivileged(new PrivilegedExceptionAction<String>() {
+                public String run() {
+                    return System.getProperty(key);
+                }
+            });
+            return value;
+        }
+        // Unwrap
+        catch (final PrivilegedActionException pae) {
+            final Throwable t = pae.getCause();
+            // Rethrow
+            if (t instanceof SecurityException) {
+                throw (SecurityException) t;
             }
-         });
-         return value;
-      }
-      // Unwrap
-      catch (final PrivilegedActionException pae)
-      {
-         final Throwable t = pae.getCause();
-         // Rethrow
-         if (t instanceof SecurityException)
-         {
-            throw (SecurityException) t;
-         }
-         if (t instanceof NullPointerException)
-         {
-            throw (NullPointerException) t;
-         }
-         else if (t instanceof IllegalArgumentException)
-         {
-            throw (IllegalArgumentException) t;
-         }
-         else
-         {
-            // No other checked Exception thrown by System.getProperty
-            try
-            {
-               throw (RuntimeException) t;
+            if (t instanceof NullPointerException) {
+                throw (NullPointerException) t;
+            } else if (t instanceof IllegalArgumentException) {
+                throw (IllegalArgumentException) t;
+            } else {
+                // No other checked Exception thrown by System.getProperty
+                try {
+                    throw (RuntimeException) t;
+                }
+                // Just in case we've really messed up
+                catch (final ClassCastException cce) {
+                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+                }
             }
-            // Just in case we've really messed up
-            catch (final ClassCastException cce)
-            {
-               throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
-            }
-         }
-      }
-   }
+        }
+    }
 
 }

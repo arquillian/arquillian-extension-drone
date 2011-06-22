@@ -21,63 +21,56 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
-public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration>
-{
+public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration> {
 
-   private String stringField;
+    private String stringField;
 
-   private int intField;
+    private int intField;
 
-   private boolean booleanField;
+    private boolean booleanField;
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.DroneConfiguration#getConfigurationName()
-    */
-   public String getConfigurationName()
-   {
-      return "mockdrone";
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.DroneConfiguration#getConfigurationName()
+     */
+    public String getConfigurationName() {
+        return "mockdrone";
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.DroneConfiguration#configure(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public MockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jboss.arquillian.drone.spi.DroneConfiguration#configure(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor
+     * , java.lang.Class)
+     */
+    public MockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
 
-   public String getStringField()
-   {
-      return stringField;
-   }
+    public String getStringField() {
+        return stringField;
+    }
 
-   public void setStringField(String stringField)
-   {
-      this.stringField = stringField;
-   }
+    public void setStringField(String stringField) {
+        this.stringField = stringField;
+    }
 
-   public int getIntField()
-   {
-      return intField;
-   }
+    public int getIntField() {
+        return intField;
+    }
 
-   public void setIntField(int intField)
-   {
-      this.intField = intField;
-   }
+    public void setIntField(int intField) {
+        this.intField = intField;
+    }
 
-   public boolean isBooleanField()
-   {
-      return booleanField;
-   }
+    public boolean isBooleanField() {
+        return booleanField;
+    }
 
-   public void setBooleanField(boolean booleanField)
-   {
-      this.booleanField = booleanField;
-   }
+    public void setBooleanField(boolean booleanField) {
+        this.booleanField = booleanField;
+    }
 }

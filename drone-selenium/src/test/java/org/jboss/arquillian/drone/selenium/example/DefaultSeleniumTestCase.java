@@ -45,74 +45,72 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(Arquillian.class)
-public class DefaultSeleniumTestCase
-{
-   // load selenium driver
-   @Drone
-   DefaultSelenium driver;
+public class DefaultSeleniumTestCase {
+    // load selenium driver
+    @Drone
+    DefaultSelenium driver;
 
-   // Load context path to the test
-   @ArquillianResource
-   URI contextPath;
+    // Load context path to the test
+    @ArquillianResource
+    URI contextPath;
 
-   private static final String USERNAME = "demo";
-   private static final String PASSWORD = "demo";
+    private static final String USERNAME = "demo";
+    private static final String PASSWORD = "demo";
 
-   private static final String LOGGED_IN = "xpath=//li[contains(text(),'Welcome')]";
-   private static final String LOGGED_OUT = "xpath=//li[contains(text(),'Goodbye')]";
+    private static final String LOGGED_IN = "xpath=//li[contains(text(),'Welcome')]";
+    private static final String LOGGED_OUT = "xpath=//li[contains(text(),'Goodbye')]";
 
-   private static final String USERNAME_FIELD = "id=loginForm:username";
-   private static final String PASSWORD_FIELD = "id=loginForm:password";
+    private static final String USERNAME_FIELD = "id=loginForm:username";
+    private static final String PASSWORD_FIELD = "id=loginForm:password";
 
-   private static final String LOGIN_BUTTON = "id=loginForm:login";
-   private static final String LOGOUT_BUTTON = "id=loginForm:logout";
+    private static final String LOGIN_BUTTON = "id=loginForm:login";
+    private static final String LOGOUT_BUTTON = "id=loginForm:logout";
 
-   private static final String TIMEOUT = "15000";
+    private static final String TIMEOUT = "15000";
 
-   /**
-    * Creates a WAR of a Weld based application using ShrinkWrap
-    * 
-    * @return WebArchive to be tested
-    */
-   @Deployment(testable = false)
-   public static WebArchive createDeployment()
-   {
-      WebArchive war = ShrinkWrap.create(WebArchive.class, "weld-login.war")
-            .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
-            .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
-            .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
-            .addAsWebInfResource(new File("src/test/resources/import.sql"))
-            .addAsWebResource(new File("src/test/webapp/index.html"))
-            .addAsWebResource(new File("src/test/webapp/home.xhtml"))
-            .addAsWebResource(new File("src/test/webapp/template.xhtml"))
-            .addAsWebResource(new File("src/test/webapp/users.xhtml"))
-            .addAsResource(new File("src/test/resources/META-INF/persistence.xml"), ArchivePaths.create("META-INF/persistence.xml"))
-            .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
+    /**
+     * Creates a WAR of a Weld based application using ShrinkWrap
+     * 
+     * @return WebArchive to be tested
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        WebArchive war = ShrinkWrap
+                .create(WebArchive.class, "weld-login.war")
+                .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
+                .addAsWebInfResource(new File("src/test/resources/import.sql"))
+                .addAsWebResource(new File("src/test/webapp/index.html"))
+                .addAsWebResource(new File("src/test/webapp/home.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/template.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/users.xhtml"))
+                .addAsResource(new File("src/test/resources/META-INF/persistence.xml"),
+                        ArchivePaths.create("META-INF/persistence.xml")).setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
 
-      // war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
+        // war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
 
-      return war;
-   }
+        return war;
+    }
 
-   @Test
-   public void testLoginAndLogout()
-   {
-      Assert.assertNotNull("Path is not null", contextPath);
-      Assert.assertNotNull("Default Selenium is not null", driver);
+    @Test
+    public void testLoginAndLogout() {
+        Assert.assertNotNull("Path is not null", contextPath);
+        Assert.assertNotNull("Default Selenium is not null", driver);
 
-      driver.open(contextPath + "/home.jsf");
+        driver.open(contextPath + "/home.jsf");
 
-      driver.type(USERNAME_FIELD, USERNAME);
-      driver.type(PASSWORD_FIELD, PASSWORD);
-      driver.click(LOGIN_BUTTON);
-      driver.waitForPageToLoad(TIMEOUT);
+        driver.type(USERNAME_FIELD, USERNAME);
+        driver.type(PASSWORD_FIELD, PASSWORD);
+        driver.click(LOGIN_BUTTON);
+        driver.waitForPageToLoad(TIMEOUT);
 
-      Assert.assertTrue("User should be logged in!", driver.isElementPresent(LOGGED_IN));
+        Assert.assertTrue("User should be logged in!", driver.isElementPresent(LOGGED_IN));
 
-      driver.click(LOGOUT_BUTTON);
-      driver.waitForPageToLoad(TIMEOUT);
-      Assert.assertTrue("User should not be logged in!", driver.isElementPresent(LOGGED_OUT));
+        driver.click(LOGOUT_BUTTON);
+        driver.waitForPageToLoad(TIMEOUT);
+        Assert.assertTrue("User should not be logged in!", driver.isElementPresent(LOGGED_OUT));
 
-   }
+    }
 
 }

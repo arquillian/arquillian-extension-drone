@@ -25,7 +25,10 @@ import java.lang.annotation.Target;
 /**
  * Determines an annotation to acts as qualified for telling different Drone Drivers apart.
  * 
- * <p>Usage:</p>
+ * <p>
+ * Usage:
+ * </p>
+ * 
  * <pre>
  * <code>
  * @Drone AjaxSelenium instance1;
@@ -34,17 +37,15 @@ import java.lang.annotation.Target;
  * </pre>
  * 
  * <p>
- * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different
- * instances of AjaxSelenium object will be configured and instantiated before execution of the 
- * first test method.
+ * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different instances of AjaxSelenium object
+ * will be configured and instantiated before execution of the first test method.
  * </p>
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Qualifier
-{  
+public @interface Qualifier {
 }

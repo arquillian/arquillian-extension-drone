@@ -36,9 +36,8 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
- * Registar of factories. Registers every {@link Configurator},
- * {@link Instantiator} and {@link Destructor} found via SPI. Only ones with
- * highes precedence are kept. See {@link Sortable#getPrecedence()}
+ * Registar of factories. Registers every {@link Configurator}, {@link Instantiator} and {@link Destructor} found via SPI. Only
+ * ones with highes precedence are kept. See {@link Sortable#getPrecedence()}
  * 
  * <p>
  * Consumes:
@@ -64,94 +63,77 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class DroneRegistrar
-{
-   @Inject
-   @SuiteScoped
-   private InstanceProducer<DroneRegistry> dronetRegistry;
+public class DroneRegistrar {
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<DroneRegistry> dronetRegistry;
 
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   public void register(@Observes BeforeSuite event)
-   {
-      dronetRegistry.set(new DroneRegistry());
-      registerConfigurators();
-      registerInstantiators();
-      registerDestructors();
-   }
+    public void register(@Observes BeforeSuite event) {
+        dronetRegistry.set(new DroneRegistry());
+        registerConfigurators();
+        registerInstantiators();
+        registerDestructors();
+    }
 
-   private void registerConfigurators()
-   {
-      @SuppressWarnings("rawtypes")
-      List<Configurator> list = new ArrayList<Configurator>(serviceLoader.get().all(Configurator.class));
-      Collections.sort(list, SORTABLE_COMPARATOR);
+    private void registerConfigurators() {
+        @SuppressWarnings("rawtypes")
+        List<Configurator> list = new ArrayList<Configurator>(serviceLoader.get().all(Configurator.class));
+        Collections.sort(list, SORTABLE_COMPARATOR);
 
-      for (Configurator<?, ?> configurator : list)
-      {
-         Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
-         if (type != null)
-         {
-            dronetRegistry.get().registerConfiguratorFor(type, configurator);
-         }
-      }
-   }
-
-   public void registerInstantiators()
-   {
-      @SuppressWarnings("rawtypes")
-      List<Instantiator> list = new ArrayList<Instantiator>(serviceLoader.get().all(Instantiator.class));
-      Collections.sort(list, SORTABLE_COMPARATOR);
-
-      for (Instantiator<?, ?> instantiator : list)
-      {
-         Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
-         if (type != null)
-         {
-            dronetRegistry.get().registerInstantiatorFor(type, instantiator);
-         }
-      }
-   }
-
-   public void registerDestructors()
-   {
-      @SuppressWarnings("rawtypes")
-      List<Destructor> list = new ArrayList<Destructor>(serviceLoader.get().all(Destructor.class));
-      Collections.sort(list, SORTABLE_COMPARATOR);
-
-      for (Destructor<?> destructor : list)
-      {
-         Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
-         if (type != null)
-         {
-            dronetRegistry.get().registerDestructorFor(type, destructor);
-         }
-      }
-   }
-
-   private static Class<?> getFirstGenericParameterType(Class<?> clazz, Class<?> rawType)
-   {
-      for (Type interfaceType : clazz.getGenericInterfaces())
-      {
-         if (interfaceType instanceof ParameterizedType)
-         {
-            ParameterizedType ptype = (ParameterizedType) interfaceType;
-            if (rawType.isAssignableFrom((Class<?>) ptype.getRawType()))
-            {
-               return (Class<?>) ptype.getActualTypeArguments()[0];
+        for (Configurator<?, ?> configurator : list) {
+            Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
+            if (type != null) {
+                dronetRegistry.get().registerConfiguratorFor(type, configurator);
             }
-         }
-      }
-      return null;
-   }
+        }
+    }
 
-   // comparator
-   private static final Comparator<Sortable> SORTABLE_COMPARATOR = new Comparator<Sortable>()
-   {
-      public int compare(Sortable o1, Sortable o2)
-      {
-         return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
-      }
-   };
+    public void registerInstantiators() {
+        @SuppressWarnings("rawtypes")
+        List<Instantiator> list = new ArrayList<Instantiator>(serviceLoader.get().all(Instantiator.class));
+        Collections.sort(list, SORTABLE_COMPARATOR);
+
+        for (Instantiator<?, ?> instantiator : list) {
+            Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
+            if (type != null) {
+                dronetRegistry.get().registerInstantiatorFor(type, instantiator);
+            }
+        }
+    }
+
+    public void registerDestructors() {
+        @SuppressWarnings("rawtypes")
+        List<Destructor> list = new ArrayList<Destructor>(serviceLoader.get().all(Destructor.class));
+        Collections.sort(list, SORTABLE_COMPARATOR);
+
+        for (Destructor<?> destructor : list) {
+            Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
+            if (type != null) {
+                dronetRegistry.get().registerDestructorFor(type, destructor);
+            }
+        }
+    }
+
+    private static Class<?> getFirstGenericParameterType(Class<?> clazz, Class<?> rawType) {
+        for (Type interfaceType : clazz.getGenericInterfaces()) {
+            if (interfaceType instanceof ParameterizedType) {
+                ParameterizedType ptype = (ParameterizedType) interfaceType;
+                if (rawType.isAssignableFrom((Class<?>) ptype.getRawType())) {
+                    return (Class<?>) ptype.getActualTypeArguments()[0];
+                }
+            }
+        }
+        return null;
+    }
+
+    // comparator
+    private static final Comparator<Sortable> SORTABLE_COMPARATOR = new Comparator<Sortable>() {
+        public int compare(Sortable o1, Sortable o2) {
+            return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
+        }
+    };
 
 }

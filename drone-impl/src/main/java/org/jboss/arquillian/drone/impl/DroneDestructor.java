@@ -32,8 +32,8 @@ import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
 /**
- * Destructor of drone instances. Disposes instance of every field annotated
- * with {@link Drone}. Disposes Drones created for method arguments as well.
+ * Destructor of drone instances. Disposes instance of every field annotated with {@link Drone}. Disposes Drones created for
+ * method arguments as well.
  * 
  * <p>
  * Consumes:
@@ -55,92 +55,82 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class DroneDestructor
-{
-   private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());
+public class DroneDestructor {
+    private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());
 
-   @Inject
-   private Instance<DroneRegistry> registry;
+    @Inject
+    private Instance<DroneRegistry> registry;
 
-   @Inject
-   private Instance<DroneContext> droneContext;
+    @Inject
+    private Instance<DroneContext> droneContext;
 
-   @Inject
-   private Instance<MethodContext> methodContext;
+    @Inject
+    private Instance<MethodContext> methodContext;
 
-   @SuppressWarnings("unchecked")
-   public void destroyClassScopedDrone(@Observes AfterClass event)
-   {
-      Class<?> clazz = event.getTestClass().getJavaClass();
-      for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class))
-      {
-         Class<?> typeClass = f.getType();
-         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
-
-         @SuppressWarnings("rawtypes")
-         Destructor destructor = getDestructorFor(typeClass);
-
-         // get instance to be destroyed
-         // if deployment failed, there is nothing to be destroyed
-         Object instance = droneContext.get().get(typeClass, qualifier);
-         if (instance != null)
-         {
-            destructor.destroyInstance(instance);
-         }
-         droneContext.get().remove(typeClass, qualifier);
-      }
-   }
-
-   @SuppressWarnings("unchecked")
-   public void destroyMethodScopedDrone(@Observes After event)
-   {
-      Method method = event.getTestMethod();
-      Class<?>[] parameterTypes = method.getParameterTypes();
-      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-
-      for (int i = 0; i < parameterTypes.length; i++)
-      {
-         if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class))
-         {
-            Validate.notNull(methodContext.get(), "Drone registry should not be null");
-            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
+    @SuppressWarnings("unchecked")
+    public void destroyClassScopedDrone(@Observes AfterClass event) {
+        Class<?> clazz = event.getTestClass().getJavaClass();
+        for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class)) {
+            Class<?> typeClass = f.getType();
+            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
             @SuppressWarnings("rawtypes")
-            Destructor destructor = getDestructorFor(parameterTypes[i]);
-
-            DroneContext context = methodContext.get().get(method);
-            Validate.notNull(context, "Method context should not be null");
+            Destructor destructor = getDestructorFor(typeClass);
 
             // get instance to be destroyed
             // if deployment failed, there is nothing to be destroyed
-            Object instance = context.get(parameterTypes[i], qualifier);
-            if (instance != null)
-            {
-               destructor.destroyInstance(instance);
+            Object instance = droneContext.get().get(typeClass, qualifier);
+            if (instance != null) {
+                destructor.destroyInstance(instance);
             }
-            
-            context.remove(parameterTypes[i], qualifier);
-         }
-      }
+            droneContext.get().remove(typeClass, qualifier);
+        }
+    }
 
-   }
+    @SuppressWarnings("unchecked")
+    public void destroyMethodScopedDrone(@Observes After event) {
+        Method method = event.getTestMethod();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-   @SuppressWarnings("rawtypes")
-   private Destructor getDestructorFor(Class<?> typeClass)
-   {
-      // must be defined as raw because instance type to be destroyer cannot
-      // be determined in compile time
-      Destructor destructor = registry.get().getDestructorFor(typeClass);
-      if (destructor == null)
-      {
-         throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
-      }
-      if (log.isLoggable(Level.FINE))
-      {
-         log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence " + destructor.getPrecedence());
-      }
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
+                Validate.notNull(methodContext.get(), "Drone registry should not be null");
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
-      return destructor;
-   }
+                @SuppressWarnings("rawtypes")
+                Destructor destructor = getDestructorFor(parameterTypes[i]);
+
+                DroneContext context = methodContext.get().get(method);
+                Validate.notNull(context, "Method context should not be null");
+
+                // get instance to be destroyed
+                // if deployment failed, there is nothing to be destroyed
+                Object instance = context.get(parameterTypes[i], qualifier);
+                if (instance != null) {
+                    destructor.destroyInstance(instance);
+                }
+
+                context.remove(parameterTypes[i], qualifier);
+            }
+        }
+
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Destructor getDestructorFor(Class<?> typeClass) {
+        // must be defined as raw because instance type to be destroyer cannot
+        // be determined in compile time
+        Destructor destructor = registry.get().getDestructorFor(typeClass);
+        if (destructor == null) {
+            throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
+        }
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "
+                    + destructor.getPrecedence());
+        }
+
+        return destructor;
+    }
 
 }

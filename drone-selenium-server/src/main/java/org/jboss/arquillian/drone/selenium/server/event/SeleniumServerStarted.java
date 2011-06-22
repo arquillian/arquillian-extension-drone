@@ -20,8 +20,7 @@ package org.jboss.arquillian.drone.selenium.server.event;
  * An event to inform other components that Selenium Server was started
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
-public class SeleniumServerStarted
-{
+public class SeleniumServerStarted {
 }

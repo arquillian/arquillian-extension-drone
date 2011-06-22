@@ -24,171 +24,146 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
- * Register of available {@link Configurator}s, {@link Instantiator}s and
- * {@link Destructor}s discovered via SPI.
+ * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
  * 
- * Stores only one of them per type, so {@link DroneRegistrar} is responsible
- * for selecting correct implementations.
+ * Stores only one of them per type, so {@link DroneRegistrar} is responsible for selecting correct implementations.
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class DroneRegistry
-{
-   private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
+public class DroneRegistry {
+    private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
 
-   /**
-    * Gets configurator for given object type
-    * 
-    * @param <T> Type of configurator object
-    * @param type Configurator key
-    * @return Configurator for objects of type <T>
-    */
-   @SuppressWarnings("unchecked")
-   public <T> Configurator<T, ?> getConfiguratorFor(Class<T> type)
-   {
-      RegistryValue value = registry.get(type);
-      if (value != null)
-      {
-         return (Configurator<T, ?>) value.configurator;
-      }
-      return null;
-   }
+    /**
+     * Gets configurator for given object type
+     * 
+     * @param <T> Type of configurator object
+     * @param type Configurator key
+     * @return Configurator for objects of type <T>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Configurator<T, ?> getConfiguratorFor(Class<T> type) {
+        RegistryValue value = registry.get(type);
+        if (value != null) {
+            return (Configurator<T, ?>) value.configurator;
+        }
+        return null;
+    }
 
-   /**
-    * Gets instantiator for given object type
-    * 
-    * @param <T> Type of instantiator object
-    * @param key Instantiator key
-    * @return Instantiator for objects of type <T>
-    */
-   @SuppressWarnings("unchecked")
-   public <T> Instantiator<T, ?> getInstantiatorFor(Class<T> key)
-   {
-      RegistryValue value = registry.get(key);
-      if (value != null)
-      {
-         return (Instantiator<T, ?>) value.instantiator;
-      }
-      return null;
-   }
+    /**
+     * Gets instantiator for given object type
+     * 
+     * @param <T> Type of instantiator object
+     * @param key Instantiator key
+     * @return Instantiator for objects of type <T>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Instantiator<T, ?> getInstantiatorFor(Class<T> key) {
+        RegistryValue value = registry.get(key);
+        if (value != null) {
+            return (Instantiator<T, ?>) value.instantiator;
+        }
+        return null;
+    }
 
-   /**
-    * Gets destructor for given object type
-    * 
-    * @param <T> Type of destructor object
-    * @param key Destructor key
-    * @return Destructor for objects of type <T>
-    */
-   @SuppressWarnings("unchecked")
-   public <T> Destructor<T> getDestructorFor(Class<T> key)
-   {
-      RegistryValue value = registry.get(key);
-      if (value != null)
-      {
-         return (Destructor<T>) value.destructor;
-      }
-      return null;
-   }
+    /**
+     * Gets destructor for given object type
+     * 
+     * @param <T> Type of destructor object
+     * @param key Destructor key
+     * @return Destructor for objects of type <T>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Destructor<T> getDestructorFor(Class<T> key) {
+        RegistryValue value = registry.get(key);
+        if (value != null) {
+            return (Destructor<T>) value.destructor;
+        }
+        return null;
+    }
 
-   /**
-    * Registers a configurator for given object type
-    * 
-    * @param key Type to be registered
-    * @param configurator Configurator to be stored
-    * @return Modified registry
-    */
-   public DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator)
-   {
-      RegistryValue entry = registry.get(key);
-      if (entry != null)
-      {
-         entry.configurator = configurator;
-      }
-      else
-      {
-         registry.put(key, new RegistryValue().setConfigurator(configurator));
-      }
-      return this;
-   }
+    /**
+     * Registers a configurator for given object type
+     * 
+     * @param key Type to be registered
+     * @param configurator Configurator to be stored
+     * @return Modified registry
+     */
+    public DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator) {
+        RegistryValue entry = registry.get(key);
+        if (entry != null) {
+            entry.configurator = configurator;
+        } else {
+            registry.put(key, new RegistryValue().setConfigurator(configurator));
+        }
+        return this;
+    }
 
-   /**
-    * Registers a instantiator for given object type
-    * 
-    * @param key Type to be registered
-    * @param value Instantiator to be stored
-    * @return Modified registry
-    */
-   public DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value)
-   {
-      RegistryValue entry = registry.get(key);
-      if (entry != null)
-      {
-         entry.instantiator = value;
-      }
-      else
-      {
-         registry.put(key, new RegistryValue().setInstantiator(value));
-      }
-      return this;
-   }
+    /**
+     * Registers a instantiator for given object type
+     * 
+     * @param key Type to be registered
+     * @param value Instantiator to be stored
+     * @return Modified registry
+     */
+    public DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value) {
+        RegistryValue entry = registry.get(key);
+        if (entry != null) {
+            entry.instantiator = value;
+        } else {
+            registry.put(key, new RegistryValue().setInstantiator(value));
+        }
+        return this;
+    }
 
-   /**
-    * Registers a destructor for given object type
-    * 
-    * @param key Type to be registered
-    * @param value Destructor to be stored
-    * @return Modified registry
-    */
-   public DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value)
-   {
-      RegistryValue entry = registry.get(key);
-      if (entry != null)
-      {
-         entry.destructor = value;
-      }
-      else
-      {
-         registry.put(key, new RegistryValue().setDestructor(value));
-      }
-      return this;
-   }
+    /**
+     * Registers a destructor for given object type
+     * 
+     * @param key Type to be registered
+     * @param value Destructor to be stored
+     * @return Modified registry
+     */
+    public DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value) {
+        RegistryValue entry = registry.get(key);
+        if (entry != null) {
+            entry.destructor = value;
+        } else {
+            registry.put(key, new RegistryValue().setDestructor(value));
+        }
+        return this;
+    }
 
-   private static class RegistryValue
-   {
-      Configurator<?, ?> configurator;
-      Instantiator<?, ?> instantiator;
-      Destructor<?> destructor;
+    private static class RegistryValue {
+        Configurator<?, ?> configurator;
+        Instantiator<?, ?> instantiator;
+        Destructor<?> destructor;
 
-      /**
-       * @param configurator the configurator to set
-       * @return modified instance
-       */
-      public RegistryValue setConfigurator(Configurator<?, ?> configurator)
-      {
-         this.configurator = configurator;
-         return this;
-      }
+        /**
+         * @param configurator the configurator to set
+         * @return modified instance
+         */
+        public RegistryValue setConfigurator(Configurator<?, ?> configurator) {
+            this.configurator = configurator;
+            return this;
+        }
 
-      /**
-       * @param instantiator the instantiator to set
-       * @return modified instance
-       */
-      public RegistryValue setInstantiator(Instantiator<?, ?> instantiator)
-      {
-         this.instantiator = instantiator;
-         return this;
-      }
+        /**
+         * @param instantiator the instantiator to set
+         * @return modified instance
+         */
+        public RegistryValue setInstantiator(Instantiator<?, ?> instantiator) {
+            this.instantiator = instantiator;
+            return this;
+        }
 
-      /**
-       * @param destructor the destructor to set
-       * @return modified value
-       */
-      public RegistryValue setDestructor(Destructor<?> destructor)
-      {
-         this.destructor = destructor;
-         return this;
-      }
+        /**
+         * @param destructor the destructor to set
+         * @return modified value
+         */
+        public RegistryValue setDestructor(Destructor<?> destructor) {
+            this.destructor = destructor;
+            return this;
+        }
 
-   }
+    }
 }

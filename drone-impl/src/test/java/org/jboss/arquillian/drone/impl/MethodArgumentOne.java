@@ -25,12 +25,11 @@ import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Qualifier
-public @interface MethodArgumentOne
-{
+public @interface MethodArgumentOne {
 
 }

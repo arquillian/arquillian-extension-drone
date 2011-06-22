@@ -34,9 +34,8 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * Enriches test with drone instance and context path. Injects existing instance
- * into every field annotated with {@link Drone}. Handles enrichment for method
- * arguments as well.
+ * Enriches test with drone instance and context path. Injects existing instance into every field annotated with {@link Drone}.
+ * Handles enrichment for method arguments as well.
  * 
  * <p>
  * Consumes:
@@ -52,111 +51,97 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class DroneTestEnricher implements TestEnricher
-{
-   private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());
+public class DroneTestEnricher implements TestEnricher {
+    private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());
 
-   @Inject
-   private Instance<DroneContext> droneContext;
+    @Inject
+    private Instance<DroneContext> droneContext;
 
-   @Inject
-   private Instance<MethodContext> methodContext;
+    @Inject
+    private Instance<MethodContext> methodContext;
 
-   @Inject
-   private Instance<ArquillianDescriptor> arquillianDescriptor;
+    @Inject
+    private Instance<ArquillianDescriptor> arquillianDescriptor;
 
-   @Inject
-   private Instance<DroneRegistry> registry;
+    @Inject
+    private Instance<DroneRegistry> registry;
 
-   public void enrich(Object testCase)
-   {
-      List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
-      if (!droneEnrichements.isEmpty())
-      {
-         Validate.notNull(droneContext.get(), "Drone Test context should not be null");
-         droneEnrichement(testCase, droneEnrichements);
-      }
+    public void enrich(Object testCase) {
+        List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
+        if (!droneEnrichements.isEmpty()) {
+            Validate.notNull(droneContext.get(), "Drone Test context should not be null");
+            droneEnrichement(testCase, droneEnrichements);
+        }
 
-   }
+    }
 
-   public Object[] resolve(Method method)
-   {
-      Class<?>[] parameterTypes = method.getParameterTypes();
-      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-      Object[] resolution = new Object[parameterTypes.length];
+    public Object[] resolve(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        Object[] resolution = new Object[parameterTypes.length];
 
-      for (int i = 0; i < parameterTypes.length; i++)
-      {
-         if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class))
-         {
-            if (log.isLoggable(Level.FINE))
-            {
-               log.fine("Resolving method " + method.getName() + " argument at position " + i);
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
+                if (log.isLoggable(Level.FINE)) {
+                    log.fine("Resolving method " + method.getName() + " argument at position " + i);
+                }
+
+                Validate.notNull(registry.get(), "Drone registry should not be null");
+                Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
+                resolution[i] = constructDrone(method, parameterTypes[i], qualifier);
             }
+        }
 
-            Validate.notNull(registry.get(), "Drone registry should not be null");
-            Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
-            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
-            resolution[i] = constructDrone(method, parameterTypes[i], qualifier);
-         }
-      }
+        return resolution;
+    }
 
-      return resolution;
-   }
+    private void droneEnrichement(Object testCase, List<Field> fields) {
+        try {
+            for (Field f : fields) {
+                // omit setting if already set
+                if (f.get(testCase) != null) {
+                    return;
+                }
 
-   private void droneEnrichement(Object testCase, List<Field> fields)
-   {
-      try
-      {
-         for (Field f : fields)
-         {
-            // omit setting if already set
-            if (f.get(testCase) != null)
-            {
-               return;
+                Class<?> typeClass = f.getType();
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+                Object value = droneContext.get().get(typeClass, qualifier);
+                if (value == null) {
+                    throw new IllegalArgumentException(
+                            "Retrieved a null from context, which is not a valid Drone browser object");
+                }
+
+                f.set(testCase, value);
             }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not enrich test with Drone members", e);
+        }
+    }
 
-            Class<?> typeClass = f.getType();
-            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Object constructDrone(Method method, Class<?> type, Class<? extends Annotation> qualifier) {
+        DroneRegistry regs = registry.get();
+        ArquillianDescriptor desc = arquillianDescriptor.get();
 
-            Object value = droneContext.get().get(typeClass, qualifier);
-            if (value == null)
-            {
-               throw new IllegalArgumentException("Retrieved a null from context, which is not a valid Drone browser object");
-            }
+        Configurator configurator = regs.getConfiguratorFor(type);
+        Instantiator instantiator = regs.getInstantiatorFor(type);
 
-            f.set(testCase, value);
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Could not enrich test with Drone members", e);
-      }
-   }
+        // store in map if not stored already
+        DroneContext dc = methodContext.get().getOrCreate(method);
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   private Object constructDrone(Method method, Class<?> type, Class<? extends Annotation> qualifier)
-   {
-      DroneRegistry regs = registry.get();
-      ArquillianDescriptor desc = arquillianDescriptor.get();
+        DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
+        dc.add(configuration.getClass(), qualifier, configuration);
 
-      Configurator configurator = regs.getConfiguratorFor(type);
-      Instantiator instantiator = regs.getInstantiatorFor(type);
+        Object instance = instantiator.createInstance(configuration);
+        dc.add(type, qualifier, instance);
 
-      // store in map if not stored already
-      DroneContext dc = methodContext.get().getOrCreate(method);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Stored method lifecycle based Drone instance, type: " + type.getName() + ", qualifier: "
+                    + qualifier.getName() + ", instanceClass: " + instance.getClass());
+        }
 
-      DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
-      dc.add(configuration.getClass(), qualifier, configuration);
-
-      Object instance = instantiator.createInstance(configuration);
-      dc.add(type, qualifier, instance);
-
-      if (log.isLoggable(Level.FINE))
-      {
-         log.fine("Stored method lifecycle based Drone instance, type: " + type.getName() + ", qualifier: " + qualifier.getName() + ", instanceClass: " + instance.getClass());
-      }
-
-      return instance;
-   }
+        return instance;
+    }
 }

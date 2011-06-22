@@ -26,18 +26,17 @@ import javax.persistence.PersistenceContext;
 
 import org.jboss.shrinkwrap.descriptor.example.User;
 
+public class Users {
 
-public class Users
-{
-   
-   @PersistenceContext
-   private EntityManager userDatabase;
-   
-   @SuppressWarnings("unchecked")
-   @Produces @Named @RequestScoped
-   public List<User> getUsers()
-   {
-      return userDatabase.createQuery("select u from User u").getResultList();
-   }
+    @PersistenceContext
+    private EntityManager userDatabase;
+
+    @SuppressWarnings("unchecked")
+    @Produces
+    @Named
+    @RequestScoped
+    public List<User> getUsers() {
+        return userDatabase.createQuery("select u from User u").getResultList();
+    }
 
 }

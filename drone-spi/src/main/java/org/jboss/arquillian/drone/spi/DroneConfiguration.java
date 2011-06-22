@@ -82,21 +82,20 @@ import java.lang.annotation.Annotation;
  * @param <C> Configuration type
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  */
-public interface DroneConfiguration<C extends DroneConfiguration<C>>
-{
-   /**
-    * Returns the name of the configuration.
-    * 
-    * @return Name of the configuration
-    */
-   String getConfigurationName();
+public interface DroneConfiguration<C extends DroneConfiguration<C>> {
+    /**
+     * Returns the name of the configuration.
+     * 
+     * @return Name of the configuration
+     */
+    String getConfigurationName();
 
-   /**
-    * Configures configuration from descriptor and System properties
-    * 
-    * @param descriptor Arquillian Descriptor
-    * @param qualifier Qualifier
-    * @return Configured configuration instance
-    */
-   C configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier);
+    /**
+     * Configures configuration from descriptor and System properties
+     * 
+     * @param descriptor Arquillian Descriptor
+     * @param qualifier Qualifier
+     * @return Configured configuration instance
+     */
+    C configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier);
 }

@@ -22,6 +22,5 @@ package org.jboss.arquillian.drone.selenium.server.event;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class SeleniumServerStopped
-{
+public class SeleniumServerStopped {
 }

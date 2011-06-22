@@ -20,7 +20,6 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 
 import java.lang.annotation.Annotation;
 
-
 /**
  * Defines a contract for creating configurations for Drone Driver
  * 
@@ -30,17 +29,14 @@ import java.lang.annotation.Annotation;
  * @see org.jboss.arquillian.drone.spi.Qualifier
  * 
  */
-public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortable
-{
-   /**
-    * Creates a configuration for given Drone Driver. The instance is created
-    * before the first method of the test suite is run and stays in Arquillian's
-    * context until the test suite execution is finished.
-    * 
-    * @param descriptor A descriptor to be parsed
-    * @param qualifier A qualifier for this configuration
-    * @return Configuration holding values determined from Arquillian's
-    *         descriptor
-    */
-   C createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier);
+public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortable {
+    /**
+     * Creates a configuration for given Drone Driver. The instance is created before the first method of the test suite is run
+     * and stays in Arquillian's context until the test suite execution is finished.
+     * 
+     * @param descriptor A descriptor to be parsed
+     * @param qualifier A qualifier for this configuration
+     * @return Configuration holding values determined from Arquillian's descriptor
+     */
+    C createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier);
 }

@@ -64,25 +64,23 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class SeleniumServerConfigurator
-{
-   @Inject
-   @SuiteScoped
-   private InstanceProducer<SeleniumServerConfiguration> seleniumServerConfiguration;
+public class SeleniumServerConfigurator {
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<SeleniumServerConfiguration> seleniumServerConfiguration;
 
-   @Inject
-   private Instance<ArquillianDescriptor> arquillianDesc;
+    @Inject
+    private Instance<ArquillianDescriptor> arquillianDesc;
 
-   @Inject
-   private Event<SeleniumServerConfigured> afterConfiguration;
+    @Inject
+    private Event<SeleniumServerConfigured> afterConfiguration;
 
-   public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException
-   {
-      SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
-      configuration.configure(arquillianDesc.get(), Default.class);
+    public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException {
+        SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
+        configuration.configure(arquillianDesc.get(), Default.class);
 
-      seleniumServerConfiguration.set(configuration);
+        seleniumServerConfiguration.set(configuration);
 
-      afterConfiguration.fire(new SeleniumServerConfigured(configuration));
-   }
+        afterConfiguration.fire(new SeleniumServerConfigured(configuration));
+    }
 }

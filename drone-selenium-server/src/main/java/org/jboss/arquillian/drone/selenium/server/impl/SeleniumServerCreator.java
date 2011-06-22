@@ -64,42 +64,36 @@ import org.openqa.selenium.server.SeleniumServer;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class SeleniumServerCreator
-{
-   @Inject
-   private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
+public class SeleniumServerCreator {
+    @Inject
+    private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
 
-   @Inject
-   private Event<SeleniumServerStarted> afterStart;
+    @Inject
+    private Event<SeleniumServerStarted> afterStart;
 
-   @Inject
-   @SuiteScoped
-   private InstanceProducer<SeleniumServer> seleniumServer;
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<SeleniumServer> seleniumServer;
 
-   public void seleniumServerStartUp(@Observes SeleniumServerConfigured event) throws IOException
-   {
+    public void seleniumServerStartUp(@Observes SeleniumServerConfigured event) throws IOException {
 
-      if (!seleniumServerConfiguration.get().isEnable())
-      {
-         return;
-      }
+        if (!seleniumServerConfiguration.get().isEnable()) {
+            return;
+        }
 
-      SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
+        SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
 
-      RemoteControlConfiguration rcc = new RemoteControlConfiguration();
-      rcc.setPort(configuration.getPort());
-      rcc.setLogOutFileName(configuration.getOutput());
+        RemoteControlConfiguration rcc = new RemoteControlConfiguration();
+        rcc.setPort(configuration.getPort());
+        rcc.setLogOutFileName(configuration.getOutput());
 
-      try
-      {
-         SeleniumServer server = new SeleniumServer(rcc);
-         server.start();
-         seleniumServer.set(server);
-         afterStart.fire(new SeleniumServerStarted());
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Unable to start Selenium Server", e);
-      }
-   }
+        try {
+            SeleniumServer server = new SeleniumServer(rcc);
+            server.start();
+            seleniumServer.set(server);
+            afterStart.fire(new SeleniumServerStarted());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to start Selenium Server", e);
+        }
+    }
 }

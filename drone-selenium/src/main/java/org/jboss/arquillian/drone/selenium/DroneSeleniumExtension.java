@@ -27,10 +27,9 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  */
 public class DroneSeleniumExtension implements LoadableExtension {
 
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(Instantiator.class, DefaultSeleniumFactory.class);
-      builder.service(Destructor.class, DefaultSeleniumFactory.class);
-      builder.service(Configurator.class, DefaultSeleniumFactory.class);
-   }
+    public void register(ExtensionBuilder builder) {
+        builder.service(Instantiator.class, DefaultSeleniumFactory.class);
+        builder.service(Destructor.class, DefaultSeleniumFactory.class);
+        builder.service(Configurator.class, DefaultSeleniumFactory.class);
+    }
 }

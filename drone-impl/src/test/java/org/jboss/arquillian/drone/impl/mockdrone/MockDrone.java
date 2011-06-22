@@ -16,28 +16,24 @@
  */
 package org.jboss.arquillian.drone.impl.mockdrone;
 
-public class MockDrone
-{
-   private String field;
+public class MockDrone {
+    private String field;
 
-   public MockDrone(String field)
-   {
-      this.setField(field);
-   }
+    public MockDrone(String field) {
+        this.setField(field);
+    }
 
-   /**
-    * @param field the field to set
-    */
-   public void setField(String field)
-   {
-      this.field = field;
-   }
+    /**
+     * @param field the field to set
+     */
+    public void setField(String field) {
+        this.field = field;
+    }
 
-   /**
-    * @return the field
-    */
-   public String getField()
-   {
-      return field;
-   }
+    /**
+     * @return the field
+     */
+    public String getField() {
+        return field;
+    }
 }

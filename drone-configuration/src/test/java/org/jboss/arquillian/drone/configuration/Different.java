@@ -25,12 +25,11 @@ import java.lang.annotation.Target;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 @Qualifier
-public @interface Different
-{
+public @interface Different {
 
 }

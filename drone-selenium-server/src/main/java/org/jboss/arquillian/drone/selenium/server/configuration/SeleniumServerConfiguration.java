@@ -23,119 +23,104 @@ import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
- * Configuration for Selenium Server. This configuration can be fetched from
- * Arquillian Descriptor and overridden by System properties.
+ * Configuration for Selenium Server. This configuration can be fetched from Arquillian Descriptor and overridden by System
+ * properties.
  * 
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see ConfigurationMapper
  * 
  */
-public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumServerConfiguration>
-{
-   public static final String CONFIGURATION_NAME = "selenium-server";
+public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumServerConfiguration> {
+    public static final String CONFIGURATION_NAME = "selenium-server";
 
-   private int port = 14444;
+    private int port = 14444;
 
-   private String host = "localhost";
+    private String host = "localhost";
 
-   private String output = "target/selenium-configuration-output.log";
+    private String output = "target/selenium-configuration-output.log";
 
-   private boolean enable = true;
+    private boolean enable = true;
 
-   /**
-    * Creates default Selenium Server Configuration
-    */
-   public SeleniumServerConfiguration()
-   {
-   }
+    /**
+     * Creates default Selenium Server Configuration
+     */
+    public SeleniumServerConfiguration() {
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
-    * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public SeleniumServerConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
+     * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
+     */
+    public SeleniumServerConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName
-    * ()
-    */
-   public String getConfigurationName()
-   {
-      return CONFIGURATION_NAME;
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName ()
+     */
+    public String getConfigurationName() {
+        return CONFIGURATION_NAME;
+    }
 
-   /**
-    * @return the port
-    */
-   public int getPort()
-   {
-      return port;
-   }
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
 
-   /**
-    * @param port the port to set
-    */
-   public void setPort(int port)
-   {
-      this.port = port;
-   }
+    /**
+     * @param port the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-   /**
-    * @return the host
-    */
-   public String getHost()
-   {
-      return host;
-   }
+    /**
+     * @return the host
+     */
+    public String getHost() {
+        return host;
+    }
 
-   /**
-    * @param host the host to set
-    */
-   public void setHost(String host)
-   {
-      this.host = host;
-   }
+    /**
+     * @param host the host to set
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-   /**
-    * @return the output
-    */
-   public String getOutput()
-   {
-      return output;
-   }
+    /**
+     * @return the output
+     */
+    public String getOutput() {
+        return output;
+    }
 
-   /**
-    * @param output the output to set
-    */
-   public void setOutput(String output)
-   {
-      this.output = output;
-   }
+    /**
+     * @param output the output to set
+     */
+    public void setOutput(String output) {
+        this.output = output;
+    }
 
-   /**
-    * @return the enable
-    */
-   public boolean isEnable()
-   {
-      return enable;
-   }
+    /**
+     * @return the enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
 
-   /**
-    * @param enable the enable to set
-    */
-   public void setEnable(boolean enable)
-   {
-      this.enable = enable;
-   }
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
 }

@@ -25,72 +25,66 @@ import org.junit.Test;
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  */
-public class ConfigurationTestCase
-{
+public class ConfigurationTestCase {
 
-   @Test
-   public void arquillianDescriptorTest()
-   {
-      ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-            .extension("mockdrone")
-            .property("intField", "12345")
-            .property("stringField", "The descriptor string")
-            .property("booleanField", "true");
+    @Test
+    public void arquillianDescriptorTest() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("intField", "12345").property("stringField", "The descriptor string")
+                .property("booleanField", "true");
 
-      MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor, new MockDroneConfiguration(), Default.class);
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Default.class);
 
-      validateConfiguration(configuration, 12345, true, "The descriptor string");
-   }
+        validateConfiguration(configuration, 12345, true, "The descriptor string");
+    }
 
-   @Test
-   public void systemPropertyTest()
-   {
-      System.setProperty("arquillian.mockdrone.int.field", "54321");
-      System.setProperty("arquillian.mockdrone.string.field", "The property string");
-      System.setProperty("arquillian.mockdrone.boolean.field", "false");
+    @Test
+    public void systemPropertyTest() {
+        System.setProperty("arquillian.mockdrone.int.field", "54321");
+        System.setProperty("arquillian.mockdrone.string.field", "The property string");
+        System.setProperty("arquillian.mockdrone.boolean.field", "false");
 
-      MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(), Default.class);
+        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                Default.class);
 
-      validateConfiguration(configuration, 54321, false, "The property string");
-   }
+        validateConfiguration(configuration, 54321, false, "The property string");
+    }
 
-   @Test
-   public void qualifierSystemPropertyTest()
-   {
-      System.setProperty("arquillian.mockdrone.int.field", "54321");
-      System.setProperty("arquillian.mockdrone.string.field", "The property string");
-      System.setProperty("arquillian.mockdrone.boolean.field", "false");
+    @Test
+    public void qualifierSystemPropertyTest() {
+        System.setProperty("arquillian.mockdrone.int.field", "54321");
+        System.setProperty("arquillian.mockdrone.string.field", "The property string");
+        System.setProperty("arquillian.mockdrone.boolean.field", "false");
 
-      System.setProperty("arquillian.mockdrone.differentmock.string.field", "The mock property field");
+        System.setProperty("arquillian.mockdrone.differentmock.string.field", "The mock property field");
 
-      MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(), DifferentMock.class);
+        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                DifferentMock.class);
 
-      validateConfiguration(configuration, 0, false, "The mock property field");
-   }
+        validateConfiguration(configuration, 0, false, "The mock property field");
+    }
 
-   @Test
-   public void qualifierArquillianDescriptorTest()
-   {
-      ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-            .extension("mockdrone")
-               .property("intField", "12345")
-               .property("stringField", "The descriptor string")
-               .property("booleanField", "true")
-            .extension("mockdrone-different")
-               .property("stringField", "The different property field");
+    @Test
+    public void qualifierArquillianDescriptorTest() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("intField", "12345").property("stringField", "The descriptor string")
+                .property("booleanField", "true").extension("mockdrone-different")
+                .property("stringField", "The different property field");
 
-      MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor, new MockDroneConfiguration(), Different.class);
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Different.class);
 
-      validateConfiguration(configuration, 0, false, "The different property field");
-   }
+        validateConfiguration(configuration, 0, false, "The different property field");
+    }
 
-   private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean, String expectedString) throws AssertionError
-   {
-      Assert.assertNotNull("Mock drone configuration was created in context", configuration);
-      Assert.assertEquals("Mock drone configuration contains int", expectedInt, configuration.getIntField());
-      Assert.assertEquals("Mock drone configuration contains boolean", expectedBoolean, configuration.isBooleanField());
-      Assert.assertEquals("Mock drone configuration contains string", expectedString, configuration.getStringField());
+    private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,
+            String expectedString) throws AssertionError {
+        Assert.assertNotNull("Mock drone configuration was created in context", configuration);
+        Assert.assertEquals("Mock drone configuration contains int", expectedInt, configuration.getIntField());
+        Assert.assertEquals("Mock drone configuration contains boolean", expectedBoolean, configuration.isBooleanField());
+        Assert.assertEquals("Mock drone configuration contains string", expectedString, configuration.getStringField());
 
-   }
+    }
 
 }
