@@ -1,238 +1,231 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  vi:ts=2:sw=2:expandtab:
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <!-- Parent -->
-   <parent>
-      <groupId>org.jboss.arquillian.extension</groupId>
-      <artifactId>arquillian-drone-parent</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-parent</artifactId>
+        <version>1.0.0.CR1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-   <!-- Model Version -->
-   <modelVersion>4.0.0</modelVersion>
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
 
-   <!-- Artifact Configuration -->
-   <artifactId>arquillian-drone-webdriver</artifactId>
-   <name>Arquillian Drone Extension Support for WebDriver</name>
-   <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+    <!-- Artifact Configuration -->
+    <artifactId>arquillian-drone-webdriver</artifactId>
+    <name>Arquillian Drone Extension Support for WebDriver</name>
+    <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
-   <developers>
-      <developer>
-         <name>Karel Piwko</name>
-         <email>kpiwko@redhat.com</email>
-      </developer>
-   </developers>
+    <developers>
+        <developer>
+            <name>Karel Piwko</name>
+            <email>kpiwko@redhat.com</email>
+        </developer>
+    </developers>
 
-   <properties>
-      <!-- Versioning -->
-      <version.jboss_60>6.0.0.Final</version.jboss_60>
-      <version.selenium>2.0b3</version.selenium>
-      <version.slf4j>1.5.10</version.slf4j>
-
-      <!-- example dependencies -->
-      <version.jpa>1.0</version.jpa>
-      <version.cdi>1.0-SP1</version.cdi>
-      <version.jsf>2.0.2-FCS</version.jsf>
-      <version.el>2.2</version.el>
-
-   </properties>
+    <properties>
+        <!-- Versioning -->
+        <version.jpa>1.0</version.jpa>
+        <version.cdi>1.0-SP1</version.cdi>
+        <version.jsf>2.0.2-FCS</version.jsf>
+        <version.el>2.2</version.el>
+    </properties>
 
    <!-- Dependencies -->
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.arquillian.extension</groupId>
-         <artifactId>arquillian-drone-api</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.extension</groupId>
-         <artifactId>arquillian-drone-spi</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.extension</groupId>
-         <artifactId>arquillian-drone-configuration</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <!-- Arquillian dependencies -->
-      <dependency>
-         <groupId>org.jboss.arquillian.core</groupId>
-         <artifactId>arquillian-core-spi</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.test</groupId>
-         <artifactId>arquillian-test-spi</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.config</groupId>
-         <artifactId>arquillian-config-api</artifactId>
-      </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+       
+        
+        <!-- Arquillian dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.test</groupId>
+            <artifactId>arquillian-test-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.config</groupId>
+            <artifactId>arquillian-config-api</artifactId>
+        </dependency>
 
 
-      <!-- Selenium dependencies -->
-      <dependency>
-         <groupId>org.seleniumhq.selenium</groupId>
-         <artifactId>selenium-remote-control</artifactId>
-         <version>${version.selenium}</version>
-      </dependency>
+        <!-- Selenium dependencies -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-control</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <!-- required to run Selenium WebDriver -->
-      <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-simple</artifactId>
-         <version>${version.slf4j}</version>
-         <scope>test</scope>
-      </dependency>
+        <!-- required to run Selenium WebDriver -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <!-- test dependencies -->
-      <dependency>
-         <groupId>org.jboss.arquillian.extension</groupId>
-         <artifactId>arquillian-drone-impl</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.junit</groupId>
-         <artifactId>arquillian-junit-container</artifactId>
-         <scope>test</scope>
-      </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-      <!-- we are using a Weld based example for testing -->
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-         <version>${version.cdi}</version>
-         <scope>test</scope>
-      </dependency>
+        <!-- we are using a Weld based example for testing -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version.cdi}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>javax.faces</groupId>
-         <artifactId>jsf-api</artifactId>
-         <version>${version.jsf}</version>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>javax.faces</groupId>
+            <artifactId>jsf-api</artifactId>
+            <version>${version.jsf}</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>javax.persistence</groupId>
-         <artifactId>persistence-api</artifactId>
-         <version>${version.jpa}</version>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${version.jpa}</version>
+            <scope>test</scope>
+        </dependency>
 
-   </dependencies>
+    </dependencies>
 
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>default-test</id>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skipTests>true</skipTests>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
-
-   <profiles>
-
-      <!--  Uses Selenium 2.0 default, that is WebDriver HtmlUnit driver -->
-      <profile>
-         <id>default</id>
-
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <executions>
-                     <execution>
-                        <id>htmlunitdriver-test</id>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
                         <goals>
-                           <goal>test</goal>
+                            <goal>test</goal>
                         </goals>
                         <configuration>
-                           <includes>
-                              <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
-                           </includes>
+                            <skipTests>true</skipTests>
                         </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-      <!-- uses Selenium 2.0 FirefoxDriver -->
-      <profile>
-         <id>firefoxdriver</id>
+    <profiles>
 
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <executions>
-                     <execution>
-                        <id>firefoxdriver-test</id>
-                        <goals>
-                           <goal>test</goal>
-                        </goals>
-                        <configuration>
-                           <systemPropertyVariables>
-                              <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver
+        <!--  Uses Selenium 2.0 default, that is WebDriver HtmlUnit driver -->
+        <profile>
+            <id>ftest</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>htmlunitdriver-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- uses Selenium 2.0 FirefoxDriver -->
+        <profile>
+            <id>ftest-firefox</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>firefoxdriver-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver
                               </arquillian.webdriver.implementation.class>
-                           </systemPropertyVariables>
-                           <includes>
-                              <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
-                           </includes>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
+                                    </systemPropertyVariables>
+                                    <includes>
+                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
-      <!-- CONTAINER PROFILES -->
+        <!-- CONTAINER PROFILES -->
 
-      <!--  Deploys example to remote JBoss AS 6 instance -->
-      <profile>
+        <!--  Deploys example to remote JBoss AS 6 instance -->
+        <profile>
 
-         <id>jbossas-remote-6</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jbossas-remote-6</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.jboss.jbossas</groupId>
-               <artifactId>jboss-as-client</artifactId>
-               <version>${version.jboss_60}</version>
-               <type>pom</type>
-            </dependency>
-         </dependencies>
-      </profile>
+            <id>jbossas-remote-6</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-jbossas-remote-6</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.jbossas</groupId>
+                    <artifactId>jboss-as-client</artifactId>
+                    <type>pom</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
-   </profiles>
+    </profiles>
 
 </project>
 
