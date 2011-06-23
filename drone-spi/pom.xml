@@ -5,7 +5,7 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-parent</artifactId>
+        <artifactId>arquillian-drone-aggregator</artifactId>
         <version>1.0.0.CR1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
