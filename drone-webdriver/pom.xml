@@ -210,6 +210,19 @@
         <profile>
 
             <id>jbossas-remote-6</id>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jboss.arquillian.extension</groupId>
+                        <artifactId>arquillian-drone-bom</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
