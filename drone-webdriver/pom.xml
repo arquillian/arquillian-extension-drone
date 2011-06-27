@@ -206,36 +206,63 @@
 
         <!-- CONTAINER PROFILES -->
 
-        <!--  Deploys example to remote JBoss AS 6 instance -->
+        <!--  Deploys example to managed JBoss AS 6 instance -->
         <profile>
 
-            <id>jbossas-remote-6</id>
+            <id>jbossas-managed-6</id>
 
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.arquillian.extension</groupId>
-                        <artifactId>arquillian-drone-bom</artifactId>
-                        <version>${project.version}</version>
-                        <type>pom</type>
-                        <scope>import</scope>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
+            <properties>
+                <!-- versioning -->
+                <version.org.jboss.jbossas>6.0.0.Final</version.org.jboss.jbossas>
+                <version.arquillian.container.jboss>1.0.0.CR1</version.arquillian.container.jboss>
+            </properties>
 
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jbossas-remote-6</artifactId>
+                    <artifactId>arquillian-jbossas-managed-6</artifactId>
                     <scope>test</scope>
+                    <version>${version.arquillian.container.jboss}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.jboss.jbossas</groupId>
                     <artifactId>jboss-as-client</artifactId>
                     <type>pom</type>
                     <scope>test</scope>
+                    <version>${version.org.jboss.jbossas}</version>
                 </dependency>
             </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.jboss.jbossas</groupId>
+                                            <artifactId>jboss-as-distribution</artifactId>
+                                            <version>${version.org.jboss.jbossas}</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
         </profile>
 
     </profiles>

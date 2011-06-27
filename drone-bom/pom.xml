@@ -29,9 +29,10 @@
 
     <properties>
         <!-- Versioning -->
-        <version.selenium>2.0b3</version.selenium>
+        <version.selenium>2.0rc3</version.selenium>
+        <version.selenium.rc>2.0rc2</version.selenium.rc>
         <version.slf4j>1.5.10</version.slf4j>
-        <version.arquillian.core>1.0.0.CR1-SNAPSHOT</version.arquillian.core>
+        <version.arquillian.core>1.0.0.CR1</version.arquillian.core>
     </properties>
 
     <dependencyManagement>
@@ -57,6 +58,7 @@
             </dependency>
             
             <!-- Selenium dependencies -->
+
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
@@ -64,8 +66,38 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-remote-control</artifactId>
+                <artifactId>selenium-chrome-driver</artifactId>
                 <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-htmlunit-driver</artifactId>
+                <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-firefox-driver</artifactId>
+                <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-ie-driver</artifactId>
+                <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-iphone-driver</artifactId>
+                <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-android-driver</artifactId>
+                <version>${version.selenium}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-remote-control</artifactId>
+                <version>${version.selenium.rc}</version>
             </dependency>
       
             <!-- required to run Selenium DefaultSelenium -->
@@ -76,33 +108,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <profiles>
-        <profile>
-            <id>jbossas-remote-6</id>
-
-            <properties>
-                <!-- versioning -->
-                <version.jbossas6>6.0.0.Final</version.jbossas6>
-                <version.arquillian.container.jboss>1.0.0-SNAPSHOT</version.arquillian.container.jboss>
-            </properties>
-
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.arquillian.container</groupId>
-                        <artifactId>arquillian-jbossas-remote-6</artifactId>
-                        <version>${version.arquillian.container.jboss}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.jbossas</groupId>
-                        <artifactId>jboss-as-client</artifactId>
-                        <version>${version.jbossas6}</version>
-                        <type>pom</type>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-    </profiles>
 
 </project>
