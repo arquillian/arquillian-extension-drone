@@ -7,6 +7,7 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
         <version>6-beta-2</version>
+        <relativePath></relativePath>
     </parent>
 
     <!-- Model Version -->
