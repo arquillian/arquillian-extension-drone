@@ -34,7 +34,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 /**
  * Destructor of drone instances. Disposes instance of every field annotated with {@link Drone}. Disposes Drones created for
  * method arguments as well.
- * 
+ *
  * <p>
  * Consumes:
  * </p>
@@ -43,7 +43,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
  * <li>{@link DroneRegistry}</li>
  * <li>{@link MethodContext}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
@@ -51,9 +51,9 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
  * <li>{@link After}</li>
  * <li>{@link AfterClass}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneDestructor {
     private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());

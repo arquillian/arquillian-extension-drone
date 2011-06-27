@@ -39,7 +39,7 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SeleniumServerTestCase extends AbstractTestTestBase {

@@ -16,7 +16,11 @@
  */
 package org.jboss.arquillian.drone.api.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Drone annotation is used to inject Selenium's WebDriver, Selenium's DefaultSelenium, Arquillian Ajocado AjaxSelenium or other
@@ -29,7 +33,7 @@ import java.lang.annotation.*;
  * {@code @Drone} can be used for both field in a class, thus class scoped instance of the browser or for parameter in a method,
  * where injected instance will be method scoped.
  * </p>
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @Retention(RetentionPolicy.RUNTIME)

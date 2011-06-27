@@ -16,20 +16,20 @@
  */
 package org.jboss.arquillian.drone.selenium.configuration;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
-import java.lang.annotation.Annotation;
-
 /**
  * Configuration for Selenium. This configuration can be fetched from Arquillian Descriptor and overridden by System properties.
- * 
- * 
+ *
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see ArquillianDescriptor
  * @see ConfigurationMapper
- * 
+ *
  */
 public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfiguration> {
     public static final String CONFIGURATION_NAME = "selenium";
@@ -54,7 +54,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName ()
      */
     public String getConfigurationName() {
@@ -63,7 +63,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
      * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
      */
@@ -74,7 +74,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /**
      * A port where Selenium configuration is started/running
-     * 
+     *
      * @return the serverPort
      */
     public int getServerPort() {
@@ -90,7 +90,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /**
      * The name of machine where Selenium configuration is started/running
-     * 
+     *
      * @return the serverHost
      */
     public String getServerHost() {
@@ -107,7 +107,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
     /**
      * Time limit in milliseconds which determines operation failed, either for executing Selenium command or starting Selenium
      * configuration
-     * 
+     *
      * @return the timeout
      */
     public int getTimeout() {
@@ -123,7 +123,7 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /**
      * Time delay in milliseconds before each Selenium command is sent
-     * 
+     *
      * @return the speed
      */
     public int getSpeed() {
@@ -139,9 +139,9 @@ public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfigu
 
     /**
      * Identification of the browser for needs of Selenium.
-     * 
+     *
      * Use can use variants including path to binary, such as: <i>*firefoxproxy /opt/firefox-3.0/firefox</i>
-     * 
+     *
      * @return the browser
      */
     public String getBrowser() {

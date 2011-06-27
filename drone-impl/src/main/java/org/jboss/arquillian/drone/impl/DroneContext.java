@@ -25,9 +25,9 @@ import org.jboss.arquillian.drone.api.annotation.Default;
 /**
  * Holder of Drone context. It is able to store different instances of drone instances as well as their configurations and to
  * retrieve them during testing.
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneContext {
     // cache holder
@@ -35,7 +35,7 @@ public class DroneContext {
 
     /**
      * Gets object stored under {@link Default} qualifier and given key
-     * 
+     *
      * @param <T> Type of the object
      * @param key Key used to find the object
      * @return Object stored under given qualified key
@@ -46,7 +46,7 @@ public class DroneContext {
 
     /**
      * Gets object stored under given qualifier and given key
-     * 
+     *
      * @param <T> Type of the object
      * @param key Key used to find the object
      * @param qualifier Qualifier used to find the object
@@ -58,7 +58,7 @@ public class DroneContext {
 
     /**
      * Adds object under given key and {@link Default} qualifier
-     * 
+     *
      * @param <T> Type of the object
      * @param key Key used to store the object
      * @param instance Object to be stored
@@ -71,7 +71,7 @@ public class DroneContext {
 
     /**
      * Adds object under given key and given qualifier
-     * 
+     *
      * @param <T> Type of the object
      * @param key Key used to store the object
      * @param qualifier Qualifier used to store the object
@@ -85,7 +85,7 @@ public class DroneContext {
 
     /**
      * Removes object under given key and {@link Default} qualifier
-     * 
+     *
      * @param key Key used to find the object
      * @return Modified context
      */
@@ -96,7 +96,7 @@ public class DroneContext {
 
     /**
      * Removes object under given key and given qualifier
-     * 
+     *
      * @param key Key used to find the object
      * @param qualifier Qualifier used to find the object
      * @return Modified context
@@ -117,7 +117,7 @@ public class DroneContext {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -131,7 +131,7 @@ public class DroneContext {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override

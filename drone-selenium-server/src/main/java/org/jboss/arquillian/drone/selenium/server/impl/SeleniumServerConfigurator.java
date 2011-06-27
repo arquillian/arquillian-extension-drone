@@ -32,37 +32,37 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * Configurator of Selenium Server Configuration
- * 
+ *
  * <p>
  * Consumes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
  * </ol>
- * 
+ *
  * <p>
  * Produces:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration}</li>
  * </ol>
- * 
+ *
  * <p>
  * Fires:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.spi.event.suite.BeforeSuite}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class SeleniumServerConfigurator {
     @Inject

@@ -25,10 +25,10 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 /**
  * Configuration for Selenium Server. This configuration can be fetched from Arquillian Descriptor and overridden by System
  * properties.
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see ConfigurationMapper
- * 
+ *
  */
 public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumServerConfiguration> {
     public static final String CONFIGURATION_NAME = "selenium-server";
@@ -49,7 +49,7 @@ public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
      * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
      */
@@ -60,7 +60,7 @@ public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName ()
      */
     public String getConfigurationName() {

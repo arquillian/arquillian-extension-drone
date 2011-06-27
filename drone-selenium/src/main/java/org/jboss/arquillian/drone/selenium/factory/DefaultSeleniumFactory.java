@@ -16,29 +16,30 @@
  */
 package org.jboss.arquillian.drone.selenium.factory;
 
-import com.thoughtworks.selenium.DefaultSelenium;
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.selenium.configuration.SeleniumConfiguration;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
-import java.lang.annotation.Annotation;
+import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for Selenium
  * browser object called {@link com.thoughtworks.selenium.DefaultSelenium} .
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, SeleniumConfiguration>,
         Instantiator<DefaultSelenium, SeleniumConfiguration>, Destructor<DefaultSelenium> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.selenium.spi.Sortable#getPrecedence()
      */
     public int getPrecedence() {
@@ -47,7 +48,7 @@ public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, Sel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(DefaultSelenium instance) {
@@ -57,7 +58,7 @@ public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, Sel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss. arquillian.drone.spi.DroneConfiguration)
      */
     public DefaultSelenium createInstance(SeleniumConfiguration configuration) {
@@ -72,7 +73,7 @@ public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, Sel
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss
      * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
      */

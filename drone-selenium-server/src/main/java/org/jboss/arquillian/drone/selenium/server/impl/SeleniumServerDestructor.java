@@ -27,7 +27,6 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * Destructor of Selenium Server instance
- * <p/>
  * <p>
  * Consumes:
  * </p>
@@ -49,7 +48,7 @@ import org.openqa.selenium.server.SeleniumServer;
  * <ol>
  * <li>{@link org.jboss.arquillian.spi.event.suite.AfterSuite}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  */
 public class SeleniumServerDestructor {

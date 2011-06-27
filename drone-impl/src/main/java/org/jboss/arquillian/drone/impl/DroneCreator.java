@@ -31,7 +31,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
  * Creator of drone instances. Creates a instance for every field annotated with {@link Drone}.
- * 
+ *
  * <p>
  * Consumes:
  * </p>
@@ -39,16 +39,16 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * <li>{@link DroneRegistry}</li>
  * <li>{@link DroneContext}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link DroneConfigured}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneCreator {
     private static final Logger log = Logger.getLogger(DroneCreator.class.getName());

@@ -23,66 +23,57 @@ import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
- * Configuration for Selenium WebDriver. This configuration can be fetched from
- * Arquillian Descriptor and overridden by System properties.
- * 
+ * Configuration for Selenium WebDriver. This configuration can be fetched from Arquillian Descriptor and overridden by System
+ * properties.
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see ArquillianDescriptor
  * @see org.jboss.arquillian.drone.configuration.ConfigurationMapper
- * 
+ *
  */
-public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration>
-{
-   public static final String CONFIGURATION_NAME = "webdriver";
+public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration> {
+    public static final String CONFIGURATION_NAME = "webdriver";
 
-   private String implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+    private String implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
 
-   /**
-    * Creates default Selenium WebDriver Configuration
-    */
-   public WebDriverConfiguration()
-   {
-   }
+    /**
+     * Creates default Selenium WebDriver Configuration
+     */
+    public WebDriverConfiguration() {
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
-    * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public WebDriverConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
+     * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
+     */
+    public WebDriverConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName
-    * ()
-    */
-   public String getConfigurationName()
-   {
-      return CONFIGURATION_NAME;
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName ()
+     */
+    public String getConfigurationName() {
+        return CONFIGURATION_NAME;
+    }
 
-   /**
-    * @return the implementationClass
-    */
-   public String getImplementationClass()
-   {
-      return implementationClass;
-   }
+    /**
+     * @return the implementationClass
+     */
+    public String getImplementationClass() {
+        return implementationClass;
+    }
 
-   /**
-    * @param implementationClass the implementationClass to set
-    */
-   public void setImplementationClass(String implementationClass)
-   {
-      this.implementationClass = implementationClass;
-   }
+    /**
+     * @param implementationClass the implementationClass to set
+     */
+    public void setImplementationClass(String implementationClass) {
+        this.implementationClass = implementationClass;
+    }
 
 }

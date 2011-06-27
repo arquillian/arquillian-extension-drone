@@ -32,37 +32,37 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * Creator of Selenium Server instance
- * 
+ *
  * <p>
  * Consumes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration}</li>
  * </ol>
- * 
+ *
  * <p>
  * Produces:
  * </p>
  * <ol>
  * <li>{@link org.openqa.selenium.server.SeleniumServer}</li>
  * </ol>
- * 
+ *
  * <p>
  * Fires:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.event.SeleniumServerStarted}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class SeleniumServerCreator {
     @Inject

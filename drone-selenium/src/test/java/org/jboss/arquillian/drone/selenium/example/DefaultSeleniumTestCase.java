@@ -41,7 +41,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
  * Tests Arquillian Drone extension against Weld Login example.
  * <p/>
  * Uses legacy Selenium driver bound to Firefox browser.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(Arquillian.class)
@@ -70,7 +70,7 @@ public class DefaultSeleniumTestCase {
 
     /**
      * Creates a WAR of a Weld based application using ShrinkWrap
-     * 
+     *
      * @return WebArchive to be tested
      */
     @Deployment(testable = false)

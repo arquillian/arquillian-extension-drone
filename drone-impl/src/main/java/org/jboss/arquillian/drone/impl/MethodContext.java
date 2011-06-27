@@ -22,16 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Holder of Drone context for method based life cycle. It is able to store different instances of drone instances as well as
  * their configurations and to retrieve them during testing.
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class MethodContext {
     private ConcurrentHashMap<Method, DroneContext> cache = new ConcurrentHashMap<Method, DroneContext>();
 
     /**
      * Gets context with is bound to a test method
-     * 
+     *
      * @param key The test method
      * @return Drone context
      */
@@ -41,7 +41,7 @@ public class MethodContext {
 
     /**
      * Puts value into context if it doesn't exist already
-     * 
+     *
      * @param key The test method
      * @param value Context for method
      * @return Actual context for method
@@ -54,7 +54,7 @@ public class MethodContext {
 
     /**
      * Removes context bound to a method
-     * 
+     *
      * @param key The test method
      * @return Modified instance
      */

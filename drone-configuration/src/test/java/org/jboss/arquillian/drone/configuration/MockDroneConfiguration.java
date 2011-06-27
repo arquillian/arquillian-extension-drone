@@ -21,6 +21,12 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
+/**
+ * Sample configuration
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration> {
 
     private String stringField;
@@ -31,7 +37,7 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.spi.DroneConfiguration#getConfigurationName()
      */
     public String getConfigurationName() {
@@ -40,7 +46,7 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.jboss.arquillian.drone.spi.DroneConfiguration#configure(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor
      * , java.lang.Class)

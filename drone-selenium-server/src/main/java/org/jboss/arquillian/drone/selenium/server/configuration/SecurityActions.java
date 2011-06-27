@@ -27,12 +27,12 @@ import java.util.List;
 
 /**
  * SecurityActions
- * 
+ *
  * A set of privileged actions that are not to leak out of this package
- * 
- * 
+ *
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  * @version $Revision: $
  */
 final class SecurityActions {

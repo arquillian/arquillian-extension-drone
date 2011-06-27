@@ -25,56 +25,55 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.WebDriver;
 
-/** 
- * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator}, {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor}
- * for Selenium WebDriver browser object called {@link org.openqa.selenium.WebDriver}.
- * 
+/**
+ * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for Selenium
+ * WebDriver browser object called {@link org.openqa.selenium.WebDriver}.
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
-public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver>
-{
+public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>,
+        Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
-    */
-   public int getPrecedence()
-   {
-      return 0;
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
+     */
+    public int getPrecedence() {
+        return 0;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-    */
-   public void destroyInstance(WebDriver instance)
-   {
-      instance.quit();
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
+     */
+    public void destroyInstance(WebDriver instance) {
+        instance.quit();
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
-    */
-   public WebDriver createInstance(WebDriverConfiguration configuration)
-   {
-      WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0], WebDriver.class);
-      return driver;
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
+     */
+    public WebDriver createInstance(WebDriverConfiguration configuration) {
+        WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
+                WebDriver.class);
+        return driver;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
+     * ArquillianDescriptor, java.lang.Class)
+     */
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
 
-      return new WebDriverConfiguration().configure(descriptor, qualifier);
-   }
+        return new WebDriverConfiguration().configure(descriptor, qualifier);
+    }
 
 }

@@ -16,24 +16,24 @@
  */
 package org.jboss.arquillian.drone.spi;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-
 import java.lang.annotation.Annotation;
+
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 
 /**
  * Defines a contract for creating configurations for Drone Driver
- * 
+ *
  * @param <T> Type of the driver
  * @param <C> Type of the configuration
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see org.jboss.arquillian.drone.spi.Qualifier
- * 
+ *
  */
 public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortable {
     /**
      * Creates a configuration for given Drone Driver. The instance is created before the first method of the test suite is run
      * and stays in Arquillian's context until the test suite execution is finished.
-     * 
+     *
      * @param descriptor A descriptor to be parsed
      * @param qualifier A qualifier for this configuration
      * @return Configuration holding values determined from Arquillian's descriptor

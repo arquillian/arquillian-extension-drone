@@ -35,7 +35,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
  * Configurator of Drone Configuration. Creates a configuration for every field annotated with {@link Drone}.
- * 
+ *
  * <p>
  * Consumes:
  * </p>
@@ -43,7 +43,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
  * <li>{@link DroneRegistry}</li>
  * </ol>
- * 
+ *
  * <p>
  * Produces:
  * </p>
@@ -51,23 +51,23 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * <li>{@link DroneContext}</li>
  * <li>{@link MethodContext}</li>
  * </ol>
- * 
+ *
  * <p>
  * Fires:
  * </p>
  * <ol>
  * <li>{@link DroneConfigured}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link BeforeClass}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneConfigurator {
     @Inject

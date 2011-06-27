@@ -36,7 +36,7 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 /**
  * Enriches test with drone instance and context path. Injects existing instance into every field annotated with {@link Drone}.
  * Handles enrichment for method arguments as well.
- * 
+ *
  * <p>
  * Consumes:
  * </p>
@@ -46,10 +46,10 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * <li>{@link ArquillianDescriptor}</li>
  * <li>{@link DroneRegistry}</li>
  * </ol>
- * 
- * 
+ *
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneTestEnricher implements TestEnricher {
     private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());

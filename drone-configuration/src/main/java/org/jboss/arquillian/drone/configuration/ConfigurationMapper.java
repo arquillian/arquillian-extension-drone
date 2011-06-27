@@ -37,7 +37,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
  * Utility which maps Arquillian Descriptor and System Properties to a configuration.
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see DroneConfiguration
  */
@@ -56,7 +56,7 @@ public class ConfigurationMapper {
 
     /**
      * Maps a configuration using Arquillian Descriptor file
-     * 
+     *
      * @param <T> Type of the configuration
      * @param descriptor Arquillian Descriptor
      * @param configuration Configuration object
@@ -80,7 +80,7 @@ public class ConfigurationMapper {
 
     /**
      * Maps a configuration using System Properties
-     * 
+     *
      * @param <T> Type of the configuration
      * @param configuration Configuration object
      * @param qualifier Qualifier annotation
@@ -100,7 +100,7 @@ public class ConfigurationMapper {
 
     /**
      * Maps configuration values from Arquillian Descriptor
-     * 
+     *
      * @param <T> A type of configuration
      * @param configuration Configuration object
      * @return Configured configuration of given type
@@ -122,7 +122,7 @@ public class ConfigurationMapper {
 
     /**
      * Maps configuration values from System properties
-     * 
+     *
      * @param <T> A type of configuration
      * @param configuration Configuration object
      * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
@@ -159,7 +159,7 @@ public class ConfigurationMapper {
 
     /**
      * Maps fields to values using System configuration properties
-     * 
+     *
      * @param fields Fields to be mapped
      * @param prefix System property prefix
      * @return Mapped values
@@ -179,7 +179,7 @@ public class ConfigurationMapper {
 
     /**
      * Parses Arquillian Descriptor into property name - value pairs
-     * 
+     *
      * @param descriptor An Arquillian Descriptor
      * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
      * @param qualifierName Name of the qualifier passed
@@ -211,10 +211,10 @@ public class ConfigurationMapper {
 
     /**
      * Maps a field name to a property.
-     * 
+     *
      * Replaces camel case with a dot ('.') and lower case character, replaces other non digit and non letter characters with a
      * dot (').
-     * 
+     *
      * @param fieldName The name of field
      * @return Corresponding property name
      */
@@ -241,7 +241,7 @@ public class ConfigurationMapper {
 
     /**
      * A helper boxing method. Returns boxed class for a primitive class
-     * 
+     *
      * @param primitive A primitive class
      * @return Boxed class if class was primitive, unchanged class in other cases
      */
@@ -273,9 +273,9 @@ public class ConfigurationMapper {
 
     /**
      * A helper converting method.
-     * 
+     *
      * Converts string to a class of given type
-     * 
+     *
      * @param <T> Type of returned value
      * @param clazz Type of desired value
      * @param value String value to be converted

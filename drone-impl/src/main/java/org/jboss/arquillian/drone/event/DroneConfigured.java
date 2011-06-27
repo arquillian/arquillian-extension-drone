@@ -23,9 +23,9 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
  * An event to inform other components that a drone instance was configured
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneConfigured {
     private Class<? extends Annotation> qualifier;
@@ -34,7 +34,7 @@ public class DroneConfigured {
 
     /**
      * Creates the event
-     * 
+     *
      * @param injected A field of test which caused creation of the configuration
      * @param qualifier Qualifier for current drone instance
      * @param configuration Configuration for drone instance

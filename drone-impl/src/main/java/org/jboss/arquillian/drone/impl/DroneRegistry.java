@@ -25,18 +25,18 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
  * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
- * 
+ *
  * Stores only one of them per type, so {@link DroneRegistrar} is responsible for selecting correct implementations.
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
 public class DroneRegistry {
     private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
 
     /**
      * Gets configurator for given object type
-     * 
+     *
      * @param <T> Type of configurator object
      * @param type Configurator key
      * @return Configurator for objects of type <T>
@@ -52,7 +52,7 @@ public class DroneRegistry {
 
     /**
      * Gets instantiator for given object type
-     * 
+     *
      * @param <T> Type of instantiator object
      * @param key Instantiator key
      * @return Instantiator for objects of type <T>
@@ -68,7 +68,7 @@ public class DroneRegistry {
 
     /**
      * Gets destructor for given object type
-     * 
+     *
      * @param <T> Type of destructor object
      * @param key Destructor key
      * @return Destructor for objects of type <T>
@@ -84,7 +84,7 @@ public class DroneRegistry {
 
     /**
      * Registers a configurator for given object type
-     * 
+     *
      * @param key Type to be registered
      * @param configurator Configurator to be stored
      * @return Modified registry
@@ -101,7 +101,7 @@ public class DroneRegistry {
 
     /**
      * Registers a instantiator for given object type
-     * 
+     *
      * @param key Type to be registered
      * @param value Instantiator to be stored
      * @return Modified registry
@@ -118,7 +118,7 @@ public class DroneRegistry {
 
     /**
      * Registers a destructor for given object type
-     * 
+     *
      * @param key Type to be registered
      * @param value Destructor to be stored
      * @return Modified registry
