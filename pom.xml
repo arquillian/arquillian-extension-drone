@@ -36,46 +36,12 @@
         <version.slf4j>1.5.10</version.slf4j>
     </properties>
 
-    <!-- Plugin Configuration -->
-    <build>
-        <plugins>
-            <!-- Checkstyle -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>arquillian-drone-checkstyle/checkstyle.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <useFile />
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.arquillian.extension</groupId>
-                        <artifactId>arquillian-drone-build-config</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>check-style</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>checkstyle</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-    </build>
-
     <!-- Modules -->
     <modules>
 
         <!-- Drone build chain-->
-        <module>drone-build</module>
         <module>build-config</module>
+        <module>drone-build</module>        
 
         <!-- Drone modules -->
         <module>drone-api</module>

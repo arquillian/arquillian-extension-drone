@@ -36,6 +36,41 @@
         <version.el>2.2</version.el>
     </properties>
 
+    <!-- Plugin Configuration -->
+    <build>
+        <plugins>
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>arquillian-drone-checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <useFile />
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jboss.arquillian.extension</groupId>
+                        <artifactId>arquillian-drone-build-config</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>check-style</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
+
+
     <dependencyManagement>
         <dependencies>
             <!-- Arquillian -->
@@ -133,7 +168,7 @@
                 <artifactId>persistence-api</artifactId>
                 <version>${version.jpa}</version>
             </dependency>
-            
+
         </dependencies>
     </dependencyManagement>
 
