@@ -18,24 +18,21 @@ package org.jboss.arquillian.drone.spi;
 
 /**
  * Defines a contract for instantiating a DroneDriver
- * 
+ *
  * @param <T> Type of drone instances
  * @param <C> Type of drone configurations
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
-public interface Instantiator<T, C extends DroneConfiguration<C>> extends Sortable
-{
-   /**
-    * Creates an instance of Drone Driver.
-    * 
-    * The instance is created before execution of the first method of the test
-    * class automatically by calling this method. The object is then bound to
-    * the Arquillian context, where it stays until the execution of the last
-    * test method is finished.
-    * 
-    * @param configuration the configuration object for the extension
-    * @return Newly created instance of the driver
-    */
-   T createInstance(C configuration);
+public interface Instantiator<T, C extends DroneConfiguration<C>> extends Sortable {
+    /**
+     * Creates an instance of Drone Driver.
+     *
+     * The instance is created before execution of the first method of the test class automatically by calling this method. The
+     * object is then bound to the Arquillian context, where it stays until the execution of the last test method is finished.
+     *
+     * @param configuration the configuration object for the extension
+     * @return Newly created instance of the driver
+     */
+    T createInstance(C configuration);
 }

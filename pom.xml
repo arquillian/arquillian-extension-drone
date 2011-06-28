@@ -1,61 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  vi:ts=2:sw=2:expandtab:
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
         <version>6-beta-2</version>
+        <relativePath />
     </parent>
 
-   <!-- Model Version -->
-   <modelVersion>4.0.0</modelVersion>
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
 
-   <!-- Artifact Configuration -->
-   <groupId>org.jboss.arquillian.extension</groupId>
-   <artifactId>arquillian-drone-parent</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
-   <packaging>pom</packaging>
-   <name>Arquillian Drone Extension Parent</name>
-   <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+    <!-- Artifact Configuration -->
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-drone-aggregator</artifactId>
+    <version>1.0.0.CR1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Arquillian Drone Extension Agreggator</name>
+    <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
-   <developers>
-      <developer>
-         <name>Karel Piwko</name>
-         <email>kpiwko@redhat.com</email>
-      </developer>
-   </developers>
+    <developers>
+        <developer>
+            <name>Karel Piwko</name>
+            <email>kpiwko@redhat.com</email>
+        </developer>
+    </developers>
 
-   <properties>
-      <!-- Versioning -->
-      <version.arquillian_core>1.0.0.Beta1</version.arquillian_core>
-   </properties>
+    <properties>
+        <!-- Versioning -->
+        <version.arquillian.core>1.0.0.CR1</version.arquillian.core>
+        <version.selenium>2.0rc3</version.selenium>
+        <version.selenium.rc>2.0rc2</version.selenium.rc>
+        <version.slf4j>1.5.10</version.slf4j>
+    </properties>
 
-   <dependencyManagement>
-      <dependencies>
-         <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-bom</artifactId>
-            <version>${version.arquillian_core}</version>
-            <type>pom</type>
-            <scope>import</scope>
-         </dependency>
-      </dependencies>
-   </dependencyManagement>
+    <!-- Plugin Configuration -->
+    <build>
+        <plugins>
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>arquillian-drone-checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <useFile />
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jboss.arquillian.extension</groupId>
+                        <artifactId>arquillian-drone-build-config</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>check-style</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 
-   <!-- Modules -->
-   <modules>
-      <module>drone-api</module>
-      <module>drone-spi</module>
-      <module>drone-configuration</module>
-      <module>drone-impl</module>
-      <module>drone-selenium-server</module>
-      <module>drone-selenium</module>
-      <module>drone-webdriver</module>
-   </modules>
+    </build>
+
+    <!-- Modules -->
+    <modules>
+
+        <!-- Drone build chain-->
+        <module>drone-build</module>
+        <module>build-config</module>
+
+        <!-- Drone modules -->
+        <module>drone-api</module>
+        <module>drone-spi</module>
+        <module>drone-configuration</module>
+        <module>drone-impl</module>
+        <module>drone-selenium-server</module>
+        <module>drone-selenium</module>
+        <module>drone-webdriver</module>
+        <module>drone-bom</module>
+    </modules>
 
 </project>

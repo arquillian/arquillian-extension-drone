@@ -32,57 +32,55 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * Configurator of Selenium Server Configuration
- * 
+ *
  * <p>
  * Consumes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
  * </ol>
- * 
+ *
  * <p>
  * Produces:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerConfiguration}</li>
  * </ol>
- * 
+ *
  * <p>
  * Fires:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.drone.selenium.server.event.SeleniumServerConfigured}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link org.jboss.arquillian.spi.event.suite.BeforeSuite}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
-public class SeleniumServerConfigurator
-{
-   @Inject
-   @SuiteScoped
-   private InstanceProducer<SeleniumServerConfiguration> seleniumServerConfiguration;
+public class SeleniumServerConfigurator {
+    @Inject
+    @SuiteScoped
+    private InstanceProducer<SeleniumServerConfiguration> seleniumServerConfiguration;
 
-   @Inject
-   private Instance<ArquillianDescriptor> arquillianDesc;
+    @Inject
+    private Instance<ArquillianDescriptor> arquillianDesc;
 
-   @Inject
-   private Event<SeleniumServerConfigured> afterConfiguration;
+    @Inject
+    private Event<SeleniumServerConfigured> afterConfiguration;
 
-   public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException
-   {
-      SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
-      configuration.configure(arquillianDesc.get(), Default.class);
+    public void seleniumServerStartUp(@Observes BeforeSuite event) throws IOException {
+        SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
+        configuration.configure(arquillianDesc.get(), Default.class);
 
-      seleniumServerConfiguration.set(configuration);
+        seleniumServerConfiguration.set(configuration);
 
-      afterConfiguration.fire(new SeleniumServerConfigured(configuration));
-   }
+        afterConfiguration.fire(new SeleniumServerConfigured(configuration));
+    }
 }

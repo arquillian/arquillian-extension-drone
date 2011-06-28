@@ -24,16 +24,14 @@ import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 
 /**
  * Arquillian Drone support for WebDriver
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class DroneWebDriverExtension implements LoadableExtension
-{
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(Configurator.class, WebDriverFactory.class);
-      builder.service(Instantiator.class, WebDriverFactory.class);
-      builder.service(Destructor.class, WebDriverFactory.class);
-   }
+public class DroneWebDriverExtension implements LoadableExtension {
+    public void register(ExtensionBuilder builder) {
+        builder.service(Configurator.class, WebDriverFactory.class);
+        builder.service(Instantiator.class, WebDriverFactory.class);
+        builder.service(Destructor.class, WebDriverFactory.class);
+    }
 }

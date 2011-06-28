@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.drone.configuration;
 
-import org.jboss.arquillian.drone.api.annotation.Qualifier;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
@@ -30,7 +30,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 @Qualifier
-public @interface Different
-{
+public @interface Different {
 
 }

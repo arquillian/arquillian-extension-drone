@@ -39,40 +39,37 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SeleniumServerTestCase extends AbstractTestTestBase
-{
-   @Spy
-   SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
+public class SeleniumServerTestCase extends AbstractTestTestBase {
+    @Spy
+    SeleniumServerConfiguration configuration = new SeleniumServerConfiguration();
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(SeleniumServerCreator.class);
-      extensions.add(SeleniumServerDestructor.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(SeleniumServerCreator.class);
+        extensions.add(SeleniumServerDestructor.class);
+    }
 
-   @Before
-   public void setMocks() {
-      bind(SuiteScoped.class, SeleniumServerConfiguration.class, configuration);
-      Mockito.when(configuration.isEnable()).thenReturn(true);
-   }
+    @Before
+    public void setMocks() {
+        bind(SuiteScoped.class, SeleniumServerConfiguration.class, configuration);
+        Mockito.when(configuration.isEnable()).thenReturn(true);
+    }
 
-   @Test
-   public void serverCreatedAndDestroyed() throws Exception
-   {
+    @Test
+    public void serverCreatedAndDestroyed() throws Exception {
 
-      fire(new SeleniumServerConfigured(configuration));
+        fire(new SeleniumServerConfigured(configuration));
 
-      SeleniumServer server = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServer.class);
+        SeleniumServer server = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServer.class);
 
-      Assert.assertNotNull("Selenium configuration object is present in context", server);
-      assertEventFired(SeleniumServerStarted.class, 1);
+        Assert.assertNotNull("Selenium configuration object is present in context", server);
+        assertEventFired(SeleniumServerStarted.class, 1);
 
-      fire(new AfterSuite());
+        fire(new AfterSuite());
 
-      assertEventFired(SeleniumServerStopped.class, 1);
-   }
+        assertEventFired(SeleniumServerStopped.class, 1);
+    }
 }

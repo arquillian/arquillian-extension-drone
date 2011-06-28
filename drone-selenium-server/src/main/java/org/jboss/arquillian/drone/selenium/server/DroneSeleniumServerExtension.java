@@ -24,13 +24,11 @@ import org.jboss.arquillian.drone.selenium.server.impl.SeleniumServerDestructor;
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-public class DroneSeleniumServerExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.observer(SeleniumServerConfigurator.class);
-      builder.observer(SeleniumServerCreator.class);
-      builder.observer(SeleniumServerDestructor.class);
-   }
+public class DroneSeleniumServerExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.observer(SeleniumServerConfigurator.class);
+        builder.observer(SeleniumServerCreator.class);
+        builder.observer(SeleniumServerDestructor.class);
+    }
 }

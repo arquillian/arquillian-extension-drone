@@ -42,57 +42,55 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-
 /**
  * Tests Registar precedence and its retrieval chain.
- *
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RegistrarTestCase extends AbstractTestTestBase
-{
-   @Mock
-   private ServiceLoader serviceLoader;
+public class RegistrarTestCase extends AbstractTestTestBase {
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Drone
-   MockDrone unused;
+    @Drone
+    MockDrone unused;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(DroneRegistrar.class);
-      extensions.add(DroneConfigurator.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DroneRegistrar.class);
+        extensions.add(DroneConfigurator.class);
+    }
 
-   @SuppressWarnings("rawtypes")
-   @Before
-   public void setMocks()
-   {
-      ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class);
+    @SuppressWarnings("rawtypes")
+    @Before
+    public void setMocks() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class);
 
-      getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
-      Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
-   }
+        getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+        getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
+                Arrays.<Configurator> asList(new MockDronePriorityFactory(), new MockDroneFactory()));
+    }
 
-   @Test
-   public void testPrecedence() throws Exception
-   {
-      getManager().fire(new BeforeSuite());
+    @Test
+    public void testPrecedence() throws Exception {
+        getManager().fire(new BeforeSuite());
 
-      DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-      Assert.assertNotNull("Drone registry was created in the context", registry);
+        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+        Assert.assertNotNull("Drone registry was created in the context", registry);
 
-      Assert.assertNotNull("Configurator for MockDrone was created", registry.getConfiguratorFor(MockDrone.class));
-      System.err.println(registry.getConfiguratorFor(MockDrone.class).getClass());
-      Assert.assertTrue("Configurator is of MockDronePriorityFactory type", registry.getConfiguratorFor(MockDrone.class) instanceof MockDronePriorityFactory);
+        Assert.assertNotNull("Configurator for MockDrone was created", registry.getConfiguratorFor(MockDrone.class));
+        System.err.println(registry.getConfiguratorFor(MockDrone.class).getClass());
+        Assert.assertTrue("Configurator is of MockDronePriorityFactory type",
+                registry.getConfiguratorFor(MockDrone.class) instanceof MockDronePriorityFactory);
 
-      getManager().fire(new BeforeClass(this.getClass()));
+        getManager().fire(new BeforeClass(this.getClass()));
 
-      DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-      Assert.assertNotNull("Drone object holder was created in the context", context);
+        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("Drone object holder was created in the context", context);
 
-      MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
-      Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory", MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());
-   }
+        MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
+        Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",
+                MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());
+    }
 }

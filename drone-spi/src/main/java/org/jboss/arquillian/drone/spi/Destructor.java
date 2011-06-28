@@ -18,20 +18,19 @@ package org.jboss.arquillian.drone.spi;
 
 /**
  * Defines a contract for destroying instances of the Drone Driver
- * 
- * @param <T> Type of the driver that the destructor is able to destroy 
+ *
+ * @param <T> Type of the driver that the destructor is able to destroy
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface Destructor<T> extends Sortable
-{
-   /**
-    * Destroys an instance of the driver.
-    * 
-    * After the last method is run, the driver instance is destroyed. This means
-    * browser windows, if any, are closed and used resources are freed.
-    * 
-    * @param instance The instance to be destroyed
-    */
-   void destroyInstance(T instance);
+public interface Destructor<T> extends Sortable {
+    /**
+     * Destroys an instance of the driver.
+     *
+     * After the last method is run, the driver instance is destroyed. This means browser windows, if any, are closed and used
+     * resources are freed.
+     *
+     * @param instance The instance to be destroyed
+     */
+    void destroyInstance(T instance);
 }

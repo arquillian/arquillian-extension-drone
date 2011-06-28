@@ -27,46 +27,43 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>, Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone>
-{
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
-    */
-   public int getPrecedence()
-   {
-      return 0;
-   }
+public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
+        Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
+     */
+    public int getPrecedence() {
+        return 0;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      return new MockDroneConfiguration().configure(descriptor, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.
+     * ArquillianDescriptor, java.lang.Class)
+     */
+    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        return new MockDroneConfiguration().configure(descriptor, qualifier);
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-    */
-   public void destroyInstance(MockDrone instance)
-   {
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
+     */
+    public void destroyInstance(MockDrone instance) {
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
-    */
-   public MockDrone createInstance(MockDroneConfiguration configuration)
-   {
-      MockDrone instance = new MockDrone(configuration.getField());
-      return instance;
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
+     */
+    public MockDrone createInstance(MockDroneConfiguration configuration) {
+        MockDrone instance = new MockDrone(configuration.getField());
+        return instance;
+    }
 
 }

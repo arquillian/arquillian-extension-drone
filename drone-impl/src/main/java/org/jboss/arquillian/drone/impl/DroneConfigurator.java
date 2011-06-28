@@ -34,9 +34,8 @@ import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
- * Configurator of Drone Configuration. Creates a configuration for every
- * field annotated with {@link Drone}.
- * 
+ * Configurator of Drone Configuration. Creates a configuration for every field annotated with {@link Drone}.
+ *
  * <p>
  * Consumes:
  * </p>
@@ -44,7 +43,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
  * <li>{@link DroneRegistry}</li>
  * </ol>
- * 
+ *
  * <p>
  * Produces:
  * </p>
@@ -52,71 +51,66 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * <li>{@link DroneContext}</li>
  * <li>{@link MethodContext}</li>
  * </ol>
- * 
+ *
  * <p>
  * Fires:
  * </p>
  * <ol>
  * <li>{@link DroneConfigured}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link BeforeClass}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
-public class DroneConfigurator
-{
-   @Inject
-   @ClassScoped
-   private InstanceProducer<DroneContext> droneContext;
+public class DroneConfigurator {
+    @Inject
+    @ClassScoped
+    private InstanceProducer<DroneContext> droneContext;
 
-   @Inject
-   @ClassScoped
-   private InstanceProducer<MethodContext> methodContext;
-   
-   @Inject
-   private Instance<ArquillianDescriptor> arquillianDescriptor;
+    @Inject
+    @ClassScoped
+    private InstanceProducer<MethodContext> methodContext;
 
-   @Inject
-   private Instance<DroneRegistry> registry;
-   
-   @Inject
-   private Event<DroneConfigured> afterConfiguration;
+    @Inject
+    private Instance<ArquillianDescriptor> arquillianDescriptor;
 
-   public void configureDrone(@Observes BeforeClass event)
-   {
-      methodContext.set(new MethodContext());
-      
-      // check if any field is @Drone annotated
-      List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
-      if (fields.isEmpty())
-      {
-         return;
-      }
+    @Inject
+    private Instance<DroneRegistry> registry;
 
-      droneContext.set(new DroneContext());
-      for (Field f : fields)
-      {
-         Class<?> typeClass = f.getType();
-         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+    @Inject
+    private Event<DroneConfigured> afterConfiguration;
 
-         Configurator<?, ?> configurator = registry.get().getConfiguratorFor(typeClass);
-         if (configurator == null)
-         {
-            throw new IllegalArgumentException("No configurator was found for object of type " + typeClass.getName());
-         }
+    public void configureDrone(@Observes BeforeClass event) {
+        methodContext.set(new MethodContext());
 
-         DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-         droneContext.get().add(configuration.getClass(), qualifier, configuration);
-         afterConfiguration.fire(new DroneConfigured(f, qualifier, configuration));
-      }
+        // check if any field is @Drone annotated
+        List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
+        if (fields.isEmpty()) {
+            return;
+        }
 
-   }
+        droneContext.set(new DroneContext());
+        for (Field f : fields) {
+            Class<?> typeClass = f.getType();
+            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+            Configurator<?, ?> configurator = registry.get().getConfiguratorFor(typeClass);
+            if (configurator == null) {
+                throw new IllegalArgumentException("No configurator was found for object of type " + typeClass.getName());
+            }
+
+            DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
+            droneContext.get().add(configuration.getClass(), qualifier, configuration);
+            afterConfiguration.fire(new DroneConfigured(f, qualifier, configuration));
+        }
+
+    }
 
 }

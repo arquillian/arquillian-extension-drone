@@ -27,7 +27,6 @@ import org.openqa.selenium.server.SeleniumServer;
 
 /**
  * Destructor of Selenium Server instance
- * <p/>
  * <p>
  * Consumes:
  * </p>
@@ -52,26 +51,23 @@ import org.openqa.selenium.server.SeleniumServer;
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  */
-public class SeleniumServerDestructor
-{
-   @Inject
-   private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
+public class SeleniumServerDestructor {
+    @Inject
+    private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
 
-   @Inject
-   private Instance<SeleniumServer> seleniumServer;
+    @Inject
+    private Instance<SeleniumServer> seleniumServer;
 
-   @Inject
-   private Event<SeleniumServerStopped> afterStop;
+    @Inject
+    private Event<SeleniumServerStopped> afterStop;
 
-   public void seleniumServerShutDown(@Observes AfterSuite event)
-   {
-      if (!seleniumServerConfiguration.get().isEnable())
-      {
-         return;
-      }
+    public void seleniumServerShutDown(@Observes AfterSuite event) {
+        if (!seleniumServerConfiguration.get().isEnable()) {
+            return;
+        }
 
-      seleniumServer.get().stop();
-      afterStop.fire(new SeleniumServerStopped());
-   }
+        seleniumServer.get().stop();
+        afterStop.fire(new SeleniumServerStopped());
+    }
 
 }

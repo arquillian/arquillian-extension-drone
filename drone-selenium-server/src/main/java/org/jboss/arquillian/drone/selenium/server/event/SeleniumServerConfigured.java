@@ -20,38 +20,34 @@ import org.jboss.arquillian.drone.selenium.server.configuration.SeleniumServerCo
 
 /**
  * An event which is send to inform other components that Selenium Server was configured
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  */
-public class SeleniumServerConfigured
-{
-   private SeleniumServerConfiguration configuration;
+public class SeleniumServerConfigured {
+    private SeleniumServerConfiguration configuration;
 
-   
-   /**
-    * Creates an event with Selenium Server configuration
-    * @param configuration the configuration
-    */
-   public SeleniumServerConfigured(SeleniumServerConfiguration configuration)
-   {
-      this.setConfiguration(configuration);
-   }
+    /**
+     * Creates an event with Selenium Server configuration
+     *
+     * @param configuration the configuration
+     */
+    public SeleniumServerConfigured(SeleniumServerConfiguration configuration) {
+        this.setConfiguration(configuration);
+    }
 
-   /**
-    * @param configuration the configuration to set
-    */
-   public void setConfiguration(SeleniumServerConfiguration configuration)
-   {
-      this.configuration = configuration;
-   }
+    /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(SeleniumServerConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-   /**
-    * @return the configuration
-    */
-   public SeleniumServerConfiguration getConfiguration()
-   {
-      return configuration;
-   }
+    /**
+     * @return the configuration
+     */
+    public SeleniumServerConfiguration getConfiguration() {
+        return configuration;
+    }
 
 }

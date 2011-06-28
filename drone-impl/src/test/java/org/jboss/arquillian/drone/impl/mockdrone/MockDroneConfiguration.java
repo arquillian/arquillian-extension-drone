@@ -22,46 +22,43 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
-public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration>
-{
+public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration> {
 
-   private String field;
+    private String field;
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.DroneConfiguration#getConfigurationName()
-    */
-   public String getConfigurationName()
-   {
-      return "mockdrone";
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.DroneConfiguration#getConfigurationName()
+     */
+    public String getConfigurationName() {
+        return "mockdrone";
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.DroneConfiguration#configure(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public MockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jboss.arquillian.drone.spi.DroneConfiguration#configure(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor
+     * , java.lang.Class)
+     */
+    public MockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
 
-   /**
-    * @param field the field to set
-    */
-   public void setField(String field)
-   {
-      this.field = field;
-   }
+    /**
+     * @param field the field to set
+     */
+    public void setField(String field) {
+        this.field = field;
+    }
 
-   /**
-    * @return the field
-    */
-   public String getField()
-   {
-      return field;
-   }
+    /**
+     * @return the field
+     */
+    public String getField() {
+        return field;
+    }
 
 }

@@ -30,9 +30,8 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
- * Creator of drone instances. Creates a instance for every field annotated
- * with {@link Drone}.
- * 
+ * Creator of drone instances. Creates a instance for every field annotated with {@link Drone}.
+ *
  * <p>
  * Consumes:
  * </p>
@@ -40,47 +39,44 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * <li>{@link DroneRegistry}</li>
  * <li>{@link DroneContext}</li>
  * </ol>
- * 
+ *
  * <p>
  * Observes:
  * </p>
  * <ol>
  * <li>{@link DroneConfigured}</li>
  * </ol>
- * 
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
+ *
  */
-public class DroneCreator
-{
-   private static final Logger log = Logger.getLogger(DroneCreator.class.getName());
+public class DroneCreator {
+    private static final Logger log = Logger.getLogger(DroneCreator.class.getName());
 
-   @Inject
-   private Instance<DroneRegistry> registry;
+    @Inject
+    private Instance<DroneRegistry> registry;
 
-   @Inject
-   private Instance<DroneContext> droneContext;
+    @Inject
+    private Instance<DroneContext> droneContext;
 
-   @SuppressWarnings("unchecked")
-   public void createWebTestBrowser(@Observes DroneConfigured event)
-   {
-      Field field = event.getInjected();
-      Class<?> typeClass = field.getType();
-      Class<? extends Annotation> qualifier = event.getQualifier();
-      DroneConfiguration<?> configuration = event.getConfiguration();
+    @SuppressWarnings("unchecked")
+    public void createWebTestBrowser(@Observes DroneConfigured event) {
+        Field field = event.getInjected();
+        Class<?> typeClass = field.getType();
+        Class<? extends Annotation> qualifier = event.getQualifier();
+        DroneConfiguration<?> configuration = event.getConfiguration();
 
-      @SuppressWarnings("rawtypes")
-      Instantiator instantiator = registry.get().getInstantiatorFor(typeClass);
+        @SuppressWarnings("rawtypes")
+        Instantiator instantiator = registry.get().getInstantiatorFor(typeClass);
 
-      if (instantiator == null)
-      {
-         throw new IllegalArgumentException("No instantiator was found for object of type " + typeClass.getName());
-      }
-      if (log.isLoggable(Level.FINE))
-      {
-         log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence " + instantiator.getPrecedence());
-      }
+        if (instantiator == null) {
+            throw new IllegalArgumentException("No instantiator was found for object of type " + typeClass.getName());
+        }
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence "
+                    + instantiator.getPrecedence());
+        }
 
-      droneContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
-   }
+        droneContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
+    }
 }

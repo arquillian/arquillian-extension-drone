@@ -48,116 +48,108 @@ import org.mockito.runners.MockitoJUnitRunner;
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
  * <p/>
  * Additionally tests DroneTestEnricher
- *
+ * 
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EnricherTestCase extends AbstractTestTestBase
-{
-   private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
-   private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
+public class EnricherTestCase extends AbstractTestTestBase {
+    private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
+    private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
 
-   @Mock
-   private ServiceLoader serviceLoader;
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(DroneRegistrar.class);
-      extensions.add(DroneConfigurator.class);
-      extensions.add(DroneTestEnricher.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DroneRegistrar.class);
+        extensions.add(DroneConfigurator.class);
+        extensions.add(DroneTestEnricher.class);
+    }
 
-   @SuppressWarnings("rawtypes")
-   @org.junit.Before
-   public void setMocks()
-   {
-      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-            .extension("mockdrone-different")
-            .property("field", DIFFERENT_FIELD)
-            .extension("mockdrone-methodargumentone")
-            .property("field", METHOD_ARGUMENT_ONE_FIELD);
+    @SuppressWarnings("rawtypes")
+    @org.junit.Before
+    public void setMocks() {
+        ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone-different")
+                .property("field", DIFFERENT_FIELD).extension("mockdrone-methodargumentone")
+                .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
-      TestEnricher testEnricher = new DroneTestEnricher();
+        TestEnricher testEnricher = new DroneTestEnricher();
 
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
-      Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator>asList(new MockDroneFactory()));
-      Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator>asList(new MockDroneFactory()));
-      Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator>asList(new MockDroneFactory()));
-      Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
-      Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
-   }
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+    }
 
-   @Test
-   public void testQualifer() throws Exception
-   {
-      getManager().getContext(ClassContext.class).activate(EnrichedClass.class);
-      fire(new BeforeSuite());
+    @Test
+    public void testQualifer() throws Exception {
+        getManager().getContext(ClassContext.class).activate(EnrichedClass.class);
+        fire(new BeforeSuite());
 
+        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+        Assert.assertNotNull("Drone registry was created in the context", registry);
 
-      DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-      Assert.assertNotNull("Drone registry was created in the context", registry);
+        Assert.assertTrue("Configurator is of mock type",
+                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
 
-      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+        fire(new BeforeClass(EnrichedClass.class));
 
-      fire(new BeforeClass(EnrichedClass.class));
+        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("Drone object holder was created in the context", context);
 
-      DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-      Assert.assertNotNull("Drone object holder was created in the context", context);
+        MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
+        Assert.assertNull("There is no MockDroneConfiguration with @Default qualifier", configuration);
 
-      MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
-      Assert.assertNull("There is no MockDroneConfiguration with @Default qualifier", configuration);
+        configuration = context.get(MockDroneConfiguration.class, Different.class);
+        Assert.assertNotNull("MockDroneConfiguration is stored with @DifferentMock qualifier", configuration);
 
-      configuration = context.get(MockDroneConfiguration.class, Different.class);
-      Assert.assertNotNull("MockDroneConfiguration is stored with @DifferentMock qualifier", configuration);
+        Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD, configuration.getField());
 
-      Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD, configuration.getField());
+        getManager().getContext(ClassContext.class).deactivate();
+        getManager().getContext(ClassContext.class).destroy(EnrichedClass.class);
+    }
 
-      getManager().getContext(ClassContext.class).deactivate();
-      getManager().getContext(ClassContext.class).destroy(EnrichedClass.class);
-   }
+    @Test
+    public void testMethodQualifer() throws Exception {
+        getManager().getContext(ClassContext.class).activate(MethodEnrichedClass.class);
+        fire(new BeforeSuite());
 
-   @Test
-   public void testMethodQualifer() throws Exception
-   {
-      getManager().getContext(ClassContext.class).activate(MethodEnrichedClass.class);
-      fire(new BeforeSuite());
+        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+        Assert.assertNotNull("Drone registry was created in the context", registry);
 
-      DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-      Assert.assertNotNull("Drone registry was created in the context", registry);
+        Assert.assertTrue("Configurator is of mock type",
+                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
 
-      Assert.assertTrue("Configurator is of mock type", registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+        fire(new BeforeClass(MethodEnrichedClass.class));
 
-      fire(new BeforeClass(MethodEnrichedClass.class));
+        MethodContext mc = getManager().getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
+        Assert.assertNotNull("Method context object holder was created in the context", mc);
 
-      MethodContext mc = getManager().getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
-      Assert.assertNotNull("Method context object holder was created in the context", mc);
+        Object instance = new MethodEnrichedClass();
+        Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDrone.class);
 
-      Object instance = new MethodEnrichedClass();
-      Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDrone.class);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        Object[] parameters = testEnricher.resolve(testMethod);
+        testMethod.invoke(instance, parameters);
+    }
 
-      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-      getManager().inject(testEnricher);
-      Object[] parameters = testEnricher.resolve(testMethod);
-      testMethod.invoke(instance, parameters);
-   }
+    static class EnrichedClass {
+        @Drone
+        @Different
+        MockDrone unused;
+    }
 
-   static class EnrichedClass
-   {
-      @Drone
-      @Different
-      MockDrone unused;
-   }
+    static class MethodEnrichedClass {
 
-   static class MethodEnrichedClass
-   {
-
-      public void testMethodEnrichment(@Drone @MethodArgumentOne MockDrone unused)
-      {
-         Assert.assertNotNull("Mock drone instance was created", unused);
-         Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD, unused.getField());
-      }
-   }
+        public void testMethodEnrichment(@Drone @MethodArgumentOne MockDrone unused) {
+            Assert.assertNotNull("Mock drone instance was created", unused);
+            Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD,
+                    unused.getField());
+        }
+    }
 
 }

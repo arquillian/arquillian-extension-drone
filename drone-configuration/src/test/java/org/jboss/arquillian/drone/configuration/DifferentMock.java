@@ -30,7 +30,6 @@ import org.jboss.arquillian.drone.api.annotation.Qualifier;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 @Qualifier
-public @interface DifferentMock
-{
+public @interface DifferentMock {
 
 }

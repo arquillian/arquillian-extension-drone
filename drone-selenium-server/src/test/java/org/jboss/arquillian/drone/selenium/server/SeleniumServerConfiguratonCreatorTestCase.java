@@ -33,28 +33,23 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-public class SeleniumServerConfiguratonCreatorTestCase extends AbstractTestTestBase
-{
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(SeleniumServerConfigurator.class);
-   }
+public class SeleniumServerConfiguratonCreatorTestCase extends AbstractTestTestBase {
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(SeleniumServerConfigurator.class);
+    }
 
-   @Before
-   public void setMocks()
-   {
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
-   }
+    @Before
+    public void setMocks() {
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+    }
 
-
-   @Test
-   public void configurationWasCreated() throws Exception
-   {
-      fire(new BeforeSuite());
-      SeleniumServerConfiguration selConf = getManager().getContext(SuiteContext.class).getObjectStore().get(SeleniumServerConfiguration.class);
-      Assert.assertNotNull("Selenium configuration was created in context", selConf);
-   }
-
+    @Test
+    public void configurationWasCreated() throws Exception {
+        fire(new BeforeSuite());
+        SeleniumServerConfiguration selConf = getManager().getContext(SuiteContext.class).getObjectStore()
+                .get(SeleniumServerConfiguration.class);
+        Assert.assertNotNull("Selenium configuration was created in context", selConf);
+    }
 
 }

@@ -16,29 +16,25 @@
  */
 package org.jboss.arquillian.drone.spi;
 
-
 /**
- * Contract which allows to sort object based an precedence value.
- * This allows to choose between different implementations for same types.
- * 
- * Support for Ajocado, Selenium and WebDriver included in the extension
- * always has a precedence of {@code 0}, so it can be easily overridden by
- * providing {@link org.jboss.arquillian.drone.spi.Configurator}, etc. with bigger precedence value.
- * 
- * 
+ * Contract which allows to sort object based an precedence value. This allows to choose between different implementations for
+ * same types.
+ *
+ * Support for Ajocado, Selenium and WebDriver included in the extension always has a precedence of {@code 0}, so it can be
+ * easily overridden by providing {@link org.jboss.arquillian.drone.spi.Configurator}, etc. with bigger precedence value.
+ *
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see org.jboss.arquillian.drone.spi.Configurator
  * @see org.jboss.arquillian.drone.spi.Instantiator
  * @see org.jboss.arquillian.drone.spi.Destructor
  *
  */
-public interface Sortable
-{
-   /**
-    * Returns precedence of this implementation
-    * 
-    * @return the precedence for current instance
-    */
-   int getPrecedence();
+public interface Sortable {
+    /**
+     * Returns precedence of this implementation
+     *
+     * @return the precedence for current instance
+     */
+    int getPrecedence();
 }
-

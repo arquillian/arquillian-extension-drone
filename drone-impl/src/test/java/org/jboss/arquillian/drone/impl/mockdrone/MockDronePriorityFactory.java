@@ -27,50 +27,47 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * 
  */
-public class MockDronePriorityFactory implements Configurator<MockDrone, MockDroneConfiguration>, Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone>
-{
-   public static final String MOCK_DRONE_PRIORITY_FACTORY_FIELD = "Set by MockDronePriorityFactory";
+public class MockDronePriorityFactory implements Configurator<MockDrone, MockDroneConfiguration>,
+        Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+    public static final String MOCK_DRONE_PRIORITY_FACTORY_FIELD = "Set by MockDronePriorityFactory";
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
-    */
-   public int getPrecedence()
-   {
-      return 10;
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
+     */
+    public int getPrecedence() {
+        return 10;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, qualifier);
-      configuration.setField(MOCK_DRONE_PRIORITY_FACTORY_FIELD);
-      return configuration;
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.
+     * ArquillianDescriptor, java.lang.Class)
+     */
+    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, qualifier);
+        configuration.setField(MOCK_DRONE_PRIORITY_FACTORY_FIELD);
+        return configuration;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-    */
-   public void destroyInstance(MockDrone instance)
-   {
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
+     */
+    public void destroyInstance(MockDrone instance) {
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
-    */
-   public MockDrone createInstance(MockDroneConfiguration configuration)
-   {
-      MockDrone instance = new MockDrone(configuration.getField());
-      return instance;
-   }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
+     */
+    public MockDrone createInstance(MockDroneConfiguration configuration) {
+        MockDrone instance = new MockDrone(configuration.getField());
+        return instance;
+    }
 
 }

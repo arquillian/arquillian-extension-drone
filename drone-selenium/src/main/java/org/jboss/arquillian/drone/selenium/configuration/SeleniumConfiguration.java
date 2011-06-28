@@ -16,177 +16,156 @@
  */
 package org.jboss.arquillian.drone.selenium.configuration;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
-import java.lang.annotation.Annotation;
-
 /**
- * Configuration for Selenium. This configuration can be fetched from Arquillian
- * Descriptor and overridden by System properties.
- * 
- * 
+ * Configuration for Selenium. This configuration can be fetched from Arquillian Descriptor and overridden by System properties.
+ *
+ *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  * @see ArquillianDescriptor
  * @see ConfigurationMapper
- * 
+ *
  */
-public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfiguration>
-{
-   public static final String CONFIGURATION_NAME = "selenium";
+public class SeleniumConfiguration implements DroneConfiguration<SeleniumConfiguration> {
+    public static final String CONFIGURATION_NAME = "selenium";
 
-   private int serverPort = 14444;
+    private int serverPort = 14444;
 
-   private String serverHost = "localhost";
+    private String serverHost = "localhost";
 
-   private String url = "http://localhost:8080";
+    private String url = "http://localhost:8080";
 
-   private int timeout = 60000;
+    private int timeout = 60000;
 
-   private int speed = 0;
+    private int speed = 0;
 
-   private String browser = "*firefox";
+    private String browser = "*firefox";
 
-   /**
-    * Creates default Selenium Configuration
-    */
-   public SeleniumConfiguration()
-   {
-   }
+    /**
+     * Creates default Selenium Configuration
+     */
+    public SeleniumConfiguration() {
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName
-    * ()
-    */
-   public String getConfigurationName()
-   {
-      return CONFIGURATION_NAME;
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#getConfigurationName ()
+     */
+    public String getConfigurationName() {
+        return CONFIGURATION_NAME;
+    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see
-    * org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
-    * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-    */
-   public SeleniumConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier)
-   {
-      ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-      return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
-   }
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jboss.arquillian.selenium.spi.WebTestConfiguration#configure(org.jboss
+     * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
+     */
+    public SeleniumConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
 
-   /**
-    * A port where Selenium configuration is started/running
-    * 
-    * @return the serverPort
-    */
-   public int getServerPort()
-   {
-      return serverPort;
-   }
+    /**
+     * A port where Selenium configuration is started/running
+     *
+     * @return the serverPort
+     */
+    public int getServerPort() {
+        return serverPort;
+    }
 
-   /**
-    * @param serverPort the serverPort to set
-    */
-   public void setServerPort(int serverPort)
-   {
-      this.serverPort = serverPort;
-   }
+    /**
+     * @param serverPort the serverPort to set
+     */
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
 
-   /**
-    * The name of machine where Selenium configuration is started/running
-    * 
-    * @return the serverHost
-    */
-   public String getServerHost()
-   {
-      return serverHost;
-   }
+    /**
+     * The name of machine where Selenium configuration is started/running
+     *
+     * @return the serverHost
+     */
+    public String getServerHost() {
+        return serverHost;
+    }
 
-   /**
-    * @param serverHost the serverHost to set
-    */
-   public void setServerHost(String serverHost)
-   {
-      this.serverHost = serverHost;
-   }
+    /**
+     * @param serverHost the serverHost to set
+     */
+    public void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
 
-   /**
-    * Time limit in milliseconds which determines operation failed, either for
-    * executing Selenium command or starting Selenium configuration
-    * 
-    * @return the timeout
-    */
-   public int getTimeout()
-   {
-      return timeout;
-   }
+    /**
+     * Time limit in milliseconds which determines operation failed, either for executing Selenium command or starting Selenium
+     * configuration
+     *
+     * @return the timeout
+     */
+    public int getTimeout() {
+        return timeout;
+    }
 
-   /**
-    * @param timeout the timeout to set
-    */
-   public void setTimeout(int timeout)
-   {
-      this.timeout = timeout;
-   }
+    /**
+     * @param timeout the timeout to set
+     */
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 
-   /**
-    * Time delay in milliseconds before each Selenium command is sent
-    * 
-    * @return the speed
-    */
-   public int getSpeed()
-   {
-      return speed;
-   }
+    /**
+     * Time delay in milliseconds before each Selenium command is sent
+     *
+     * @return the speed
+     */
+    public int getSpeed() {
+        return speed;
+    }
 
-   /**
-    * @param speed the speed to set
-    */
-   public void setSpeed(int speed)
-   {
-      this.speed = speed;
-   }
+    /**
+     * @param speed the speed to set
+     */
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
-   /**
-    * Identification of the browser for needs of Selenium.
-    * 
-    * Use can use variants including path to binary, such as: <i>*firefoxproxy
-    * /opt/firefox-3.0/firefox</i>
-    * 
-    * @return the browser
-    */
-   public String getBrowser()
-   {
-      return browser;
-   }
+    /**
+     * Identification of the browser for needs of Selenium.
+     *
+     * Use can use variants including path to binary, such as: <i>*firefoxproxy /opt/firefox-3.0/firefox</i>
+     *
+     * @return the browser
+     */
+    public String getBrowser() {
+        return browser;
+    }
 
-   /**
-    * @param browser the browser to set
-    */
-   public void setBrowser(String browser)
-   {
-      this.browser = browser;
-   }
+    /**
+     * @param browser the browser to set
+     */
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
 
-   /**
-    * @param url the url to set
-    */
-   public void setUrl(String url)
-   {
-      this.url = url;
-   }
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-   /**
-    * @return the url
-    */
-   public String getUrl()
-   {
-      return url;
-   }
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
 }
