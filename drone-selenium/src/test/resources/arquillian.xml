@@ -12,7 +12,6 @@
             <!-- <property name="javaHome">/usr/lib/jvm/java-6-openjdk/</property> -->
             <property name="bindAddress">127.0.0.1</property>
             <property name="httpPort">8080</property>
-            <property name="profileName">all</property>
         </configuration>
     </container>
 </arquillian>

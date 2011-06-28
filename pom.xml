@@ -4,9 +4,10 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-build</artifactId>
-        <version>1.0.0.CR1-SNAPSHOT</version>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>6-beta-2</version>
+        <relativePath />
     </parent>
 
     <!-- Model Version -->
@@ -29,22 +30,15 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.0.CR1-SNAPSHOT</version.arquillian.core>
+        <version.arquillian.core>1.0.0.CR1</version.arquillian.core>
+        <version.selenium>2.0rc3</version.selenium>
+        <version.selenium.rc>2.0rc2</version.selenium.rc>
+        <version.slf4j>1.5.10</version.slf4j>
     </properties>
 
     <!-- Plugin Configuration -->
     <build>
         <plugins>
-            <!-- Deploy -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <!-- Don't include this aggregator in the deployment -->
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-
             <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -76,30 +70,14 @@
 
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian.core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-bom</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <!-- Modules -->
     <modules>
+
+        <!-- Drone build chain-->
+        <module>drone-build</module>
         <module>build-config</module>
-        <!-- Drone -->
-        <module>drone-bom</module>
+
+        <!-- Drone modules -->
         <module>drone-api</module>
         <module>drone-spi</module>
         <module>drone-configuration</module>
@@ -107,6 +85,7 @@
         <module>drone-selenium-server</module>
         <module>drone-selenium</module>
         <module>drone-webdriver</module>
+        <module>drone-bom</module>
     </modules>
 
 </project>

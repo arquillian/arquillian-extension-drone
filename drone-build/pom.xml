@@ -15,10 +15,10 @@
 
     <!-- Artifact Configuration -->
     <groupId>org.jboss.arquillian.extension</groupId>
-    <artifactId>arquillian-drone-bom</artifactId>
+    <artifactId>arquillian-drone-build</artifactId>
 
     <packaging>pom</packaging>
-    <name>Arquillian Drone Extension BOM</name>
+    <name>Arquillian Drone Extension Build</name>
     <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
     <developers>
@@ -29,45 +29,41 @@
     </developers>
 
     <properties>
+        <!-- Versioning -->
+        <version.jpa>1.0</version.jpa>
+        <version.cdi>1.0-SP1</version.cdi>
+        <version.jsf>2.0.2-FCS</version.jsf>
+        <version.el>2.2</version.el>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Arquillian Drone-->
+            <!-- Arquillian -->
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-api</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.arquillian.core}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-spi</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-build</artifactId>
+                <version>${version.arquillian.core}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-configuration</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-impl-base</artifactId>
+                <classifier>tests</classifier>
+                <version>${version.arquillian.core}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-selenium</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-selenium-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-webdriver</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.jboss.arquillian.test</groupId>
+                <artifactId>arquillian-test-impl-base</artifactId>
+                <classifier>tests</classifier>
+                <version>${version.arquillian.core}</version>
             </dependency>
             
             <!-- Selenium dependencies -->
@@ -118,6 +114,26 @@
                 <artifactId>slf4j-simple</artifactId>
                 <version>${version.slf4j}</version>
             </dependency>
+
+            <!-- we are using a Weld based example for testing -->
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${version.cdi}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.faces</groupId>
+                <artifactId>jsf-api</artifactId>
+                <version>${version.jsf}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>persistence-api</artifactId>
+                <version>${version.jpa}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 

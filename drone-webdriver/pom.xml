@@ -5,9 +5,9 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-aggregator</artifactId>
+        <artifactId>arquillian-drone-build</artifactId>
         <version>1.0.0.CR1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../drone-build/pom.xml</relativePath>
     </parent>
 
     <!-- Model Version -->
@@ -26,11 +26,6 @@
     </developers>
 
     <properties>
-        <!-- Versioning -->
-        <version.jpa>1.0</version.jpa>
-        <version.cdi>1.0-SP1</version.cdi>
-        <version.jsf>2.0.2-FCS</version.jsf>
-        <version.el>2.2</version.el>
     </properties>
 
    <!-- Dependencies -->
@@ -104,21 +99,18 @@
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
-            <version>${version.cdi}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>javax.faces</groupId>
             <artifactId>jsf-api</artifactId>
-            <version>${version.jsf}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
-            <version>${version.jpa}</version>
             <scope>test</scope>
         </dependency>
 
