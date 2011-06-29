@@ -28,13 +28,37 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-drone.git</connection>
+        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-drone.git</developerConnection>
+        <url>git://github.com/arquillian/arquillian-extension-drone.git</url>
+    </scm>
+
     <properties>
         <!-- Versioning -->
         <version.arquillian.core>1.0.0.CR1</version.arquillian.core>
         <version.selenium>2.0rc3</version.selenium>
         <version.selenium.rc>2.0rc2</version.selenium.rc>
         <version.slf4j>1.5.10</version.slf4j>
+
+        <!-- override from parent -->
+        <version.release.plugin>2.1</version.release.plugin>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.5</maven.compiler.source>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <!-- Modules -->
     <modules>
