@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-drone-build</artifactId>
-        <version>1.0.0.CR1-SNAPSHOT</version>
+        <version>1.0.0.CR1</version>
         <relativePath>../drone-build/pom.xml</relativePath>
     </parent>
 
