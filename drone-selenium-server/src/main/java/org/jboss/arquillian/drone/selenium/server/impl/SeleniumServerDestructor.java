@@ -62,7 +62,10 @@ public class SeleniumServerDestructor {
     private Event<SeleniumServerStopped> afterStop;
 
     public void seleniumServerShutDown(@Observes AfterSuite event) {
-        if (!seleniumServerConfiguration.get().isEnable()) {
+
+        SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
+
+        if (configuration == null || configuration.isSkip()) {
             return;
         }
 

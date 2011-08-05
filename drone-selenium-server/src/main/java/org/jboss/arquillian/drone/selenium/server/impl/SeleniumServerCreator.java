@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.selenium.server.impl;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.jboss.arquillian.core.api.Event;
@@ -65,6 +66,7 @@ import org.openqa.selenium.server.SeleniumServer;
  *
  */
 public class SeleniumServerCreator {
+
     @Inject
     private Instance<SeleniumServerConfiguration> seleniumServerConfiguration;
 
@@ -77,23 +79,81 @@ public class SeleniumServerCreator {
 
     public void seleniumServerStartUp(@Observes SeleniumServerConfigured event) throws IOException {
 
-        if (!seleniumServerConfiguration.get().isEnable()) {
+        SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
+
+        if (configuration == null || configuration.isSkip()) {
             return;
         }
 
-        SeleniumServerConfiguration configuration = seleniumServerConfiguration.get();
-
-        RemoteControlConfiguration rcc = new RemoteControlConfiguration();
-        rcc.setPort(configuration.getPort());
-        rcc.setLogOutFileName(configuration.getOutput());
-
         try {
-            SeleniumServer server = new SeleniumServer(rcc);
+            SeleniumServer server = new SeleniumServer(configure(configuration));
+            SystemEnvHolder sysEnv = new SystemEnvHolder();
+            sysEnv.modifyEnvBy(configuration);
             server.start();
+            sysEnv.restore();
+
             seleniumServer.set(server);
             afterStart.fire(new SeleniumServerStarted());
         } catch (Exception e) {
             throw new RuntimeException("Unable to start Selenium Server", e);
         }
+    }
+
+    private RemoteControlConfiguration configure(SeleniumServerConfiguration configuration) {
+        RemoteControlConfiguration rcc = new RemoteControlConfiguration();
+
+        rcc.setAvoidProxy(configuration.isAvoidProxy());
+        rcc.setBrowserSideLogEnabled(configuration.isBrowserSideLog());
+        rcc.setDebugMode(configuration.isDebug());
+        rcc.setDontTouchLogging(configuration.isDontTouchLogging());
+        SecurityActions.setProperty("selenium.loglevel", configuration.isDebug() ? "DEBUG" : "INFO");
+
+        rcc.setEnsureCleanSession(configuration.isEnsureCleanSession());
+
+        // set firefox profile
+        String ffProfile = configuration.getFirefoxProfileTemplate();
+        if (Validate.isNotNullOrEmpty(ffProfile)) {
+            Validate.isValidFile(ffProfile, "Firefox profile must point to a readable directory: " + ffProfile);
+            rcc.setFirefoxProfileTemplate(new File(ffProfile));
+        }
+
+        // force browser type
+        String forcedMode = configuration.getForcedBrowserMode();
+        if (Validate.isNotNullOrEmpty(forcedMode)) {
+            rcc.setForcedBrowserMode(forcedMode);
+        }
+
+        rcc.setHonorSystemProxy(configuration.isHonorSystemProxy());
+
+        // log file
+        String logFile = configuration.getLogFile();
+        if (Validate.isNotNullOrEmpty(logFile)) {
+            Validate.isInReadableDirectory(logFile, "Log file cannot be created: " + logFile);
+            rcc.setLogOutFile(new File(logFile));
+        }
+
+        rcc.setPort(configuration.getPort());
+
+        // set profile location
+        String profiles = configuration.getProfilesLocation();
+        if (Validate.isNotNullOrEmpty(profiles)) {
+            Validate.isValidFile(profiles, "Profiles location must point to a readable directory: " + profiles);
+            rcc.setProfilesLocation(new File(profiles));
+        }
+
+        rcc.setProxyInjectionModeArg(configuration.isProxyInjectionMode());
+        rcc.setReuseBrowserSessions(configuration.isBrowserSessionReuse());
+        rcc.setRetryTimeoutInSeconds(configuration.getRetryTimeoutInSeconds());
+        rcc.setSingleWindow(configuration.isSingleWindow());
+        rcc.setTimeoutInSeconds(configuration.getTimeoutInSeconds());
+        rcc.setTrustAllSSLCertificates(configuration.isTrustAllSSLCertificates());
+
+        String userExtensions = configuration.getUserExtensions();
+        if (Validate.isNotNullOrEmpty(userExtensions)) {
+            Validate.isValidFile(userExtensions, "User extensions must point to a valid file");
+            rcc.setUserExtensions(new File(userExtensions));
+        }
+
+        return rcc;
     }
 }
