@@ -55,7 +55,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     @Before
     public void setMocks() {
         bind(SuiteScoped.class, SeleniumServerConfiguration.class, configuration);
-        Mockito.when(configuration.isEnable()).thenReturn(true);
+        Mockito.when(configuration.isSkip()).thenReturn(false);
     }
 
     @Test
