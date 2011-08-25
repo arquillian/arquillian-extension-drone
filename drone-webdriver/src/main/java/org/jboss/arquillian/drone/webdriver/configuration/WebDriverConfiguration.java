@@ -27,6 +27,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * properties.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="jpapouse@redhat.com>Jan Papousek</a>
  * @see ArquillianDescriptor
  * @see org.jboss.arquillian.drone.configuration.ConfigurationMapper
  *
@@ -35,6 +36,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     public static final String CONFIGURATION_NAME = "webdriver";
 
     private String implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+    private String androidRemoteAddress = "http://localhost:8080/wd/hub";
 
     /**
      * Creates default Selenium WebDriver Configuration
@@ -70,10 +72,24 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     }
 
     /**
+     * @return the remote address used for testing via android sdk
+     */
+    public String getAndroidRemoteAddress() {
+        return androidRemoteAddress;
+    }
+
+    /**
      * @param implementationClass the implementationClass to set
      */
     public void setImplementationClass(String implementationClass) {
         this.implementationClass = implementationClass;
+    }
+
+    /**
+     * @param remoteAddress the remote address used for testing via android sdk
+     */
+    public void setAndroidRemoteAddress(String androidRemoteAddress) {
+        this.androidRemoteAddress = androidRemoteAddress;
     }
 
 }
