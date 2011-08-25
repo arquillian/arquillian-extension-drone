@@ -31,6 +31,7 @@ import org.openqa.selenium.WebDriver;
  * WebDriver browser object called {@link org.openqa.selenium.WebDriver}.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="jpapouse@redhat.com>Jan Papousek</a>
  *
  */
 public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>,
@@ -60,9 +61,12 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     public WebDriver createInstance(WebDriverConfiguration configuration) {
-        WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                WebDriver.class);
-        return driver;
+        if ("org.openqa.selenium.android.AndroidDriver".equals(configuration.getImplementationClass())) {
+            return createInstanceAndroid(configuration);
+        }
+        else {
+            return createInstanceDefault(configuration);
+        }
     }
 
     /*
@@ -76,4 +80,31 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
         return new WebDriverConfiguration().configure(descriptor, qualifier);
     }
 
+    /**
+     * Creates a new instance of android web driver with parameters from the given configuration
+     * 
+     * @param configuration 
+     * @return a new instance of android web driver
+     */
+    private WebDriver createInstanceAndroid(WebDriverConfiguration configuration) {
+        return SecurityActions.newInstance(
+            configuration.getImplementationClass(),
+            new Class<?>[] {String.class},
+            new Object[] {configuration.getAndroidRemoteAddress()},
+            WebDriver.class);
+    }
+
+    /**
+     * Creates a new instance of web driver without any paramaters
+     * 
+     * @param configuration 
+     * @return a new instance of web driver
+     */
+    private WebDriver createInstanceDefault(WebDriverConfiguration configuration) {
+        return SecurityActions.newInstance(
+            configuration.getImplementationClass(),
+            new Class<?>[0],
+            new Object[0],
+            WebDriver.class);
+    }
 }
