@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>6-beta-2</version>
+        <version>6</version>
         <relativePath />
     </parent>
 
@@ -35,9 +35,9 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.0.CR1</version.arquillian.core>
-        <version.selenium>2.0rc3</version.selenium>
-        <version.selenium.rc>2.0rc2</version.selenium.rc>
+        <version.arquillian.core>1.0.0.CR4</version.arquillian.core>
+        <version.selenium.server>2.5.0</version.selenium.server>
+        <version.selenium>2.5.0</version.selenium>
         <version.slf4j>1.5.10</version.slf4j>
 
         <!-- override from parent -->
@@ -64,6 +64,7 @@
 
         <!-- Drone build chain-->
         <module>build-config</module>
+        <module>drone-bom</module>
         <module>drone-build</module>        
 
         <!-- Drone modules -->
@@ -73,8 +74,7 @@
         <module>drone-impl</module>
         <module>drone-selenium-server</module>
         <module>drone-selenium</module>
-        <module>drone-webdriver</module>
-        <module>drone-bom</module>
+        <module>drone-webdriver</module>        
     </modules>
 
 </project>

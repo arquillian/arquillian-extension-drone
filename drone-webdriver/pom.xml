@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -64,7 +65,7 @@
         <!-- Selenium dependencies -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-control</artifactId>
+            <artifactId>selenium-java</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -73,7 +74,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency>        
 
         <!-- test dependencies -->
         <dependency>
@@ -158,22 +159,6 @@
                                     </includes>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- uses Selenium 2.0 FirefoxDriver -->
-        <profile>
-            <id>ftest-firefox</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
                             <execution>
                                 <id>firefoxdriver-test</id>
                                 <goals>
@@ -181,11 +166,10 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver
-                              </arquillian.webdriver.implementation.class>
+                                        <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver</arquillian.webdriver.implementation.class>
                                     </systemPropertyVariables>
                                     <includes>
-                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
+                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase*</include>
                                     </includes>
                                 </configuration>
                             </execution>
