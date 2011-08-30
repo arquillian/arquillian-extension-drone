@@ -78,15 +78,16 @@ public class DefaultSeleniumTestCase {
         WebArchive war = ShrinkWrap
                 .create(WebArchive.class, "weld-login.war")
                 .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
+                .addAsResource(new File("src/test/resources/import.sql"))
                 .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
                 .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
-                .addAsWebInfResource(new File("src/test/resources/import.sql"))
                 .addAsWebResource(new File("src/test/webapp/index.html"))
                 .addAsWebResource(new File("src/test/webapp/home.xhtml"))
                 .addAsWebResource(new File("src/test/webapp/template.xhtml"))
                 .addAsWebResource(new File("src/test/webapp/users.xhtml"))
                 .addAsResource(new File("src/test/resources/META-INF/persistence.xml"),
-                        ArchivePaths.create("META-INF/persistence.xml")).setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
+                        ArchivePaths.create("META-INF/persistence.xml"))
+                .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
 
         // war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
 

@@ -54,7 +54,6 @@ public class InternetExplorerDriverFactory implements
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(InternetExplorerDriver instance) {
-        instance.close();
         instance.quit();
     }
 

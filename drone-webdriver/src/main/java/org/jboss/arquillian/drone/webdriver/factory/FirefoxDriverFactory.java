@@ -53,7 +53,6 @@ public class FirefoxDriverFactory implements Configurator<FirefoxDriver, Firefox
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(FirefoxDriver instance) {
-        instance.close();
         instance.quit();
     }
 

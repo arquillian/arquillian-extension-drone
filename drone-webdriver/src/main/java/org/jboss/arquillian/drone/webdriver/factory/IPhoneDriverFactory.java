@@ -50,7 +50,6 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, IPhoneDri
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(IPhoneDriver instance) {
-        instance.close();
         instance.quit();
     }
 

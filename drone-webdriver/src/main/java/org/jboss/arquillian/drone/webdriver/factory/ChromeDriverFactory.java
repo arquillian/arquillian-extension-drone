@@ -61,7 +61,6 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDri
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(ChromeDriver instance) {
-        instance.close();
         instance.quit();
     }
 

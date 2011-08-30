@@ -156,8 +156,15 @@
                                 <configuration>
                                     <skipTests>false</skipTests>
                                     <includes>
-                                        <include>org/jboss/arquillian/drone/webdriver/example/*TestCase*</include>
+                                        <include>**/*TestCase*</include>
                                     </includes>
+                                    <!-- Testing Chrome driver is hard to be done in an automatized way -->
+                                    <!-- 1/ chromedriver binary is required -->
+                                    <!-- 2/ paths to chrome binary is required -->
+                                    <!-- 3/ minimal chrome version must be ensured -->
+                                    <excludes>
+                                        <exclude>**/ChromeDriver*</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>

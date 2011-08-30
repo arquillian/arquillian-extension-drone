@@ -50,7 +50,6 @@ public class AndroidDriverFactory implements Configurator<AndroidDriver, Android
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(AndroidDriver instance) {
-        instance.close();
         instance.quit();
     }
 

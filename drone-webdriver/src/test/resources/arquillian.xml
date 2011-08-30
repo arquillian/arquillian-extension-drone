@@ -20,7 +20,7 @@
         <property name="useJavaScript">true</property>
         <!-- ChromeDriver only -->
         <property name="chromeBinary">/opt/google/chrome/chrome</property>
-        <property name="chromeDriverBinary">/usr/local/bin/chromedriver</property>
+        <property name="chromeDriverBinary">/home/kpiwko/temp/chromedriver</property>
         <property name="chromeSwitches">--user-data-dir=/tmp</property>
     </extension>
 
