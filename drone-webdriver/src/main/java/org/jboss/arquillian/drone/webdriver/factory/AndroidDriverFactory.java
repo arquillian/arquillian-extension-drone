@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,19 +22,18 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.openqa.selenium.WebDriver;
+import org.jboss.arquillian.drone.webdriver.configuration.AndroidDriverConfiguration;
+import org.openqa.selenium.android.AndroidDriver;
 
 /**
- * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for a generic
- * WebDriver browser.
+ * * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for AndroidDriver.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>,
-        Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
+public class AndroidDriverFactory implements Configurator<AndroidDriver, AndroidDriverConfiguration>,
+        Instantiator<AndroidDriver, AndroidDriverConfiguration>, Destructor<AndroidDriver> {
 
     /*
      * (non-Javadoc)
@@ -50,7 +49,7 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
-    public void destroyInstance(WebDriver instance) {
+    public void destroyInstance(AndroidDriver instance) {
         instance.quit();
     }
 
@@ -59,10 +58,22 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public WebDriver createInstance(WebDriverConfiguration configuration) {
-        WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                WebDriver.class);
-        return driver;
+    public AndroidDriver createInstance(AndroidDriverConfiguration configuration) {
+
+        String remoteAddress = configuration.getRemoteAddress();
+
+        // default
+        if (Validate.empty(remoteAddress)) {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
+                    AndroidDriver.class);
+        }
+        // remote address specified
+        else {
+            Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { String.class },
+                    new Object[] { remoteAddress }, AndroidDriver.class);
+
+        }
     }
 
     /*
@@ -71,9 +82,9 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    public AndroidDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
 
-        return new WebDriverConfiguration().configure(descriptor, qualifier);
+        return new AndroidDriverConfiguration().configure(descriptor, qualifier);
     }
 
 }

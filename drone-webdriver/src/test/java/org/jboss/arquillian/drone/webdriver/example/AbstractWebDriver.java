@@ -14,59 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.selenium.example;
+package org.jboss.arquillian.drone.webdriver.example;
 
 import java.io.File;
-import java.net.URI;
+import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.selenium.example.webapp.Credentials;
-import org.jboss.arquillian.drone.selenium.example.webapp.LoggedIn;
-import org.jboss.arquillian.drone.selenium.example.webapp.Login;
-import org.jboss.arquillian.drone.selenium.example.webapp.User;
-import org.jboss.arquillian.drone.selenium.example.webapp.Users;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.drone.webdriver.example.webapp.Credentials;
+import org.jboss.arquillian.drone.webdriver.example.webapp.LoggedIn;
+import org.jboss.arquillian.drone.webdriver.example.webapp.Login;
+import org.jboss.arquillian.drone.webdriver.example.webapp.User;
+import org.jboss.arquillian.drone.webdriver.example.webapp.Users;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.thoughtworks.selenium.DefaultSelenium;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 
 /**
- * Tests Arquillian Drone extension against Weld Login example.
- * <p/>
- * Uses legacy Selenium driver bound to Firefox browser.
+ * Tests Arquillian Selenium extension against Weld Login example.
+ *
+ * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
+ * as a System property or in the Arquillian configuration.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
-@RunWith(Arquillian.class)
-public class DefaultSeleniumTestCase {
-    // load selenium driver
-    @Drone
-    DefaultSelenium driver;
+public abstract class AbstractWebDriver {
+    protected static final String USERNAME = "demo";
+    protected static final String PASSWORD = "demo";
 
-    // Load context path to the test
+    protected static final By LOGGED_IN = By.xpath("//li[contains(text(),'Welcome')]");
+    protected static final By LOGGED_OUT = By.xpath("//li[contains(text(),'Goodbye')]");
+
+    protected static final By USERNAME_FIELD = By.id("loginForm:username");
+    protected static final By PASSWORD_FIELD = By.id("loginForm:password");
+
+    protected static final By LOGIN_BUTTON = By.id("loginForm:login");
+    protected static final By LOGOUT_BUTTON = By.id("loginForm:logout");
+
     @ArquillianResource
-    URI contextPath;
-
-    private static final String USERNAME = "demo";
-    private static final String PASSWORD = "demo";
-
-    private static final String LOGGED_IN = "xpath=//li[contains(text(),'Welcome')]";
-    private static final String LOGGED_OUT = "xpath=//li[contains(text(),'Goodbye')]";
-
-    private static final String USERNAME_FIELD = "id=loginForm:username";
-    private static final String PASSWORD_FIELD = "id=loginForm:password";
-
-    private static final String LOGIN_BUTTON = "id=loginForm:login";
-    private static final String LOGOUT_BUTTON = "id=loginForm:logout";
-
-    private static final String TIMEOUT = "15000";
+    URL contextPath;
 
     /**
      * Creates a WAR of a Weld based application using ShrinkWrap
@@ -97,20 +90,29 @@ public class DefaultSeleniumTestCase {
     @Test
     public void testLoginAndLogout() {
         Assert.assertNotNull("Path is not null", contextPath);
-        Assert.assertNotNull("Default Selenium is not null", driver);
+        Assert.assertNotNull("WebDriver is not null", driver());
 
-        driver.open(contextPath + "/home.jsf");
+        driver().get(contextPath + "home.jsf");
 
-        driver.type(USERNAME_FIELD, USERNAME);
-        driver.type(PASSWORD_FIELD, PASSWORD);
-        driver.click(LOGIN_BUTTON);
-        driver.waitForPageToLoad(TIMEOUT);
+        driver().findElement(USERNAME_FIELD).sendKeys(USERNAME);
+        driver().findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
+        driver().findElement(LOGIN_BUTTON).click();
+        checkElementPresence(driver(), LOGGED_IN, "User should be logged in!");
 
-        Assert.assertTrue("User should be logged in!", driver.isElementPresent(LOGGED_IN));
+        driver().findElement(LOGOUT_BUTTON).click();
+        checkElementPresence(driver(), LOGGED_OUT, "User should not be logged in!");
 
-        driver.click(LOGOUT_BUTTON);
-        driver.waitForPageToLoad(TIMEOUT);
-        Assert.assertTrue("User should not be logged in!", driver.isElementPresent(LOGGED_OUT));
+    }
+
+    protected abstract WebDriver driver();
+
+    // check is element is presence on page, fails otherwise
+    protected void checkElementPresence(WebDriver driver, By by, String errorMsg) {
+        try {
+            Assert.assertTrue(errorMsg, driver.findElement(by) != null);
+        } catch (NoSuchElementException e) {
+            Assert.fail(errorMsg);
+        }
 
     }
 

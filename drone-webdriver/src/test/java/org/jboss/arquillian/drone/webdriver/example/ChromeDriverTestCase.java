@@ -20,26 +20,28 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
- * 
+ *
  * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
  * as a System property or in the Arquillian configuration.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class WebDriverTestCase extends AbstractWebDriver {
+public class ChromeDriverTestCase extends AbstractWebDriver {
 
     @Drone
-    WebDriver driver;
+    ChromeDriver driver;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.webdriver.example.AbstractWebDriverTestCase#driver()
      */
     @Override

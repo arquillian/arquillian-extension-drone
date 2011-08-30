@@ -17,18 +17,34 @@
 package org.jboss.arquillian.drone.webdriver.configuration;
 
 /**
- * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
+ * Configuration for Android Driver
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverConfiguration extends AbstractWebDriverConfiguration<WebDriverConfiguration> {
+public class AndroidDriverConfiguration extends AbstractWebDriverConfiguration<AndroidDriverConfiguration> {
+
+    private String androidRemoteAddress;
 
     /**
-     * Creates default Selenium WebDriver Configuration
+     * Creates a Android Driver configuration
      */
-    public WebDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+    public AndroidDriverConfiguration() {
+        this.implementationClass = "org.openqa.selenium.android.AndroidDriver";
+    }
+
+    /**
+     * @param remoteAddress the remoteAddress to set
+     */
+    public void setRemoteAddress(String remoteAddress) {
+        this.androidRemoteAddress = remoteAddress;
+    }
+
+    /**
+     * @return the remoteAddress
+     */
+    public String getRemoteAddress() {
+        return androidRemoteAddress;
     }
 
 }
