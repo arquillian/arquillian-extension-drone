@@ -16,19 +16,37 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
+import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
+
 /**
- * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
+ * Configuration for Internet Explorer Driver
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverConfiguration extends AbstractWebDriverConfiguration<WebDriverConfiguration> {
+public class InternetExplorerDriverConfiguration extends AbstractWebDriverConfiguration<InternetExplorerDriverConfiguration> {
+
+    private int iePort = InternetExplorerDriverFactory.DEFAULT_INTERNET_EXPLORER_PORT;
 
     /**
-     * Creates default Selenium WebDriver Configuration
+     * Creates a Internet Explorer Driver configuration
      */
-    public WebDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+    public InternetExplorerDriverConfiguration() {
+        this.implementationClass = "org.openqa.selenium.ie.InternetExplorerDriver";
+    }
+
+    /**
+     * @param iePort the iePort to set
+     */
+    public void setIePort(int iePort) {
+        this.iePort = iePort;
+    }
+
+    /**
+     * @return the iePort
+     */
+    public int getIePort() {
+        return iePort;
     }
 
 }

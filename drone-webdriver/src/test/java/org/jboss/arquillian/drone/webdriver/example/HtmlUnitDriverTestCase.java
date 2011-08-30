@@ -16,35 +16,44 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
- * 
+ *
  * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
  * as a System property or in the Arquillian configuration.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
+ *
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class WebDriverTestCase extends AbstractWebDriver {
+public class HtmlUnitDriverTestCase extends AbstractWebDriver {
 
     @Drone
-    WebDriver driver;
+    HtmlUnitDriver driver;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jboss.arquillian.drone.webdriver.example.AbstractWebDriverTestCase#driver()
      */
     @Override
     protected WebDriver driver() {
         return driver;
+    }
+
+    @Test
+    public void testJavaScriptEnabled() {
+        Assert.assertTrue("JavaScript is enabled", driver.isJavascriptEnabled());
     }
 
 }

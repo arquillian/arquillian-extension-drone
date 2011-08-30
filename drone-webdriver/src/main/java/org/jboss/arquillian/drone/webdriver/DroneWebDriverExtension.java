@@ -20,6 +20,12 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.factory.AndroidDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.IPhoneDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 
 /**
@@ -30,6 +36,31 @@ import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
  */
 public class DroneWebDriverExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
+
+        builder.service(Configurator.class, AndroidDriverFactory.class);
+        builder.service(Instantiator.class, AndroidDriverFactory.class);
+        builder.service(Destructor.class, AndroidDriverFactory.class);
+
+        builder.service(Configurator.class, ChromeDriverFactory.class);
+        builder.service(Instantiator.class, ChromeDriverFactory.class);
+        builder.service(Destructor.class, ChromeDriverFactory.class);
+
+        builder.service(Configurator.class, FirefoxDriverFactory.class);
+        builder.service(Instantiator.class, FirefoxDriverFactory.class);
+        builder.service(Destructor.class, FirefoxDriverFactory.class);
+
+        builder.service(Configurator.class, HtmlUnitDriverFactory.class);
+        builder.service(Instantiator.class, HtmlUnitDriverFactory.class);
+        builder.service(Destructor.class, HtmlUnitDriverFactory.class);
+
+        builder.service(Configurator.class, InternetExplorerDriverFactory.class);
+        builder.service(Instantiator.class, InternetExplorerDriverFactory.class);
+        builder.service(Destructor.class, InternetExplorerDriverFactory.class);
+
+        builder.service(Configurator.class, IPhoneDriverFactory.class);
+        builder.service(Instantiator.class, IPhoneDriverFactory.class);
+        builder.service(Destructor.class, IPhoneDriverFactory.class);
+
         builder.service(Configurator.class, WebDriverFactory.class);
         builder.service(Instantiator.class, WebDriverFactory.class);
         builder.service(Destructor.class, WebDriverFactory.class);

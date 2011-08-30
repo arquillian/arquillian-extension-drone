@@ -22,19 +22,20 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.openqa.selenium.WebDriver;
+import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfiguration;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for a generic
- * WebDriver browser.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for HtmlUnitDriver.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfiguration>,
-        Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
+public class HtmlUnitDriverFactory implements Configurator<HtmlUnitDriver, HtmlUnitDriverConfiguration>,
+        Instantiator<HtmlUnitDriver, HtmlUnitDriverConfiguration>, Destructor<HtmlUnitDriver> {
 
     /*
      * (non-Javadoc)
@@ -50,7 +51,7 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
-    public void destroyInstance(WebDriver instance) {
+    public void destroyInstance(HtmlUnitDriver instance) {
         instance.quit();
     }
 
@@ -59,10 +60,24 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public WebDriver createInstance(WebDriverConfiguration configuration) {
-        WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                WebDriver.class);
-        return driver;
+    public HtmlUnitDriver createInstance(HtmlUnitDriverConfiguration configuration) {
+
+        String applicationName = configuration.getApplicationName();
+        String applicationVersion = configuration.getApplicationVersion();
+        String userAgent = configuration.getUserAgent();
+        float browserVersionNumeric = configuration.getBrowserVersionNumeric();
+        boolean useJavaScript = configuration.isUseJavaScript();
+
+        if (Validate.empty(applicationName) || Validate.empty(applicationVersion) || Validate.empty(userAgent)) {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { boolean.class },
+                    new Object[] { useJavaScript }, HtmlUnitDriver.class);
+        }
+        // set browser version
+        else {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { BrowserVersion.class },
+                    new Object[] { new BrowserVersion(applicationName, applicationVersion, userAgent, browserVersionNumeric) },
+                    HtmlUnitDriver.class);
+        }
     }
 
     /*
@@ -71,9 +86,10 @@ public class WebDriverFactory implements Configurator<WebDriver, WebDriverConfig
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    public HtmlUnitDriverConfiguration createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
 
-        return new WebDriverConfiguration().configure(descriptor, qualifier);
+        return new HtmlUnitDriverConfiguration().configure(descriptor, qualifier);
     }
 
 }

@@ -20,6 +20,7 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -32,10 +33,10 @@ import org.openqa.selenium.WebDriver;
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class WebDriverTestCase extends AbstractWebDriver {
+public class FirefoxDriverTestCase extends AbstractWebDriver {
 
     @Drone
-    WebDriver driver;
+    FirefoxDriver driver;
 
     /*
      * (non-Javadoc)

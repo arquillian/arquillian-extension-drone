@@ -17,18 +17,34 @@
 package org.jboss.arquillian.drone.webdriver.configuration;
 
 /**
- * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
+ * Configuration for IPhone Driver
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverConfiguration extends AbstractWebDriverConfiguration<WebDriverConfiguration> {
+public class IPhoneDriverConfiguration extends AbstractWebDriverConfiguration<IPhoneDriverConfiguration> {
+
+    private String iphoneRemoteAddress;
 
     /**
-     * Creates default Selenium WebDriver Configuration
+     * Creates a IPhone Driver configuration
      */
-    public WebDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+    public IPhoneDriverConfiguration() {
+        this.implementationClass = "org.openqa.selenium.iphone.IPhoneDriver";
+    }
+
+    /**
+     * @param remoteAddress the remoteAddress to set
+     */
+    public void setRemoteAddress(String remoteAddress) {
+        this.iphoneRemoteAddress = remoteAddress;
+    }
+
+    /**
+     * @return the remoteAddress
+     */
+    public String getRemoteAddress() {
+        return iphoneRemoteAddress;
     }
 
 }

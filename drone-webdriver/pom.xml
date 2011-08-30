@@ -149,27 +149,14 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>htmlunitdriver-test</id>
+                                <id>default-test</id>
                                 <goals>
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>false</skipTests>
                                     <includes>
-                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase.class</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>firefoxdriver-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables>
-                                        <arquillian.webdriver.implementation.class>org.openqa.selenium.firefox.FirefoxDriver</arquillian.webdriver.implementation.class>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>org/jboss/arquillian/drone/webdriver/example/WebDriverTestCase*</include>
+                                        <include>org/jboss/arquillian/drone/webdriver/example/*TestCase*</include>
                                     </includes>
                                 </configuration>
                             </execution>
