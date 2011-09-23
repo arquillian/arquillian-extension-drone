@@ -26,6 +26,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.event.DroneConfigured;
+import org.jboss.arquillian.drone.event.MethodDroneConfigured;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
@@ -77,5 +78,24 @@ public class DroneCreator {
         }
 
         droneContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void createWebTestBrowser(@Observes MethodDroneConfigured event, MethodContext droneMethodContext) {
+        Class<?> typeClass = event.getDroneType();
+        Class<? extends Annotation> qualifier = event.getQualifier();
+        DroneConfiguration<?> configuration = event.getConfiguration();
+
+        @SuppressWarnings("rawtypes")
+        Instantiator instantiator = registry.get().getInstantiatorFor(typeClass);
+        Validate.stateNotNull(instantiator, DroneRegistry.getUnregisteredExceptionMessage(registry.get(), typeClass,
+                DroneRegistry.RegisteredType.INSTANTIATOR));
+
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence "
+                    + instantiator.getPrecedence());
+        }
+
+        droneMethodContext.add(typeClass, qualifier, instantiator.createInstance(configuration));
     }
 }

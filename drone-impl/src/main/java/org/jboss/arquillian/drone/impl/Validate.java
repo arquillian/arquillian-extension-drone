@@ -19,14 +19,27 @@ package org.jboss.arquillian.drone.impl;
 /**
  * Simple validation utility
  *
- * @author kpiwko
+ * @author <a href="@mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 class Validate {
 
-    public static void stateNotNull(Object object, String message) {
+    public static void stateNotNull(Object object, String message) throws IllegalStateException {
         if (object == null) {
             throw new IllegalStateException(message);
+        }
+    }
+
+    /**
+     * Checks that object is not null, throws exception if it is.
+     *
+     * @param obj The object to check
+     * @param message The exception message
+     * @throws IllegalArgumentException Thrown if obj is null
+     */
+    public static void notNull(final Object obj, final String message) throws IllegalArgumentException {
+        if (obj == null) {
+            throw new IllegalArgumentException(message);
         }
     }
 }

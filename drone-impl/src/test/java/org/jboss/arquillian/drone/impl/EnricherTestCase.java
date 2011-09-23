@@ -33,11 +33,15 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
+import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -63,7 +67,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
+        extensions.add(DroneCreator.class);
         extensions.add(DroneTestEnricher.class);
+        extensions.add(DroneDestructor.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -113,8 +119,13 @@ public class EnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    public void testMethodQualifer() throws Exception {
+    public void testMethodQualiferWithCleanup() throws Exception {
         getManager().getContext(ClassContext.class).activate(MethodEnrichedClass.class);
+
+        Object instance = new MethodEnrichedClass();
+        Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDrone.class);
+
+        getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
 
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
@@ -124,22 +135,28 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClass.class));
+        fire(new Before(instance, testMethod));
 
-        MethodContext mc = getManager().getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
+        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
         Assert.assertNotNull("Method context object holder was created in the context", mc);
 
-        Object instance = new MethodEnrichedClass();
-        Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDrone.class);
+        Object droneInstance = mc.get(MockDrone.class, MethodArgumentOne.class);
+        Assert.assertNotNull("Enricher created the instance of mock browser", droneInstance);
 
-        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-        getManager().inject(testEnricher);
-        Object[] parameters = testEnricher.resolve(testMethod);
-        testMethod.invoke(instance, parameters);
+        fire(new After(instance, testMethod));
+        droneInstance = mc.get(MockDrone.class, MethodArgumentOne.class);
+        Assert.assertNull("Enricher created the instance of mock browser was destroyed", droneInstance);
+
     }
 
-    @Test//(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testMethodQualiferUnregistered() throws Exception {
         getManager().getContext(ClassContext.class).activate(MethodEnrichedClassUnregistered.class);
+
+        Object instance = new MethodEnrichedClassUnregistered();
+        Method testMethod = MethodEnrichedClassUnregistered.class.getMethod("testMethodEnrichment", Object.class);
+
+        getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
 
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
@@ -149,12 +166,10 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
+        fire(new Before(instance, testMethod));
 
-        MethodContext mc = getManager().getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
+        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
         Assert.assertNotNull("Method context object holder was created in the context", mc);
-
-        Object instance = new MethodEnrichedClassUnregistered();
-        Method testMethod = MethodEnrichedClassUnregistered.class.getMethod("testMethodEnrichment", Object.class);
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
         getManager().inject(testEnricher);
