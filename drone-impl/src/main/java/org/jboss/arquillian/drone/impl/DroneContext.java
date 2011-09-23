@@ -106,7 +106,7 @@ public class DroneContext {
         return this;
     }
 
-    private static class QualifiedKey {
+    static class QualifiedKey {
         private Class<?> key;
         private Class<? extends Annotation> qualifier;
 
@@ -154,6 +154,11 @@ public class DroneContext {
             } else if (!key.equals(other.key))
                 return false;
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return key.getName() + "/" + qualifier.getSimpleName();
         }
 
     }

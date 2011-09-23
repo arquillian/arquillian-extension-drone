@@ -18,7 +18,10 @@ package org.jboss.arquillian.drone.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
@@ -28,9 +31,12 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.event.DroneConfigured;
+import org.jboss.arquillian.drone.event.MethodDroneConfigured;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
@@ -70,13 +76,15 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  *
  */
 public class DroneConfigurator {
+    private static Logger log = Logger.getLogger(DroneConfigurator.class.getName());
+
     @Inject
     @ClassScoped
     private InstanceProducer<DroneContext> droneContext;
 
     @Inject
-    @ClassScoped
-    private InstanceProducer<MethodContext> methodContext;
+    @TestScoped
+    private InstanceProducer<MethodContext> droneMethodContext;
 
     @Inject
     private Instance<ArquillianDescriptor> arquillianDescriptor;
@@ -87,9 +95,10 @@ public class DroneConfigurator {
     @Inject
     private Event<DroneConfigured> afterConfiguration;
 
-    public void configureDrone(@Observes BeforeClass event) {
-        methodContext.set(new MethodContext());
+    @Inject
+    private Event<MethodDroneConfigured> afterMethodConfiguration;
 
+    public void configureDrone(@Observes BeforeClass event) {
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
         if (fields.isEmpty()) {
@@ -108,6 +117,40 @@ public class DroneConfigurator {
             DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
             droneContext.get().add(configuration.getClass(), qualifier, configuration);
             afterConfiguration.fire(new DroneConfigured(f, qualifier, configuration));
+        }
+
+    }
+
+    public void configureDrone(@Observes Before event) {
+        Method method = event.getTestMethod();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+        // check if any field is @Drone annotated
+        if (parameterTypes.length == 0) {
+            return;
+        }
+
+        droneMethodContext.set(new MethodContext());
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
+                if (log.isLoggable(Level.FINE)) {
+                    log.fine("Resolving method " + method.getName() + " argument at position " + i);
+                }
+
+                Validate.notNull(registry.get(), "Drone registry should not be null");
+                Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
+
+                @SuppressWarnings("rawtypes")
+                Configurator configurator = registry.get().getConfiguratorFor(parameterTypes[i]);
+                Validate.stateNotNull(configurator, DroneRegistry.getUnregisteredExceptionMessage(registry.get(),
+                        parameterTypes[i], DroneRegistry.RegisteredType.CONFIGURATOR));
+                @SuppressWarnings("unchecked")
+                DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
+                droneMethodContext.get().add(configuration.getClass(), qualifier, configuration);
+                afterMethodConfiguration.fire(new MethodDroneConfigured(parameterTypes[i], qualifier, configuration));
+            }
         }
 
     }

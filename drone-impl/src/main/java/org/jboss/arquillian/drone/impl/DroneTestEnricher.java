@@ -26,11 +26,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.spi.Configurator;
-import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
@@ -58,7 +54,7 @@ public class DroneTestEnricher implements TestEnricher {
     private Instance<DroneContext> droneContext;
 
     @Inject
-    private Instance<MethodContext> methodContext;
+    private Instance<MethodContext> droneMethodContext;
 
     @Inject
     private Instance<ArquillianDescriptor> arquillianDescriptor;
@@ -88,8 +84,13 @@ public class DroneTestEnricher implements TestEnricher {
 
                 Validate.notNull(registry.get(), "Drone registry should not be null");
                 Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
+                Validate.notNull(droneMethodContext.get(), "Method context should not be null");
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
-                resolution[i] = constructDrone(method, parameterTypes[i], qualifier);
+
+                Object value = droneMethodContext.get().get(parameterTypes[i], qualifier);
+                Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
+
+                resolution[i] = value;
             }
         }
 
@@ -108,44 +109,12 @@ public class DroneTestEnricher implements TestEnricher {
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
                 Object value = droneContext.get().get(typeClass, qualifier);
-                if (value == null) {
-                    throw new IllegalArgumentException(
-                            "Retrieved a null from context, which is not a valid Drone browser object");
-                }
+                Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
 
                 f.set(testCase, value);
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not enrich test with Drone members", e);
         }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object constructDrone(Method method, Class<?> type, Class<? extends Annotation> qualifier) {
-        DroneRegistry regs = registry.get();
-        ArquillianDescriptor desc = arquillianDescriptor.get();
-
-        Configurator configurator = regs.getConfiguratorFor(type);
-        Validate.stateNotNull(configurator,
-                DroneRegistry.getUnregisteredExceptionMessage(registry.get(), type, DroneRegistry.RegisteredType.CONFIGURATOR));
-
-        Instantiator instantiator = regs.getInstantiatorFor(type);
-        Validate.stateNotNull(instantiator,
-                DroneRegistry.getUnregisteredExceptionMessage(registry.get(), type, DroneRegistry.RegisteredType.INSTANTIATOR));
-
-        // store in map if not stored already
-        DroneContext dc = methodContext.get().getOrCreate(method);
-        DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
-        dc.add(configuration.getClass(), qualifier, configuration);
-
-        Object instance = instantiator.createInstance(configuration);
-        dc.add(type, qualifier, instance);
-
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Stored method lifecycle based Drone instance, type: " + type.getName() + ", qualifier: "
-                    + qualifier.getName() + ", instanceClass: " + instance.getClass());
-        }
-
-        return instance;
     }
 }
