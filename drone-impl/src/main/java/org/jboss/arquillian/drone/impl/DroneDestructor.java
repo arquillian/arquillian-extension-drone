@@ -60,18 +60,8 @@ public class DroneDestructor {
     @Inject
     private Instance<DroneRegistry> registry;
 
-    @Inject
-    private Instance<DroneContext> droneContext;
-
     @SuppressWarnings("unchecked")
-    public void destroyClassScopedDrone(@Observes AfterClass event) {
-
-        if (droneContext == null) {
-            // initialization have failed, no instance to be removed here
-            return;
-        }
-
-        Validate.notNull(droneContext.get(), "Drone context should have been instantiated");
+    public void destroyClassScopedDrone(@Observes AfterClass event, DroneContext droneContext) {
 
         Class<?> clazz = event.getTestClass().getJavaClass();
         for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class)) {
@@ -83,11 +73,11 @@ public class DroneDestructor {
 
             // get instance to be destroyed
             // if deployment failed, there is nothing to be destroyed
-            Object instance = droneContext.get().get(typeClass, qualifier);
+            Object instance = droneContext.get(typeClass, qualifier);
             if (instance != null) {
                 destructor.destroyInstance(instance);
             }
-            droneContext.get().remove(typeClass, qualifier);
+            droneContext.remove(typeClass, qualifier);
         }
     }
 

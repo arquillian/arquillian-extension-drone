@@ -63,6 +63,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * </p>
  * <ol>
  * <li>{@link DroneConfigured}</li>
+ * <li>{@link MethodDroneConfigured}</li>
  * </ol>
  *
  * <p>

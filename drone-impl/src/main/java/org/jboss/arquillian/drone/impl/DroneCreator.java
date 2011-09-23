@@ -57,11 +57,8 @@ public class DroneCreator {
     @Inject
     private Instance<DroneRegistry> registry;
 
-    @Inject
-    private Instance<DroneContext> droneContext;
-
     @SuppressWarnings("unchecked")
-    public void createWebTestBrowser(@Observes DroneConfigured event) {
+    public void createWebTestBrowser(@Observes DroneConfigured event, DroneContext droneContext) {
         Field field = event.getInjected();
         Class<?> typeClass = field.getType();
         Class<? extends Annotation> qualifier = event.getQualifier();
@@ -77,7 +74,7 @@ public class DroneCreator {
                     + instantiator.getPrecedence());
         }
 
-        droneContext.get().add(typeClass, qualifier, instantiator.createInstance(configuration));
+        droneContext.add(typeClass, qualifier, instantiator.createInstance(configuration));
     }
 
     @SuppressWarnings("unchecked")
