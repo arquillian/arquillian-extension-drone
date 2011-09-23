@@ -48,7 +48,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
  * <p/>
  * Additionally tests DroneTestEnricher
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -137,6 +137,31 @@ public class EnricherTestCase extends AbstractTestTestBase {
         testMethod.invoke(instance, parameters);
     }
 
+    @Test//(expected=IllegalStateException.class)
+    public void testMethodQualiferUnregistered() throws Exception {
+        getManager().getContext(ClassContext.class).activate(MethodEnrichedClassUnregistered.class);
+        fire(new BeforeSuite());
+
+        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+        Assert.assertNotNull("Drone registry was created in the context", registry);
+
+        Assert.assertTrue("Configurator is of mock type",
+                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+
+        fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
+
+        MethodContext mc = getManager().getContext(ClassContext.class).getObjectStore().get(MethodContext.class);
+        Assert.assertNotNull("Method context object holder was created in the context", mc);
+
+        Object instance = new MethodEnrichedClassUnregistered();
+        Method testMethod = MethodEnrichedClassUnregistered.class.getMethod("testMethodEnrichment", Object.class);
+
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        Object[] parameters = testEnricher.resolve(testMethod);
+        testMethod.invoke(instance, parameters);
+    }
+
     static class EnrichedClass {
         @Drone
         @Different
@@ -149,6 +174,11 @@ public class EnricherTestCase extends AbstractTestTestBase {
             Assert.assertNotNull("Mock drone instance was created", unused);
             Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD,
                     unused.getField());
+        }
+    }
+
+    static class MethodEnrichedClassUnregistered {
+        public void testMethodEnrichment(@Drone Object unused) {
         }
     }
 

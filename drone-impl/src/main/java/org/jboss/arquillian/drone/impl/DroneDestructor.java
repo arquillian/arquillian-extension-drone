@@ -122,9 +122,9 @@ public class DroneDestructor {
         // must be defined as raw because instance type to be destroyer cannot
         // be determined in compile time
         Destructor destructor = registry.get().getDestructorFor(typeClass);
-        if (destructor == null) {
-            throw new IllegalArgumentException("No destructor was found for object of type " + typeClass.getName());
-        }
+        Validate.stateNotNull(destructor, DroneRegistry.getUnregisteredExceptionMessage(registry.get(), typeClass,
+                DroneRegistry.RegisteredType.DESTRUCTOR));
+
         if (log.isLoggable(Level.FINE)) {
             log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "
                     + destructor.getPrecedence());

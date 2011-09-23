@@ -68,10 +68,9 @@ public class DroneCreator {
 
         @SuppressWarnings("rawtypes")
         Instantiator instantiator = registry.get().getInstantiatorFor(typeClass);
+        Validate.stateNotNull(instantiator, DroneRegistry.getUnregisteredExceptionMessage(registry.get(), typeClass,
+                DroneRegistry.RegisteredType.INSTANTIATOR));
 
-        if (instantiator == null) {
-            throw new IllegalArgumentException("No instantiator was found for object of type " + typeClass.getName());
-        }
         if (log.isLoggable(Level.FINE)) {
             log.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", with precedence "
                     + instantiator.getPrecedence());

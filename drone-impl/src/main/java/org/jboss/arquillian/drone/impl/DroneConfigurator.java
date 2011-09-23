@@ -102,9 +102,8 @@ public class DroneConfigurator {
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
             Configurator<?, ?> configurator = registry.get().getConfiguratorFor(typeClass);
-            if (configurator == null) {
-                throw new IllegalArgumentException("No configurator was found for object of type " + typeClass.getName());
-            }
+            Validate.stateNotNull(configurator, DroneRegistry.getUnregisteredExceptionMessage(registry.get(), typeClass,
+                    DroneRegistry.RegisteredType.CONFIGURATOR));
 
             DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
             droneContext.get().add(configuration.getClass(), qualifier, configuration);
@@ -112,5 +111,4 @@ public class DroneConfigurator {
         }
 
     }
-
 }

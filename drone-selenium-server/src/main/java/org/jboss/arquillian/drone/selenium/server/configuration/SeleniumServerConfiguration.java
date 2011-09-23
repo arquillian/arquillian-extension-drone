@@ -21,7 +21,6 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.openqa.selenium.server.RemoteControlConfiguration;
 
 /**
  * Configuration for Selenium Server. This configuration can be fetched from Arquillian Descriptor and overridden by System

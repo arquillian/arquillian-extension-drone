@@ -126,11 +126,15 @@ public class DroneTestEnricher implements TestEnricher {
         ArquillianDescriptor desc = arquillianDescriptor.get();
 
         Configurator configurator = regs.getConfiguratorFor(type);
+        Validate.stateNotNull(configurator,
+                DroneRegistry.getUnregisteredExceptionMessage(registry.get(), type, DroneRegistry.RegisteredType.CONFIGURATOR));
+
         Instantiator instantiator = regs.getInstantiatorFor(type);
+        Validate.stateNotNull(instantiator,
+                DroneRegistry.getUnregisteredExceptionMessage(registry.get(), type, DroneRegistry.RegisteredType.INSTANTIATOR));
 
         // store in map if not stored already
         DroneContext dc = methodContext.get().getOrCreate(method);
-
         DroneConfiguration configuration = configurator.createConfiguration(desc, qualifier);
         dc.add(configuration.getClass(), qualifier, configuration);
 
