@@ -32,6 +32,45 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  *
  */
 public class DroneRegistry {
+
+    public static enum RegisteredType {
+        CONFIGURATOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.configurator == null;
+            }
+
+            @Override
+            public String toString() {
+                return "configurator";
+            }
+        },
+        INSTANTIATOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.instantiator == null;
+            }
+
+            @Override
+            public String toString() {
+                return "instantiator";
+            }
+        },
+        DESTRUCTOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.destructor == null;
+            }
+
+            @Override
+            public String toString() {
+                return "destructor";
+            }
+        };
+
+        public abstract boolean registeredIn(RegistryValue value);
+    }
+
     private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
 
     /**
@@ -131,6 +170,34 @@ public class DroneRegistry {
             registry.put(key, new RegistryValue().setDestructor(value));
         }
         return this;
+    }
+
+    /**
+     * Constructs pretty nice exception message when something was not registered
+     *
+     * @param registry The registry to be checked
+     * @param unregistered The class which wasn't registered
+     * @param registeredType Type of the builder which was not registered
+     * @return the exception message
+     */
+    static String getUnregisteredExceptionMessage(DroneRegistry registry, Class<?> unregistered, RegisteredType registeredType) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("No "
+                + registeredType
+                + " was found for object of type "
+                + unregistered.getName()
+                + ".\n"
+                + "Make sure you have a proper Drone extension on the classpath, that is arquillian-drone-selenium for Selenium browsers, arquillian-drone-webdriver for WebDriver browsers and arquillian-ajocado-drone for AjaxSelenium browsers. If you are using your own browser extension, please make sure it is on classpath.\n");
+
+        sb.append("Currently registered " + registeredType + "s are: ");
+
+        for (Map.Entry<Class<?>, RegistryValue> entry : registry.registry.entrySet()) {
+            if (registeredType.registeredIn(entry.getValue())) {
+                sb.append(entry.getKey().getName()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 
     private static class RegistryValue {
