@@ -75,6 +75,9 @@ public class DefaultSeleniumTestCase {
      */
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
+
+        boolean isRunningOnAS7 = System.getProperty("jbossHome", "target/jboss-as-7.0.2.Final").contains("7.0.2.Final");
+
         WebArchive war = ShrinkWrap
                 .create(WebArchive.class, "weld-login.war")
                 .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
@@ -85,11 +88,10 @@ public class DefaultSeleniumTestCase {
                 .addAsWebResource(new File("src/test/webapp/home.xhtml"))
                 .addAsWebResource(new File("src/test/webapp/template.xhtml"))
                 .addAsWebResource(new File("src/test/webapp/users.xhtml"))
-                .addAsResource(new File("src/test/resources/META-INF/persistence.xml"),
-                        ArchivePaths.create("META-INF/persistence.xml"))
-                .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
-
-        // war.as(ZipExporter.class).exportTo(new File("weld-login.war"), true);
+                .addAsResource(
+                        isRunningOnAS7 ? new File("src/test/resources/META-INF/persistence.xml") : new File(
+                                "src/test/resources/META-INF/persistence-as6.xml"),
+                        ArchivePaths.create("META-INF/persistence.xml")).setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
 
         return war;
     }

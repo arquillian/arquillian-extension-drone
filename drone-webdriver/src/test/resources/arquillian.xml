@@ -8,10 +8,7 @@
 
     <container qualifier="jboss" default="true">
         <configuration>
-            <property name="jbossHome">target/jboss-6.0.0.Final</property>
-            <!-- <property name="javaHome">/usr/lib/jvm/java-6-openjdk/</property> -->
-            <property name="bindAddress">127.0.0.1</property>
-            <property name="httpPort">8080</property>
+            <property name="jbossHome">${jbossHome}</property>
         </configuration>
     </container>
 
