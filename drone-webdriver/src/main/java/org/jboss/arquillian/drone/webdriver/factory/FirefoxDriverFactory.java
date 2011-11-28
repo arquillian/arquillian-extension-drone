@@ -24,6 +24,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -35,14 +36,16 @@ import org.openqa.selenium.firefox.FirefoxProfile;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class FirefoxDriverFactory implements Configurator<FirefoxDriver, FirefoxDriverConfiguration>,
-        Instantiator<FirefoxDriver, FirefoxDriverConfiguration>, Destructor<FirefoxDriver> {
+public class FirefoxDriverFactory implements
+        Configurator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>,
+        Instantiator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>, Destructor<FirefoxDriver> {
 
     /*
      * (non-Javadoc)
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -52,6 +55,7 @@ public class FirefoxDriverFactory implements Configurator<FirefoxDriver, Firefox
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(FirefoxDriver instance) {
         instance.quit();
     }
@@ -61,7 +65,8 @@ public class FirefoxDriverFactory implements Configurator<FirefoxDriver, Firefox
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public FirefoxDriver createInstance(FirefoxDriverConfiguration configuration) {
+    @Override
+    public FirefoxDriver createInstance(TypedWebDriverConfiguration<FirefoxDriverConfiguration> configuration) {
 
         String binary = configuration.getFirefoxBinary();
         String profile = configuration.getFirefoxProfile();
@@ -95,9 +100,11 @@ public class FirefoxDriverFactory implements Configurator<FirefoxDriver, Firefox
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public FirefoxDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-
-        return new FirefoxDriverConfiguration().configure(descriptor, qualifier);
+    @Override
+    public TypedWebDriverConfiguration<FirefoxDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
+        return new TypedWebDriverConfiguration<FirefoxDriverConfiguration>(FirefoxDriverConfiguration.class,
+                "org.openqa.selenium.firefox.FirefoxDriver").configure(descriptor, qualifier);
     }
 
 }

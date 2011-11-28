@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
 
 /**
  * Configuration for Internet Explorer Driver
@@ -24,29 +23,16 @@ import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactor
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class InternetExplorerDriverConfiguration extends AbstractWebDriverConfiguration<InternetExplorerDriverConfiguration> {
-
-    private int iePort = InternetExplorerDriverFactory.DEFAULT_INTERNET_EXPLORER_PORT;
-
-    /**
-     * Creates a Internet Explorer Driver configuration
-     */
-    public InternetExplorerDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.ie.InternetExplorerDriver";
-    }
+public interface InternetExplorerDriverConfiguration extends CommonWebDriverConfiguration {
 
     /**
      * @param iePort the iePort to set
      */
-    public void setIePort(int iePort) {
-        this.iePort = iePort;
-    }
+    void setIePort(int iePort);
 
     /**
      * @return the iePort
      */
-    public int getIePort() {
-        return iePort;
-    }
+    int getIePort();
 
 }

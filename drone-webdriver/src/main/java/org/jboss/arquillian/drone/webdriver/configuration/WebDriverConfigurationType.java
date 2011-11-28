@@ -17,31 +17,11 @@
 package org.jboss.arquillian.drone.webdriver.configuration;
 
 /**
- * Configuration for Firefox Driver
+ * Marker for classes implemententing a WebDriver configuration
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public interface FirefoxDriverConfiguration extends CommonWebDriverConfiguration {
-
-    /**
-     * @return the firefoxProfile
-     */
-    String getFirefoxProfile();
-
-    /**
-     * @param firefoxProfile the firefoxProfile to set
-     */
-    void setFirefoxProfile(String firefoxProfile);
-
-    /**
-     * @return the firefoxBinary
-     */
-    String getFirefoxBinary();
-
-    /**
-     * @param firefoxBinary the firefoxBinary to set
-     */
-    void setFirefoxBinary(String firefoxBinary);
+public interface WebDriverConfigurationType {
 
 }

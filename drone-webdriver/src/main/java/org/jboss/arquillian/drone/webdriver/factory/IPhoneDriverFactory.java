@@ -23,6 +23,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.IPhoneDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.iphone.IPhoneDriver;
 
 /**
@@ -32,14 +33,15 @@ import org.openqa.selenium.iphone.IPhoneDriver;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class IPhoneDriverFactory implements Configurator<IPhoneDriver, IPhoneDriverConfiguration>,
-        Instantiator<IPhoneDriver, IPhoneDriverConfiguration>, Destructor<IPhoneDriver> {
+public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>,
+        Instantiator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>, Destructor<IPhoneDriver> {
 
     /*
      * (non-Javadoc)
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -49,6 +51,7 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, IPhoneDri
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(IPhoneDriver instance) {
         instance.quit();
     }
@@ -58,7 +61,8 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, IPhoneDri
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public IPhoneDriver createInstance(IPhoneDriverConfiguration configuration) {
+    @Override
+    public IPhoneDriver createInstance(TypedWebDriverConfiguration<IPhoneDriverConfiguration> configuration) {
 
         String remoteAddress = configuration.getRemoteAddress();
 
@@ -81,9 +85,12 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, IPhoneDri
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public IPhoneDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    @Override
+    public TypedWebDriverConfiguration<IPhoneDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
 
-        return new IPhoneDriverConfiguration().configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<IPhoneDriverConfiguration>(IPhoneDriverConfiguration.class,
+                "org.openqa.selenium.iphone.IPhoneDriver").configure(descriptor, qualifier);
     }
 
 }

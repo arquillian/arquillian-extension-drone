@@ -22,29 +22,15 @@ package org.jboss.arquillian.drone.webdriver.configuration;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class IPhoneDriverConfiguration extends AbstractWebDriverConfiguration<IPhoneDriverConfiguration> {
-
-    private String iphoneRemoteAddress;
-
-    /**
-     * Creates a IPhone Driver configuration
-     */
-    public IPhoneDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.iphone.IPhoneDriver";
-    }
+public interface IPhoneDriverConfiguration extends CommonWebDriverConfiguration {
 
     /**
      * @param remoteAddress the remoteAddress to set
      */
-    public void setRemoteAddress(String remoteAddress) {
-        this.iphoneRemoteAddress = remoteAddress;
-    }
+    void setRemoteAddress(String remoteAddress);
 
     /**
      * @return the remoteAddress
      */
-    public String getRemoteAddress() {
-        return iphoneRemoteAddress;
-    }
-
+    String getRemoteAddress();
 }

@@ -23,6 +23,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -34,14 +35,16 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class HtmlUnitDriverFactory implements Configurator<HtmlUnitDriver, HtmlUnitDriverConfiguration>,
-        Instantiator<HtmlUnitDriver, HtmlUnitDriverConfiguration>, Destructor<HtmlUnitDriver> {
+public class HtmlUnitDriverFactory implements
+        Configurator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>,
+        Instantiator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>, Destructor<HtmlUnitDriver> {
 
     /*
      * (non-Javadoc)
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -51,6 +54,7 @@ public class HtmlUnitDriverFactory implements Configurator<HtmlUnitDriver, HtmlU
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(HtmlUnitDriver instance) {
         instance.quit();
     }
@@ -60,7 +64,8 @@ public class HtmlUnitDriverFactory implements Configurator<HtmlUnitDriver, HtmlU
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public HtmlUnitDriver createInstance(HtmlUnitDriverConfiguration configuration) {
+    @Override
+    public HtmlUnitDriver createInstance(TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> configuration) {
 
         String applicationName = configuration.getApplicationName();
         String applicationVersion = configuration.getApplicationVersion();
@@ -86,10 +91,11 @@ public class HtmlUnitDriverFactory implements Configurator<HtmlUnitDriver, HtmlU
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public HtmlUnitDriverConfiguration createConfiguration(ArquillianDescriptor descriptor,
+    @Override
+    public TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-
-        return new HtmlUnitDriverConfiguration().configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>(HtmlUnitDriverConfiguration.class,
+                "org.openqa.selenium.htmlunit.HtmlUnitDriver").configure(descriptor, qualifier);
     }
 
 }

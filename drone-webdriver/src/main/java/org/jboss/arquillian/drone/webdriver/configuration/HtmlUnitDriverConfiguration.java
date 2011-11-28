@@ -22,89 +22,55 @@ package org.jboss.arquillian.drone.webdriver.configuration;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class HtmlUnitDriverConfiguration extends AbstractWebDriverConfiguration<HtmlUnitDriverConfiguration> {
-
-    private String applicationName;
-    private String applicationVersion;
-    private String userAgent;
-    private float browserVersionNumeric;
-    private boolean useJavaScript = false;
-
-    /**
-     * Creates a HtmlUnit Driver configuration
-     */
-    public HtmlUnitDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
-    }
+public interface HtmlUnitDriverConfiguration extends CommonWebDriverConfiguration {
 
     /**
      * @return the applicationName
      */
-    public String getApplicationName() {
-        return applicationName;
-    }
+    String getApplicationName();
 
     /**
      * @param applicationName the applicationName to set
      */
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
+    void setApplicationName(String applicationName);
 
     /**
      * @return the applicationVersion
      */
-    public String getApplicationVersion() {
-        return applicationVersion;
-    }
+    String getApplicationVersion();
 
     /**
      * @param applicationVersion the applicationVersion to set
      */
-    public void setApplicationVersion(String applicationVersion) {
-        this.applicationVersion = applicationVersion;
-    }
+    void setApplicationVersion(String applicationVersion);
 
     /**
      * @return the userAgent
      */
-    public String getUserAgent() {
-        return userAgent;
-    }
+    String getUserAgent();
 
     /**
      * @param userAgent the userAgent to set
      */
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
+    void setUserAgent(String userAgent);
 
     /**
      * @return the browserVersionNumeric
      */
-    public float getBrowserVersionNumeric() {
-        return browserVersionNumeric;
-    }
+    float getBrowserVersionNumeric();
 
     /**
      * @param browserVersionNumeric the browserVersionNumeric to set
      */
-    public void setBrowserVersionNumeric(float browserVersionNumeric) {
-        this.browserVersionNumeric = browserVersionNumeric;
-    }
+    void setBrowserVersionNumeric(float browserVersionNumeric);
 
     /**
      * @return the useJavaScript
      */
-    public boolean isUseJavaScript() {
-        return useJavaScript;
-    }
+    boolean isUseJavaScript();
 
     /**
      * @param useJavaScript the useJavaScript to set
      */
-    public void setUseJavaScript(boolean useJavaScript) {
-        this.useJavaScript = useJavaScript;
-    }
-
+    void setUseJavaScript(boolean useJavaScript);
 }

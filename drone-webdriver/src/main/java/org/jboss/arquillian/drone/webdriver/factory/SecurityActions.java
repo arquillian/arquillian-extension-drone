@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -124,8 +125,24 @@ final class SecurityActions {
             final Class<?> implClass = Class.forName(className, false, tccl);
             Constructor<?> constructor = getConstructor(implClass, argumentTypes);
             obj = constructor.newInstance(arguments);
-        } catch (Exception e) {
-            throw new RuntimeException("Could not create new instance of " + className + ", missing package from classpath?", e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to find implementation class " + className
+                    + " on current classpath. Please make sure it is present on the classpath.");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Unable to find a proper constructor for implementation class " + className
+                    + " with given parameters. Please make sure that you haven't misconfigured Arquillian Drone.");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Unable to instantiate a " + className
+                    + " instance, please make sure you have provided a proper configuration.", e);
+        } catch (InstantiationException e) {
+            throw new IllegalStateException("Unable to instantiate a " + className
+                    + " instance, please make sure you have provided a proper configuration.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Unable to instantiate a " + className
+                    + " instance, access refused by SecurityManager.", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalStateException("Unable to instantiate a " + className
+                    + " instance, please make sure you have provided a proper configuration.", e);
         }
 
         // Cast

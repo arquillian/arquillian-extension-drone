@@ -22,13 +22,7 @@ package org.jboss.arquillian.drone.webdriver.configuration;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverConfiguration extends AbstractWebDriverConfiguration<WebDriverConfiguration> {
-
-    /**
-     * Creates default Selenium WebDriver Configuration
-     */
-    public WebDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
-    }
+public interface WebDriverConfiguration extends AndroidDriverConfiguration, ChromeDriverConfiguration,
+        FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration, IPhoneDriverConfiguration {
 
 }

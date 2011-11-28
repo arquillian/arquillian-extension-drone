@@ -26,6 +26,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.ChromeDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -37,8 +38,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDriverConfiguration>,
-        Instantiator<ChromeDriver, ChromeDriverConfiguration>, Destructor<ChromeDriver> {
+public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>,
+        Instantiator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>, Destructor<ChromeDriver> {
 
     private static final String CHROME_DRIVER_BINARY_KEY = "webdriver.chrome.driver";
 
@@ -47,6 +48,7 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDri
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -56,6 +58,7 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDri
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(ChromeDriver instance) {
         instance.quit();
     }
@@ -65,7 +68,8 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDri
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public ChromeDriver createInstance(ChromeDriverConfiguration configuration) {
+    @Override
+    public ChromeDriver createInstance(TypedWebDriverConfiguration<ChromeDriverConfiguration> configuration) {
 
         String binary = configuration.getChromeBinary();
         String driverBinary = configuration.getChromeDriverBinary();
@@ -113,9 +117,11 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, ChromeDri
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public ChromeDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-
-        return new ChromeDriverConfiguration().configure(descriptor, qualifier);
+    @Override
+    public TypedWebDriverConfiguration<ChromeDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
+        return new TypedWebDriverConfiguration<ChromeDriverConfiguration>(ChromeDriverConfiguration.class,
+                "org.openqa.selenium.chrome.ChromeDriver").configure(descriptor, qualifier);
     }
 
     private List<String> getChromeSwitches(String valueString) {

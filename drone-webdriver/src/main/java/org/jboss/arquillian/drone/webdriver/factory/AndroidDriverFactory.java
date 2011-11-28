@@ -23,6 +23,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.AndroidDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.android.AndroidDriver;
 
 /**
@@ -32,14 +33,16 @@ import org.openqa.selenium.android.AndroidDriver;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class AndroidDriverFactory implements Configurator<AndroidDriver, AndroidDriverConfiguration>,
-        Instantiator<AndroidDriver, AndroidDriverConfiguration>, Destructor<AndroidDriver> {
+public class AndroidDriverFactory implements
+        Configurator<AndroidDriver, TypedWebDriverConfiguration<AndroidDriverConfiguration>>,
+        Instantiator<AndroidDriver, TypedWebDriverConfiguration<AndroidDriverConfiguration>>, Destructor<AndroidDriver> {
 
     /*
      * (non-Javadoc)
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -49,6 +52,7 @@ public class AndroidDriverFactory implements Configurator<AndroidDriver, Android
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(AndroidDriver instance) {
         instance.quit();
     }
@@ -58,7 +62,8 @@ public class AndroidDriverFactory implements Configurator<AndroidDriver, Android
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public AndroidDriver createInstance(AndroidDriverConfiguration configuration) {
+    @Override
+    public AndroidDriver createInstance(TypedWebDriverConfiguration<AndroidDriverConfiguration> configuration) {
 
         String remoteAddress = configuration.getRemoteAddress();
 
@@ -82,9 +87,12 @@ public class AndroidDriverFactory implements Configurator<AndroidDriver, Android
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public AndroidDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    @Override
+    public TypedWebDriverConfiguration<AndroidDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
 
-        return new AndroidDriverConfiguration().configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<AndroidDriverConfiguration>(AndroidDriverConfiguration.class,
+                "org.openqa.selenium.android.AndroidDriver").configure(descriptor, qualifier);
     }
 
 }

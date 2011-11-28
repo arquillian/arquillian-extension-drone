@@ -23,6 +23,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.InternetExplorerDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
 /**
@@ -34,8 +35,9 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
  *
  */
 public class InternetExplorerDriverFactory implements
-        Configurator<InternetExplorerDriver, InternetExplorerDriverConfiguration>,
-        Instantiator<InternetExplorerDriver, InternetExplorerDriverConfiguration>, Destructor<InternetExplorerDriver> {
+        Configurator<InternetExplorerDriver, TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>>,
+        Instantiator<InternetExplorerDriver, TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>>,
+        Destructor<InternetExplorerDriver> {
 
     public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
 
@@ -44,6 +46,7 @@ public class InternetExplorerDriverFactory implements
      *
      * @see org.jboss.arquillian.drone.spi.Sortable#getPrecedence()
      */
+    @Override
     public int getPrecedence() {
         return 0;
     }
@@ -53,6 +56,7 @@ public class InternetExplorerDriverFactory implements
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @Override
     public void destroyInstance(InternetExplorerDriver instance) {
         instance.quit();
     }
@@ -62,7 +66,8 @@ public class InternetExplorerDriverFactory implements
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public InternetExplorerDriver createInstance(InternetExplorerDriverConfiguration configuration) {
+    @Override
+    public InternetExplorerDriver createInstance(TypedWebDriverConfiguration<InternetExplorerDriverConfiguration> configuration) {
 
         int port = configuration.getIePort();
 
@@ -84,10 +89,11 @@ public class InternetExplorerDriverFactory implements
      * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
-    public InternetExplorerDriverConfiguration createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-
-        return new InternetExplorerDriverConfiguration().configure(descriptor, qualifier);
+    @Override
+    public TypedWebDriverConfiguration<InternetExplorerDriverConfiguration> createConfiguration(
+            ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        return new TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>(InternetExplorerDriverConfiguration.class,
+                "org.openqa.selenium.ie.InternetExplorerDriver").configure(descriptor, qualifier);
     }
 
 }

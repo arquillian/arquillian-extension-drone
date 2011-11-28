@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 
 /**
  * Configuration for Chrome Driver
@@ -24,61 +23,36 @@ import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class ChromeDriverConfiguration extends AbstractWebDriverConfiguration<ChromeDriverConfiguration> {
-
-    private String chromeBinary;
-
-    private String chromeDriverBinary;
-
-    private String chromeSwitches;
-
-    /**
-     * Creates a Chrome Driver configuration
-     */
-    public ChromeDriverConfiguration() {
-        this.implementationClass = "org.openqa.selenium.chrome.ChromeDriver";
-    }
+public interface ChromeDriverConfiguration extends CommonWebDriverConfiguration {
 
     /**
      * @return the chromeBinary
      */
-    public String getChromeBinary() {
-        return chromeBinary;
-    }
+    String getChromeBinary();
 
     /**
      * @param chromeBinary the chromeBinary to set
      */
-    public void setChromeBinary(String chromeBinary) {
-        this.chromeBinary = chromeBinary;
-    }
+    void setChromeBinary(String chromeBinary);
 
     /**
      * @param chromeDriverBinary the chromeDriverBinary to set
      */
-    public void setChromeDriverBinary(String chromeDriverBinary) {
-        this.chromeDriverBinary = chromeDriverBinary;
-    }
+    void setChromeDriverBinary(String chromeDriverBinary);
 
     /**
      * @return the chromeDriverBinary
      */
-    public String getChromeDriverBinary() {
-        return chromeDriverBinary;
-    }
+    String getChromeDriverBinary();
 
     /**
      * @param chromeSwitches the chromeSwitches to set
      */
-    public void setChromeSwitches(String chromeSwitches) {
-        this.chromeSwitches = chromeSwitches;
-    }
+    void setChromeSwitches(String chromeSwitches);
 
     /**
      * @return the chromeSwitches
      */
-    public String getChromeSwitches() {
-        return chromeSwitches;
-    }
+    String getChromeSwitches();
 
 }

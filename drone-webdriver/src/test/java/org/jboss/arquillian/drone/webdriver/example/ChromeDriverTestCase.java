@@ -21,7 +21,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
