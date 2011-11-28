@@ -14,7 +14,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact Configuration -->
-    <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-drone-build</artifactId>
 
     <packaging>pom</packaging>
@@ -30,10 +29,7 @@
 
     <properties>
         <!-- Versioning -->
-        <version.jpa>1.0</version.jpa>
-        <version.cdi>1.0-SP1</version.cdi>
-        <version.jsf>2.0.2-FCS</version.jsf>
-        <version.el>2.2</version.el>
+        <version.javaee6-web.spec>3.0.0.Beta1</version.javaee6-web.spec>
     </properties>
 
     <!-- Plugin Configuration -->
@@ -43,7 +39,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10</version>
             </plugin>
             <!-- Checkstyle -->
             <plugin>
@@ -71,6 +67,26 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Compiler -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <compilerVersion>1.6</compilerVersion>
+                    <showDeprecation>false</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <optimize>true</optimize>
+                    <fork>true</fork>
+                    <compilerArguments>
+                        <source>1.5</source>
+                        <target>1.5</target>
+                    </compilerArguments>
+                    <argLine>-Xmx512M</argLine>
+                    <executable>${JAVA_HOME}/bin/javac</executable>
+                </configuration>
             </plugin>
         </plugins>
 
@@ -211,23 +227,13 @@
                 <version>${version.slf4j}</version>
             </dependency>
 
-            <!-- we are using a Weld based example for testing -->
+            <!-- we are using a Java EE 6 based example for testing -->
             <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>${version.cdi}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.faces</groupId>
-                <artifactId>jsf-api</artifactId>
-                <version>${version.jsf}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>persistence-api</artifactId>
-                <version>${version.jpa}</version>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-web-6.0</artifactId>
+                <version>${version.javaee6-web.spec}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
         </dependencies>

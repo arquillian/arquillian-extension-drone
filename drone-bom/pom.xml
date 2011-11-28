@@ -13,7 +13,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact Configuration -->
-    <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-drone-bom</artifactId>
 
     <packaging>pom</packaging>

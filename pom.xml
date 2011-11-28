@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>6</version>
+        <version>7</version>
         <relativePath />
     </parent>
 
@@ -35,15 +36,13 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.0.CR4</version.arquillian.core>
+        <version.arquillian.core>1.0.0.CR6</version.arquillian.core>
         <version.selenium.server>2.13.0</version.selenium.server>
         <version.selenium>2.13.0</version.selenium>
         <version.slf4j>1.5.10</version.slf4j>
 
         <!-- override from parent -->
         <version.release.plugin>2.1</version.release.plugin>
-        <maven.compiler.target>1.5</maven.compiler.target>
-        <maven.compiler.source>1.5</maven.compiler.source>
     </properties>
 
     <build>
@@ -62,10 +61,10 @@
     <!-- Modules -->
     <modules>
 
-        <!-- Drone build chain-->
+        <!-- Drone build chain -->
         <module>build-config</module>
         <module>drone-bom</module>
-        <module>drone-build</module>        
+        <module>drone-build</module>
 
         <!-- Drone modules -->
         <module>drone-api</module>
@@ -74,7 +73,7 @@
         <module>drone-impl</module>
         <module>drone-selenium-server</module>
         <module>drone-selenium</module>
-        <module>drone-webdriver</module>        
+        <module>drone-webdriver</module>
     </modules>
 
 </project>

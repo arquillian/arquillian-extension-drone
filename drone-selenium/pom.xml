@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -43,7 +44,7 @@
             <artifactId>arquillian-drone-configuration</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- Arquillian dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -64,7 +65,7 @@
             <artifactId>selenium-java</artifactId>
             <scope>provided</scope>
         </dependency>
-      
+
         <!-- required to run Selenium DefaultSelenium -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -91,7 +92,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- we are using a Weld based example for testing -->
+        <!-- we are using a Jave EE 6 based example for testing -->
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
@@ -99,14 +100,14 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.faces</groupId>
-            <artifactId>jsf-api</artifactId>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
+            <groupId>org.jboss.spec.javax.faces</groupId>
+            <artifactId>jboss-jsf-api_2.0_spec</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -181,7 +182,7 @@
 
         <!-- CONTAINER PROFILES -->
 
-        <!--  Deploys example to managed JBoss AS 6 instance -->
+        <!-- Deploys example to managed JBoss AS 6 instance -->
         <profile>
             <id>jbossas-managed-6</id>
 

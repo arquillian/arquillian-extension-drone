@@ -8,7 +8,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-drone-build-config</artifactId>
     <name>Arquillian Drone Extension Build Configuration</name>
 
