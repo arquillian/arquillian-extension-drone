@@ -36,8 +36,8 @@
     <properties>
         <!-- Versioning -->
         <version.arquillian.core>1.0.0.CR4</version.arquillian.core>
-        <version.selenium.server>2.5.0</version.selenium.server>
-        <version.selenium>2.5.0</version.selenium>
+        <version.selenium.server>2.13.0</version.selenium.server>
+        <version.selenium>2.13.0</version.selenium>
         <version.slf4j>1.5.10</version.slf4j>
 
         <!-- override from parent -->
