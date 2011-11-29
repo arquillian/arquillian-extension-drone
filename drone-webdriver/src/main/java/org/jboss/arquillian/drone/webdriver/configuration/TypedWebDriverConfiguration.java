@@ -388,7 +388,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             }
             // get method in the interface
             try {
-                type.getDeclaredMethod(name, parameterTypes);
+                type.getMethod(name, parameterTypes);
                 this.exists = true;
             } catch (NoSuchMethodException e) {
                 this.exists = false;
@@ -413,7 +413,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         }
 
         private String decamelize(String name) {
-            StringBuilder sb = new StringBuilder(name.substring(2));
+            StringBuilder sb = new StringBuilder(name.substring(3));
             sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
             return sb.toString();
         }

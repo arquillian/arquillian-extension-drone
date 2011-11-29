@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
@@ -112,9 +113,7 @@ public class DroneDestructor {
     private Destructor getDestructorFor(Class<?> typeClass) {
         // must be defined as raw because instance type to be destroyer cannot
         // be determined in compile time
-        Destructor destructor = registry.get().getDestructorFor(typeClass);
-        Validate.stateNotNull(destructor, DroneRegistry.getUnregisteredExceptionMessage(registry.get(), typeClass,
-                DroneRegistry.RegisteredType.DESTRUCTOR));
+        Destructor destructor = registry.get().getEntryFor(typeClass, Destructor.class);
 
         if (log.isLoggable(Level.FINE)) {
             log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "

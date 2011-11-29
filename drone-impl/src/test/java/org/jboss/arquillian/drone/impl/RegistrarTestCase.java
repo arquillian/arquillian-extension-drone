@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDronePriorityFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -44,7 +45,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests Registar precedence and its retrieval chain.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -79,10 +80,10 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
-        Assert.assertNotNull("Configurator for MockDrone was created", registry.getConfiguratorFor(MockDrone.class));
-        System.err.println(registry.getConfiguratorFor(MockDrone.class).getClass());
+        Assert.assertNotNull("Configurator for MockDrone was created", registry.getEntryFor(MockDrone.class, Configurator.class));
+
         Assert.assertTrue("Configurator is of MockDronePriorityFactory type",
-                registry.getConfiguratorFor(MockDrone.class) instanceof MockDronePriorityFactory);
+                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDronePriorityFactory);
 
         getManager().fire(new BeforeClass(this.getClass()));
 

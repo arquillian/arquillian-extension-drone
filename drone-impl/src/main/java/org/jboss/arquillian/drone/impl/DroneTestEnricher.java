@@ -27,6 +27,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
@@ -56,12 +57,6 @@ public class DroneTestEnricher implements TestEnricher {
     @Inject
     private Instance<MethodContext> droneMethodContext;
 
-    @Inject
-    private Instance<ArquillianDescriptor> arquillianDescriptor;
-
-    @Inject
-    private Instance<DroneRegistry> registry;
-
     public void enrich(Object testCase) {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
         if (!droneEnrichements.isEmpty()) {
@@ -82,8 +77,6 @@ public class DroneTestEnricher implements TestEnricher {
                     log.fine("Resolving method " + method.getName() + " argument at position " + i);
                 }
 
-                Validate.notNull(registry.get(), "Drone registry should not be null");
-                Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
                 Validate.notNull(droneMethodContext.get(), "Method context should not be null");
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 

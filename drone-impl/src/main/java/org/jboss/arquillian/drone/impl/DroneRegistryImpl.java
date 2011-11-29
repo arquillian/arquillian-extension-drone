@@ -21,7 +21,9 @@ import java.util.Map;
 
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
  * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
@@ -31,95 +33,9 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class DroneRegistry {
-
-    public static enum RegisteredType {
-        CONFIGURATOR {
-            @Override
-            public boolean registeredIn(RegistryValue value) {
-                return value.configurator == null;
-            }
-
-            @Override
-            public String toString() {
-                return "configurator";
-            }
-        },
-        INSTANTIATOR {
-            @Override
-            public boolean registeredIn(RegistryValue value) {
-                return value.instantiator == null;
-            }
-
-            @Override
-            public String toString() {
-                return "instantiator";
-            }
-        },
-        DESTRUCTOR {
-            @Override
-            public boolean registeredIn(RegistryValue value) {
-                return value.destructor == null;
-            }
-
-            @Override
-            public String toString() {
-                return "destructor";
-            }
-        };
-
-        public abstract boolean registeredIn(RegistryValue value);
-    }
+public class DroneRegistryImpl implements DroneRegistry {
 
     private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
-
-    /**
-     * Gets configurator for given object type
-     *
-     * @param <T> Type of configurator object
-     * @param type Configurator key
-     * @return Configurator for objects of type <T>
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Configurator<T, ?> getConfiguratorFor(Class<T> type) {
-        RegistryValue value = registry.get(type);
-        if (value != null) {
-            return (Configurator<T, ?>) value.configurator;
-        }
-        return null;
-    }
-
-    /**
-     * Gets instantiator for given object type
-     *
-     * @param <T> Type of instantiator object
-     * @param key Instantiator key
-     * @return Instantiator for objects of type <T>
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Instantiator<T, ?> getInstantiatorFor(Class<T> key) {
-        RegistryValue value = registry.get(key);
-        if (value != null) {
-            return (Instantiator<T, ?>) value.instantiator;
-        }
-        return null;
-    }
-
-    /**
-     * Gets destructor for given object type
-     *
-     * @param <T> Type of destructor object
-     * @param key Destructor key
-     * @return Destructor for objects of type <T>
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Destructor<T> getDestructorFor(Class<T> key) {
-        RegistryValue value = registry.get(key);
-        if (value != null) {
-            return (Destructor<T>) value.destructor;
-        }
-        return null;
-    }
 
     /**
      * Registers a configurator for given object type
@@ -128,6 +44,7 @@ public class DroneRegistry {
      * @param configurator Configurator to be stored
      * @return Modified registry
      */
+    @Override
     public DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator) {
         RegistryValue entry = registry.get(key);
         if (entry != null) {
@@ -145,6 +62,7 @@ public class DroneRegistry {
      * @param value Instantiator to be stored
      * @return Modified registry
      */
+    @Override
     public DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value) {
         RegistryValue entry = registry.get(key);
         if (entry != null) {
@@ -162,6 +80,7 @@ public class DroneRegistry {
      * @param value Destructor to be stored
      * @return Modified registry
      */
+    @Override
     public DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value) {
         RegistryValue entry = registry.get(key);
         if (entry != null) {
@@ -172,6 +91,22 @@ public class DroneRegistry {
         return this;
     }
 
+    @Override
+    public <T extends Sortable> T getEntryFor(Class<?> key, Class<T> entryType) throws IllegalStateException {
+        RegisteredType regType = RegisteredType.getType(entryType);
+        RegistryValue value = registry.get(key);
+
+        if (value == null) {
+            throw new IllegalStateException(getUnregisteredExceptionMessage(key, regType));
+        }
+
+        if (!regType.registeredIn(value)) {
+            throw new IllegalStateException(getUnregisteredExceptionMessage(key, regType));
+        }
+
+        return regType.unwrap(value, entryType);
+    }
+
     /**
      * Constructs pretty nice exception message when something was not registered
      *
@@ -180,7 +115,7 @@ public class DroneRegistry {
      * @param registeredType Type of the builder which was not registered
      * @return the exception message
      */
-    static String getUnregisteredExceptionMessage(DroneRegistry registry, Class<?> unregistered, RegisteredType registeredType) {
+    String getUnregisteredExceptionMessage(Class<?> unregistered, RegisteredType registeredType) {
         StringBuilder sb = new StringBuilder();
         sb.append("No "
                 + registeredType
@@ -191,7 +126,7 @@ public class DroneRegistry {
 
         sb.append("Currently registered " + registeredType + "s are: ");
 
-        for (Map.Entry<Class<?>, RegistryValue> entry : registry.registry.entrySet()) {
+        for (Map.Entry<Class<?>, RegistryValue> entry : registry.entrySet()) {
             if (registeredType.registeredIn(entry.getValue())) {
                 sb.append(entry.getKey().getName()).append("\n");
             }
@@ -232,5 +167,82 @@ public class DroneRegistry {
             return this;
         }
 
+    }
+
+    private static enum RegisteredType {
+        CONFIGURATOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.configurator != null;
+            }
+
+            @Override
+            public String toString() {
+                return "configurator";
+            }
+
+            @Override
+            public <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass) {
+                if (registeredIn(value)) {
+                    return unwrapClass.cast(value.configurator);
+                }
+                return null;
+            }
+        },
+        INSTANTIATOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.instantiator != null;
+            }
+
+            @Override
+            public String toString() {
+                return "instantiator";
+            }
+
+            @Override
+            public <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass) {
+                if (registeredIn(value)) {
+                    return unwrapClass.cast(value.instantiator);
+                }
+                return null;
+            }
+        },
+        DESTRUCTOR {
+            @Override
+            public boolean registeredIn(RegistryValue value) {
+                return value.destructor != null;
+            }
+
+            @Override
+            public String toString() {
+                return "destructor";
+            }
+
+            @Override
+            public <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass) {
+                if (registeredIn(value)) {
+                    return unwrapClass.cast(value.destructor);
+                }
+                return null;
+            }
+        };
+
+        public abstract boolean registeredIn(RegistryValue value);
+
+        public abstract <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass);
+
+        public static RegisteredType getType(Class<? extends Sortable> registeredType) {
+            Validate.stateNotNull(registeredType, "Registered type must not be null");
+            if (Configurator.class.isAssignableFrom(registeredType)) {
+                return CONFIGURATOR;
+            } else if (Instantiator.class.isAssignableFrom(registeredType)) {
+                return INSTANTIATOR;
+            } else if (Destructor.class.isAssignableFrom(registeredType)) {
+                return DESTRUCTOR;
+            }
+
+            throw new AssertionError("Unable to determine registered Type from " + registeredType.getName());
+        }
     }
 }

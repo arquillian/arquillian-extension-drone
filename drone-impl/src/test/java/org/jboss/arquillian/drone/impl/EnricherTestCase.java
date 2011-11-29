@@ -29,6 +29,7 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -41,7 +42,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -99,7 +99,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(EnrichedClass.class));
 
@@ -132,7 +132,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
@@ -163,7 +163,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                registry.getConfiguratorFor(MockDrone.class) instanceof MockDroneFactory);
+                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
         fire(new Before(instance, testMethod));

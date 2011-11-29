@@ -76,7 +76,13 @@ public class FirefoxDriverFactory implements
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
                     FirefoxDriver.class);
         }
-        // profile was specified
+        // only binary was specified
+        else if (Validate.empty(profile)) {
+            Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { FirefoxBinary.class,
+                    FirefoxProfile.class }, new Object[] { new FirefoxBinary(new File(binary)), null }, FirefoxDriver.class);
+        }
+        // only profile was specified
         else if (Validate.empty(binary)) {
             Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
 

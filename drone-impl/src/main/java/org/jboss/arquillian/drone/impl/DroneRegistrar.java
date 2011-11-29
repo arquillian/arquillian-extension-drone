@@ -30,6 +30,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.Sortable;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
@@ -66,13 +67,13 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 public class DroneRegistrar {
     @Inject
     @SuiteScoped
-    private InstanceProducer<DroneRegistry> dronetRegistry;
+    private InstanceProducer<DroneRegistry> droneRegistry;
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
     public void register(@Observes BeforeSuite event) {
-        dronetRegistry.set(new DroneRegistry());
+        droneRegistry.set(new DroneRegistryImpl());
         registerConfigurators();
         registerInstantiators();
         registerDestructors();
@@ -86,7 +87,7 @@ public class DroneRegistrar {
         for (Configurator<?, ?> configurator : list) {
             Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
             if (type != null) {
-                dronetRegistry.get().registerConfiguratorFor(type, configurator);
+                droneRegistry.get().registerConfiguratorFor(type, configurator);
             }
         }
     }
@@ -99,7 +100,7 @@ public class DroneRegistrar {
         for (Instantiator<?, ?> instantiator : list) {
             Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
             if (type != null) {
-                dronetRegistry.get().registerInstantiatorFor(type, instantiator);
+                droneRegistry.get().registerInstantiatorFor(type, instantiator);
             }
         }
     }
@@ -112,7 +113,7 @@ public class DroneRegistrar {
         for (Destructor<?> destructor : list) {
             Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
             if (type != null) {
-                dronetRegistry.get().registerDestructorFor(type, destructor);
+                droneRegistry.get().registerDestructorFor(type, destructor);
             }
         }
     }
