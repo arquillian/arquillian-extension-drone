@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>7</version>
+        <version>8</version>
         <relativePath />
     </parent>
 
@@ -41,7 +41,9 @@
         <version.slf4j>1.5.10</version.slf4j>
 
         <!-- override from parent -->
-        <version.release.plugin>2.1</version.release.plugin>
+        <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
+        <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
+
     </properties>
 
     <build>
