@@ -128,13 +128,7 @@
                 <artifactId>selenium-remote-driver</artifactId>
                 <version>${version.selenium}</version>
             </dependency>
-      
-            <!-- required to run Selenium DefaultSelenium -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${version.slf4j}</version>
-            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 

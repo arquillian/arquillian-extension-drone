@@ -36,9 +36,8 @@
     <properties>
         <!-- Versioning -->
         <version.arquillian.core>1.0.0.CR6</version.arquillian.core>
-        <version.selenium.server>2.13.0</version.selenium.server>
-        <version.selenium>2.13.0</version.selenium>
-        <version.slf4j>1.5.10</version.slf4j>
+        <version.selenium.server>2.20.0</version.selenium.server>
+        <version.selenium>2.20.0</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -66,7 +65,7 @@
         <module>build-config</module>
         <module>drone-bom</module>
         <module>drone-build</module>
-
+        
         <!-- Drone modules -->
         <module>drone-api</module>
         <module>drone-spi</module>
