@@ -35,7 +35,7 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.0.CR6</version.arquillian.core>
+        <version.arquillian.core>1.0.0.CR7</version.arquillian.core>
         <version.selenium.server>2.20.0</version.selenium.server>
         <version.selenium>2.20.0</version.selenium>
 
