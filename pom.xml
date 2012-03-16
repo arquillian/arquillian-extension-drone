@@ -66,6 +66,10 @@
         <module>drone-bom</module>
         <module>drone-build</module>
         
+        <!-- Drone dependency chain -->
+        <module>depchain/selenium</module>
+        <module>depchain/webdriver</module>
+
         <!-- Drone modules -->
         <module>drone-api</module>
         <module>drone-spi</module>
