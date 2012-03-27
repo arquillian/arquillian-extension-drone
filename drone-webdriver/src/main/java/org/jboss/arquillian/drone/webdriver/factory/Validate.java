@@ -17,14 +17,19 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 class Validate {
+
+    private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
 
     static boolean empty(String object) {
         return object == null || object.length() == 0;
@@ -65,8 +70,51 @@ class Validate {
 
         File file = new File(path);
 
-        if (!file.exists() || !file.canExecute()) {
+        if (!file.exists() || !fileExecutableChecker.canExecute(file)) {
             throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Checker if a file can be executed. It requires Java 6 to do that. If anything goes wrong, it supposes that a file can be
+     * executed.
+     *
+     */
+    private static final class FileExecutableChecker {
+        private static final Logger log = Logger.getLogger(FileExecutableChecker.class.getName());
+
+        private final Method isExecutableMethod;
+
+        FileExecutableChecker() {
+            Method m = null;
+            try {
+                m = File.class.getMethod("canExecute");
+            } catch (SecurityException e) {
+                log.warning("Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
+            } catch (NoSuchMethodException e) {
+                log.warning("Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
+            }
+
+            this.isExecutableMethod = m;
+        }
+
+        public boolean canExecute(File file) {
+            if (isExecutableMethod == null) {
+                return true;
+            }
+
+            Boolean result = true;
+            try {
+                result = (Boolean) isExecutableMethod.invoke(file);
+            } catch (IllegalArgumentException e) {
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+            } catch (IllegalAccessException e) {
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+            } catch (InvocationTargetException e) {
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+            }
+
+            return result;
         }
     }
 

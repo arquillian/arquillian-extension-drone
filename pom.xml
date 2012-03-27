@@ -35,10 +35,9 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.0.CR6</version.arquillian.core>
-        <version.selenium.server>2.13.0</version.selenium.server>
-        <version.selenium>2.13.0</version.selenium>
-        <version.slf4j>1.5.10</version.slf4j>
+        <version.arquillian.core>1.0.0.CR7</version.arquillian.core>
+        <version.selenium.server>2.20.0</version.selenium.server>
+        <version.selenium>2.20.0</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -56,6 +55,27 @@
                     <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>signature-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java15</artifactId>
+                        <version>1.0</version>
+                    </signature>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -66,6 +86,10 @@
         <module>build-config</module>
         <module>drone-bom</module>
         <module>drone-build</module>
+        
+        <!-- Drone dependency chain -->
+        <module>depchain/selenium</module>
+        <module>depchain/webdriver</module>
 
         <!-- Drone modules -->
         <module>drone-api</module>
