@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <!-- Parent -->
-    <parent>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-aggregator</artifactId>
-        <version>1.0.0.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Model Version -->
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact Configuration -->
+    <groupId>org.jboss.arquillian.extension</groupId>
     <artifactId>arquillian-drone-bom</artifactId>
-
     <packaging>pom</packaging>
+    <version>1.0.0.Final-SNAPSHOT</version>
+
     <name>Arquillian Drone Extension BOM</name>
     <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
@@ -27,108 +22,126 @@
     </developers>
 
     <properties>
+        <version.org.seleniumhq.selenium.server>2.20.0</version.org.seleniumhq.selenium.server>
+        <version.org.seleniumhq.selenium>2.20.0</version.org.seleniumhq.selenium>
+        <version.org.jboss.arquillian.extension.drone>1.0.0.Final-SNAPSHOT</version.org.jboss.arquillian.extension.drone>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Arquillian Drone-->
+            <!-- Arquillian Drone -->
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-api</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-spi</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-configuration</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-impl</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium-server</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-webdriver</artifactId>
-                <version>${project.version}</version>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
             </dependency>
-            
+
             <!-- Selenium Server -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
-                <version>${version.selenium.server}</version>
+                <version>${version.org.seleniumhq.selenium.server}</version>
             </dependency>
 
             <!-- Selenium dependecies -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-api</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-support</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
-            
+
             <!-- Drivers -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-android-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-chrome-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-firefox-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-htmlunit-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-ie-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-iphone-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-remote-driver</artifactId>
-                <version>${version.selenium}</version>
+                <version>${version.org.seleniumhq.selenium}</version>
             </dependency>
-            
+
+            <!-- Dependency Chains -->
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-drone-selenium-depchain</artifactId>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <type>pom</type>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
