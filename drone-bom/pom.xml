@@ -41,7 +41,6 @@
     <properties>
         <version.org.seleniumhq.selenium.server>2.20.0</version.org.seleniumhq.selenium.server>
         <version.org.seleniumhq.selenium>2.20.0</version.org.seleniumhq.selenium>
-        <version.org.jboss.arquillian.extension.drone>1.0.0.Final-SNAPSHOT</version.org.jboss.arquillian.extension.drone>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
@@ -52,37 +51,37 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-api</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-spi</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-configuration</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-impl</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium-server</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-webdriver</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Selenium Server -->
@@ -150,14 +149,14 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium-depchain</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-webdriver-depchain</artifactId>
-                <version>${version.org.jboss.arquillian.extension.drone}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
 
