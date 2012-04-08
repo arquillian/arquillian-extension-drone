@@ -13,6 +13,23 @@
 
     <name>Arquillian Drone Extension BOM</name>
     <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+    <url>http://www.jboss.org/arquillian</url>
+
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <!-- SCM -->
+    <scm>
+        <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-drone.git</connection>
+        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-drone.git</developerConnection>
+        <url>git://github.com/arquillian/arquillian-extension-drone.git</url>
+    </scm>
+
 
     <developers>
         <developer>
@@ -25,6 +42,8 @@
         <version.org.seleniumhq.selenium.server>2.20.0</version.org.seleniumhq.selenium.server>
         <version.org.seleniumhq.selenium>2.20.0</version.org.seleniumhq.selenium>
         <version.org.jboss.arquillian.extension.drone>1.0.0.Final-SNAPSHOT</version.org.jboss.arquillian.extension.drone>
+        <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
 
     <dependencyManagement>
@@ -144,5 +163,34 @@
 
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <pushChanges>false</pushChanges>
+                        <localCheckout>true</localCheckout>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>jboss-releases-repository</id>
+            <name>JBoss Releases Repository</name>
+            <url>${jboss.releases.repo.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>${jboss.snapshots.repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 
 </project>
