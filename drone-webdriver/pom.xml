@@ -111,6 +111,12 @@
             <version>${version.selenium}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>${version.com.opera}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>

@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-support</artifactId>            
+            <artifactId>selenium-support</artifactId>
             <version>${version.selenium}</version>
         </dependency>
 
@@ -111,6 +111,11 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-remote-driver</artifactId>
             <version>${version.selenium}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>${version.com.opera}</version>
         </dependency>
     </dependencies>
 

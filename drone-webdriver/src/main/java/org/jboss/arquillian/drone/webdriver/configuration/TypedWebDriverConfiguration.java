@@ -71,6 +71,32 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     protected boolean useJavaScript;
 
+    protected String operaArguments;
+
+    protected boolean operaAutostart = true;
+
+    protected String operaBinary;
+
+    protected int operaDisplay = -1;
+
+    protected boolean operaIdle = false;
+
+    protected String operaLauncher;
+
+    protected String operaLoggingFile;
+
+    protected String operaLoggingLevel = "INFO";
+
+    protected int operaPort = 0;
+
+    protected String operaProfile;
+
+    protected String operaProduct;
+
+    protected boolean operaQuit = true;
+
+    protected boolean operaRestart = true;
+
     public TypedWebDriverConfiguration(Class<T> type, String implementationClass) {
         this.type = type;
         this.implementationClass = implementationClass;
@@ -376,6 +402,305 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     public TypedWebDriverConfiguration<T> configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
         ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
         return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    }
+
+    @Override
+    public String getOperaArguments() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaArguments;
+            }
+        };
+        return interceptor.intercept("getOperaArguments");
+    }
+
+    @Override
+    public String getOperaBinary() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaBinary;
+            }
+        };
+        return interceptor.intercept("getOperaBinary");
+    }
+
+    @Override
+    public int getOperaPort() {
+        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
+            @Override
+            public Integer invoke() {
+                return operaPort;
+            }
+        };
+        return interceptor.intercept("getOperaPort");
+    }
+
+    @Override
+    public String getOperaProfile() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaProfile;
+            }
+        };
+        return interceptor.intercept("getOperaProfile");
+    }
+
+    @Override
+    public void setOperaArguments(final String operaArguments) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaArguments = operaArguments;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaArguments", String.class);
+    }
+
+    @Override
+    public void setOperaBinary(final String operaBinary) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaBinary = operaBinary;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaBinary", String.class);
+    }
+
+    @Override
+    public void setOperaPort(final int operaPort) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaPort = operaPort;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaPort", int.class);
+    }
+
+    @Override
+    public void setOperaProfile(final String operaProfile) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaProfile = operaProfile;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaProfile", String.class);
+    }
+
+    @Override
+    public int getOperaDisplay() {
+        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
+            @Override
+            public Integer invoke() {
+                return operaDisplay;
+            }
+        };
+        return interceptor.intercept("getOperaDisplay");
+    }
+
+    @Override
+    public String getOperaLauncher() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaLauncher;
+            }
+        };
+        return interceptor.intercept("getOperaLauncher");
+    }
+
+    @Override
+    public String getOperaLoggingFile() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaLoggingFile;
+            }
+        };
+        return interceptor.intercept("getOperaLoggingFile");
+    }
+
+    @Override
+    public String getOperaLoggingLevel() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaLoggingLevel;
+            }
+        };
+        return interceptor.intercept("getOperaLoggingLevel");
+    }
+
+    @Override
+    public String getOperaProduct() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaProduct;
+            }
+        };
+        return interceptor.intercept("getOperaProduct");
+    }
+
+    @Override
+    public boolean isOperaAutostart() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return operaAutostart;
+            }
+        };
+        return interceptor.intercept("isOperaAutostart");
+    }
+
+    @Override
+    public boolean isOperaIdle() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return operaIdle;
+            }
+        };
+        return interceptor.intercept("isOperaIdle");
+    }
+
+    @Override
+    public boolean isOperaQuit() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return operaQuit;
+            }
+        };
+        return interceptor.intercept("isOperaQuit");
+    }
+
+    @Override
+    public boolean isOperaRestart() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return operaRestart;
+            }
+        };
+        return interceptor.intercept("isOperaRestart");
+    }
+
+    @Override
+    public void setOperaAutostart(final boolean operaAutostart) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaAutostart = operaAutostart;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaAutostart", int.class);
+    }
+
+    @Override
+    public void setOperaDisplay(final int operaDisplay) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaDisplay = operaDisplay;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaDisplay", int.class);
+    }
+
+    @Override
+    public void setOperaLauncher(final String operaLauncher) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaLauncher = operaLauncher;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaLauncher", String.class);
+    }
+
+    @Override
+    public void setOperaLoggingFile(final String operaLoggingFile) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaLoggingFile = operaLoggingFile;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaLoggingFile", String.class);
+    }
+
+    @Override
+    public void setOperaLoggingLevel(final String operaLoggingLevel) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaLoggingLevel = operaLoggingLevel;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaLoggingLevel", String.class);
+    }
+
+    @Override
+    public void setOperaProduct(final String operaProduct) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaProduct = operaProduct;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaProduct", String.class);
+    }
+
+    @Override
+    public void setOperaIdle(final boolean operaIdle) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaIdle = operaIdle;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaIdle", boolean.class);
+    }
+
+    @Override
+    public void setOperaQuit(final boolean operaQuit) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaQuit = operaQuit;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaQuit", boolean.class);
+    }
+
+    @Override
+    public void setOperaRestart(final boolean operaRestart) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaRestart = operaRestart;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaRestart", boolean.class);
     }
 
     private abstract class CallInterceptor<R> {

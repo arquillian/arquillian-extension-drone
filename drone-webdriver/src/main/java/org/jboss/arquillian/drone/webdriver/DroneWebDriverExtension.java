@@ -26,6 +26,7 @@ import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.IPhoneDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 
 /**
@@ -64,5 +65,9 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(Configurator.class, WebDriverFactory.class);
         builder.service(Instantiator.class, WebDriverFactory.class);
         builder.service(Destructor.class, WebDriverFactory.class);
+
+        builder.service(Configurator.class, OperaDriverFactory.class);
+        builder.service(Instantiator.class, OperaDriverFactory.class);
+        builder.service(Destructor.class, OperaDriverFactory.class);
     }
 }

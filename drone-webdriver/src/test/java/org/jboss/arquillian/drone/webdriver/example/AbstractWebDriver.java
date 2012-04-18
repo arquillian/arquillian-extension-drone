@@ -16,9 +16,11 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
+import com.google.common.base.Function;
 import java.io.File;
 import java.net.URL;
 
+import org.apache.commons.lang.Validate;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.webdriver.example.webapp.Credentials;
 import org.jboss.arquillian.drone.webdriver.example.webapp.LoggedIn;
@@ -33,7 +35,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Clock;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Sleeper;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -109,13 +117,48 @@ public abstract class AbstractWebDriver {
     protected abstract WebDriver driver();
 
     // check is element is presence on page, fails otherwise
-    protected void checkElementPresence(WebDriver driver, By by, String errorMsg) {
-        try {
-            Assert.assertTrue(errorMsg, driver.findElement(by) != null);
-        } catch (NoSuchElementException e) {
-            Assert.fail(errorMsg);
+    protected void checkElementPresence(final WebDriver driver, final By by, String errorMsg) {
+        new WebDriverWaitWithMessage(driver(), 10).failWith(errorMsg).until(
+                new ExpectedCondition<Boolean>() {
+                    @Override
+                    public Boolean apply(WebDriver webDriver) {
+                        try {
+                            return driver.findElement(by).isDisplayed();
+                        } catch (NoSuchElementException ignored) {
+                            return false;
+                        } catch (StaleElementReferenceException ignored) {
+                            return false;
+                        }
+                    }
+                });
+    }
+
+    protected static class WebDriverWaitWithMessage extends WebDriverWait {
+
+        private String message;
+
+        public WebDriverWaitWithMessage(WebDriver driver, long timeOutInSeconds) {
+            super(driver, timeOutInSeconds);
         }
 
+        public WebDriverWait failWith(String message) {
+            Validate.notNull(message);
+            this.message = message;
+            return this;
+        }
+
+        @Override
+        public <V> V until(Function<? super WebDriver, V> isTrue) {
+            if (message == null) {
+                return super.until(isTrue);
+            } else {
+                try {
+                    return super.until(isTrue);
+                } catch(TimeoutException e) {
+                    throw new TimeoutException(message, e);
+                }
+            }
+        }
     }
 
 }
