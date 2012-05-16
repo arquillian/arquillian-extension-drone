@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.configuration;
+package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
+
+import java.util.HashMap;
+
+import org.openqa.selenium.remote.SessionId;
 
 /**
- * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
- *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
-public interface WebDriverConfiguration extends AndroidDriverConfiguration, ChromeDriverConfiguration,
-        FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration,
-        IPhoneDriverConfiguration, OperaDriverConfiguration, RemoteWebDriverConfiguration {
+public class InitializationParametersMap extends HashMap<SessionId, InitializationParameter> {
+
+    private static final long serialVersionUID = -2370516918873010433L;
 
 }

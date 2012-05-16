@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -60,7 +61,19 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
      */
     @Override
     public void destroyInstance(WebDriver instance) {
-        instance.quit();
+        // check if there is a better destructor than default one
+        // FIXME: this line should be written generally, not only for subclasses of RemoteWebDriver
+        Class<?> instanceClass = instance instanceof RemoteWebDriver ? RemoteWebDriver.class : instance.getClass();
+        Destructor destructor = null;
+        try {
+            destructor = registryInstance.get().getEntryFor(instance.getClass(), Destructor.class);
+        } catch(Exception ignored) {
+        }
+        if (destructor != null && !destructor.getClass().equals(this.getClass())) {
+            destructor.destroyInstance(instance);
+        } else {
+            instance.quit();
+        }
     }
 
     /*
@@ -72,7 +85,7 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
     @Override
     public WebDriver createInstance(TypedWebDriverConfiguration<WebDriverConfiguration> configuration) {
 
-        // check if there is a better instantiator then default one
+        // check if there is a better instantiator than default one
         String implementationClassName = configuration.getImplementationClass();
 
         DroneRegistry registry = registryInstance.get();
@@ -101,8 +114,7 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
     @Override
     public TypedWebDriverConfiguration<WebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<WebDriverConfiguration>(WebDriverConfiguration.class,
-                "org.openqa.selenium.htmlunit.HtmlUnitDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<WebDriverConfiguration>(WebDriverConfiguration.class, null).configure(descriptor, qualifier);
     }
 
 }
