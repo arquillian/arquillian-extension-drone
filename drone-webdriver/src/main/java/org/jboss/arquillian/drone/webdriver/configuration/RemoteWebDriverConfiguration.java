@@ -16,14 +16,30 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-/**
- * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
- *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
- */
-public interface WebDriverConfiguration extends AndroidDriverConfiguration, ChromeDriverConfiguration,
-        FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration,
-        IPhoneDriverConfiguration, OperaDriverConfiguration, RemoteWebDriverConfiguration {
+import java.util.Map;
 
+/**
+ * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
+ */
+public interface RemoteWebDriverConfiguration extends CommonWebDriverConfiguration {
+
+    String getCapability(String name);
+
+    Map<String,String> getCapabilities();
+
+    Map<String, String> getCapabilities(String needle);
+
+    String getRemoteAddress();
+
+    boolean isRemote();
+
+    boolean isRemoteReusable();
+
+    void setCapability(String name, String value);
+
+    void setRemote(boolean remote);
+
+    void setRemoteAddress(String remoteAddress);
+
+    void setRemoteReusable(boolean reusable);
 }

@@ -19,6 +19,10 @@
         <property name="chromeBinary">/opt/google/chrome/chrome</property>
         <property name="chromeDriverBinary">/home/kpiwko/temp/chromedriver</property>
         <property name="chromeSwitches">--user-data-dir=/tmp</property>
+        <!-- RemoteWebDriver only -->
+        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="reusable">true</property>
+<!--        <property name="implementationClass">org.openqa.selenium.remote.RemoteWebDriver</property>-->
     </extension>
 
 </arquillian>

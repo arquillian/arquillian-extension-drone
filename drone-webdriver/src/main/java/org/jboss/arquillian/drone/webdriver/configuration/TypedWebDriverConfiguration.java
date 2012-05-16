@@ -18,9 +18,15 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 
 import java.lang.annotation.Annotation;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Configuration shared among all WebDriver implementations. This means that all configurations maps to the same namespace,
@@ -28,8 +34,13 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  *
  * Safely retrieves only the value compatible with current browser type.
  *
+ * When user uses <code>@Drone WebDriver drive</code> in the code, the configurator
+ * doesn't know the implementation class, so it has to provide an object implementing
+ * all possible configuration interfaces. Afterwards this object is passed as an
+ * argument to the proper factory method.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  * @see ArquillianDescriptor
  * @see org.jboss.arquillian.drone.configuration.ConfigurationMapper
  *
@@ -40,10 +51,11 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         IPhoneDriverConfiguration, WebDriverConfiguration {
 
     public static final String CONFIGURATION_NAME = "webdriver";
-
+    public static final Map<String, String> CAPABILITIES_TO_IMPLEMENTATION = new HashMap<String, String>();
     // shared configuration
     protected Class<T> type;
 
+    @Deprecated
     protected String implementationClass;
 
     // configuration holders for WebDriver Types
@@ -96,6 +108,16 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     protected boolean operaQuit = true;
 
     protected boolean operaRestart = true;
+
+    protected ExtensionDef descriptor;
+
+    protected Map<String, String> capabilities;
+
+    protected String browserCapabilities = "htmlUnit";
+
+    protected boolean remoteReusable;
+
+    protected boolean remote;
 
     public TypedWebDriverConfiguration(Class<T> type, String implementationClass) {
         this.type = type;
@@ -400,8 +422,23 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     @Override
     public TypedWebDriverConfiguration<T> configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        this.descriptor = getExtensionDescriptor(descriptor, this.getConfigurationName(), qualifier);
         ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+        ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+        if (this.getImplementationClass() == null) {
+            if (this.getBrowserCapabilities() == null) {
+                throw new IllegalStateException("Neither implementation class nor browser capabilities is not set.");
+            }
+            if (this.isRemoteReusable() && (this.isRemote() || !this.descriptor.getExtensionProperties().containsKey("remote"))) {
+                this.setImplementationClass(RemoteWebDriver.class.getCanonicalName());
+            }
+            else if (this.isRemote()) {
+                this.setImplementationClass(RemoteWebDriver.class.getCanonicalName());
+            } else {
+                this.setImplementationClass(getImplementationClassFromBrowserCapabilities(browserCapabilities));
+            }
+        }
+        return this;
     }
 
     @Override
@@ -703,6 +740,127 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         interceptor.intercept("setOperaRestart", boolean.class);
     }
 
+    @Override
+    public String getCapability(String name) {
+        if (capabilities == null) {
+            capabilities = loadCapabilities(descriptor);
+        }
+        return capabilities.get(name);
+    }
+
+    @Override
+    public Map<String, String> getCapabilities() {
+        if (capabilities == null) {
+            capabilities = loadCapabilities(descriptor);
+        }
+        return Collections.unmodifiableMap(capabilities);
+    }
+
+    @Override
+    public Map<String, String> getCapabilities(String needle) {
+        if (capabilities == null) {
+            capabilities = loadCapabilities(descriptor);
+        }
+        Map<String,String> result = new HashMap<String, String>();
+        for (Entry<String, String> entry: capabilities.entrySet()) {
+            if (entry.getKey().contains(needle)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void setCapability(String name, String value) {
+        if (capabilities == null) {
+            capabilities = loadCapabilities(descriptor);
+        }
+        capabilities.put(name, value);
+    }
+
+    private Map<String, String> loadCapabilities(ExtensionDef extensionDescriptor) {
+        Map<String, String> newCapabilities = new HashMap<String, String>();
+        if (extensionDescriptor == null) {
+            return newCapabilities;
+        }
+        for (Entry<String, String> entry: extensionDescriptor.getExtensionProperties().entrySet()) {
+            if (entry.getKey().startsWith("capability")) {
+                String name = camelCaseToPropertyName(entry.getKey().replace("capability", ""));
+                newCapabilities.put(name, entry.getValue());
+            }
+        }
+        return newCapabilities;
+    }
+
+    @Override
+    public String getBrowserCapabilities() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return TypedWebDriverConfiguration.this.browserCapabilities;
+            }
+        };
+        return interceptor.intercept("getBrowserCapabilities");
+    }
+
+    @Override
+    public void setBrowserCapabilities(final String browserCapabilities) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.browserCapabilities = browserCapabilities;
+                return null;
+            }
+        };
+        interceptor.intercept("setBrowserCapabilities", String.class);
+    }
+
+    @Override
+    public boolean isRemoteReusable() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return TypedWebDriverConfiguration.this.remoteReusable;
+            }
+        };
+        return interceptor.intercept("isRemoteReusable");
+    }
+
+    @Override
+    public void setRemoteReusable(final boolean remoteReusable) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.remoteReusable = remoteReusable;
+                return null;
+            }
+        };
+        interceptor.intercept("setRemoteReusable", Boolean.class);
+    }
+
+    @Override
+    public boolean isRemote() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return TypedWebDriverConfiguration.this.remote;
+            }
+        };
+        return interceptor.intercept("isRemote");
+    }
+
+    @Override
+    public void setRemote(final boolean remote) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.remote = remote;
+                return null;
+            }
+        };
+        interceptor.intercept("setRemote", Boolean.class);
+    }
+
     private abstract class CallInterceptor<R> {
         private Boolean exists = null;
 
@@ -742,6 +900,52 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
             return sb.toString();
         }
+    }
+
+    private static ExtensionDef getExtensionDescriptor(ArquillianDescriptor descriptor, String configurationName, Class<? extends Annotation> qualifier) {
+        String descriptorQualifier = configurationName;
+        String qualifierName = qualifier.getSimpleName().toLowerCase();
+        String fullDescriptorQualifier = new StringBuilder(descriptorQualifier).append("-").append(qualifierName).toString();
+        ExtensionDef match = null;
+        for (ExtensionDef extension : descriptor.getExtensions()) {
+            if (fullDescriptorQualifier.equals(extension.getExtensionName())) {
+                return extension;
+            } else if (descriptorQualifier.equals(extension.getExtensionName())) {
+                match = extension;
+            }
+        }
+        return match;
+    }
+
+    private static String camelCaseToPropertyName(String value) {
+        return value.replaceAll(
+              String.format("%s|%s|%s",
+                 "(?<=[A-Z])(?=[A-Z][a-z])",
+                 "(?<=[^A-Z])(?=[A-Z])",
+                 "(?<=[A-Za-z])(?=[^A-Za-z])"
+              ),
+              "."
+           ).toLowerCase();
+    }
+
+    private static String getImplementationClassFromBrowserCapabilities(String browserCapabilities) {
+        if (CAPABILITIES_TO_IMPLEMENTATION.isEmpty()) {
+            CAPABILITIES_TO_IMPLEMENTATION.put("android", "org.openqa.selenium.android.AndroidDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("chrome", "org.openqa.selenium.chrome.ChromeDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("firefox", "org.openqa.selenium.firefox.FirefoxDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("htmlUnit", "org.openqa.selenium.htmlunit.HtmlUnitDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("internetExplorer", "org.openqa.selenium.ie.InternetExplorerDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("iphone", "org.openqa.selenium.iphone.IPhoneDriver");
+            CAPABILITIES_TO_IMPLEMENTATION.put("opera", "com.opera.core.systems.OperaDriver");
+            // not supported yet
+//            CAPABILITIES_TO_IMPLEMENTATION.put("safari", "");
+//            CAPABILITIES_TO_IMPLEMENTATION.put("ipad", "");
+        }
+        String implemenationClass = CAPABILITIES_TO_IMPLEMENTATION.get(browserCapabilities);
+        if (implemenationClass == null) {
+            throw new IllegalArgumentException("There is no implemenation class for <" + browserCapabilities + ">, supported browsers via browser capabilities are " + CAPABILITIES_TO_IMPLEMENTATION.keySet() + ".");
+        }
+        return implemenationClass;
     }
 
 }

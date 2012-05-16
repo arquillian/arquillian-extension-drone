@@ -25,6 +25,12 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 public interface CommonWebDriverConfiguration extends WebDriverConfigurationType {
 
     /**
+     * Gets capabilities which can be
+     * @return
+     */
+    String getBrowserCapabilities();
+
+    /**
      * Gets class which points to the implementation of the driver
      *
      * @return the class
@@ -38,4 +44,6 @@ public interface CommonWebDriverConfiguration extends WebDriverConfigurationType
      */
     void setImplementationClass(String implementationClass);
 
+
+    void setBrowserCapabilities(String browserCapabilities);
 }
