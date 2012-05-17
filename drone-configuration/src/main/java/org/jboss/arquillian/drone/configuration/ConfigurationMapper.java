@@ -110,6 +110,9 @@ public class ConfigurationMapper {
         for (Field f : fields) {
             if (nameValuePairs.containsKey(f.getName())) {
                 try {
+                    if (f.getAnnotation(Deprecated.class) != null) {
+                        log.log(Level.WARNING, "The property \"{0}\" used Arquillian \"{1}\" configuration is deprecated.", new Object[]{f.getName(), configuration.getConfigurationName()});
+                    }
                     f.set(configuration, convert(box(f.getType()), nameValuePairs.get(f.getName())));
                 } catch (Exception e) {
                     throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
@@ -146,6 +149,9 @@ public class ConfigurationMapper {
 
         for (Map.Entry<Field, String> entry : fieldValuePairs.entrySet()) {
             try {
+                if (entry.getKey().getAnnotation(Deprecated.class) != null) {
+                    log.log(Level.WARNING, "The property \"{0}\" used Arquillian \"{1}\" configuration is deprecated.", new Object[]{entry.getKey().getName(), configuration.getConfigurationName()});
+                }
                 entry.getKey().set(configuration, convert(box(entry.getKey().getType()), entry.getValue()));
             } catch (Exception e) {
                 throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
