@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.configuration;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -34,6 +35,8 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     private int intField;
 
     private boolean booleanField;
+
+    private Map<String, String> mapMap;
 
     /*
      * (non-Javadoc)
@@ -78,5 +81,13 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     public void setBooleanField(boolean booleanField) {
         this.booleanField = booleanField;
+    }
+
+    public Map<String, String> getMapMap() {
+        return mapMap;
+    }
+
+    public void setMapMap(Map<String, String> mapMap) {
+        this.mapMap = mapMap;
     }
 }

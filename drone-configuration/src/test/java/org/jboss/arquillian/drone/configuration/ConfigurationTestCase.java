@@ -78,6 +78,40 @@ public class ConfigurationTestCase {
         validateConfiguration(configuration, 0, false, "The different property field");
     }
 
+    @Test
+    public void mapFromDescriptorTest() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("intField", "12345").property("stringField", "The descriptor string")
+                .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Default.class);
+
+        validateConfiguration(configuration, 12345, true, "The descriptor string");
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+        Assert.assertEquals("Map has two entries", 2, configuration.getMapMap().size());
+
+        Assert.assertEquals("Map entry was mapped", "barbar", configuration.getMapMap().get("foo.bar"));
+    }
+
+    @Test
+    public void mapFromSystemPropertiesTest() {
+
+        System.setProperty("arquillian.mockdrone.map.foo", "the-bar");
+        System.setProperty("arquillian.mockdrone.map.foo.bar", "the-bar-bar");
+        System.setProperty("arquillian.mockdrone.map.whatever", "the-bar-bar");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                Default.class);
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+        Assert.assertEquals("Map has two entries", 3, configuration.getMapMap().size());
+
+        Assert.assertEquals("Map entry was mapped", "the-bar", configuration.getMapMap().get("foo"));
+        Assert.assertEquals("Map entry was mapped", "the-bar-bar", configuration.getMapMap().get("foo.bar"));
+    }
+
     private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,
             String expectedString) throws AssertionError {
         Assert.assertNotNull("Mock drone configuration was created in context", configuration);
