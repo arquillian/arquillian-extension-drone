@@ -17,14 +17,10 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
@@ -32,7 +28,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.RemoteWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.RemoteReusableWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
@@ -41,19 +37,20 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSession;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
- * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 public class RemoteWebDriverFactory implements
-        Configurator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteWebDriverConfiguration>>,
-        Instantiator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteWebDriverConfiguration>>,
+        Configurator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>,
+        Instantiator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>,
         Destructor<RemoteWebDriver> {
 
-    private static final Logger LOGGER = Logger.getLogger(RemoteWebDriverFactory.class.getCanonicalName());
+    private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
     @Inject
     Instance<ReusedSessionStore> sessionStore;
@@ -63,40 +60,38 @@ public class RemoteWebDriverFactory implements
     Event<PersistReusedSessionsEvent> persistEvent;
 
     @Override
-    public TypedWebDriverConfiguration<RemoteWebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<RemoteWebDriverConfiguration>(RemoteWebDriverConfiguration.class,
-                "org.openqa.selenium.remote.RemoteWebDriver").configure(descriptor, qualifier);
-    }
-
-    @Override
     public int getPrecedence() {
         return 0;
     }
 
     @Override
-    public RemoteWebDriver createInstance(TypedWebDriverConfiguration<RemoteWebDriverConfiguration> configuration) {
-        if (configuration.getBrowserCapabilities() == null) {
-            throw new IllegalArgumentException("The browser capabilities are not set.");
+    public RemoteWebDriver createInstance(TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration) {
+
+        URL remoteAddress = configuration.getRemoteAddress();
+
+        // default remote address
+        if (Validate.empty(remoteAddress)) {
+            remoteAddress = TypedWebDriverConfiguration.DEFAULT_REMOTE_URL;
+            log.log(Level.INFO, "Property \"remoteAdress\" was not specified, using default value of {0}",
+                    TypedWebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
-        if (configuration.getRemoteAddress() == null) {
-            throw new IllegalArgumentException("The remote address has to be set.");
+
+        Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
+
+        String browserCapabilities = configuration.getBrowserCapabilities();
+        if (Validate.empty(browserCapabilities)) {
+            configuration.setBrowserCapabilities(TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+            log.log(Level.INFO, "Property \"browserCapabilities\" was not specified, using default value of {0}",
+                    TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
         }
-        // construct remote address URL
-        Validate.isValidUrl(configuration.getRemoteAddress(), "Remote address must be a valid url, " + configuration.getRemoteAddress());
-        URL remoteAddress = null;
-        try {
-            remoteAddress = new URL(configuration.getRemoteAddress());
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Can't create a new instance of RemoteWebDriver, because the URL <"+ configuration.getRemoteAddress() + "> doesn't seem to be valid.", e);
-        }
+
+        Validate.isEmpty(configuration.getBrowserCapabilities(), "The browser capabilities are not set.");
+
         // construct capabilities
-        DesiredCapabilities desiredCapabilities = getDesiredCapabilities(configuration.getBrowserCapabilities());
-        Map<String, String> capabilities = configuration.getCapabilities(configuration.getBrowserCapabilities());
-        for (Entry<String, String> entry: capabilities.entrySet()) {
-            desiredCapabilities.setCapability(entry.getKey(), entry.getValue());
-        }
+        Capabilities desiredCapabilities = configuration.getCapabilities();
         // construct init params
-        InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities, configuration.isRemoteReusable());
+        InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities,
+                configuration.isRemoteReusable());
         RemoteWebDriver driver = null;
         // create a new instance of webdriver
         if (configuration.isRemoteReusable()) {
@@ -107,7 +102,7 @@ public class RemoteWebDriverFactory implements
                 try {
                     driver = new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities, stored.getSessionId());
                 } catch (UnableReuseSessionException ex) {
-                    LOGGER.log(Level.WARNING, "Unable to reuse session: {0}", stored.getSessionId());
+                    log.log(Level.WARNING, "Unable to reuse session: {0}", stored.getSessionId());
                 }
             }
         }
@@ -122,12 +117,12 @@ public class RemoteWebDriverFactory implements
     @Override
     public void destroyInstance(RemoteWebDriver instance) {
         if (instance.getSessionId() == null) {
-            LOGGER.warning("The driver has been already destroyed and can't be destroyed again.");
+            log.warning("The driver has been already destroyed and can't be destroyed again.");
             return;
         }
         InitializationParameter param = initParams.get().remove(instance.getSessionId());
         if (param == null) {
-            LOGGER.warning("Can't load initialization parameter for driver instance. The driver and its session will be destroyed.");
+            log.warning("Can't load initialization parameter for driver instance. The driver and its session will be destroyed.");
             instance.quit();
             return;
         }
@@ -140,17 +135,18 @@ public class RemoteWebDriverFactory implements
         }
     }
 
-    protected DesiredCapabilities getDesiredCapabilities(String browserCapabilities) {
-        for (Method method: DesiredCapabilities.class.getDeclaredMethods()) {
-            if (method.getName().equals(browserCapabilities) && method.getReturnType().equals(DesiredCapabilities.class) && Modifier.isStatic(method.getModifiers()) && method.getParameterTypes().length == 0) {
-                try {
-                    return DesiredCapabilities.class.cast(method.invoke(null, new Object[] {}));
-                } catch (Exception e) {
-                    throw new IllegalStateException("Can't invoke method " + DesiredCapabilities.class + "#" + browserCapabilities + "()");
-                }
-            }
+    @Override
+    public TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
+
+        TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration = new TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>(
+                RemoteReusableWebDriverConfiguration.class).configure(descriptor, qualifier);
+        if (!configuration.isRemote()) {
+            configuration.setRemote(true);
+            log.log(Level.FINE, "Forcing RemoteWebDriver configuration to be remote-based.");
         }
-        throw new IllegalStateException("There is no method " + DesiredCapabilities.class + "#" + browserCapabilities + "()");
+
+        return configuration;
     }
 
 }

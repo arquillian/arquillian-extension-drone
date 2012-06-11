@@ -135,21 +135,15 @@ final class SecurityActions {
             throw new IllegalArgumentException("Arguments must be specified. Use empty array if no arguments");
         }
         final Object obj;
+
         try {
             final Class<?> implClass = getClass(className);
             Constructor<?> constructor = getConstructor(implClass, argumentTypes);
             obj = constructor.newInstance(arguments);
         } catch (NoSuchMethodException e) {
-            StringBuilder argNames = new StringBuilder();
-            for (Class<?> arg : argumentTypes) {
-                argNames.append(arg.getSimpleName()).append(", ");
-            }
-            if (argNames.length() > 0) {
-                argNames.deleteCharAt(argNames.length() - 1);
-            }
-            throw new IllegalStateException("Unable to find a proper constructor for implementation class " + className
-                    + " with given parameters (" + argNames.toString()
-                    + "). Please make sure that you haven't misconfigured Arquillian Drone, "
+            throw new IllegalStateException("Unable to find a constructor for implementation class "
+                    + getConstructorName(className, argumentTypes)
+                    + ". Please make sure that you haven't misconfigured Arquillian Drone, "
                     + "e.g. you set an implementationClass which does not match the field/parameter type in your code.");
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Unable to instantiate a " + className
@@ -163,9 +157,8 @@ final class SecurityActions {
             throw new IllegalStateException("Unable to instantiate a " + className
                     + " instance, access refused by SecurityManager.", e);
         } catch (InvocationTargetException e) {
-            throw new IllegalStateException("Unable to instantiate a " + className
-                    + ". Please make sure that you haven't misconfigured Arquillian Drone, "
-                    + "e.g. you set an implementationClass which does not match the field/parameter type in your code.", e);
+            throw new RuntimeException("Unable to instantiate Drone via " + getConstructorName(className, argumentTypes),
+                    e.getCause());
         }
 
         // Cast
@@ -245,6 +238,18 @@ final class SecurityActions {
                 }
             }
         }
+    }
+
+    private static String getConstructorName(String className, final Class<?>[] argumentTypes) {
+        StringBuilder constructor = new StringBuilder(className).append("(");
+        for (Class<?> arg : argumentTypes) {
+            constructor.append(arg.getSimpleName()).append(",");
+        }
+        if (constructor.charAt(constructor.length() - 1) == ',') {
+            constructor.deleteCharAt(constructor.length() - 1);
+        }
+        constructor.append(")");
+        return constructor.toString();
     }
 
     // -------------------------------------------------------------------------------||

@@ -16,8 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
+import org.openqa.selenium.remote.RemoteWebDriver;
+
 /**
- * Configuration for HtmlUnit driver
+ * Configuration for HtmlUnit driver.
+ *
+ * Note that we allow HtmlUnit to run in Remote mode even if it is not a direct implementation of {@link RemoteWebDriver}
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *

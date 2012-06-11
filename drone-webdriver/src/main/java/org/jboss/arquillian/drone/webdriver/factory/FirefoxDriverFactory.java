@@ -18,6 +18,8 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -25,9 +27,10 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
-import org.openqa.selenium.firefox.FirefoxBinary;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -39,6 +42,8 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class FirefoxDriverFactory implements
         Configurator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>,
         Instantiator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>, Destructor<FirefoxDriver> {
+
+    private static final Logger log = Logger.getLogger(FirefoxDriverFactory.class.getName());
 
     /*
      * (non-Javadoc)
@@ -71,33 +76,23 @@ public class FirefoxDriverFactory implements
         String binary = configuration.getFirefoxBinary();
         String profile = configuration.getFirefoxProfile();
 
-        // no argument constructor
-        if (Validate.empty(binary) && Validate.empty(profile)) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                    FirefoxDriver.class);
-        }
-        // only binary was specified
-        else if (Validate.empty(profile)) {
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+
+        // set binary and profile values
+        if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { FirefoxBinary.class,
-                    FirefoxProfile.class }, new Object[] { new FirefoxBinary(new File(binary)), null }, FirefoxDriver.class);
+            log.log(Level.FINE, "Setting firefox binary to {0}", binary);
+            capabilities.setCapability(FirefoxDriver.BINARY, binary);
         }
-        // only profile was specified
-        else if (Validate.empty(binary)) {
+        if (Validate.nonEmpty(profile)) {
             Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
-
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { FirefoxProfile.class },
-                    new Object[] { new FirefoxProfile(new File(profile)) }, FirefoxDriver.class);
+            log.log(Level.FINE, "Setting firefox profile to path {0}", profile);
+            capabilities.setCapability(FirefoxDriver.PROFILE, new FirefoxProfile(new File(profile)));
         }
-        // both were specified
-        else {
-            Validate.isValidPath(profile, "Firefox profile does not point to a valid path,  " + profile);
-            Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
 
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { FirefoxBinary.class,
-                    FirefoxProfile.class }, new Object[] { new FirefoxBinary(new File(binary)),
-                    new FirefoxProfile(new File(profile)) }, FirefoxDriver.class);
-        }
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { capabilities }, FirefoxDriver.class);
+
     }
 
     /*
@@ -109,8 +104,8 @@ public class FirefoxDriverFactory implements
     @Override
     public TypedWebDriverConfiguration<FirefoxDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<FirefoxDriverConfiguration>(FirefoxDriverConfiguration.class,
-                "org.openqa.selenium.firefox.FirefoxDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<FirefoxDriverConfiguration>(FirefoxDriverConfiguration.class).configure(
+                descriptor, qualifier);
     }
 
 }

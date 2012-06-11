@@ -16,13 +16,21 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
+
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.assertEquals;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -39,60 +47,112 @@ import org.openqa.selenium.remote.SessionId;
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class RemoteWebDriverTestCase extends AbstractWebDriver {
+public class RemoteWebDriverTestCase {
 
-    @Drone
-    RemoteWebDriver driver;
+    // sessionId is set to be static, so it can be shared between test methods
+    private static SessionId sessionId;
 
-    private SessionId sessionId;
+    /**
+     * Creates a WAR of a Weld based application using ShrinkWrap
+     *
+     * @return WebArchive to be tested
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return Deployments.createDeployment();
+    }
 
     @BeforeClass
     public static void prepareSystemProperties() {
-        System.setProperty("arquillian.webdriver.implementation.class", "org.openqa.selenium.remote.RemoteWebDriver");
+        Assert.assertTrue("Remote Reusable tests require Selenium Server to be running on port 4444, please start", isSeleniumServerRunning());
+        System.setProperty("arquillian.webdriver.port4444.remote.reusable", "true");
+
     }
 
     @AfterClass
     public static void cleanSystemProperties() {
-        System.clearProperty("arquillian.webdriver.implementationClass");
+        System.clearProperty("arquillian.webdriver.port4444.remote.reusable");
     }
 
     @Test
-    public void testReusableSessionId1(@Drone RemoteWebDriver d) {
-        testReusableSessionId(d);
+    @InSequence(1)
+    public void testReusableSessionId1(@Drone @Port4444 RemoteWebDriver d) {
+        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
+        sessionId = ((RemoteWebDriver) d).getSessionId();
     }
 
     @Test
-    public void testReusableSessionId2(@Drone RemoteWebDriver d) {
-        testReusableSessionId(d);
+    @InSequence(2)
+    public void testReusableSessionId2(@Drone @Port4444 RemoteWebDriver d) {
+        Assert.assertTrue("Drone instance is reusable", d instanceof ReusableRemoteWebDriver);
+        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
+        Assert.assertEquals("SessionId was reused", sessionId, ((RemoteWebDriver) d).getSessionId());
+        sessionId = null;
     }
 
     @Test
-    public void testReusableSessionId3(@Drone WebDriver d) {
-        testReusableSessionId(d);
+    @InSequence(3)
+    public void testReusableSessionId3(@Drone @Port4444 WebDriver d) {
+        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
+        sessionId = ((RemoteWebDriver) d).getSessionId();
     }
 
     @Test
-    public void testReusableSessionId4(@Drone WebDriver d) {
-        testReusableSessionId(d);
+    @InSequence(4)
+    public void testReusableSessionId4(@Drone @Port4444 WebDriver d) {
+        Assert.assertTrue("Drone instance is reusable", d instanceof ReusableRemoteWebDriver);
+        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
+        Assert.assertEquals("SessionId was reused", sessionId, ((RemoteWebDriver) d).getSessionId());
+        sessionId = null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.drone.webdriver.example.AbstractWebDriverTestCase#driver()
+    @Test
+    @InSequence(5)
+    public void testNonReusableSession1(@Drone WebDriver d) {
+        Assert.assertFalse("Drone instance is not reusable", d instanceof ReusableRemoteWebDriver);
+    }
+
+    @Test
+    @InSequence(6)
+    public void testNonReusableSession2(@Drone RemoteWebDriver d) {
+        Assert.assertFalse("Drone instance is not reusable", d instanceof ReusableRemoteWebDriver);
+    }
+
+    /**
+     * Tries to open a service on default port used by Selenium Server (:4444)
      */
-    @Override
-    protected WebDriver driver() {
-        return driver;
+    static boolean isSeleniumServerRunning() {
+        return !isPortAvailable(4444);
     }
 
-    private void testReusableSessionId(WebDriver d) {
-        RemoteWebDriver rd = (RemoteWebDriver) d;
-        if (sessionId == null) {
-            sessionId = rd.getSessionId();
-        } else {
-            assertEquals(sessionId, rd.getSessionId());
+    /**
+     * @author The Apache Directory Project (mina-dev@directory.apache.org)
+     */
+    static boolean isPortAvailable(int port) {
+
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            return true;
+        } catch (IOException e) {
+            // do nothing
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    /* should not be thrown */
+                }
+            }
         }
+        return false;
     }
 
 }

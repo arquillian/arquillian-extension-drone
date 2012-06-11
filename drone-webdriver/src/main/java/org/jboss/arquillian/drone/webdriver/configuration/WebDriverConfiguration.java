@@ -24,6 +24,6 @@ package org.jboss.arquillian.drone.webdriver.configuration;
  */
 public interface WebDriverConfiguration extends AndroidDriverConfiguration, ChromeDriverConfiguration,
         FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration,
-        IPhoneDriverConfiguration, OperaDriverConfiguration, RemoteWebDriverConfiguration {
+        IPhoneDriverConfiguration, OperaDriverConfiguration, RemoteWebDriverConfiguration, RemoteReusableWebDriverConfiguration {
 
 }

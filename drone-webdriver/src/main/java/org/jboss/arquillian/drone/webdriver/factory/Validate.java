@@ -31,6 +31,10 @@ class Validate {
 
     private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
 
+    static boolean empty(Object object) {
+        return object == null;
+    }
+
     static boolean empty(String object) {
         return object == null || object.length() == 0;
     }
@@ -51,6 +55,12 @@ class Validate {
         File file = new File(path);
 
         if (!file.exists() || !file.canRead()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static void isValidUrl(URL url, String message) throws IllegalArgumentException {
+        if (url == null) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -107,11 +117,14 @@ class Validate {
             try {
                 result = (Boolean) isExecutableMethod.invoke(file);
             } catch (IllegalArgumentException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                        + e.getMessage());
             } catch (IllegalAccessException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                        + e.getMessage());
             } catch (InvocationTargetException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable." + e.getMessage());
+                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                        + e.getMessage());
             }
 
             return result;

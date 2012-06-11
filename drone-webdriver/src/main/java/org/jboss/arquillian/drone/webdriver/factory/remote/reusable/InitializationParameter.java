@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.io.Serializable;
 import java.net.URL;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
@@ -29,10 +29,10 @@ public class InitializationParameter implements Serializable {
     private static final long serialVersionUID = -8174522811019827442L;
 
     private final URL url;
-    private final DesiredCapabilities desiredCapabilities;
+    private final Capabilities desiredCapabilities;
     private final boolean reusable;
 
-    public InitializationParameter(URL url, DesiredCapabilities desiredCapabilities, boolean reusable) {
+    public InitializationParameter(URL url, Capabilities desiredCapabilities, boolean reusable) {
         this.url = url;
         this.desiredCapabilities = desiredCapabilities;
         this.reusable = reusable;
@@ -42,7 +42,7 @@ public class InitializationParameter implements Serializable {
         return url;
     }
 
-    public DesiredCapabilities getDesiredCapabilities() {
+    public Capabilities getDesiredCapabilities() {
         return desiredCapabilities;
     }
 
