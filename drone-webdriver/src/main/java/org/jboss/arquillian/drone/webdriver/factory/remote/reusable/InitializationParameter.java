@@ -30,12 +30,10 @@ public class InitializationParameter implements Serializable {
 
     private final URL url;
     private final Capabilities desiredCapabilities;
-    private final boolean reusable;
 
-    public InitializationParameter(URL url, Capabilities desiredCapabilities, boolean reusable) {
+    public InitializationParameter(URL url, Capabilities desiredCapabilities) {
         this.url = url;
         this.desiredCapabilities = desiredCapabilities;
-        this.reusable = reusable;
     }
 
     public URL getUrl() {
@@ -44,10 +42,6 @@ public class InitializationParameter implements Serializable {
 
     public Capabilities getDesiredCapabilities() {
         return desiredCapabilities;
-    }
-
-    public boolean isReusable() {
-        return reusable;
     }
 
     @Override

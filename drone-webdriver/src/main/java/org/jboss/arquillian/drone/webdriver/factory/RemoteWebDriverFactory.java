@@ -39,6 +39,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessio
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
@@ -89,29 +90,12 @@ public class RemoteWebDriverFactory implements
 
         // construct capabilities
         Capabilities desiredCapabilities = configuration.getCapabilities();
-        // construct init params
-        InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities,
-                configuration.isRemoteReusable());
-        RemoteWebDriver driver = null;
-        // create a new instance of webdriver
+
         if (configuration.isRemoteReusable()) {
-            // try to reuse the session
-            // retrieve the session id
-            ReusedSession stored = sessionStore.get().pull(initParam);
-            if (stored != null) {
-                try {
-                    driver = new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities, stored.getSessionId());
-                } catch (UnableReuseSessionException ex) {
-                    log.log(Level.WARNING, "Unable to reuse session: {0}", stored.getSessionId());
-                }
-            }
+            return createReusableDriver(remoteAddress, desiredCapabilities);
+        } else {
+            return createRemoteDriver(remoteAddress, desiredCapabilities);
         }
-        if (driver == null) {
-            // create a new instance with a new session
-            driver = new RemoteWebDriver(remoteAddress, desiredCapabilities);
-        }
-        initParams.get().put(driver.getSessionId(), initParam);
-        return driver;
     }
 
     @Override
@@ -120,24 +104,22 @@ public class RemoteWebDriverFactory implements
             log.warning("The driver has been already destroyed and can't be destroyed again.");
             return;
         }
+
         InitializationParameter param = initParams.get().remove(instance.getSessionId());
-        if (param == null) {
-            log.warning("Can't load initialization parameter for driver instance. The driver and its session will be destroyed.");
-            instance.quit();
-            return;
-        }
-        if (param.isReusable()) {
+
+        if (param != null) {
             ReusedSession session = new ReusedSession(instance.getSessionId(), instance.getCapabilities());
             sessionStore.get().store(param, session);
             persistEvent.fire(new PersistReusedSessionsEvent());
         } else {
             instance.quit();
         }
+
     }
 
     @Override
-    public TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
+    public TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> createConfiguration(
+            ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
 
         TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration = new TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>(
                 RemoteReusableWebDriverConfiguration.class).configure(descriptor, qualifier);
@@ -147,6 +129,42 @@ public class RemoteWebDriverFactory implements
         }
 
         return configuration;
+    }
+
+    private RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {
+        return new RemoteWebDriver(remoteAddress, desiredCapabilities);
+    }
+
+    private ReusableRemoteWebDriver createReusableDriver(URL remoteAddress, Capabilities desiredCapabilities) {
+        // construct init params
+        InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities);
+
+        ReusableRemoteWebDriver driver = null;
+
+        // try to reuse the session
+        // retrieve the session id
+        ReusedSession stored = sessionStore.get().pull(initParam);
+        // get all the stored sessions for given initParam
+        while (stored != null) {
+            SessionId reusedSessionId = stored.getSessionId();
+            try {
+                driver = ReusableRemoteWebDriver.fromReusedSession(remoteAddress, desiredCapabilities, reusedSessionId);
+                break;
+            } catch (UnableReuseSessionException ex) {
+                log.log(Level.WARNING, "Unable to reuse session: {0}", stored.getSessionId());
+            }
+
+            stored = sessionStore.get().pull(initParam);
+        }
+
+        if (driver == null) {
+            // if either browser session isn't stored or can't be reused
+            RemoteWebDriver newdriver = createRemoteDriver(remoteAddress, desiredCapabilities);
+            driver = ReusableRemoteWebDriver.fromRemoteWebDriver(newdriver);
+        }
+
+        initParams.get().put(driver.getSessionId(), initParam);
+        return driver;
     }
 
 }

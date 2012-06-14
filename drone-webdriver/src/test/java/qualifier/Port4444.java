@@ -1,4 +1,4 @@
-package org.jboss.arquillian.drone.webdriver.example;
+package qualifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.lang.reflect.Field;
 import java.net.URL;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -42,6 +41,16 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
     }
 
     /**
+     * Creates the {@link ReusableRemoteWebDriver} from valid {@link RemoteWebDriver} instance.
+     *
+     * @param remoteWebDriver valid {@link RemoteWebDriver} instance.
+     * @return the {@link RemoteWebDriver} wrapped as {@link ReusableRemoteWebDriver}
+     */
+    public static ReusableRemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
+        return new ReusableRemoteWebDriver(remoteWebDriver);
+    }
+
+    /**
      * Reuses browser session using sessionId and desiredCapabilities as fully-initialized {@link Capabilities} object from the
      * previous {@link RemoteWebDriver} session.
      *
@@ -49,7 +58,24 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
      * @param desiredCapabilities fully-initialized capabilities returned from previous {@link RemoteWebDriver} session
      * @param sessionId sessionId from previous {@link RemoteWebDriver} session
      */
-    public ReusableRemoteWebDriver(URL remoteAddress, Capabilities desiredCapabilities, SessionId sessionId)
+    public static ReusableRemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities,
+            SessionId sessionId) throws UnableReuseSessionException {
+        return new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities, sessionId);
+    }
+
+    private ReusableRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
+        super();
+        setCommandExecutor(remoteWebDriver.getCommandExecutor());
+
+        reuseSession(remoteWebDriver.getSessionId(), remoteWebDriver.getCapabilities());
+        try {
+            checkReusability();
+        } catch (UnableReuseSessionException e) {
+            throw new IllegalStateException("Reusing RemoteWebDriver session unexpectedly failed", e);
+        }
+    }
+
+    private ReusableRemoteWebDriver(URL remoteAddress, Capabilities desiredCapabilities, SessionId sessionId)
             throws UnableReuseSessionException {
         super();
         setCommandExecutor(new HttpCommandExecutor(remoteAddress));
@@ -68,7 +94,7 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
      */
     private void checkReusability() throws UnableReuseSessionException {
         try {
-            this.findElement(By.cssSelector("body"));
+            this.getCurrentUrl();
         } catch (WebDriverException e) {
             throw new UnableReuseSessionException();
         }

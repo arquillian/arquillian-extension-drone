@@ -34,7 +34,7 @@ public interface CommonWebDriverConfiguration extends WebDriverConfigurationType
     String getBrowserCapabilities();
 
     /**
-     * Ge
+     * Sets browser capabilities
      *
      * @param browserCapabilities
      */
@@ -64,5 +64,4 @@ public interface CommonWebDriverConfiguration extends WebDriverConfigurationType
      */
     @Deprecated
     void setImplementationClass(String implementationClass);
-
 }

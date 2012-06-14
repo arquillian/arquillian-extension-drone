@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
@@ -27,28 +26,28 @@ import java.util.Queue;
 public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
     private static final long serialVersionUID = 9148577993706454735L;
-    private Map<InitializationParameter, Queue<ReusedSession>> store = new HashMap<InitializationParameter, Queue<ReusedSession>>();
+    private Map<InitializationParameter, LinkedList<ReusedSession>> store = new HashMap<InitializationParameter, LinkedList<ReusedSession>>();
 
     @Override
     public ReusedSession pull(InitializationParameter key) {
         synchronized (store) {
-            Queue<ReusedSession> queue = store.get(key);
-            if (queue == null) {
+            LinkedList<ReusedSession> list = store.get(key);
+            if (list == null) {
                 return null;
             }
-            return queue.poll();
+            return list.removeLast();
         }
     }
 
     @Override
     public void store(InitializationParameter key, ReusedSession session) {
         synchronized (store) {
-            Queue<ReusedSession> queue = store.get(key);
-            if (queue == null) {
-                queue = new LinkedList<ReusedSession>();
-                store.put(key, queue);
+            LinkedList<ReusedSession> list = store.get(key);
+            if (list == null) {
+                list = new LinkedList<ReusedSession>();
+                store.put(key, list);
             }
-            queue.add(session);
+            list.add(session);
         }
     }
 }

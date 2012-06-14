@@ -14,40 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.example;
+package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
+
+import static junit.framework.Assert.assertTrue;
+
+import java.io.Serializable;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import qualifier.Port4444;
+import qualifier.Reusable;
 
 /**
- * Tests Arquillian Selenium extension against Weld Login example.
- * 
- * Uses standard settings of Selenium 2.0, that is RemoteWebDriver by default, but allows user to pass another driver specified
- * as a System property or in the Arquillian configuration.
- * 
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
- * 
- * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
+ * @author Lukas Fryc
  */
 @RunWith(Arquillian.class)
-public class RemoteWebDriverTestCase extends AbstractWebDriver {
+public class TestCapabilitiesSerialization extends AbstractInBrowserTest {
 
-    @Drone @Port4444
+    @Drone
+    @Reusable
     RemoteWebDriver driver;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jboss.arquillian.drone.webdriver.example.AbstractWebDriverTestCase#driver()
-     */
-    @Override
-    protected WebDriver driver() {
-        return driver;
+    @Test
+    public void whenGetCapabilitiesFromRunningSessionThenItShouldBeSerializable() {
+        Capabilities initializedCapabilities = driver.getCapabilities();
+
+        assertTrue("Capabilities obtained from running session should be serializable",
+                initializedCapabilities instanceof Serializable);
     }
 }
