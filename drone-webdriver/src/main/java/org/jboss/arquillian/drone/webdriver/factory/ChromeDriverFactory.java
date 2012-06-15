@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.annotation.Annotation;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -72,17 +71,9 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
     @Override
     public ChromeDriver createInstance(TypedWebDriverConfiguration<ChromeDriverConfiguration> configuration) {
 
-        URL remoteAddress = configuration.getRemoteAddress();
-
         String binary = configuration.getChromeBinary();
         String driverBinary = configuration.getChromeDriverBinary();
         String chromeSwitches = configuration.getChromeSwitches();
-
-        // if configured to run as remote, there must be a remote address
-        if (Validate.empty(remoteAddress) && configuration.isRemote()) {
-            throw new IllegalStateException(
-                    "Unable to set up ChromeDriver to run in remote mode. There must be \"remoteAddress\" property set up.");
-        }
 
         if (Validate.empty(driverBinary)) {
             driverBinary = SecurityActions.getProperty(CHROME_DRIVER_BINARY_KEY);
