@@ -19,8 +19,10 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Map.Entry;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -160,7 +162,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     protected boolean operaRestart = true;
 
-    protected Map<String, String> capabilitiesMap;
+    protected Map<String, String> capabilityMap;
 
     protected String browserCapabilities;
 
@@ -245,7 +247,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
                     merged = new DesiredCapabilities(capabilityMap.getCapabilities());
                 }
 
-                merged = new DesiredCapabilities(merged, new DesiredCapabilities(capabilitiesMap));
+                merged = new DesiredCapabilities(merged, new DesiredCapabilities(TypedWebDriverConfiguration.this.capabilityMap));
 
                 return merged;
             }
