@@ -32,7 +32,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     public ReusedSession pull(InitializationParameter key) {
         synchronized (store) {
             LinkedList<ReusedSession> list = store.get(key);
-            if (list == null) {
+            if (list == null || list.isEmpty()) {
                 return null;
             }
             return list.removeLast();
