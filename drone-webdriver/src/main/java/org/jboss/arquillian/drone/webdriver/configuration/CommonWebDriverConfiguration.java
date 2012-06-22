@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
+import org.openqa.selenium.Capabilities;
+
 /**
  * Encapsulation of configuration properties shared among all WebDriver types
  *
@@ -25,6 +27,27 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 public interface CommonWebDriverConfiguration extends WebDriverConfigurationType {
 
     /**
+     * Gets capabilities which can be
+     *
+     * @return
+     */
+    String getBrowserCapabilities();
+
+    /**
+     * Sets browser capabilities
+     *
+     * @param browserCapabilities
+     */
+    void setBrowserCapabilities(String browserCapabilities);
+
+    /**
+     * Returns a set of capabilities for underlying browser
+     *
+     * @return Capabilities for given browser
+     */
+    Capabilities getCapabilities();
+
+    /**
      * Gets class which points to the implementation of the driver
      *
      * @return the class
@@ -32,10 +55,13 @@ public interface CommonWebDriverConfiguration extends WebDriverConfigurationType
     String getImplementationClass();
 
     /**
-     * Sets class which points to the implementation of the driver
+     * Sets class which points to the implementation of the driver.
+     *
+     * Do not use this method directly, rather set desired capabilities.
      *
      * @param implementationClass the class which implements the driver
+     * @see CommonWebDriverConfiguration#setBrowserCapabilities(String)
      */
+    @Deprecated
     void setImplementationClass(String implementationClass);
-
 }

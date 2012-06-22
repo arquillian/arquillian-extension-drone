@@ -22,10 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,14 +42,10 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 public class ConfigurationMapper {
     private static final Logger log = Logger.getLogger(ConfigurationMapper.class.getName());
 
-    private Map<String, String> nameValuePairs;
+    private static final String MAP_SUFFIX = "Map";
 
     private ConfigurationMapper() {
-        this(Collections.<String, String> emptyMap());
-    }
-
-    private ConfigurationMapper(Map<String, String> nameValuePairs) {
-        this.nameValuePairs = nameValuePairs;
+        throw new InstantiationError();
     }
 
     /**
@@ -72,10 +66,9 @@ public class ConfigurationMapper {
         String descriptorQualifier = configuration.getConfigurationName();
         String qualifierName = qualifier.getSimpleName().toLowerCase();
 
-        ConfigurationMapper mapper = new ConfigurationMapper();
-        mapper.setNameValuePairs(descriptor, descriptorQualifier, qualifierName);
+        Map<String, String> nameValuePairs = loadNameValuePairs(descriptor, descriptorQualifier, qualifierName);
 
-        return mapper.mapFromArquillianDescriptor(configuration);
+        return mapFromNameValuePairs(configuration, nameValuePairs);
     }
 
     /**
@@ -94,8 +87,9 @@ public class ConfigurationMapper {
         String descriptorQualifier = configuration.getConfigurationName();
         String qualifierName = qualifier.getSimpleName().toLowerCase();
 
-        ConfigurationMapper mapper = new ConfigurationMapper();
-        return mapper.mapFromSystemProperties(configuration, descriptorQualifier, qualifierName);
+        Map<String, String> nameValuePairs = loadNameValuePairs(descriptorQualifier, qualifierName);
+
+        return mapFromNameValuePairs(configuration, nameValuePairs);
     }
 
     /**
@@ -105,96 +99,96 @@ public class ConfigurationMapper {
      * @param configuration Configuration object
      * @return Configured configuration of given type
      */
-    private <T extends DroneConfiguration<T>> T mapFromArquillianDescriptor(T configuration) {
-        List<Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
-        for (Field f : fields) {
-            if (nameValuePairs.containsKey(f.getName())) {
+    static <T extends DroneConfiguration<T>> T mapFromNameValuePairs(T configuration, Map<String, String> nameValuePairs) {
+        Map<String, Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
+
+        // map basic fields
+        for (Map.Entry<String, String> nameValue : nameValuePairs.entrySet()) {
+            String name = nameValue.getKey();
+            // does not process any nameValue that ends with MAP_SUFFIX
+            if (name.endsWith(MAP_SUFFIX)) {
+                continue;
+            }
+            // map a field
+            if (fields.containsKey(name)) {
                 try {
-                    f.set(configuration, convert(box(f.getType()), nameValuePairs.get(f.getName())));
+                    Field f = fields.get(name);
+                    if (f.getAnnotation(Deprecated.class) != null) {
+                        log.log(Level.WARNING, "The property \"{0}\" used Arquillian \"{1}\" configuration is deprecated.",
+                                new Object[] { f.getName(), configuration.getConfigurationName() });
+                    }
+                    f.set(configuration, convert(box(f.getType()), nameValue.getValue()));
                 } catch (Exception e) {
                     throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
                             + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
                 }
             }
         }
-        return configuration;
-    }
 
-    /**
-     * Maps configuration values from System properties
-     *
-     * @param <T> A type of configuration
-     * @param configuration Configuration object
-     * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
-     * @param qualifierName Name of the qualifier passed
-     * @return Configured configuration of given type
-     */
-    private <T extends DroneConfiguration<T>> T mapFromSystemProperties(T configuration, String descriptorQualifier,
-            String qualifierName) {
-        List<Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
-
-        String fullQualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append("-")
-                .append(qualifierName).append(".").toString();
-
-        // get fields with qualifier included
-        Map<Field, String> fieldValuePairs = getFieldValuePairs(fields, fullQualifiedPrefix);
-        // get fields without qualifier included
-        if (fieldValuePairs.isEmpty()) {
-            String prefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".").toString();
-            fieldValuePairs = getFieldValuePairs(fields, prefix);
-        }
-
-        for (Map.Entry<Field, String> entry : fieldValuePairs.entrySet()) {
-            try {
-                entry.getKey().set(configuration, convert(box(entry.getKey().getType()), entry.getValue()));
-            } catch (Exception e) {
-                throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
-                        + ") for " + configuration.getClass().getName() + " from System properties", e);
+        // map map-based fields
+        for (Field f : fields.values()) {
+            String name = f.getName();
+            // we got a map
+            if (name.endsWith(MAP_SUFFIX) && Map.class.isAssignableFrom(f.getType())) {
+                Map<String, String> map = emulateMap(name.substring(0, name.lastIndexOf(MAP_SUFFIX)), nameValuePairs);
+                try {
+                    if (f.getAnnotation(Deprecated.class) != null) {
+                        log.log(Level.WARNING, "The property \"{0}\" used Arquillian \"{1}\" configuration is deprecated.",
+                                new Object[] { f.getName(), configuration.getConfigurationName() });
+                    }
+                    f.set(configuration, map);
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
+                            + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
+                }
             }
         }
 
         return configuration;
-
     }
 
     /**
-     * Maps fields to values using System configuration properties
+     * Fills a map based on prefix.
      *
-     * @param fields Fields to be mapped
-     * @param prefix System property prefix
-     * @return Mapped values
+     *
+     *
+     * @param prefix Prefix
+     * @param nameValuePairs Name value pairs
+     * @return
      */
-    private Map<Field, String> getFieldValuePairs(Collection<Field> fields, String prefix) {
-        Map<Field, String> fieldValuePairs = new HashMap<Field, String>();
-        for (Field f : fields) {
-            String fieldName = keyTransform(new StringBuilder(prefix).append(f.getName()));
-            String value = SecurityActions.getProperty(fieldName);
-            if (value != null) {
-                fieldValuePairs.put(f, value);
+    static Map<String, String> emulateMap(String prefix, Map<String, String> nameValuePairs) {
+        Map<String, String> map = new HashMap<String, String>();
+        for (Map.Entry<String, String> nameValueEntry : nameValuePairs.entrySet()) {
+            String propertyName = nameValueEntry.getKey();
+            if (nameValueEntry.getKey().startsWith(prefix)) {
+                StringBuilder key = new StringBuilder(propertyName.substring(prefix.length()));
+                key.setCharAt(0, Character.toLowerCase(key.charAt(0)));
+                map.put(keyTransform(key), nameValueEntry.getValue());
             }
         }
-        return fieldValuePairs;
 
+        return map;
     }
 
     /**
-     * Parses Arquillian Descriptor into property name - value pairs
+     * Parses Arquillian Descriptor into property name - value pairs value
      *
      * @param descriptor An Arquillian Descriptor
      * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
      * @param qualifierName Name of the qualifier passed
      */
-    private void setNameValuePairs(ArquillianDescriptor descriptor, String descriptorQualifier, String qualifierName) {
+    static Map<String, String> loadNameValuePairs(ArquillianDescriptor descriptor, String descriptorQualifier,
+            String qualifierName) {
         String fullDescriptorQualifier = new StringBuilder(descriptorQualifier).append("-").append(qualifierName).toString();
 
         ExtensionDef match = null;
         for (ExtensionDef extension : descriptor.getExtensions()) {
             if (fullDescriptorQualifier.equals(extension.getExtensionName())) {
-                this.nameValuePairs = extension.getExtensionProperties();
+                Map<String, String> nameValuePairs = extension.getExtensionProperties();
                 if (log.isLoggable(Level.FINE)) {
                     log.fine("Using <extension qualifier=\"" + extension.getExtensionName() + "\"> for Drone Configuration");
                 }
-                return;
+                return nameValuePairs;
             } else if (descriptorQualifier.equals(extension.getExtensionName())) {
                 match = extension;
             }
@@ -202,11 +196,49 @@ public class ConfigurationMapper {
 
         // found generic only
         if (match != null) {
-            this.nameValuePairs = match.getExtensionProperties();
+            Map<String, String> nameValuePairs = match.getExtensionProperties();
             if (log.isLoggable(Level.FINE)) {
                 log.fine("Using <extension qualifier=\"" + match.getExtensionName() + "\"> for Drone Configuration");
             }
+            return nameValuePairs;
         }
+
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Parses System properties into property name - value pairs
+     *
+     * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
+     * @param qualifierName Name of the qualifier passed
+     */
+    static Map<String, String> loadNameValuePairs(String descriptorQualifier, String qualifierName) {
+        String fullQualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".")
+                .append(qualifierName).append(".").toString();
+
+        String qualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".").toString();
+
+        // try to get fully qualified prefix properties first
+        Map<String, String> candidates = SecurityActions.getProperties(fullQualifiedPrefix);
+        if (candidates.isEmpty()) {
+            candidates.putAll(SecurityActions.getProperties(qualifiedPrefix));
+        }
+
+        // properly rename
+        Map<String, String> nameValuePairs = new HashMap<String, String>(candidates.size());
+        for (Map.Entry<String, String> entry : candidates.entrySet()) {
+            String name = entry.getKey();
+
+            // trim name
+            name = name.contains(fullQualifiedPrefix) ? name.substring(fullQualifiedPrefix.length()) : name
+                    .substring(qualifiedPrefix.length());
+            // transform to a field name
+
+            nameValuePairs.put(keyTransformReverse(name), entry.getValue());
+        }
+
+        return nameValuePairs;
+
     }
 
     /**
@@ -218,7 +250,7 @@ public class ConfigurationMapper {
      * @param fieldName The name of field
      * @return Corresponding property name
      */
-    private String keyTransform(String fieldName) {
+    static String keyTransform(String fieldName) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < fieldName.length(); i++) {
@@ -235,8 +267,35 @@ public class ConfigurationMapper {
         return sb.toString();
     }
 
-    private String keyTransform(StringBuilder fieldName) {
+    static String keyTransform(StringBuilder fieldName) {
         return keyTransform(fieldName.toString());
+    }
+
+    /**
+     * Maps a property to a field name.
+     *
+     * Replaces dot ('.') and lower case character with an upper case character
+     *
+     * @param propertyName The name of field
+     * @return Corresponding field name
+     */
+    static String keyTransformReverse(String propertyName) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean upperCaseFlag = false;
+        for (int i = 0; i < propertyName.length(); i++) {
+            char c = propertyName.charAt(i);
+            if (c == '.') {
+                upperCaseFlag = true;
+            } else if (upperCaseFlag && Character.isLowerCase(c)) {
+                sb.append(Character.toUpperCase(c));
+                upperCaseFlag = false;
+            } else {
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -245,7 +304,7 @@ public class ConfigurationMapper {
      * @param primitive A primitive class
      * @return Boxed class if class was primitive, unchanged class in other cases
      */
-    private Class<?> box(Class<?> primitive) {
+    static Class<?> box(Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             return primitive;
         }
@@ -281,7 +340,7 @@ public class ConfigurationMapper {
      * @param value String value to be converted
      * @return Value converted to a appropriate type
      */
-    private <T> T convert(Class<T> clazz, String value) {
+    static <T> T convert(Class<T> clazz, String value) {
         if (String.class.equals(clazz)) {
             return clazz.cast(value);
         } else if (Integer.class.equals(clazz)) {

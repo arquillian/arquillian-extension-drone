@@ -93,7 +93,7 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
         }
 
         // set capabilities
-        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         // binary was set, so set the capability
         if (Validate.nonEmpty(binary)) {
@@ -107,6 +107,8 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
             capabilities.setCapability("chrome.switches", getChromeSwitches(chromeSwitches));
         }
 
+        // FIXME this call will not be supported for a long time
+        // Chrome will be using ChromeOptions object
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { capabilities }, ChromeDriver.class);
     }
@@ -120,8 +122,8 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
     @Override
     public TypedWebDriverConfiguration<ChromeDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<ChromeDriverConfiguration>(ChromeDriverConfiguration.class,
-                "org.openqa.selenium.chrome.ChromeDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<ChromeDriverConfiguration>(ChromeDriverConfiguration.class).configure(
+                descriptor, qualifier);
     }
 
     private List<String> getChromeSwitches(String valueString) {

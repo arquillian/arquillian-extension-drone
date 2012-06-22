@@ -17,6 +17,8 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.annotation.Annotation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -24,7 +26,9 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
@@ -38,6 +42,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 public class HtmlUnitDriverFactory implements
         Configurator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>,
         Instantiator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>, Destructor<HtmlUnitDriver> {
+
+    private static final Logger log = Logger.getLogger(HtmlUnitDriverFactory.class.getName());
 
     /*
      * (non-Javadoc)
@@ -67,18 +73,28 @@ public class HtmlUnitDriverFactory implements
     @Override
     public HtmlUnitDriver createInstance(TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> configuration) {
 
+        // this is support for legacy constructor
         String applicationName = configuration.getApplicationName();
         String applicationVersion = configuration.getApplicationVersion();
         String userAgent = configuration.getUserAgent();
         float browserVersionNumeric = configuration.getBrowserVersionNumeric();
         boolean useJavaScript = configuration.isUseJavaScript();
 
+        // this is support for capability based HtmlUnitDriver
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        capabilities.setJavascriptEnabled(useJavaScript);
+
+        // use capability based constructor if possible
         if (Validate.empty(applicationName) || Validate.empty(applicationVersion) || Validate.empty(userAgent)) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { boolean.class },
-                    new Object[] { useJavaScript }, HtmlUnitDriver.class);
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                    new Object[] { capabilities }, HtmlUnitDriver.class);
         }
-        // set browser version
+        // plain old constructor
         else {
+
+            log.log(Level.FINE, "Creating HtmlUnitDriver using {0} {1} {2} {3}", new Object[] { applicationName,
+                    applicationVersion, userAgent, browserVersionNumeric });
+
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { BrowserVersion.class },
                     new Object[] { new BrowserVersion(applicationName, applicationVersion, userAgent, browserVersionNumeric) },
                     HtmlUnitDriver.class);
@@ -94,8 +110,8 @@ public class HtmlUnitDriverFactory implements
     @Override
     public TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>(HtmlUnitDriverConfiguration.class,
-                "org.openqa.selenium.htmlunit.HtmlUnitDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>(HtmlUnitDriverConfiguration.class).configure(
+                descriptor, qualifier);
     }
 
 }

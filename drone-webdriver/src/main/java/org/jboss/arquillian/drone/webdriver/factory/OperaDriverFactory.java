@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.opera.core.systems.OperaDriver;
 import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -27,11 +27,12 @@ import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfigur
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.opera.core.systems.OperaDriver;
+
 /**
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
-public class OperaDriverFactory implements
-        Configurator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>,
+public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>,
         Instantiator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>, Destructor<OperaDriver> {
 
     @Override
@@ -40,14 +41,16 @@ public class OperaDriverFactory implements
     }
 
     @Override
-    public TypedWebDriverConfiguration<OperaDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<OperaDriverConfiguration>(OperaDriverConfiguration.class,
-                "com.opera.core.systems.OperaDriver").configure(descriptor, qualifier);
+    public TypedWebDriverConfiguration<OperaDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
+            Class<? extends Annotation> qualifier) {
+        return new TypedWebDriverConfiguration<OperaDriverConfiguration>(OperaDriverConfiguration.class).configure(descriptor,
+                qualifier);
     }
 
     @Override
     public OperaDriver createInstance(TypedWebDriverConfiguration<OperaDriverConfiguration> configuration) {
-        DesiredCapabilities operaCapabilities = new DesiredCapabilities();
+
+        DesiredCapabilities operaCapabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         setIfNotNull(operaCapabilities, "opera.arguments", configuration.getOperaArguments());
         operaCapabilities.setCapability("opera.autostart", configuration.isOperaAutostart());
@@ -64,11 +67,8 @@ public class OperaDriverFactory implements
         setIfNotNull(operaCapabilities, "opera.profile", configuration.getOperaProfile());
         operaCapabilities.setCapability("opera.port", configuration.getOperaPort());
 
-        return SecurityActions.newInstance(
-                configuration.getImplementationClass(),
-                new Class<?>[] { Capabilities.class },
-                new Object[] { operaCapabilities },
-                OperaDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { operaCapabilities }, OperaDriver.class);
     }
 
     @Override

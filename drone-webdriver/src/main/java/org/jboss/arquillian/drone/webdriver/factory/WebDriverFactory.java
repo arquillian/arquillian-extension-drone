@@ -17,6 +17,8 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.annotation.Annotation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
@@ -28,6 +30,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -39,6 +42,8 @@ import org.openqa.selenium.WebDriver;
  */
 public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>,
         Instantiator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>, Destructor<WebDriver> {
+
+    private static final Logger log = Logger.getLogger(WebDriverFactory.class.getName());
 
     @Inject
     private Instance<DroneRegistry> registryInstance;
@@ -58,9 +63,25 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
      *
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void destroyInstance(WebDriver instance) {
-        instance.quit();
+        // check if there is a better destructor than default one
+
+        // FIXME: this line should be written generally, not only for subclasses of RemoteWebDriver
+        Class<?> instanceClass = instance instanceof RemoteWebDriver ? RemoteWebDriver.class : instance.getClass();
+
+        @SuppressWarnings("rawtypes")
+        Destructor destructor = null;
+        try {
+            destructor = registryInstance.get().getEntryFor(instanceClass, Destructor.class);
+        } catch (Exception ignored) {
+        }
+        if (destructor != null && !destructor.getClass().equals(this.getClass())) {
+            destructor.destroyInstance(instance);
+        } else {
+            instance.quit();
+        }
     }
 
     /*
@@ -72,13 +93,35 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
     @Override
     public WebDriver createInstance(TypedWebDriverConfiguration<WebDriverConfiguration> configuration) {
 
-        // check if there is a better instantiator then default one
-        String implementationClassName = configuration.getImplementationClass();
-
-        DroneRegistry registry = registryInstance.get();
-        Class<?> implementationClass = SecurityActions.getClass(implementationClassName);
         @SuppressWarnings("rawtypes")
-        Instantiator instantiator = registry.getEntryFor(implementationClass, Instantiator.class);
+        Instantiator instantiator;
+        String implementationClassName = null;
+
+        // get remote-reusable instantiator
+        if (configuration.isRemoteReusable()) {
+            instantiator = getRemoteWebDriverInstantiator();
+        }
+        // get real implementation class name based on capabilitiesBrowser and
+        // deprecated implementationClassName
+        else {
+            String browserCapabilities = configuration.getBrowserCapabilities();
+            if (Validate.empty(browserCapabilities)) {
+                configuration.setBrowserCapabilities(TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+                log.log(Level.INFO, "Property \"browserCapabilities\" was not specified, using default value of {0}",
+                        TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+            }
+
+            implementationClassName = configuration.getImplementationClass();
+
+            Validate.isEmpty(implementationClassName,
+                    "The combination of browserCapabilities=" + configuration.getBrowserCapabilities()
+                            + ", implemenationClass=" + implementationClassName
+                            + " does not to a valid browser. Please specify supported browserCapabilities");
+
+            DroneRegistry registry = registryInstance.get();
+            Class<?> implementationClass = SecurityActions.getClass(implementationClassName);
+            instantiator = registry.getEntryFor(implementationClass, Instantiator.class);
+        }
 
         // if we've found an instantiator and at the same time we are sure that it is not the current one
         // invoke it instead in order to get capabilities and other advanced stuff
@@ -87,9 +130,15 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
         }
 
         // this is a simple constructor which does not know anything advanced
-        WebDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                WebDriver.class);
-        return driver;
+        if (Validate.empty(implementationClassName)) {
+            WebDriver driver = SecurityActions.newInstance(implementationClassName, new Class<?>[0], new Object[0],
+                    WebDriver.class);
+            return driver;
+        }
+
+        throw new IllegalStateException(
+                "Unable to create Arquillian WebDriver browser, please set \"browserCapabilites\" or \"implementationClass\" property");
+
     }
 
     /*
@@ -101,8 +150,14 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
     @Override
     public TypedWebDriverConfiguration<WebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
             Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<WebDriverConfiguration>(WebDriverConfiguration.class,
-                "org.openqa.selenium.htmlunit.HtmlUnitDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<WebDriverConfiguration>(WebDriverConfiguration.class).configure(descriptor,
+                qualifier);
+    }
+
+    @SuppressWarnings({ "rawtypes" })
+    private Instantiator getRemoteWebDriverInstantiator() {
+        DroneRegistry registry = registryInstance.get();
+        return registry.getEntryFor(RemoteWebDriver.class, Instantiator.class);
     }
 
 }

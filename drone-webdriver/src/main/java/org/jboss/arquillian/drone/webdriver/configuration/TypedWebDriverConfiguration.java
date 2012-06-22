@@ -17,10 +17,17 @@
 package org.jboss.arquillian.drone.webdriver.configuration;
 
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
+import java.util.Map.Entry;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Configuration shared among all WebDriver implementations. This means that all configurations maps to the same namespace,
@@ -28,8 +35,12 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  *
  * Safely retrieves only the value compatible with current browser type.
  *
+ * When user uses <code>@Drone WebDriver drive</code> in the code, the configurator doesn't know the implementation class, so it
+ * has to provide an object implementing all possible configuration interfaces. Afterwards this object is passed as an argument
+ * to the proper factory method.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  * @see ArquillianDescriptor
  * @see org.jboss.arquillian.drone.configuration.ConfigurationMapper
  *
@@ -37,13 +48,67 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> implements
         DroneConfiguration<TypedWebDriverConfiguration<T>>, AndroidDriverConfiguration, ChromeDriverConfiguration,
         FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration,
-        IPhoneDriverConfiguration, WebDriverConfiguration {
+        IPhoneDriverConfiguration, WebDriverConfiguration, RemoteReusableWebDriverConfiguration {
+
+    private abstract class CallInterceptor<R> {
+        private Boolean exists = null;
+
+        private String decamelize(String name) {
+            int prefixLength = name.startsWith("is") ? 2 : 3;
+            StringBuilder sb = new StringBuilder(name.substring(prefixLength));
+            sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
+            return sb.toString();
+        }
+
+        public R intercept(String name, Class<?>... parameterTypes) {
+            if (methodExists(name, parameterTypes)) {
+                return invoke();
+            }
+            // this should never happen in the implementation
+            else {
+                String propertyName = decamelize(name);
+                String configurationName = type.getSimpleName().replaceAll("ConfigurationType", "");
+                throw new IllegalStateException("Property with name " + propertyName + " is not valid for " + configurationName
+                        + ". Make sure you are using proper configuration element for the WebDriver browser type");
+            }
+        }
+
+        public abstract R invoke();
+
+        private boolean methodExists(String name, Class<?>[] parameterTypes) {
+
+            if (exists != null) {
+                return exists;
+            }
+            // get method in the interface
+            try {
+                type.getMethod(name, parameterTypes);
+                this.exists = true;
+            } catch (NoSuchMethodException e) {
+                this.exists = false;
+            }
+
+            return exists;
+        }
+    }
 
     public static final String CONFIGURATION_NAME = "webdriver";
+
+    public static URL DEFAULT_REMOTE_URL;
+    static {
+        try {
+            DEFAULT_REMOTE_URL = new URL("http://localhost:14444/wd/hub");
+        } catch (MalformedURLException e) {
+            // ignore invalid url exception
+        }
+    }
+
+    public static final String DEFAULT_BROWSER_CAPABILITIES = CapabilityMap.HTMLUNIT.getReadableName();
 
     // shared configuration
     protected Class<T> type;
 
+    @Deprecated
     protected String implementationClass;
 
     // configuration holders for WebDriver Types
@@ -65,7 +130,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     protected String chromeSwitches;
 
-    protected String remoteAddress;
+    protected URL remoteAddress;
 
     protected float browserVersionNumeric;
 
@@ -97,43 +162,33 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     protected boolean operaRestart = true;
 
+    protected Map<String, String> capabilityMap;
+
+    protected String browserCapabilities;
+
+    protected boolean remoteReusable;
+
+    protected boolean remote;
+
+    public TypedWebDriverConfiguration(Class<T> type) {
+        this.type = type;
+        CapabilityMap capabilityMap = CapabilityMap.byWebDriverConfigurationType(type);
+        if (capabilityMap != null) {
+            this.browserCapabilities = capabilityMap.getReadableName();
+        }
+    }
+
+    @Deprecated
     public TypedWebDriverConfiguration(Class<T> type, String implementationClass) {
         this.type = type;
         this.implementationClass = implementationClass;
     }
 
     @Override
-    public String getImplementationClass() {
-        return implementationClass;
-    }
-
-    @Override
-    public void setImplementationClass(String implementationClass) {
-        this.implementationClass = implementationClass;
-    }
-
-    @Override
-    public void setIePort(final int iePort) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.iePort = iePort;
-                return null;
-            }
-        };
-        interceptor.intercept("setIePort", int.class);
-
-    }
-
-    @Override
-    public int getIePort() {
-        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
-            @Override
-            public Integer invoke() {
-                return iePort;
-            }
-        };
-        return interceptor.intercept("getIePort");
+    public TypedWebDriverConfiguration<T> configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+        return this;
     }
 
     @Override
@@ -148,19 +203,6 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setApplicationName(final String applicationName) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.applicationName = applicationName;
-                return null;
-            }
-        };
-        interceptor.intercept("setApplicationName", String.class);
-
-    }
-
-    @Override
     public String getApplicationVersion() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -172,39 +214,14 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setApplicationVersion(final String applicationVersion) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.applicationVersion = applicationVersion;
-                return null;
-            }
-        };
-        interceptor.intercept("setApplicationVersion", String.class);
-    }
-
-    @Override
-    public String getUserAgent() {
+    public String getBrowserCapabilities() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
             public String invoke() {
-                return userAgent;
+                return TypedWebDriverConfiguration.this.browserCapabilities;
             }
         };
-        return interceptor.intercept("getUserAgent");
-    }
-
-    @Override
-    public void setUserAgent(final String userAgent) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.userAgent = userAgent;
-                return null;
-            }
-        };
-        interceptor.intercept("setUserAgent", String.class);
-
+        return interceptor.intercept("getBrowserCapabilities");
     }
 
     @Override
@@ -219,85 +236,23 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setBrowserVersionNumeric(final float browserVersionNumeric) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+    public Capabilities getCapabilities() {
+
+        final CallInterceptor<Capabilities> interceptor = new CallInterceptor<Capabilities>() {
             @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.browserVersionNumeric = browserVersionNumeric;
-                return null;
+            public Capabilities invoke() {
+                CapabilityMap capabilityMap = CapabilityMap.byImplementationClass(getImplementationClass());
+                DesiredCapabilities merged = new DesiredCapabilities();
+                if (capabilityMap != null) {
+                    merged = new DesiredCapabilities(capabilityMap.getCapabilities());
+                }
+
+                merged = new DesiredCapabilities(merged, new DesiredCapabilities(TypedWebDriverConfiguration.this.capabilityMap));
+
+                return merged;
             }
         };
-        interceptor.intercept("setBrowserVersionNumeric", float.class);
-    }
-
-    @Override
-    public boolean isUseJavaScript() {
-        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
-            @Override
-            public Boolean invoke() {
-                return useJavaScript;
-            }
-        };
-        return interceptor.intercept("isUseJavaScript");
-    }
-
-    @Override
-    public void setUseJavaScript(final boolean useJavaScript) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.useJavaScript = useJavaScript;
-                return null;
-            }
-        };
-        interceptor.intercept("setUseJavaScript", boolean.class);
-    }
-
-    @Override
-    public String getFirefoxProfile() {
-        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
-            @Override
-            public String invoke() {
-                return firefoxProfile;
-            }
-        };
-        return interceptor.intercept("getFirefoxProfile");
-    }
-
-    @Override
-    public void setFirefoxProfile(final String firefoxProfile) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.firefoxProfile = firefoxProfile;
-                return null;
-            }
-        };
-        interceptor.intercept("setFirefoxProfile", String.class);
-
-    }
-
-    @Override
-    public String getFirefoxBinary() {
-        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
-            @Override
-            public String invoke() {
-                return firefoxBinary;
-            }
-        };
-        return interceptor.intercept("getFirefoxBinary");
-    }
-
-    @Override
-    public void setFirefoxBinary(final String firefoxBinary) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.firefoxBinary = firefoxBinary;
-                return null;
-            }
-        };
-        interceptor.intercept("setFirefoxBinary", String.class);
+        return interceptor.intercept("getCapabilities");
 
     }
 
@@ -313,30 +268,6 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setChromeBinary(final String chromeBinary) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.chromeBinary = chromeBinary;
-                return null;
-            }
-        };
-        interceptor.intercept("setChromeBinary", String.class);
-    }
-
-    @Override
-    public void setChromeDriverBinary(final String chromeDriverBinary) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.chromeDriverBinary = chromeDriverBinary;
-                return null;
-            }
-        };
-        interceptor.intercept("setChromeDriverBinary", String.class);
-    }
-
-    @Override
     public String getChromeDriverBinary() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -345,18 +276,6 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             }
         };
         return interceptor.intercept("getChromeDriverBinary");
-    }
-
-    @Override
-    public void setChromeSwitches(final String chromeSwitches) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.chromeSwitches = chromeSwitches;
-                return null;
-            }
-        };
-        interceptor.intercept("setChromeSwitches", String.class);
     }
 
     @Override
@@ -371,37 +290,60 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setRemoteAddress(final String remoteAddress) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.remoteAddress = remoteAddress;
-                return null;
-            }
-        };
-        interceptor.intercept("setRemoteAddress", String.class);
-    }
-
-    @Override
-    public String getRemoteAddress() {
-        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
-            @Override
-            public String invoke() {
-                return remoteAddress;
-            }
-        };
-        return interceptor.intercept("getRemoteAddress");
-    }
-
-    @Override
     public String getConfigurationName() {
         return CONFIGURATION_NAME;
     }
 
     @Override
-    public TypedWebDriverConfiguration<T> configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+    public String getFirefoxBinary() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return firefoxBinary;
+            }
+        };
+        return interceptor.intercept("getFirefoxBinary");
+    }
+
+    @Override
+    public String getFirefoxProfile() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return firefoxProfile;
+            }
+        };
+        return interceptor.intercept("getFirefoxProfile");
+    }
+
+    @Override
+    public int getIePort() {
+        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
+            @Override
+            public Integer invoke() {
+                return iePort;
+            }
+        };
+        return interceptor.intercept("getIePort");
+    }
+
+    @Override
+    public String getImplementationClass() {
+
+        String browserCapabilities = getBrowserCapabilities();
+        @SuppressWarnings("deprecation")
+        String implementationClassName = this.implementationClass;
+        CapabilityMap capabilityMap = CapabilityMap.byImplementationClass(implementationClassName);
+        if (capabilityMap == null) {
+            capabilityMap = CapabilityMap.byDesiredCapabilities(browserCapabilities);
+        }
+
+        // get real implementation class value
+        if (implementationClassName == null && capabilityMap != null) {
+            implementationClassName = capabilityMap.getImplementationClass();
+        }
+
+        return implementationClassName;
     }
 
     @Override
@@ -424,76 +366,6 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             }
         };
         return interceptor.intercept("getOperaBinary");
-    }
-
-    @Override
-    public int getOperaPort() {
-        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
-            @Override
-            public Integer invoke() {
-                return operaPort;
-            }
-        };
-        return interceptor.intercept("getOperaPort");
-    }
-
-    @Override
-    public String getOperaProfile() {
-        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
-            @Override
-            public String invoke() {
-                return operaProfile;
-            }
-        };
-        return interceptor.intercept("getOperaProfile");
-    }
-
-    @Override
-    public void setOperaArguments(final String operaArguments) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.operaArguments = operaArguments;
-                return null;
-            }
-        };
-        interceptor.intercept("setOperaArguments", String.class);
-    }
-
-    @Override
-    public void setOperaBinary(final String operaBinary) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.operaBinary = operaBinary;
-                return null;
-            }
-        };
-        interceptor.intercept("setOperaBinary", String.class);
-    }
-
-    @Override
-    public void setOperaPort(final int operaPort) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.operaPort = operaPort;
-                return null;
-            }
-        };
-        interceptor.intercept("setOperaPort", int.class);
-    }
-
-    @Override
-    public void setOperaProfile(final String operaProfile) {
-        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
-            public Void invoke() {
-                TypedWebDriverConfiguration.this.operaProfile = operaProfile;
-                return null;
-            }
-        };
-        interceptor.intercept("setOperaProfile", String.class);
     }
 
     @Override
@@ -541,6 +413,17 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    public int getOperaPort() {
+        final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
+            @Override
+            public Integer invoke() {
+                return operaPort;
+            }
+        };
+        return interceptor.intercept("getOperaPort");
+    }
+
+    @Override
     public String getOperaProduct() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -549,6 +432,39 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             }
         };
         return interceptor.intercept("getOperaProduct");
+    }
+
+    @Override
+    public String getOperaProfile() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return operaProfile;
+            }
+        };
+        return interceptor.intercept("getOperaProfile");
+    }
+
+    @Override
+    public URL getRemoteAddress() {
+        final CallInterceptor<URL> interceptor = new CallInterceptor<URL>() {
+            @Override
+            public URL invoke() {
+                return remoteAddress;
+            }
+        };
+        return interceptor.intercept("getRemoteAddress");
+    }
+
+    @Override
+    public String getUserAgent() {
+        final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
+            @Override
+            public String invoke() {
+                return userAgent;
+            }
+        };
+        return interceptor.intercept("getUserAgent");
     }
 
     @Override
@@ -596,6 +512,181 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    public boolean isRemote() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return TypedWebDriverConfiguration.this.remote;
+            }
+        };
+        return interceptor.intercept("isRemote");
+    }
+
+    @Override
+    public boolean isRemoteReusable() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return TypedWebDriverConfiguration.this.remoteReusable;
+            }
+        };
+        return interceptor.intercept("isRemoteReusable");
+    }
+
+    @Override
+    public boolean isUseJavaScript() {
+        final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return useJavaScript;
+            }
+        };
+        return interceptor.intercept("isUseJavaScript");
+    }
+
+    @Override
+    public void setApplicationName(final String applicationName) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.applicationName = applicationName;
+                return null;
+            }
+        };
+        interceptor.intercept("setApplicationName", String.class);
+
+    }
+
+    @Override
+    public void setApplicationVersion(final String applicationVersion) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.applicationVersion = applicationVersion;
+                return null;
+            }
+        };
+        interceptor.intercept("setApplicationVersion", String.class);
+    }
+
+    @Override
+    public void setBrowserCapabilities(final String browserCapabilities) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.browserCapabilities = browserCapabilities;
+                return null;
+            }
+        };
+        interceptor.intercept("setBrowserCapabilities", String.class);
+    }
+
+    @Override
+    public void setBrowserVersionNumeric(final float browserVersionNumeric) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.browserVersionNumeric = browserVersionNumeric;
+                return null;
+            }
+        };
+        interceptor.intercept("setBrowserVersionNumeric", float.class);
+    }
+
+    @Override
+    public void setChromeBinary(final String chromeBinary) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.chromeBinary = chromeBinary;
+                return null;
+            }
+        };
+        interceptor.intercept("setChromeBinary", String.class);
+    }
+
+    @Override
+    public void setChromeDriverBinary(final String chromeDriverBinary) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.chromeDriverBinary = chromeDriverBinary;
+                return null;
+            }
+        };
+        interceptor.intercept("setChromeDriverBinary", String.class);
+    }
+
+    @Override
+    public void setChromeSwitches(final String chromeSwitches) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.chromeSwitches = chromeSwitches;
+                return null;
+            }
+        };
+        interceptor.intercept("setChromeSwitches", String.class);
+    }
+
+    @Override
+    public void setFirefoxBinary(final String firefoxBinary) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.firefoxBinary = firefoxBinary;
+                return null;
+            }
+        };
+        interceptor.intercept("setFirefoxBinary", String.class);
+
+    }
+
+    @Override
+    public void setFirefoxProfile(final String firefoxProfile) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.firefoxProfile = firefoxProfile;
+                return null;
+            }
+        };
+        interceptor.intercept("setFirefoxProfile", String.class);
+
+    }
+
+    @Override
+    public void setIePort(final int iePort) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.iePort = iePort;
+                return null;
+            }
+        };
+        interceptor.intercept("setIePort", int.class);
+
+    }
+
+    @Deprecated
+    @Override
+    public void setImplementationClass(String implementationClass) {
+        this.implementationClass = implementationClass;
+    }
+
+    @Override
+    public void setOperaArguments(final String operaArguments) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaArguments = operaArguments;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaArguments", String.class);
+    }
+
+    @Override
     public void setOperaAutostart(final boolean operaAutostart) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -608,6 +699,18 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    public void setOperaBinary(final String operaBinary) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaBinary = operaBinary;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaBinary", String.class);
+    }
+
+    @Override
     public void setOperaDisplay(final int operaDisplay) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -617,6 +720,18 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             }
         };
         interceptor.intercept("setOperaDisplay", int.class);
+    }
+
+    @Override
+    public void setOperaIdle(final boolean operaIdle) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaIdle = operaIdle;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaIdle", boolean.class);
     }
 
     @Override
@@ -656,6 +771,18 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    public void setOperaPort(final int operaPort) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.operaPort = operaPort;
+                return null;
+            }
+        };
+        interceptor.intercept("setOperaPort", int.class);
+    }
+
+    @Override
     public void setOperaProduct(final String operaProduct) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -668,15 +795,15 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
-    public void setOperaIdle(final boolean operaIdle) {
+    public void setOperaProfile(final String operaProfile) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
             public Void invoke() {
-                TypedWebDriverConfiguration.this.operaIdle = operaIdle;
+                TypedWebDriverConfiguration.this.operaProfile = operaProfile;
                 return null;
             }
         };
-        interceptor.intercept("setOperaIdle", boolean.class);
+        interceptor.intercept("setOperaProfile", String.class);
     }
 
     @Override
@@ -703,45 +830,65 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         interceptor.intercept("setOperaRestart", boolean.class);
     }
 
-    private abstract class CallInterceptor<R> {
-        private Boolean exists = null;
-
-        private boolean methodExists(String name, Class<?>[] parameterTypes) {
-
-            if (exists != null) {
-                return exists;
+    @Override
+    public void setRemote(final boolean remote) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.remote = remote;
+                return null;
             }
-            // get method in the interface
-            try {
-                type.getMethod(name, parameterTypes);
-                this.exists = true;
-            } catch (NoSuchMethodException e) {
-                this.exists = false;
+        };
+        interceptor.intercept("setRemote", boolean.class);
+    }
+
+    @Override
+    public void setRemoteAddress(final URL remoteAddress) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.remoteAddress = remoteAddress;
+                return null;
             }
+        };
+        interceptor.intercept("setRemoteAddress", URL.class);
+    }
 
-            return exists;
-        }
-
-        public abstract R invoke();
-
-        public R intercept(String name, Class<?>... parameterTypes) {
-            if (methodExists(name, parameterTypes)) {
-                return invoke();
+    @Override
+    public void setRemoteReusable(final boolean remoteReusable) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.remoteReusable = remoteReusable;
+                return null;
             }
-            // this should never happen in the implementation
-            else {
-                String propertyName = decamelize(name);
-                String configurationName = type.getSimpleName().replaceAll("ConfigurationType", "");
-                throw new IllegalStateException("Property with name " + propertyName + " is not valid for " + configurationName
-                        + ". Make sure you are using proper configuration element for the WebDriver browser type");
-            }
-        }
+        };
+        interceptor.intercept("setRemoteReusable", boolean.class);
+    }
 
-        private String decamelize(String name) {
-            StringBuilder sb = new StringBuilder(name.substring(3));
-            sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
-            return sb.toString();
-        }
+    @Override
+    public void setUseJavaScript(final boolean useJavaScript) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.useJavaScript = useJavaScript;
+                return null;
+            }
+        };
+        interceptor.intercept("setUseJavaScript", boolean.class);
+    }
+
+    @Override
+    public void setUserAgent(final String userAgent) {
+        final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
+            @Override
+            public Void invoke() {
+                TypedWebDriverConfiguration.this.userAgent = userAgent;
+                return null;
+            }
+        };
+        interceptor.intercept("setUserAgent", String.class);
+
     }
 
 }

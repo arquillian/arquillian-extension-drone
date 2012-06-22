@@ -16,22 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-
 /**
  * Configuration for Android Driver
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface AndroidDriverConfiguration extends CommonWebDriverConfiguration {
+public interface AndroidDriverConfiguration extends RemoteWebDriverConfiguration {
 
-    /**
-     * @param remoteAddress the remoteAddress to set
-     */
-    void setRemoteAddress(String remoteAddress);
-
-    /**
-     * @return the remoteAddress
-     */
-    String getRemoteAddress();
 }

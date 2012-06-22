@@ -17,6 +17,8 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.lang.annotation.Annotation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -25,6 +27,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.InternetExplorerDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -38,6 +41,8 @@ public class InternetExplorerDriverFactory implements
         Configurator<InternetExplorerDriver, TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>>,
         Instantiator<InternetExplorerDriver, TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>>,
         Destructor<InternetExplorerDriver> {
+
+    private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
 
     public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
 
@@ -71,12 +76,16 @@ public class InternetExplorerDriverFactory implements
 
         int port = configuration.getIePort();
 
+        // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
+                    new Class<?>[] { DesiredCapabilities.class }, new Object[] { configuration.getCapabilities() },
                     InternetExplorerDriver.class);
         }
-        // port specified
+        // port specified, we cannot use capabilities
         else {
+            log.log(Level.FINE, "Creating InternetExplorerDriver bound to port {0}", port);
+
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { int.class },
                     new Object[] { port }, InternetExplorerDriver.class);
         }
@@ -92,8 +101,8 @@ public class InternetExplorerDriverFactory implements
     @Override
     public TypedWebDriverConfiguration<InternetExplorerDriverConfiguration> createConfiguration(
             ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>(InternetExplorerDriverConfiguration.class,
-                "org.openqa.selenium.ie.InternetExplorerDriver").configure(descriptor, qualifier);
+        return new TypedWebDriverConfiguration<InternetExplorerDriverConfiguration>(InternetExplorerDriverConfiguration.class)
+                .configure(descriptor, qualifier);
     }
 
 }

@@ -16,20 +16,11 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import com.google.common.base.Function;
-import java.io.File;
 import java.net.URL;
 
 import org.apache.commons.lang.Validate;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.drone.webdriver.example.webapp.Credentials;
-import org.jboss.arquillian.drone.webdriver.example.webapp.LoggedIn;
-import org.jboss.arquillian.drone.webdriver.example.webapp.Login;
-import org.jboss.arquillian.drone.webdriver.example.webapp.User;
-import org.jboss.arquillian.drone.webdriver.example.webapp.Users;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,10 +29,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Function;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -76,25 +67,7 @@ public abstract class AbstractWebDriver {
      */
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-
-        boolean isRunningOnAS7 = System.getProperty("jbossHome", "target/jboss-as-7.0.2.Final").contains("7.0.2.Final");
-
-        WebArchive war = ShrinkWrap
-                .create(WebArchive.class, "weld-login.war")
-                .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
-                .addAsResource(new File("src/test/resources/import.sql"))
-                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
-                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
-                .addAsWebResource(new File("src/test/webapp/index.html"))
-                .addAsWebResource(new File("src/test/webapp/home.xhtml"))
-                .addAsWebResource(new File("src/test/webapp/template.xhtml"))
-                .addAsWebResource(new File("src/test/webapp/users.xhtml"))
-                .addAsResource(
-                        isRunningOnAS7 ? new File("src/test/resources/META-INF/persistence.xml") : new File(
-                                "src/test/resources/META-INF/persistence-as6.xml"),
-                        ArchivePaths.create("META-INF/persistence.xml")).setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
-
-        return war;
+        return Deployments.createDeployment();
     }
 
     @Test
@@ -118,19 +91,18 @@ public abstract class AbstractWebDriver {
 
     // check is element is presence on page, fails otherwise
     protected void checkElementPresence(final WebDriver driver, final By by, String errorMsg) {
-        new WebDriverWaitWithMessage(driver(), 10).failWith(errorMsg).until(
-                new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(WebDriver webDriver) {
-                        try {
-                            return driver.findElement(by).isDisplayed();
-                        } catch (NoSuchElementException ignored) {
-                            return false;
-                        } catch (StaleElementReferenceException ignored) {
-                            return false;
-                        }
-                    }
-                });
+        new WebDriverWaitWithMessage(driver(), 10).failWith(errorMsg).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                try {
+                    return driver.findElement(by).isDisplayed();
+                } catch (NoSuchElementException ignored) {
+                    return false;
+                } catch (StaleElementReferenceException ignored) {
+                    return false;
+                }
+            }
+        });
     }
 
     protected static class WebDriverWaitWithMessage extends WebDriverWait {
@@ -154,7 +126,7 @@ public abstract class AbstractWebDriver {
             } else {
                 try {
                     return super.until(isTrue);
-                } catch(TimeoutException e) {
+                } catch (TimeoutException e) {
                     throw new TimeoutException(message, e);
                 }
             }
