@@ -38,7 +38,7 @@
     </developers>
 
     <properties>
-        <version.com.opera>0.11</version.com.opera>
+        <version.com.opera>0.14</version.com.opera>
         <version.org.seleniumhq.selenium.server>2.24.1</version.org.seleniumhq.selenium.server>
         <version.org.seleniumhq.selenium>2.24.1</version.org.seleniumhq.selenium>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
