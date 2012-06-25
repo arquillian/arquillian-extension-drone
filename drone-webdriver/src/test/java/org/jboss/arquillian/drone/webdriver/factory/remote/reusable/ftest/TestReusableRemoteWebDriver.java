@@ -43,12 +43,8 @@ import qualifier.Reusable;
 @RunWith(Arquillian.class)
 public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
-    @Drone
-    @Reusable
-    RemoteWebDriver driver;
-
     @Test
-    public void whenBrowserIsCreatedThenCouldBeReused() throws UnableReuseSessionException {
+    public void whenBrowserIsCreatedThenCouldBeReused(@Drone @Reusable RemoteWebDriver driver) throws UnableReuseSessionException {
 
         driver.navigate().to(SERVER_URL.toString());
         Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
@@ -60,7 +56,7 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
     }
 
     @Test
-    public void whenBrowserIsCreatedAndQuitAndTriedToReuseThenItShouldThrowException() {
+    public void whenBrowserIsCreatedAndQuitAndTriedToReuseThenItShouldThrowException(@Drone @Reusable RemoteWebDriver driver) {
 
         driver.navigate().to(SERVER_URL.toString());
         Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
