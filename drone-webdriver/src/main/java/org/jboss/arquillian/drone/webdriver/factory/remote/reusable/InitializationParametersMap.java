@@ -21,7 +21,10 @@ import java.util.HashMap;
 import org.openqa.selenium.remote.SessionId;
 
 /**
- * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
+ * Contains a map of initialization parameters available in run time in time period between a reusable browser is created and
+ * destroyed
+ *
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 public class InitializationParametersMap extends HashMap<SessionId, InitializationParameter> {
 

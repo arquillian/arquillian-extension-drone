@@ -18,6 +18,9 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
@@ -27,17 +30,26 @@ import org.apache.commons.io.FileUtils;
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
 public class ReusedSessionFileStore {
+    private static final Logger log = Logger.getLogger(ReusedSessionFileStore.class.getName());
 
     public ReusedSessionStore loadStoreFromFile(File file) {
-        byte[] readStore = readStore(file);
-        if (readStore == null) {
-            return null;
-        }
         try {
-            ReusedSessionStore loadedSession = (ReusedSessionStore) SerializationUtils.deserializeFromBytes(readStore);
+            byte[] readStore = readStore(file);
+            ReusedSessionStore loadedSession = SerializationUtils.deserializeFromBytes(ReusedSessionStore.class, readStore);
             return loadedSession;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (InvalidClassException e) {
+            log.log(Level.WARNING,
+                    "Unable to get reused session store from file storage, likely it is due to its internal format change. "
+                            + "Drone will remove file " + file + " with recent implementation. Cause: ", e);
+            return null;
+        } catch (ClassNotFoundException e) {
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file " + file
+                    + " with recent implementation. Cause: ", e);
+            return null;
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file " + file
+                    + " with recent implementation. Cause: ", e);
+            return null;
         }
     }
 
@@ -45,33 +57,26 @@ public class ReusedSessionFileStore {
         try {
             byte[] serialized = SerializationUtils.serializeToBytes(store);
             writeStore(file, serialized);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Unable to persist reused session store, session reuse will not work", e);
+
         }
 
     }
 
-    private byte[] readStore(File file) {
-        if (!file.exists()) {
-            return null;
-        }
-        try {
+    private byte[] readStore(File file) throws IOException {
+        if (Validate.readable(file)) {
             return FileUtils.readFileToByteArray(file);
-        } catch (IOException e) {
-            // TODO logger
-            System.err.println("Problems reading file '" + file + "'");
-            return null;
         }
+        log.info("Reused session store is not available at " + file + ", a new one will be created.");
+        return null;
     }
 
-    private boolean writeStore(File file, byte[] data) {
-        try {
+    private void writeStore(File file, byte[] data) throws IOException {
+        if (Validate.writeable(file)) {
             FileUtils.writeByteArrayToFile(file, data);
-            return true;
-        } catch (IOException e) {
-            // TODO logger
-            System.err.println("Problems writing to storeFile '" + file + "'");
-            return false;
+            return;
         }
+        log.severe("Reused session store cannot be persisted to file, session reuse will not work");
     }
 }

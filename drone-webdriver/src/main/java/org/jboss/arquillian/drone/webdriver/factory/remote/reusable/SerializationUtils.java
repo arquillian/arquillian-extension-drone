@@ -59,6 +59,7 @@ public class SerializationUtils {
     /**
      * Takes byte array representing serialized object and constructs its object form
      *
+     * @param classType Type of the returned object
      * @param serializedObject byte array representing serialized object
      * @return deserialized object
      * @throws ClassNotFoundException Class of a serialized object cannot be found.
@@ -67,11 +68,11 @@ public class SerializationUtils {
      * @throws OptionalDataException Primitive data was found in the stream instead of objects.
      * @throws IOException Any of the usual Input/Output related exceptions.
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends Serializable> T deserializeFromBytes(byte[] serializedObject) throws IOException,
-            ClassNotFoundException {
+    public static <T extends Serializable> T deserializeFromBytes(Class<T> classType, byte[] serializedObject)
+            throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
         ObjectInputStream ois = new ObjectInputStream(bais);
-        return (T) ois.readObject();
+        return classType.cast(ois.readObject());
     }
+
 }

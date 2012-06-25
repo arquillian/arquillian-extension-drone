@@ -27,6 +27,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -37,13 +38,13 @@ import qualifier.Reusable;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
- * 
+ *
  * Uses standard settings of Selenium 2.0, that is RemoteWebDriver by default, but allows user to pass another driver specified
  * as a System property or in the Arquillian configuration.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
- * 
+ *
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
@@ -54,12 +55,18 @@ public class ReusableRemoteWebDriverTestCase {
 
     /**
      * Creates a WAR of a Weld based application using ShrinkWrap
-     * 
+     *
      * @return WebArchive to be tested
      */
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return Deployments.createDeployment();
+    }
+
+    @BeforeClass
+    public static void checkIfWebdriverHubIsRunning() {
+        Assert.assertTrue("Remote Reusable tests require Selenium Server to be running on port 4444, please start",
+                isSeleniumServerRunning());
     }
 
     @Test
