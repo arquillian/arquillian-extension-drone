@@ -35,6 +35,11 @@ public class ReusedSessionFileStore {
     public ReusedSessionStore loadStoreFromFile(File file) {
         try {
             byte[] readStore = readStore(file);
+
+            if (readStore == null) {
+                return null;
+            }
+
             ReusedSessionStore loadedSession = SerializationUtils.deserializeFromBytes(ReusedSessionStore.class, readStore);
             return loadedSession;
         } catch (InvalidClassException e) {

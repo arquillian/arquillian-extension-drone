@@ -18,6 +18,7 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,5 +64,18 @@ public class TestReusedSessionStoreImplSerialization {
                 tmpFile.delete();
             }
         }
+    }
+    
+    @Test
+    public void when_store_file_does_not_exists_then_null_is_returned() {
+        
+        // given
+        File nonExistent = new File("this-file-really-does-not-exists");  
+        
+        // when
+        ReusedSessionStore loadedStore = fileStore.loadStoreFromFile(nonExistent);
+        
+        // then
+        assertNull(loadedStore);
     }
 }
