@@ -16,39 +16,58 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.SessionId;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(MockitoJUnitRunner.class)
 public class TestReusedSessionStoreImpl {
 
-    @Mock
-    InitializationParameter mockKey1;
-    @Mock
-    InitializationParameter mockKey2;
+    InitializationParameter key1;
+    InitializationParameter key2;
 
-    @Mock
-    ReusedSession mockSession1;
-    @Mock
-    ReusedSession mockSession2;
+    ReusedSession session1;
+    ReusedSession session2;
+
+    @Before
+    public void initialize() {
+        URL url1;
+        URL url2;
+        try {
+            url1 = new URL("http://localhost:8080/1/");
+            url2 = new URL("http://localhost:8080/2/");
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
+        DesiredCapabilities capabilities1 = new DesiredCapabilities();
+        DesiredCapabilities capabilities2 = new DesiredCapabilities();
+        SessionId sessionId1 = new SessionId("1");
+        SessionId sessionId2 = new SessionId("2");
+
+        key1 = new InitializationParameter(url1, capabilities1);
+        key2 = new InitializationParameter(url2, capabilities2);
+        session1 = new ReusedSession(sessionId1, capabilities1);
+        session2 = new ReusedSession(sessionId2, capabilities2);
+    }
 
     @Test
     public void when_session_is_stored_then_it_can_be_pulled() {
         // given
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         // when
-        store.store(mockKey1, mockSession1);
-        ReusedSession pulled = store.pull(mockKey1);
+        store.store(key1, session1);
+        ReusedSession pulled = store.pull(key1);
         // then
-        assertSame(mockSession1, pulled);
+        assertEquals(session1, pulled);
     }
 
     @Test
@@ -56,10 +75,10 @@ public class TestReusedSessionStoreImpl {
         // given
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         // when
-        store.store(mockKey1, mockSession1);
-        store.pull(mockKey1);
+        store.store(key1, session1);
+        store.pull(key1);
         // then
-        assertNull(store.pull(mockKey1));
+        assertNull(store.pull(key1));
     }
 
     @Test
@@ -68,7 +87,7 @@ public class TestReusedSessionStoreImpl {
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         // when
         // then
-        assertNull(store.pull(mockKey1));
+        assertNull(store.pull(key1));
     }
 
     @Test
@@ -76,9 +95,9 @@ public class TestReusedSessionStoreImpl {
         // given
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         // when
-        store.store(mockKey1, mockSession1);
+        store.store(key1, session1);
         // then
-        assertNull(store.pull(mockKey2));
+        assertNull(store.pull(key2));
     }
 
     @Test
@@ -86,10 +105,10 @@ public class TestReusedSessionStoreImpl {
         // given
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         // when
-        store.store(mockKey1, mockSession1);
-        store.store(mockKey2, mockSession2);
+        store.store(key1, session1);
+        store.store(key2, session2);
         // then
-        assertSame(mockSession2, store.pull(mockKey2));
-        assertSame(mockSession1, store.pull(mockKey1));
+        assertEquals(session2, store.pull(key2));
+        assertEquals(session1, store.pull(key1));
     }
 }
