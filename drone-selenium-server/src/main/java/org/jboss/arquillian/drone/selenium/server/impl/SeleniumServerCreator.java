@@ -89,7 +89,7 @@ public class SeleniumServerCreator {
             SeleniumServer server = new SeleniumServer(configure(configuration));
             SystemEnvHolder sysEnv = new SystemEnvHolder();
             sysEnv.modifyEnvBy(configuration);
-            server.start();
+            server.boot();
             sysEnv.restore();
 
             seleniumServer.set(server);
