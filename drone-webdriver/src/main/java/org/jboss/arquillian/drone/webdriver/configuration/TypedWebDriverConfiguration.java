@@ -19,10 +19,10 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import java.util.Map.Entry;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -91,6 +91,8 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             return exists;
         }
     }
+
+    private static final Logger log = Logger.getLogger(TypedWebDriverConfiguration.class.getName());
 
     public static final String CONFIGURATION_NAME = "webdriver";
 
@@ -166,6 +168,9 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
     protected String browserCapabilities;
 
+    // ARQ-1022
+    protected String originalBrowserCapabilities;
+
     protected boolean remoteReusable;
 
     protected boolean remote;
@@ -174,7 +179,8 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         this.type = type;
         CapabilityMap capabilityMap = CapabilityMap.byWebDriverConfigurationType(type);
         if (capabilityMap != null) {
-            this.browserCapabilities = capabilityMap.getReadableName();
+            this.originalBrowserCapabilities = capabilityMap.getReadableName();
+            this.browserCapabilities = originalBrowserCapabilities;
         }
     }
 
@@ -188,6 +194,14 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     public TypedWebDriverConfiguration<T> configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
         ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
         ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+
+        // ARQ-1022, we need to check if we haven't overriden original browser capabilities in an incompatible way
+        if (originalBrowserCapabilities != null && !originalBrowserCapabilities.equals(this.browserCapabilities)) {
+            this.browserCapabilities = originalBrowserCapabilities;
+            log.log(Level.WARNING,
+                    "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, Arquillian configuration will be ignored.",
+                    new Object[] { browserCapabilities, originalBrowserCapabilities });
+        }
         return this;
     }
 
@@ -218,6 +232,10 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
             public String invoke() {
+                CapabilityMap capabilityMap = CapabilityMap.byWebDriverConfigurationType(type);
+                if (capabilityMap != null) {
+                    capabilityMap.getReadableName();
+                }
                 return TypedWebDriverConfiguration.this.browserCapabilities;
             }
         };
@@ -247,7 +265,8 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
                     merged = new DesiredCapabilities(capabilityMap.getCapabilities());
                 }
 
-                merged = new DesiredCapabilities(merged, new DesiredCapabilities(TypedWebDriverConfiguration.this.capabilityMap));
+                merged = new DesiredCapabilities(merged,
+                        new DesiredCapabilities(TypedWebDriverConfiguration.this.capabilityMap));
 
                 return merged;
             }

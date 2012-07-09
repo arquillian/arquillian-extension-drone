@@ -166,8 +166,9 @@ final class SecurityActions {
             return expectedType.cast(obj);
         } catch (final ClassCastException cce) {
             // Reconstruct so we get some useful information
-            throw new ClassCastException("Incorrect expected type, " + expectedType.getName() + ", defined for "
-                    + obj.getClass().getName());
+            throw new ClassCastException("Unable to instantiate " + expectedType.getName()
+                    + " instance. Constructed object was type of " + obj.getClass().getName()
+                    + ", which is not compatible. Please make sure you haven't misconfigured Arquillian Drone.");
         }
     }
 

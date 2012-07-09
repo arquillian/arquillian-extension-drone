@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,54 +19,48 @@ package org.jboss.arquillian.drone.webdriver.example;
 import java.net.URL;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import qualifier.MethodSpecific;
 
 /**
- * Tests Arquillian Selenium extension against Weld Login example.
- *
- * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
- * as a System property or in the Arquillian configuration.
+ * Test for non-remote driver with browserCapability properties specified in the configuration
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
- * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
-public abstract class AbstractWebDriver {
+@RunWith(Arquillian.class)
+public class MethodSpecificDriverTestCase {
 
-    protected static final String USERNAME = "demo";
-    protected static final String PASSWORD = "demo";
-
-    @ArquillianResource
-    URL contextPath;
-
-    /**
-     * Creates a WAR of a Weld based application using ShrinkWrap
-     *
-     * @return WebArchive to be tested
-     */
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return Deployments.createDeployment();
     }
 
+    @ArquillianResource
+    URL contextPath;
+
     @Test
     @InSequence(1)
-    public void login() {
-        LoginPage page = new LoginPage(driver(), contextPath);
-        page.login(USERNAME, PASSWORD);
+    public void simpleWebdriverTest(@Drone @MethodSpecific FirefoxDriver webdriver) {
+        LoginPage page = new LoginPage(webdriver, contextPath);
+        page.login("demo", "demo");
+        page.logout();
     }
 
     @Test
     @InSequence(2)
-    public void logout() {
-        LoginPage page = new LoginPage(driver(), contextPath);
+    public void simpleWebdriverChromeTest(@Drone @MethodSpecific ChromeDriver webdriver) {
+        LoginPage page = new LoginPage(webdriver, contextPath);
+        page.login("demo", "demo");
         page.logout();
     }
-
-    protected abstract WebDriver driver();
-
 }
