@@ -197,10 +197,10 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
 
         // ARQ-1022, we need to check if we haven't overriden original browser capabilities in an incompatible way
         if (originalBrowserCapabilities != null && !originalBrowserCapabilities.equals(this.browserCapabilities)) {
-            this.browserCapabilities = originalBrowserCapabilities;
             log.log(Level.WARNING,
                     "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, Arquillian configuration will be ignored.",
                     new Object[] { browserCapabilities, originalBrowserCapabilities });
+            this.browserCapabilities = originalBrowserCapabilities;
         }
         return this;
     }
