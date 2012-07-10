@@ -105,7 +105,7 @@ enum CapabilityMap {
         }
 
     },
-    INTERNET_EXPLORER {
+    INTERNETEXPLORER {
 
         @Override
         public String getImplementationClass() {

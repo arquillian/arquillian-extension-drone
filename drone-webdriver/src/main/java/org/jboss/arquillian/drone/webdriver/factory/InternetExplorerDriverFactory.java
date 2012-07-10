@@ -26,8 +26,8 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.InternetExplorerDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -79,7 +79,7 @@ public class InternetExplorerDriverFactory implements
         // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
             return SecurityActions.newInstance(configuration.getImplementationClass(),
-                    new Class<?>[] { DesiredCapabilities.class }, new Object[] { configuration.getCapabilities() },
+                    new Class<?>[] { Capabilities.class }, new Object[] { configuration.getCapabilities() },
                     InternetExplorerDriver.class);
         }
         // port specified, we cannot use capabilities
