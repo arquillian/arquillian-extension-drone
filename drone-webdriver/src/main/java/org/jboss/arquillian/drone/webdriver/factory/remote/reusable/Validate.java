@@ -74,7 +74,7 @@ class Validate {
             return false;
         }
 
-        if (!file.exists() || !file.canWrite()) {
+        if (file.exists() && !file.canWrite()) {
             return false;
         }
 
