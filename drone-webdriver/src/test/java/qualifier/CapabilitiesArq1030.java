@@ -1,4 +1,4 @@
-package org.jboss.arquillian.drone.webdriver.example;
+package qualifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,6 +10,6 @@ import org.jboss.arquillian.drone.api.annotation.Qualifier;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Qualifier
-public @interface LegacyConfiguration {
+public @interface CapabilitiesArq1030 {
 
 }

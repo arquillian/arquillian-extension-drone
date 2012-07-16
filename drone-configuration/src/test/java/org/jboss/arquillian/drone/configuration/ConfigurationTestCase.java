@@ -106,10 +106,34 @@ public class ConfigurationTestCase {
                 Default.class);
 
         Assert.assertNotNull("Map was created", configuration.getMapMap());
-        Assert.assertEquals("Map has two entries", 3, configuration.getMapMap().size());
+        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
 
         Assert.assertEquals("Map entry was mapped", "the-bar", configuration.getMapMap().get("foo"));
         Assert.assertEquals("Map entry was mapped", "the-bar-bar", configuration.getMapMap().get("foo.bar"));
+    }
+
+    @Test
+    public void mapFromArquillianDescriptorAndSystemPropertiesTest() {
+
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("intField", "12345").property("stringField", "The descriptor string")
+                .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar");
+
+        System.clearProperty("arquillian.mockdrone.map.foo");
+        System.clearProperty("arquillian.mockdrone.map.foo.bar");
+        System.clearProperty("arquillian.mockdrone.map.whatever");
+        System.setProperty("arquillian.mockdrone.map.combined.together", "descriptor&properties");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Default.class);
+        ConfigurationMapper.fromSystemConfiguration(configuration, Default.class);
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
+
+        Assert.assertEquals("Map entry was mapped", "bar", configuration.getMapMap().get("foo"));
+        Assert.assertEquals("Map entry was mapped", "barbar", configuration.getMapMap().get("foo.bar"));
+        Assert.assertEquals("Map entry was mapped", "descriptor&properties", configuration.getMapMap().get("combined.together"));
     }
 
     private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,

@@ -50,4 +50,10 @@
         <property name="chromeSwitches">--user-data-dir=/tmp</property>
     </extension>
 
+    <!-- ARQ-1030 -->
+    <extension qualifier="webdriver-capabilitiesarq1030">
+        <property name="browserCapabilities">firefox</property>        
+        <property name="capabilityWebdriverFirefoxProfile">selenium</property>
+    </extension>
+
 </arquillian>

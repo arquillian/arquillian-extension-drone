@@ -99,6 +99,7 @@ public class ConfigurationMapper {
      * @param configuration Configuration object
      * @return Configured configuration of given type
      */
+    @SuppressWarnings("unchecked")
     static <T extends DroneConfiguration<T>> T mapFromNameValuePairs(T configuration, Map<String, String> nameValuePairs) {
         Map<String, Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
 
@@ -136,7 +137,14 @@ public class ConfigurationMapper {
                         log.log(Level.WARNING, "The property \"{0}\" used Arquillian \"{1}\" configuration is deprecated.",
                                 new Object[] { f.getName(), configuration.getConfigurationName() });
                     }
-                    f.set(configuration, map);
+                    // ARQ-1030 We need to simply put entries to existing map, if there is already something in the map
+                    // otherwise, will set a map
+                    if (f.get(configuration) != null) {
+                        ((Map<String, String>) f.get(configuration)).putAll(map);
+                    } else {
+                        f.set(configuration, map);
+                    }
+
                 } catch (Exception e) {
                     throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
                             + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
