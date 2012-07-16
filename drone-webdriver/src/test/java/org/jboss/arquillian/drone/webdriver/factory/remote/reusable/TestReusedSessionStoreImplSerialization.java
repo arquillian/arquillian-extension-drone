@@ -36,26 +36,28 @@ import org.openqa.selenium.remote.SessionId;
 @RunWith(MockitoJUnitRunner.class)
 public class TestReusedSessionStoreImplSerialization {
 
-    ReusedSessionFileStore fileStore = new ReusedSessionFileStore();
+    ReusedSessionPernamentFileStorage fileStore;
 
     @Test
     public void when_store_is_serialized_to_file_then_it_can_be_deserialized_and_reused() throws IOException {
 
         // given
+        File tmpFile = File.createTempFile("drone-webdriver-session-store", "");
+        System.setProperty(ReusedSessionPernamentFileStorage.FILE_STORE_PROPERTY, tmpFile.getAbsolutePath());
+
+        fileStore = new ReusedSessionPernamentFileStorage();
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         URL url = new URL("http://localhost/");
         InitializationParameter key = new InitializationParameter(url, DesiredCapabilities.firefox());
         ReusedSession session = new ReusedSession(new SessionId("opaqueKey"), DesiredCapabilities.firefox());
-        File tmpFile = null;
 
         try {
             // when
-            tmpFile = File.createTempFile("graphene-filestore-test", ".ser");
             store.store(key, session);
-            fileStore.writeStoreToFile(tmpFile, store);
+            fileStore.writeStore(store);
 
             // then
-            ReusedSessionStore restoredStore = fileStore.loadStoreFromFile(tmpFile);
+            ReusedSessionStore restoredStore = fileStore.loadStore();
             assertNotNull(restoredStore);
             ReusedSession restoredSession = restoredStore.pull(key);
             assertEquals(session, restoredSession);
@@ -65,16 +67,18 @@ public class TestReusedSessionStoreImplSerialization {
             }
         }
     }
-    
+
     @Test
     public void when_store_file_does_not_exists_then_null_is_returned() {
-        
+
         // given
-        File nonExistent = new File("this-file-really-does-not-exists");  
-        
+        File nonExistent = new File("this-file-really-does-not-exists");
+        System.setProperty(ReusedSessionPernamentFileStorage.FILE_STORE_PROPERTY, nonExistent.getAbsolutePath());
+        fileStore = new ReusedSessionPernamentFileStorage();
+
         // when
-        ReusedSessionStore loadedStore = fileStore.loadStoreFromFile(nonExistent);
-        
+        ReusedSessionStore loadedStore = fileStore.loadStore();
+
         // then
         assertNull(loadedStore);
     }

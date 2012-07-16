@@ -16,23 +16,23 @@
         <!-- HtmlUnitDriver only -->
         <property name="useJavaScript">true</property>
         <!-- ChromeDriver only -->
-        <property name="chromeBinary">/opt/google/chrome/chrome</property>
+        <property name="browserCapabilities">chrome</property>
+        <property name="capabilitiesWebdriverChromeDriver">>/opt/google/chrome/chromedriver</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-        <property name="chromeSwitches">--user-data-dir=/tmp</property>
-        <!-- RemoteReusable is configured for RemoteWebDriverTest only -->
-        <property name="remoteReusable">false</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
     <extension qualifier="webdriver-port4444">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
     <extension qualifier="webdriver-reusable">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remoteReusable">true</property>
-        <property name="browserCapabilities">firefox</property>
+        <property name="browserCapabilities">chrome</property>
+        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
     <!-- test with old configuration -->

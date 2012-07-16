@@ -131,7 +131,7 @@ public class RemoteWebDriverFactory implements
         return configuration;
     }
 
-    private RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {
+    protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {
         return new RemoteWebDriver(remoteAddress, desiredCapabilities);
     }
 

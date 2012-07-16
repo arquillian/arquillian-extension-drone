@@ -17,23 +17,43 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * @author Lukas Fryc
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestReusedSessionStore extends AbstractTestTestBase {
+
+    @Mock
+    private ServiceLoader serviceLoader;
+
+    @Mock
+    private ReusedSessionPernamentStorage pernamentStorage;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ReusableRemoteWebDriverExtension.class);
+    }
+
+    @Before
+    public void before() {
+        when(serviceLoader.onlyOne(ReusedSessionPernamentStorage.class)).thenReturn(pernamentStorage);
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
     }
 
     @Inject
