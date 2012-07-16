@@ -141,15 +141,20 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // pulls non-reusable session from store, so creates new session
         RemoteWebDriver webdriver2 = factory2.createInstance(configuration);
         // quit newly created session
+        factory2.destroyInstance(webdriver2);
         webdriver2.quit();
         // persists available sessions (none should be available)
-        persistEvent.fire(new PersistReusedSessionsEvent());
+        //persistEvent.fire(new PersistReusedSessionsEvent());
 
         // new suite
         fire(new BeforeSuite());
-        // pulls session - should be empty - it was cleared by last createInstance(...) call
+        // pulls session - should *NOT* be empty
         ReusedSession reusedSession = sessionStore.get().pull(initializationParameter);
+        assertNotNull("reusedSession must be stored", reusedSession);
+        // pulls session - should be empty - it was cleared by last pull
+        reusedSession = sessionStore.get().pull(initializationParameter);
         assertNull("reusedSession must not be stored", reusedSession);
+
     }
 
     public static class MockReusedSessionPernamentStorage implements ReusedSessionPernamentStorage {
