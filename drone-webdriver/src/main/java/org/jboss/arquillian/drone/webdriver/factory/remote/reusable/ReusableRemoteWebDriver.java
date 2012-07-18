@@ -96,7 +96,7 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
         try {
             this.getCurrentUrl();
         } catch (WebDriverException e) {
-            throw new UnableReuseSessionException();
+            throw new UnableReuseSessionException(e);
         }
     }
 

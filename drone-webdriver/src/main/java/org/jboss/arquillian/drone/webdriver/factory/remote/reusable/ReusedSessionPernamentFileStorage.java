@@ -29,12 +29,27 @@ import org.apache.commons.io.FileUtils;
  *
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
-public class ReusedSessionFileStore {
-    private static final Logger log = Logger.getLogger(ReusedSessionFileStore.class.getName());
+public class ReusedSessionPernamentFileStorage implements ReusedSessionPernamentStorage {
 
-    public ReusedSessionStore loadStoreFromFile(File file) {
+    private static final Logger log = Logger.getLogger(ReusedSessionPernamentFileStorage.class.getName());
+
+    public static String FILE_STORE_PROPERTY = "drone.webdriver.session.store";
+    public static File DEFAULT_FILE = new File(System.getProperty("user.home"), ".drone-webdriver-session-store");
+
+    private final File pernamentFile;
+
+    {
+        String storeFileProperty = System.getProperty(FILE_STORE_PROPERTY);
+        if (storeFileProperty != null) {
+            pernamentFile = new File(storeFileProperty);
+        } else {
+            pernamentFile = DEFAULT_FILE;
+        }
+    }
+
+    public ReusedSessionStore loadStore() {
         try {
-            byte[] readStore = readStore(file);
+            byte[] readStore = readStore(pernamentFile);
 
             if (readStore == null) {
                 return null;
@@ -45,28 +60,27 @@ public class ReusedSessionFileStore {
         } catch (InvalidClassException e) {
             log.log(Level.WARNING,
                     "Unable to get reused session store from file storage, likely it is due to its internal format change. "
-                            + "Drone will remove file " + file + " with recent implementation. Cause: ", e);
+                            + "Drone will remove file " + pernamentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (ClassNotFoundException e) {
-            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file " + file
-                    + " with recent implementation. Cause: ", e);
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file "
+                    + pernamentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (IOException e) {
-            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file " + file
-                    + " with recent implementation. Cause: ", e);
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file "
+                    + pernamentFile + " with recent implementation. Cause: ", e);
             return null;
         }
     }
 
-    public void writeStoreToFile(File file, ReusedSessionStore store) {
+    public void writeStore(ReusedSessionStore store) {
         try {
             byte[] serialized = SerializationUtils.serializeToBytes(store);
-            writeStore(file, serialized);
+            writeStore(pernamentFile, serialized);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Unable to persist reused session store, session reuse will not work", e);
 
         }
-
     }
 
     private byte[] readStore(File file) throws IOException {

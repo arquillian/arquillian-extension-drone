@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
-import java.io.File;
-
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
@@ -28,8 +29,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
 public class ReusableRemoteWebDriverExtension {
-
-    public static final File DEFAULT_FILE = new File(System.getProperty("user.home"), ".drone-driver-session-store");
 
     @Inject
     @SuiteScoped
@@ -39,10 +38,25 @@ public class ReusableRemoteWebDriverExtension {
     @SuiteScoped
     private InstanceProducer<InitializationParametersMap> initParamsMapInstance;
 
-    private ReusedSessionFileStore fileStore = new ReusedSessionFileStore();
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ReusedSessionPernamentStorage> pernamentStorage;
 
-    public void initializeStore(@Observes BeforeSuite event) {
-        ReusedSessionStore store = fileStore.loadStoreFromFile(DEFAULT_FILE);
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
+    public void initialize(@Observes BeforeSuite event) {
+        initializePernamentStorage();
+        initializeStore();
+    }
+
+    private void initializePernamentStorage() {
+        ReusedSessionPernamentStorage instance = serviceLoader.get().onlyOne(ReusedSessionPernamentStorage.class);
+        pernamentStorage.set(instance);
+    }
+
+    private void initializeStore() {
+        ReusedSessionStore store = pernamentStorage.get().loadStore();
         if (store == null) {
             store = new ReusedSessionStoreImpl();
         }
@@ -52,6 +66,6 @@ public class ReusableRemoteWebDriverExtension {
     }
 
     public void persistStore(@Observes PersistReusedSessionsEvent event) {
-        fileStore.writeStoreToFile(DEFAULT_FILE, storeInstance.get());
+        pernamentStorage.get().writeStore(storeInstance.get());
     }
 }

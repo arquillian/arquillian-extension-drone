@@ -30,6 +30,8 @@ import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverExtension;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentFileStorage;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentStorage;
 
 /**
  * Arquillian Drone support for WebDriver
@@ -77,5 +79,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(Destructor.class, RemoteWebDriverFactory.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
+        builder.service(ReusedSessionPernamentStorage.class, ReusedSessionPernamentFileStorage.class);
     }
 }
