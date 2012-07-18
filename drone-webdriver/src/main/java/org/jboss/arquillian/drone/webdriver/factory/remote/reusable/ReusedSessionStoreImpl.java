@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -45,27 +46,40 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     private static final int SESSION_VALID_IN_SECONDS = 3600 * 48;
 
     // represents a "raw" list of reused sessions, storing sessions with timeout information
+    // we cannot use Deque, since it is 1.6+
     private Map<ByteArray, LinkedList<ByteArray>> rawStore;
-
-    // represents a list of sessions available at the moment
-    // this list is not serialized, however it is constructed for available data in the storage
-    private transient Map<InitializationParameter, LinkedList<RawDisposableReusedSession>> store;
 
     public ReusedSessionStoreImpl() {
         this.rawStore = new HashMap<ByteArray, LinkedList<ByteArray>>();
-        this.store = new HashMap<InitializationParameter, LinkedList<RawDisposableReusedSession>>();
     }
 
     @Override
     public ReusedSession pull(InitializationParameter key) {
         synchronized (rawStore) {
-            LinkedList<RawDisposableReusedSession> list = store.get(key);
-            if (list == null || list.isEmpty()) {
+
+            LinkedList<ByteArray> queue = null;
+            // find key
+            for (Entry<ByteArray, LinkedList<ByteArray>> entry : rawStore.entrySet()) {
+                InitializationParameter candidate = entry.getKey().as(InitializationParameter.class);
+                if (candidate != null && candidate.equals(key)) {
+                    queue = entry.getValue();
+                    break;
+                }
+            }
+
+            // there is no such queue
+            if (queue == null || queue.isEmpty()) {
                 return null;
             }
 
-            // get session and remove it from raw data
-            RawDisposableReusedSession disposableSession = list.removeLast();
+            // map the view to available queues
+            LinkedList<RawDisposableReusedSession> sessions = getValidSessions(queue);
+            if (sessions == null || sessions.isEmpty()) {
+                return null;
+            }
+
+            // get session and dispose it
+            RawDisposableReusedSession disposableSession = sessions.getLast();
             disposableSession.dispose();
 
             return disposableSession.getSession();
@@ -98,48 +112,30 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             TimeStampedSession timeStampedSession = new TimeStampedSession(rawSession);
             rawList.add(ByteArray.fromObject(timeStampedSession));
 
-            // regenerate view so session view will have the same content as raw one
-            regenerateView();
         }
     }
 
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        // read object content
-        ois.defaultReadObject();
-        // regenerate view
-        regenerateView();
-    }
+    private LinkedList<RawDisposableReusedSession> getValidSessions(LinkedList<ByteArray> rawQueue) {
 
-    private void regenerateView() {
-        // construct a view of valid ReusedSessions for current version of Drone
-        Map<InitializationParameter, LinkedList<RawDisposableReusedSession>> newStore = new HashMap<InitializationParameter, LinkedList<RawDisposableReusedSession>>();
-        for (Map.Entry<ByteArray, LinkedList<ByteArray>> entry : rawStore.entrySet()) {
-            InitializationParameter initializationParam = entry.getKey().as(InitializationParameter.class);
+        if (rawQueue == null || rawQueue.size() == 0) {
+            return null;
+        }
 
-            // if not null, check what reused sessions are inside
-            if (initializationParam != null) {
-                LinkedList<RawDisposableReusedSession> sessions = new LinkedList<RawDisposableReusedSession>();
-                LinkedList<ByteArray> rawSessions = entry.getValue();
-                if (rawSessions != null) {
-                    Iterator<ByteArray> byteArrayIterator = entry.getValue().iterator();
-                    while (byteArrayIterator.hasNext()) {
-                        TimeStampedSession session = byteArrayIterator.next().as(TimeStampedSession.class);
-                        // add session if valid and it can be deserialized
-                        ReusedSession reusedSession = session.getSession();
-                        if (session.isValid(SESSION_VALID_IN_SECONDS) && reusedSession != null) {
-                            sessions.add(new RawDisposableReusedSession(session.getRawSession(), rawSessions, reusedSession));
-                        }
-                        // remove completely if session is not valid
-                        else if (!session.isValid(SESSION_VALID_IN_SECONDS)) {
-                            byteArrayIterator.remove();
-                        }
-                    }
-                    // add a queue of sessions into available sessions list
-                    newStore.put(initializationParam, sessions);
-                }
+        LinkedList<RawDisposableReusedSession> sessions = new LinkedList<RawDisposableReusedSession>();
+        Iterator<ByteArray> byteArrayIterator = rawQueue.iterator();
+        while (byteArrayIterator.hasNext()) {
+            TimeStampedSession session = byteArrayIterator.next().as(TimeStampedSession.class);
+            // add session if valid and it can be deserialized
+            ReusedSession reusedSession = session.getSession();
+            if (session.isValid(SESSION_VALID_IN_SECONDS) && reusedSession != null) {
+                sessions.add(new RawDisposableReusedSession(session.getRawSession(), rawQueue, reusedSession));
+            }
+            // remove completely if session is not valid
+            else if (!session.isValid(SESSION_VALID_IN_SECONDS)) {
+                byteArrayIterator.remove();
             }
         }
-        this.store = newStore;
+        return sessions;
     }
 
     /**
@@ -162,7 +158,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
                 bytes.raw = SerializationUtils.serializeToBytes(object);
                 return bytes;
             } catch (IOException e) {
-                log.warning("Unable to serializable object of " + object.getClass() + " due to " + e.getMessage());
+                log.log(Level.FINE, "Unable to deserialize object of " + object.getClass().getName(), e);
             }
             return null;
         }
@@ -171,9 +167,11 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             try {
                 return SerializationUtils.deserializeFromBytes(classType, raw);
             } catch (ClassNotFoundException e) {
-                log.warning("Unable to deserialize object of " + classType.getName() + " due to " + e.getMessage());
+                log.log(Level.FINE, "Unable to deserialize object of " + classType.getName(), e);
             } catch (IOException e) {
-                log.warning("Unable to deserialize object of " + classType.getName() + " due to " + e.getMessage());
+                log.log(Level.FINE, "Unable to deserialize object of " + classType.getName(), e);
+            } catch (ClassCastException e) {
+                log.log(Level.FINE, "Unable to deserialize object of " + classType.getName(), e);
             }
 
             return null;
@@ -296,8 +294,17 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
         public void dispose() {
             synchronized (parentList) {
                 Iterator<ByteArray> iterator = parentList.iterator();
+                ReusedSession wrappedKey = key.as(ReusedSession.class);
+                if (wrappedKey == null) {
+                    throw new IllegalStateException(
+                            "Could not dispose a session from the storage, current session cannot be deserialized.");
+                }
+
+                // find appropriate object from parentList to be removed
                 while (iterator.hasNext()) {
-                    if (key.equals(iterator.next())) {
+                    TimeStampedSession candidate = iterator.next().as(TimeStampedSession.class);
+                    // check if both point to the same session
+                    if (candidate != null && candidate.getSession() != null && candidate.getSession().equals(wrappedKey)) {
                         iterator.remove();
                     }
                 }

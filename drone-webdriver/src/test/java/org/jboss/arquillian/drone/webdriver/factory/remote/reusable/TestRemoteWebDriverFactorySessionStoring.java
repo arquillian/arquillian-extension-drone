@@ -61,7 +61,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     @Inject
     Event<PersistReusedSessionsEvent> persistEvent;
 
-    private Capabilities desiredCapabilities = DesiredCapabilities.chrome();
+    private Capabilities desiredCapabilities = DesiredCapabilities.firefox();
     private URL hubUrl;
     private MockReusedSessionPernamentStorage pernamentStorage;
     private InitializationParameter initializationParameter;
@@ -144,7 +144,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         factory2.destroyInstance(webdriver2);
         webdriver2.quit();
         // persists available sessions (none should be available)
-        //persistEvent.fire(new PersistReusedSessionsEvent());
+        // persistEvent.fire(new PersistReusedSessionsEvent());
 
         // new suite
         fire(new BeforeSuite());
