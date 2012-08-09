@@ -252,8 +252,7 @@ public class ConfigurationMapper {
     /**
      * Maps a field name to a property.
      *
-     * Replaces camel case with a dot ('.') and lower case character, replaces other non digit and non letter characters with a
-     * dot (').
+     * Replaces camel case with a dot ('.') and lower case character, all non digit and non letter characters are preserved.
      *
      * @param fieldName The name of field
      * @return Corresponding property name
@@ -265,8 +264,6 @@ public class ConfigurationMapper {
             char c = fieldName.charAt(i);
             if (Character.isUpperCase(c)) {
                 sb.append('.').append(Character.toLowerCase(c));
-            } else if (!Character.isLetterOrDigit(c)) {
-                sb.append('.');
             } else {
                 sb.append(c);
             }

@@ -41,28 +41,40 @@ public class ConfigurationTestCase {
 
     @Test
     public void systemPropertyTest() {
-        System.setProperty("arquillian.mockdrone.int.field", "54321");
-        System.setProperty("arquillian.mockdrone.string.field", "The property string");
-        System.setProperty("arquillian.mockdrone.boolean.field", "false");
+        try {
+            System.setProperty("arquillian.mockdrone.int.field", "54321");
+            System.setProperty("arquillian.mockdrone.string.field", "The property string");
+            System.setProperty("arquillian.mockdrone.boolean.field", "false");
 
-        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                Default.class);
+            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                    Default.class);
 
-        validateConfiguration(configuration, 54321, false, "The property string");
+            validateConfiguration(configuration, 54321, false, "The property string");
+        } finally {
+            System.clearProperty("arquillian.mockdrone.int.field");
+            System.clearProperty("arquillian.mockdrone.string.field");
+            System.clearProperty("arquillian.mockdrone.boolean.field");
+        }
     }
 
     @Test
     public void qualifierSystemPropertyTest() {
-        System.setProperty("arquillian.mockdrone.int.field", "54321");
-        System.setProperty("arquillian.mockdrone.string.field", "The property string");
-        System.setProperty("arquillian.mockdrone.boolean.field", "false");
+        try {
+            System.setProperty("arquillian.mockdrone.int.field", "54321");
+            System.setProperty("arquillian.mockdrone.string.field", "The property string");
+            System.setProperty("arquillian.mockdrone.boolean.field", "false");
 
-        System.setProperty("arquillian.mockdrone.differentmock.string.field", "The mock property field");
+            System.setProperty("arquillian.mockdrone.differentmock.string.field", "The mock property field");
 
-        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                DifferentMock.class);
+            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                    DifferentMock.class);
 
-        validateConfiguration(configuration, 0, false, "The mock property field");
+            validateConfiguration(configuration, 0, false, "The mock property field");
+        } finally {
+            System.clearProperty("arquillian.mockdrone.int.field");
+            System.clearProperty("arquillian.mockdrone.string.field");
+            System.clearProperty("arquillian.mockdrone.boolean.field");
+        }
     }
 
     @Test
@@ -97,43 +109,53 @@ public class ConfigurationTestCase {
 
     @Test
     public void mapFromSystemPropertiesTest() {
+        try {
+            System.setProperty("arquillian.mockdrone.map.foo", "the-bar");
+            System.setProperty("arquillian.mockdrone.map.foo.bar", "the-bar-bar");
+            System.setProperty("arquillian.mockdrone.map.foo_bar", "the-bar-bar-bar");
+            System.setProperty("arquillian.mockdrone.map.whatever", "the-bar-bar");
 
-        System.setProperty("arquillian.mockdrone.map.foo", "the-bar");
-        System.setProperty("arquillian.mockdrone.map.foo.bar", "the-bar-bar");
-        System.setProperty("arquillian.mockdrone.map.whatever", "the-bar-bar");
+            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                    Default.class);
 
-        MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                Default.class);
+            Assert.assertNotNull("Map was created", configuration.getMapMap());
 
-        Assert.assertNotNull("Map was created", configuration.getMapMap());
-        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
+            Assert.assertEquals("Map havs 4 entries", 4, configuration.getMapMap().size());
 
-        Assert.assertEquals("Map entry was mapped", "the-bar", configuration.getMapMap().get("foo"));
-        Assert.assertEquals("Map entry was mapped", "the-bar-bar", configuration.getMapMap().get("foo.bar"));
+            Assert.assertEquals("Map entry was mapped", "the-bar", configuration.getMapMap().get("foo"));
+            Assert.assertEquals("Map entry was mapped", "the-bar-bar", configuration.getMapMap().get("foo.bar"));
+            Assert.assertEquals("Map entry was mapped", "the-bar-bar-bar", configuration.getMapMap().get("foo_bar"));
+        } finally {
+            System.clearProperty("arquillian.mockdrone.map.foo");
+            System.clearProperty("arquillian.mockdrone.map.foo.bar");
+            System.clearProperty("arquillian.mockdrone.map.foo_bar");
+            System.clearProperty("arquillian.mockdrone.map.whatever");
+        }
     }
 
     @Test
     public void mapFromArquillianDescriptorAndSystemPropertiesTest() {
+        try {
+            ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                    .property("intField", "12345").property("stringField", "The descriptor string")
+                    .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar");
 
-        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("intField", "12345").property("stringField", "The descriptor string")
-                .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar");
+            System.setProperty("arquillian.mockdrone.map.combined.together", "descriptor&properties");
 
-        System.clearProperty("arquillian.mockdrone.map.foo");
-        System.clearProperty("arquillian.mockdrone.map.foo.bar");
-        System.clearProperty("arquillian.mockdrone.map.whatever");
-        System.setProperty("arquillian.mockdrone.map.combined.together", "descriptor&properties");
+            MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                    new MockDroneConfiguration(), Default.class);
+            ConfigurationMapper.fromSystemConfiguration(configuration, Default.class);
 
-        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                new MockDroneConfiguration(), Default.class);
-        ConfigurationMapper.fromSystemConfiguration(configuration, Default.class);
+            Assert.assertNotNull("Map was created", configuration.getMapMap());
 
-        Assert.assertNotNull("Map was created", configuration.getMapMap());
-        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
+            Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
 
-        Assert.assertEquals("Map entry was mapped", "bar", configuration.getMapMap().get("foo"));
-        Assert.assertEquals("Map entry was mapped", "barbar", configuration.getMapMap().get("foo.bar"));
-        Assert.assertEquals("Map entry was mapped", "descriptor&properties", configuration.getMapMap().get("combined.together"));
+            Assert.assertEquals("Map entry was mapped", "bar", configuration.getMapMap().get("foo"));
+            Assert.assertEquals("Map entry was mapped", "barbar", configuration.getMapMap().get("foo.bar"));
+            Assert.assertEquals("Map entry was mapped", "descriptor&properties", configuration.getMapMap().get("combined.together"));
+        } finally {
+            System.clearProperty("arquillian.mockdrone.map.combined.together");
+        }
     }
 
     private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,
