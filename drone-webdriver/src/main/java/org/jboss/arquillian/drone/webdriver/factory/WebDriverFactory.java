@@ -97,8 +97,8 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
         Instantiator instantiator;
         String implementationClassName = null;
 
-        // get remote-reusable instantiator
-        if (configuration.isRemoteReusable()) {
+        // get remote or remote-reusable instantiator
+        if (configuration.isRemoteReusable() || configuration.isRemote()) {
             instantiator = getRemoteWebDriverInstantiator();
         }
         // get real implementation class name based on capabilitiesBrowser and

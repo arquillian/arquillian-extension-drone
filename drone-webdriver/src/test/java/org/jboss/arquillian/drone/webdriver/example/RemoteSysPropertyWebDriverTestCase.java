@@ -16,15 +16,16 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import qualifier.Port4444;
+import qualifier.Arq1047;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -38,11 +39,12 @@ import qualifier.Port4444;
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class RemoteWebDriverTestCase extends AbstractWebDriver {
+public class RemoteSysPropertyWebDriverTestCase extends AbstractWebDriver {
 
-    @Drone @Port4444
-    RemoteWebDriver driver;
-
+    // we set up RemoveWebDriver via system property configuration
+    @Drone
+    @Arq1047
+    WebDriver driver;
 
     @BeforeClass
     public static void checkIfWebdriverHubIsRunning() {
@@ -58,6 +60,7 @@ public class RemoteWebDriverTestCase extends AbstractWebDriver {
      */
     @Override
     protected WebDriver driver() {
+        Assert.assertTrue("Remote driver was spawn instead of webdriver", driver instanceof RemoteWebDriver);
         return driver;
     }
 }

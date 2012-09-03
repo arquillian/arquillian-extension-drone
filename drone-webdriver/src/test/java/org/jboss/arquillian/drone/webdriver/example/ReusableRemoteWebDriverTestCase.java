@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
@@ -65,8 +61,9 @@ public class ReusableRemoteWebDriverTestCase {
 
     @BeforeClass
     public static void checkIfWebdriverHubIsRunning() {
-        Assert.assertTrue("Remote Reusable tests require Selenium Server to be running on port 4444, please start",
-                isSeleniumServerRunning());
+        Assert.assertTrue(
+                "Remote Reusable tests require Selenium Server to be running on port 4444, please start it manually before running the tests.",
+                SeleniumHubChecker.isSeleniumHubRunning());
     }
 
     @Test
@@ -105,43 +102,6 @@ public class ReusableRemoteWebDriverTestCase {
     @InSequence(5)
     public void testNonReusableSession1(@Drone WebDriver d) {
         Assert.assertFalse("Drone instance is not reusable", d instanceof ReusableRemoteWebDriver);
-    }
-
-    /**
-     * Tries to open a service on default port used by Selenium Server (:4444)
-     */
-    public static boolean isSeleniumServerRunning() {
-        return !isPortAvailable(4444);
-    }
-
-    /**
-     * @author The Apache Directory Project (mina-dev@directory.apache.org)
-     */
-    static boolean isPortAvailable(int port) {
-
-        ServerSocket ss = null;
-        DatagramSocket ds = null;
-        try {
-            ss = new ServerSocket(port);
-            ss.setReuseAddress(true);
-            ds = new DatagramSocket(port);
-            ds.setReuseAddress(true);
-            return true;
-        } catch (IOException e) {
-            // do nothing
-        } finally {
-            if (ds != null) {
-                ds.close();
-            }
-            if (ss != null) {
-                try {
-                    ss.close();
-                } catch (IOException e) {
-                    /* should not be thrown */
-                }
-            }
-        }
-        return false;
     }
 
 }
