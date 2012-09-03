@@ -76,7 +76,7 @@ public class DefaultSeleniumTestCase {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
 
-        boolean isRunningOnAS7 = System.getProperty("jbossHome", "target/jboss-as-7.0.2.Final").contains("7.0.2.Final");
+        boolean isRunningOnAS7 = System.getProperty("jbossHome", "target/jboss-as-7.1.1.Final").contains("7.1.1.Final");
 
         WebArchive war = ShrinkWrap
                 .create(WebArchive.class, "weld-login.war")

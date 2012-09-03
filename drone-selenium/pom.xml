@@ -261,7 +261,7 @@
 
             <properties>
                 <!-- versioning -->
-                <version.org.jboss.jbossas>7.0.2.Final</version.org.jboss.jbossas>
+                <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
             </properties>
 
             <dependencies>
