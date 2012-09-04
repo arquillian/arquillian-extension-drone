@@ -17,7 +17,7 @@
         <property name="useJavaScript">true</property>
         <!-- ChromeDriver only -->
         <property name="browserCapabilities">chrome</property>
-        <property name="capabilitiesWebdriverChromeDriver">/opt/google/chrome/chromedriver</property>
+        <property name="chrome.binary">/opt/google/chrome/chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
@@ -60,7 +60,7 @@
     <!-- ARQ-1030 -->
     <extension qualifier="webdriver-capabilitiesarq1030">
         <property name="browserCapabilities">firefox</property>
-        <property name="capabilityWebdriverFirefoxProfile">selenium</property>
+        <property name="webdriver.firefox.profile">selenium</property>
     </extension>
 
 </arquillian>
