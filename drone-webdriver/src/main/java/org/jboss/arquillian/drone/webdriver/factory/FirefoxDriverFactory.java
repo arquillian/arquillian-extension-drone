@@ -16,10 +16,7 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.File;
 import java.lang.annotation.Annotation;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -29,7 +26,6 @@ import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfigura
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -42,8 +38,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class FirefoxDriverFactory implements
         Configurator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>,
         Instantiator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>, Destructor<FirefoxDriver> {
-
-    private static final Logger log = Logger.getLogger(FirefoxDriverFactory.class.getName());
 
     /*
      * (non-Javadoc)
@@ -73,21 +67,17 @@ public class FirefoxDriverFactory implements
     @Override
     public FirefoxDriver createInstance(TypedWebDriverConfiguration<FirefoxDriverConfiguration> configuration) {
 
-        String binary = configuration.getFirefoxBinary();
-        String profile = configuration.getFirefoxProfile();
-
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        // set binary and profile values
+        String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
+        String profile = (String) configuration.getCapabilities().getCapability(FirefoxDriver.PROFILE);
+
+        // verify binary and profile values
         if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
-            log.log(Level.FINE, "Setting firefox binary to {0}", binary);
-            capabilities.setCapability(FirefoxDriver.BINARY, binary);
         }
         if (Validate.nonEmpty(profile)) {
             Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
-            log.log(Level.FINE, "Setting firefox profile to path {0}", profile);
-            capabilities.setCapability(FirefoxDriver.PROFILE, new FirefoxProfile(new File(profile)));
         }
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },

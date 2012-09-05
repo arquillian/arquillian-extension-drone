@@ -116,52 +116,74 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     // configuration holders for WebDriver Types
     protected int iePort;
 
+    @Deprecated
     protected String applicationName;
 
+    @Deprecated
     protected String applicationVersion;
 
+    @Deprecated
     protected String userAgent;
 
+    @Deprecated
     protected String firefoxProfile;
 
+    @Deprecated
     protected String firefoxBinary;
 
+    @Deprecated
     protected String chromeBinary;
 
     protected String chromeDriverBinary;
 
+    @Deprecated
     protected String chromeSwitches;
 
     protected URL remoteAddress;
 
+    @Deprecated
     protected float browserVersionNumeric;
 
+    @Deprecated
     protected boolean useJavaScript;
 
+    @Deprecated
     protected String operaArguments;
 
+    @Deprecated
     protected boolean operaAutostart = true;
 
+    @Deprecated
     protected String operaBinary;
 
+    @Deprecated
     protected int operaDisplay = -1;
 
+    @Deprecated
     protected boolean operaIdle = false;
 
+    @Deprecated
     protected String operaLauncher;
 
+    @Deprecated
     protected String operaLoggingFile;
 
+    @Deprecated
     protected String operaLoggingLevel = "INFO";
 
+    @Deprecated
     protected int operaPort = 0;
 
+    @Deprecated
     protected String operaProfile;
 
+    @Deprecated
     protected String operaProduct;
 
+    @Deprecated
     protected boolean operaQuit = true;
 
+    @Deprecated
     protected boolean operaRestart = true;
 
     protected Map<String, String> capabilityMap;
@@ -206,6 +228,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getApplicationName() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -217,6 +240,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getApplicationVersion() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -233,8 +257,8 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
             @Override
             public String invoke() {
                 CapabilityMap capabilityMap = CapabilityMap.byWebDriverConfigurationType(type);
-                if (capabilityMap != null) {
-                    capabilityMap.getReadableName();
+                if (capabilityMap != null && capabilityMap.getReadableName() != null) {
+                    return capabilityMap.getReadableName();
                 }
                 return TypedWebDriverConfiguration.this.browserCapabilities;
             }
@@ -243,6 +267,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public float getBrowserVersionNumeric() {
         final CallInterceptor<Float> interceptor = new CallInterceptor<Float>() {
             @Override
@@ -276,6 +301,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getChromeBinary() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -298,6 +324,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getChromeSwitches() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -314,6 +341,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getFirefoxBinary() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -325,6 +353,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getFirefoxProfile() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -366,6 +395,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaArguments() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -377,6 +407,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaBinary() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -388,6 +419,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public int getOperaDisplay() {
         final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
             @Override
@@ -399,6 +431,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaLauncher() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -410,6 +443,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaLoggingFile() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -421,6 +455,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaLoggingLevel() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -432,6 +467,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public int getOperaPort() {
         final CallInterceptor<Integer> interceptor = new CallInterceptor<Integer>() {
             @Override
@@ -443,6 +479,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaProduct() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -454,6 +491,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getOperaProfile() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -476,6 +514,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public String getUserAgent() {
         final CallInterceptor<String> interceptor = new CallInterceptor<String>() {
             @Override
@@ -487,6 +526,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public boolean isOperaAutostart() {
         final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
             @Override
@@ -498,6 +538,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public boolean isOperaIdle() {
         final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
             @Override
@@ -509,6 +550,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public boolean isOperaQuit() {
         final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
             @Override
@@ -520,6 +562,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public boolean isOperaRestart() {
         final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
             @Override
@@ -553,6 +596,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public boolean isUseJavaScript() {
         final CallInterceptor<Boolean> interceptor = new CallInterceptor<Boolean>() {
             @Override
@@ -564,6 +608,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setApplicationName(final String applicationName) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -577,6 +622,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setApplicationVersion(final String applicationVersion) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -601,6 +647,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setBrowserVersionNumeric(final float browserVersionNumeric) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -613,6 +660,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setChromeBinary(final String chromeBinary) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -637,6 +685,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setChromeSwitches(final String chromeSwitches) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -649,9 +698,9 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setFirefoxBinary(final String firefoxBinary) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
-            @Override
             public Void invoke() {
                 TypedWebDriverConfiguration.this.firefoxBinary = firefoxBinary;
                 return null;
@@ -662,6 +711,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setFirefoxProfile(final String firefoxProfile) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -694,6 +744,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaArguments(final String operaArguments) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -706,6 +757,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaAutostart(final boolean operaAutostart) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -718,6 +770,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaBinary(final String operaBinary) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -730,6 +783,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaDisplay(final int operaDisplay) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -742,6 +796,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaIdle(final boolean operaIdle) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -754,6 +809,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaLauncher(final String operaLauncher) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -766,6 +822,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaLoggingFile(final String operaLoggingFile) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -778,6 +835,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaLoggingLevel(final String operaLoggingLevel) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -790,6 +848,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaPort(final int operaPort) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -802,6 +861,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaProduct(final String operaProduct) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -814,6 +874,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaProfile(final String operaProfile) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -826,6 +887,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaQuit(final boolean operaQuit) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -838,6 +900,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setOperaRestart(final boolean operaRestart) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -886,6 +949,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setUseJavaScript(final boolean useJavaScript) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override
@@ -898,6 +962,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     }
 
     @Override
+    @Deprecated
     public void setUserAgent(final String userAgent) {
         final CallInterceptor<Void> interceptor = new CallInterceptor<Void>() {
             @Override

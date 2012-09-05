@@ -71,9 +71,12 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
     @Override
     public ChromeDriver createInstance(TypedWebDriverConfiguration<ChromeDriverConfiguration> configuration) {
 
-        String binary = configuration.getChromeBinary();
+        // set capabilities
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+
         String driverBinary = configuration.getChromeDriverBinary();
-        String chromeSwitches = configuration.getChromeSwitches();
+        String binary = (String) capabilities.getCapability("chrome.binary");
+        String chromeSwitches = (String) capabilities.getCapability("chrome.switches");
 
         if (Validate.empty(driverBinary)) {
             driverBinary = SecurityActions.getProperty(CHROME_DRIVER_BINARY_KEY);
@@ -86,23 +89,12 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
             SecurityActions.setProperty(CHROME_DRIVER_BINARY_KEY, driverBinary);
         }
 
-        // create the instance, chrome binary was not set
-        if (Validate.empty(binary) || Validate.empty(chromeSwitches)) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[0], new Object[0],
-                    ChromeDriver.class);
-        }
-
-        // set capabilities
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
-
-        // binary was set, so set the capability
+        // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
-
-            // set path to chrome
-            capabilities.setCapability("chrome.binary", binary);
         }
 
+        // convert chrome switches to an array of strings
         if (Validate.nonEmpty(chromeSwitches)) {
             capabilities.setCapability("chrome.switches", getChromeSwitches(chromeSwitches));
         }

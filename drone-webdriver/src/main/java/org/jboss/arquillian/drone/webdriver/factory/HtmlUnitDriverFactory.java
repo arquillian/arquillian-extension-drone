@@ -28,7 +28,6 @@ import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfigur
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
@@ -78,22 +77,21 @@ public class HtmlUnitDriverFactory implements
         String applicationVersion = configuration.getApplicationVersion();
         String userAgent = configuration.getUserAgent();
         float browserVersionNumeric = configuration.getBrowserVersionNumeric();
-        boolean useJavaScript = configuration.isUseJavaScript();
 
-        // this is support for capability based HtmlUnitDriver
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
-        capabilities.setJavascriptEnabled(useJavaScript);
+        Capabilities capabilities = configuration.getCapabilities();
 
         // use capability based constructor if possible
         if (Validate.empty(applicationName) || Validate.empty(applicationVersion) || Validate.empty(userAgent)) {
+
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                     new Object[] { capabilities }, HtmlUnitDriver.class);
         }
         // plain old constructor
+        // this configuration is deprecated and should not be used anymore
         else {
-
-            log.log(Level.FINE, "Creating HtmlUnitDriver using {0} {1} {2} {3}", new Object[] { applicationName,
-                    applicationVersion, userAgent, browserVersionNumeric });
+            log.log(Level.WARNING,
+                    "Creating HtmlUnitDriver using legacy configuration. ApplicationName={0} ApplicationVersion={1} UserAgent={2} BrowserVersionNumeric={3}",
+                    new Object[] { applicationName, applicationVersion, userAgent, browserVersionNumeric });
 
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { BrowserVersion.class },
                     new Object[] { new BrowserVersion(applicationName, applicationVersion, userAgent, browserVersionNumeric) },

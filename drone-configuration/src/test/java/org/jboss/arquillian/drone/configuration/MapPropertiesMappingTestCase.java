@@ -23,6 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
+ * Tests for map related configurations
+ *
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
@@ -78,6 +80,22 @@ public class MapPropertiesMappingTestCase {
             System.clearProperty("arquillian.mockdrone.foo_bar");
             System.clearProperty("arquillian.mockdrone.abcDef");
             System.clearProperty("arquillian.mockdrone.FOOO-bar");
+        }
+    }
+
+    @Test
+    public void systemPropertyValueClash() {
+        try {
+            // System.setProperty("arquillian.mockdrone.boolean.field", "false");
+            System.setProperty("arquillian.mockdrone.booleanField", "true");
+
+            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
+                    Default.class);
+
+            Assert.assertEquals("Boolean field was mapped to true", true, configuration.isBooleanField());
+
+        } finally {
+            System.clearProperty("arquillian.mockdrone.booleanField");
         }
     }
 
