@@ -18,11 +18,15 @@ package org.jboss.arquillian.drone.configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -89,6 +93,65 @@ final class SecurityActions {
                         }
                     }
                     return subset;
+                }
+            });
+            return value;
+        }
+        // Unwrap
+        catch (final PrivilegedActionException pae) {
+            final Throwable t = pae.getCause();
+            // Rethrow
+            if (t instanceof SecurityException) {
+                throw (SecurityException) t;
+            }
+            if (t instanceof NullPointerException) {
+                throw (NullPointerException) t;
+            } else if (t instanceof IllegalArgumentException) {
+                throw (IllegalArgumentException) t;
+            } else {
+                // No other checked Exception thrown by System.getProperty
+                try {
+                    throw (RuntimeException) t;
+                }
+                // Just in case we've really messed up
+                catch (final ClassCastException cce) {
+                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+                }
+            }
+        }
+    }
+
+    static List<Field> getMapFields(final Class<?> source, final Class<?>... parameters) {
+        try {
+            List<Field> value = AccessController.doPrivileged(new PrivilegedExceptionAction<List<Field>>() {
+                public List<Field> run() {
+                    Map<String, Field> accesableFields = getAccessableFields(source);
+
+                    List<Field> fields = new ArrayList<Field>();
+                    for (Field field : accesableFields.values()) {
+                        // check for map
+                        if (Map.class.isAssignableFrom(field.getType())) {
+                            Type genericType = field.getGenericType();
+                            boolean parameterMatched = true;
+                            // check generic parameters
+                            if (genericType instanceof ParameterizedType) {
+                                ParameterizedType parameterizedType = (ParameterizedType) genericType;
+                                for (Type actualType : parameterizedType.getActualTypeArguments()) {
+                                    for (Class<?> desiredType : parameters) {
+                                        if (!desiredType.isAssignableFrom(((Class<?>) actualType))) {
+                                            parameterMatched = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (parameterMatched == true) {
+                                fields.add(field);
+                            }
+                        }
+                    }
+                    return fields;
                 }
             });
             return value;

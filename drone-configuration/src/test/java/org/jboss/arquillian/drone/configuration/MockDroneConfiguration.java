@@ -17,6 +17,8 @@
 package org.jboss.arquillian.drone.configuration;
 
 import java.lang.annotation.Annotation;
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
@@ -35,6 +37,14 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     private int intField;
 
     private boolean booleanField;
+
+    private long longField;
+
+    private URL urlField;
+
+    private URI uriField;
+
+    private Integer integerField;
 
     private Map<String, String> mapMap;
 
@@ -90,4 +100,37 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     public void setMapMap(Map<String, String> mapMap) {
         this.mapMap = mapMap;
     }
+
+    public long getLongField() {
+        return longField;
+    }
+
+    public void setLongField(long longField) {
+        this.longField = longField;
+    }
+
+    public URL getUrlField() {
+        return urlField;
+    }
+
+    public void setUrlField(URL urlField) {
+        this.urlField = urlField;
+    }
+
+    public URI getUriField() {
+        return uriField;
+    }
+
+    public void setUriField(URI uriField) {
+        this.uriField = uriField;
+    }
+
+    public Integer getIntegerField() {
+        return integerField;
+    }
+
+    public void setIntegerField(Integer integerField) {
+        this.integerField = integerField;
+    }
+
 }

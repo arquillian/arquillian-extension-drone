@@ -51,22 +51,6 @@ public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDri
     public OperaDriver createInstance(TypedWebDriverConfiguration<OperaDriverConfiguration> configuration) {
 
         DesiredCapabilities operaCapabilities = new DesiredCapabilities(configuration.getCapabilities());
-
-        setIfNotNull(operaCapabilities, "opera.arguments", configuration.getOperaArguments());
-        operaCapabilities.setCapability("opera.autostart", configuration.isOperaAutostart());
-        setIfNotEmpty(operaCapabilities, "opera.binary", configuration.getOperaBinary());
-        setIfNotNegative(operaCapabilities, "opera.display", configuration.getOperaDisplay());
-        operaCapabilities.setCapability("opera.idle", configuration.isOperaIdle());
-        setIfNotEmpty(operaCapabilities, "opera.launcher", configuration.getOperaLauncher());
-        setIfNotEmpty(operaCapabilities, "opera.logging.file", configuration.getOperaLoggingFile());
-        setIfNotEmpty(operaCapabilities, "opera.logging.level", configuration.getOperaLoggingLevel());
-        operaCapabilities.setCapability("opera.no_quit", !configuration.isOperaQuit());
-        operaCapabilities.setCapability("opera.no_restart", !configuration.isOperaAutostart());
-        operaCapabilities.setCapability("opera.port", configuration.getOperaPort());
-        setIfNotEmpty(operaCapabilities, "opera.product", configuration.getOperaProduct());
-        setIfNotNull(operaCapabilities, "opera.profile", configuration.getOperaProfile());
-        operaCapabilities.setCapability("opera.port", configuration.getOperaPort());
-
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { operaCapabilities }, OperaDriver.class);
     }
@@ -74,24 +58,6 @@ public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDri
     @Override
     public void destroyInstance(OperaDriver instance) {
         instance.quit();
-    }
-
-    private void setIfNotNull(DesiredCapabilities capabilities, String name, String value) {
-        if (value != null) {
-            capabilities.setCapability(name, value);
-        }
-    }
-
-    private void setIfNotEmpty(DesiredCapabilities capabilities, String name, String value) {
-        if (Validate.nonEmpty(value)) {
-            capabilities.setCapability(name, value);
-        }
-    }
-
-    private void setIfNotNegative(DesiredCapabilities capabilities, String name, int value) {
-        if (value >= 0) {
-            capabilities.setCapability(name, Integer.toString(value));
-        }
     }
 
 }

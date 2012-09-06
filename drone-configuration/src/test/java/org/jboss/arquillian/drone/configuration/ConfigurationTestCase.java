@@ -74,6 +74,7 @@ public class ConfigurationTestCase {
             System.clearProperty("arquillian.mockdrone.int.field");
             System.clearProperty("arquillian.mockdrone.string.field");
             System.clearProperty("arquillian.mockdrone.boolean.field");
+            System.clearProperty("arquillian.mockdrone.differentmock.string.field");
         }
     }
 
@@ -94,7 +95,7 @@ public class ConfigurationTestCase {
     public void mapFromDescriptorTest() {
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
                 .property("intField", "12345").property("stringField", "The descriptor string")
-                .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar");
+                .property("booleanField", "true").property("foo", "bar").property("foo.bar", "barbar");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
                 new MockDroneConfiguration(), Default.class);
@@ -110,26 +111,26 @@ public class ConfigurationTestCase {
     @Test
     public void mapFromSystemPropertiesTest() {
         try {
-            System.setProperty("arquillian.mockdrone.map.foo", "the-bar");
-            System.setProperty("arquillian.mockdrone.map.foo.bar", "the-bar-bar");
-            System.setProperty("arquillian.mockdrone.map.foo_bar", "the-bar-bar-bar");
-            System.setProperty("arquillian.mockdrone.map.whatever", "the-bar-bar");
+            System.setProperty("arquillian.mockdrone.foo", "the-bar");
+            System.setProperty("arquillian.mockdrone.foo.bar", "the-bar-bar");
+            System.setProperty("arquillian.mockdrone.foo_bar", "the-bar-bar-bar");
+            System.setProperty("arquillian.mockdrone.whatever", "the-bar-bar");
 
             MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
                     Default.class);
 
             Assert.assertNotNull("Map was created", configuration.getMapMap());
 
-            Assert.assertEquals("Map havs 4 entries", 4, configuration.getMapMap().size());
+            Assert.assertEquals("Map has four entries", 4, configuration.getMapMap().size());
 
             Assert.assertEquals("Map entry was mapped", "the-bar", configuration.getMapMap().get("foo"));
             Assert.assertEquals("Map entry was mapped", "the-bar-bar", configuration.getMapMap().get("foo.bar"));
             Assert.assertEquals("Map entry was mapped", "the-bar-bar-bar", configuration.getMapMap().get("foo_bar"));
         } finally {
-            System.clearProperty("arquillian.mockdrone.map.foo");
-            System.clearProperty("arquillian.mockdrone.map.foo.bar");
-            System.clearProperty("arquillian.mockdrone.map.foo_bar");
-            System.clearProperty("arquillian.mockdrone.map.whatever");
+            System.clearProperty("arquillian.mockdrone.foo");
+            System.clearProperty("arquillian.mockdrone.foo.bar");
+            System.clearProperty("arquillian.mockdrone.foo_bar");
+            System.clearProperty("arquillian.mockdrone.whatever");
         }
     }
 
@@ -138,10 +139,10 @@ public class ConfigurationTestCase {
         try {
             ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
                     .property("intField", "12345").property("stringField", "The descriptor string")
-                    .property("booleanField", "true").property("mapFoo", "bar").property("mapFooBar", "barbar")
-                    .property("mapFoo_bar", "barbarbar");
+                    .property("booleanField", "true").property("foo", "bar").property("foo.bar", "barbar")
+                    .property("foo_bar", "barbarbar");
 
-            System.setProperty("arquillian.mockdrone.map.combined.together", "descriptor&properties");
+            System.setProperty("arquillian.mockdrone.combined.together", "descriptor&properties");
 
             MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
                     new MockDroneConfiguration(), Default.class);
@@ -149,15 +150,35 @@ public class ConfigurationTestCase {
 
             Assert.assertNotNull("Map was created", configuration.getMapMap());
 
-            Assert.assertEquals("Map has three entries", 4, configuration.getMapMap().size());
+            Assert.assertEquals("Map has four entries", 4, configuration.getMapMap().size());
 
             Assert.assertEquals("Map entry was mapped", "bar", configuration.getMapMap().get("foo"));
             Assert.assertEquals("Map entry was mapped", "barbar", configuration.getMapMap().get("foo.bar"));
             Assert.assertEquals("Map entry was mapped", "barbarbar", configuration.getMapMap().get("foo_bar"));
-            Assert.assertEquals("Map entry was mapped", "descriptor&properties", configuration.getMapMap().get("combined.together"));
+            Assert.assertEquals("Map entry was mapped", "descriptor&properties",
+                    configuration.getMapMap().get("combined.together"));
         } finally {
-            System.clearProperty("arquillian.mockdrone.map.combined.together");
+            System.clearProperty("arquillian.mockdrone.combined.together");
         }
+    }
+
+    @Test
+    public void mapNonCamelCases() {
+
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("opera.no_quit", "true").property("firefox_profile", "JSON value").property("acceptSslCerts", "true");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Default.class);
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+
+        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
+
+        Assert.assertEquals("Map entry was mapped", "true", configuration.getMapMap().get("opera.no_quit"));
+        Assert.assertEquals("Map entry was mapped", "JSON value", configuration.getMapMap().get("firefox_profile"));
+        Assert.assertEquals("Map entry was mapped", "true", configuration.getMapMap().get("acceptSslCerts"));
+
     }
 
     private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,
