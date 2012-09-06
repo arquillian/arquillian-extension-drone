@@ -208,11 +208,15 @@ public class ConfigurationMapper {
     }
 
     /**
-     * Parses System properties into property name - value pairs
+     * Parses System properties into property name - value pairs.
+     *
+     * This method is now deprecated and should not be used anymore. Arquillian Core contains possibility to load configuration
+     * from System properties.
      *
      * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
      * @param qualifierName Name of the qualifier passed
      */
+    @Deprecated
     static Map<String, String> loadNameValuePairs(String descriptorQualifier, String qualifierName) {
         String fullQualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".")
                 .append(qualifierName).append(".").toString();
@@ -230,6 +234,18 @@ public class ConfigurationMapper {
         for (Map.Entry<String, String> entry : candidates.entrySet()) {
             String name = entry.getKey();
 
+            // make a nasty warning that this will be removed
+            if (log.isLoggable(Level.WARNING)) {
+                String propertyName = name.contains(fullQualifiedPrefix) ? name.substring(fullQualifiedPrefix.length()) : name
+                        .substring(qualifiedPrefix.length());
+
+                String newSysPropertyKey = new StringBuilder("arq.extension.")
+                        .append(name.contains(fullQualifiedPrefix) ? (descriptorQualifier + "-" + qualifierName)
+                                : descriptorQualifier).append(".").append(propertyName).toString();
+
+                log.log(Level.WARNING, "Old system property format \"{0}\" is deprecated. You should use \"{1}\" instead.",
+                        new Object[] { name, newSysPropertyKey });
+            }
             // trim name
             name = name.contains(fullQualifiedPrefix) ? name.substring(fullQualifiedPrefix.length()) : name
                     .substring(qualifiedPrefix.length());
