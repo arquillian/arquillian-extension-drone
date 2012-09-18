@@ -81,9 +81,9 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebD
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { URL.class,
-                DesiredCapabilities.class },
-                new Object[] { remoteAddress, new DesiredCapabilities(configuration.getCapabilities()) }, IPhoneDriver.class);
+        // IPhone driver doesn't support capabilities
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { URL.class },
+                new Object[] { remoteAddress }, IPhoneDriver.class);
     }
 
     /*
