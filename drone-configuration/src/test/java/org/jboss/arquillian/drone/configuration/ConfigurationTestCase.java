@@ -40,6 +40,7 @@ public class ConfigurationTestCase {
     }
 
     @Test
+    @Deprecated
     public void systemPropertyTest() {
         try {
             System.setProperty("arquillian.mockdrone.int.field", "54321");
@@ -58,6 +59,7 @@ public class ConfigurationTestCase {
     }
 
     @Test
+    @Deprecated
     public void qualifierSystemPropertyTest() {
         try {
             System.setProperty("arquillian.mockdrone.int.field", "54321");
@@ -109,6 +111,7 @@ public class ConfigurationTestCase {
     }
 
     @Test
+    @Deprecated
     public void mapFromSystemPropertiesTest() {
         try {
             System.setProperty("arquillian.mockdrone.foo", "the-bar");
@@ -135,6 +138,7 @@ public class ConfigurationTestCase {
     }
 
     @Test
+    @Deprecated
     public void mapFromArquillianDescriptorAndSystemPropertiesTest() {
         try {
             ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")

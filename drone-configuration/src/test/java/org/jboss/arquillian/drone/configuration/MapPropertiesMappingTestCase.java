@@ -52,6 +52,7 @@ public class MapPropertiesMappingTestCase {
     }
 
     @Test
+    @Deprecated
     public void mapFromSystemPropertiesTest() {
         try {
             System.setProperty("arquillian.mockdrone.boolean.field", "false");
@@ -84,6 +85,7 @@ public class MapPropertiesMappingTestCase {
     }
 
     @Test
+    @Deprecated
     public void systemPropertyValueClash() {
         try {
             // System.setProperty("arquillian.mockdrone.boolean.field", "false");

@@ -97,13 +97,16 @@ public class ConfigurationMapper {
     }
 
     /**
-     * Maps a configuration using System Properties
+     * Maps a configuration using System Properties.
+     *
+     * This method is <b>deprecated</b>. Use Arquillian Core property format instead.
      *
      * @param <T> Type of the configuration
      * @param configuration Configuration object
      * @param qualifier Qualifier annotation
      * @return Configured configuration
      */
+    @Deprecated
     public static <T extends DroneConfiguration<T>> T fromSystemConfiguration(T configuration,
             Class<? extends Annotation> qualifier) {
         Validate.notNull(configuration, "Configuration object must not be null");

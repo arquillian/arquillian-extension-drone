@@ -41,6 +41,7 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
     }
 
     @Test
+    @Deprecated
     public void withoutQualifierDroneLegacy() {
 
         try {
@@ -91,6 +92,7 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
     }
 
     @Test
+    @Deprecated
     public void withQualifierDroneLegacy() {
         try {
             System.setProperty("arquillian.mockdrone.different.boolean.field", "true");
