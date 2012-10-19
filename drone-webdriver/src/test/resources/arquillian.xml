@@ -17,7 +17,6 @@
         <property name="useJavaScript">true</property>
         <!-- ChromeDriver only -->
         <property name="browserCapabilities">chrome</property>
-        <property name="chrome.binary">/opt/google/chrome/chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
@@ -53,7 +52,6 @@
         <property name="browserCapabilities">firefox</property>
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <!-- ChromeDriver only -->
-        <property name="chromeBinary">/opt/google/chrome/chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
