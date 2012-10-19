@@ -145,7 +145,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     protected float browserVersionNumeric;
 
     @Deprecated
-    protected boolean useJavaScript;
+    protected boolean useJavaScript = true;
 
     @Deprecated
     protected String operaArguments;

@@ -13,8 +13,6 @@
     </container>
 
     <extension qualifier="webdriver">
-        <!-- HtmlUnitDriver only -->
-        <property name="useJavaScript">true</property>
         <!-- ChromeDriver only -->
         <property name="browserCapabilities">chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
