@@ -289,16 +289,6 @@
                                     <systemPropertyVariables>
                                         <jbossHome>${project.build.directory}/jboss-${version.org.jboss.jbossas}</jbossHome>
                                     </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/*TestCase*</include>
-                                    </includes>
-                                    <!-- Testing Chrome driver is hard to be done in an automatized way -->
-                                    <!-- 1/ chromedriver binary is required -->
-                                    <!-- 2/ paths to chrome binary is required -->
-                                    <!-- 3/ minimal chrome version must be ensured -->
-                                    <excludes>
-                                        <exclude>**/ChromeDriver*</exclude>
-                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
@@ -376,16 +366,6 @@
                                     <systemPropertyVariables>
                                         <jbossHome>${project.build.directory}/jboss-as-${version.org.jboss.jbossas}</jbossHome>
                                     </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/*TestCase*</include>
-                                    </includes>
-                                    <!-- Testing Chrome driver is hard to be done in an automatized way -->
-                                    <!-- 1/ chromedriver binary is required -->
-                                    <!-- 2/ paths to chrome binary is required -->
-                                    <!-- 3/ minimal chrome version must be ensured -->
-                                    <excludes>
-                                        <exclude>**/ChromeDriver*</exclude>
-                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
