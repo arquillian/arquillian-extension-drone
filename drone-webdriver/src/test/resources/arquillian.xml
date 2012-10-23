@@ -21,7 +21,7 @@
     <!-- Set a different remote address then default for RemoteReusableTesting -->
     <extension qualifier="webdriver-port4444">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
+        <property name="remote">true</property>
     </extension>
 
     <!-- Check that remote=true triggers RemoteWebDriver -->
