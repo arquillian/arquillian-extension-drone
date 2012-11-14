@@ -16,17 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import java.net.URL;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Tests Arquillian Selenium extension against Weld Login example.
+ * Runs Arquillian Drone extension tests against a simple page.
  *
  * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
  * as a System property or in the Arquillian configuration.
@@ -40,30 +35,17 @@ public abstract class AbstractWebDriver {
     protected static final String USERNAME = "demo";
     protected static final String PASSWORD = "demo";
 
-    @ArquillianResource
-    URL contextPath;
-
-    /**
-     * Creates a WAR of a Weld based application using ShrinkWrap
-     *
-     * @return WebArchive to be tested
-     */
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return Deployments.createDeployment();
-    }
-
     @Test
     @InSequence(1)
     public void login() {
-        LoginPage page = new LoginPage(driver(), contextPath);
+        LoginPage page = new LoginPage(driver());
         page.login(USERNAME, PASSWORD);
     }
 
     @Test
     @InSequence(2)
     public void logout() {
-        LoginPage page = new LoginPage(driver(), contextPath);
+        LoginPage page = new LoginPage(driver());
         page.logout();
     }
 

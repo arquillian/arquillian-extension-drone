@@ -16,21 +16,11 @@
  */
 package org.jboss.arquillian.drone.selenium.example;
 
-import java.io.File;
-import java.net.URI;
+import java.net.URL;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.selenium.example.webapp.Credentials;
-import org.jboss.arquillian.drone.selenium.example.webapp.LoggedIn;
-import org.jboss.arquillian.drone.selenium.example.webapp.Login;
-import org.jboss.arquillian.drone.selenium.example.webapp.User;
-import org.jboss.arquillian.drone.selenium.example.webapp.Users;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +28,7 @@ import org.junit.runner.RunWith;
 import com.thoughtworks.selenium.DefaultSelenium;
 
 /**
- * Tests Arquillian Drone extension against Weld Login example.
+ * Runs Arquillian Drone extension tests against a simple page.
  * <p/>
  * Uses legacy Selenium driver bound to Firefox browser.
  *
@@ -50,70 +40,47 @@ public class DefaultSeleniumTestCase {
     @Drone
     DefaultSelenium driver;
 
-    // Load context path to the test
-    @ArquillianResource
-    URI contextPath;
-
     private static final String USERNAME = "demo";
     private static final String PASSWORD = "demo";
 
-    private static final String LOGGED_IN = "xpath=//li[contains(text(),'Welcome')]";
-    private static final String LOGGED_OUT = "xpath=//li[contains(text(),'Goodbye')]";
+    private static final String LOGIN_STATUS = "id=login-status";
 
-    private static final String USERNAME_FIELD = "id=loginForm:username";
-    private static final String PASSWORD_FIELD = "id=loginForm:password";
+    private static final String USERNAME_FIELD = "id=username";
+    private static final String PASSWORD_FIELD = "id=password";
 
-    private static final String LOGIN_BUTTON = "id=loginForm:login";
-    private static final String LOGOUT_BUTTON = "id=loginForm:logout";
+    private static final String LOGIN_BUTTON = "id=login-button";
+    private static final String LOGOUT_BUTTON = "id=logout-button";
 
     private static final String TIMEOUT = "15000";
 
-    /**
-     * Creates a WAR of a Weld based application using ShrinkWrap
-     *
-     * @return WebArchive to be tested
-     */
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-
-        boolean isRunningOnAS7 = System.getProperty("jbossHome", "target/jboss-as-7.1.1.Final").contains("7.1.1.Final");
-
-        WebArchive war = ShrinkWrap
-                .create(WebArchive.class, "weld-login.war")
-                .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
-                .addAsResource(new File("src/test/resources/import.sql"))
-                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
-                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
-                .addAsWebResource(new File("src/test/webapp/index.html"))
-                .addAsWebResource(new File("src/test/webapp/home.xhtml"))
-                .addAsWebResource(new File("src/test/webapp/template.xhtml"))
-                .addAsWebResource(new File("src/test/webapp/users.xhtml"))
-                .addAsResource(
-                        isRunningOnAS7 ? new File("src/test/resources/META-INF/persistence.xml") : new File(
-                                "src/test/resources/META-INF/persistence-as6.xml"),
-                        ArchivePaths.create("META-INF/persistence.xml")).setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
-
-        return war;
-    }
-
     @Test
-    public void testLoginAndLogout() {
-        Assert.assertNotNull("Path is not null", contextPath);
+    @InSequence(1)
+    public void loginPage() {
         Assert.assertNotNull("Default Selenium is not null", driver);
-
-        driver.open(contextPath + "/home.jsf");
+        openPage();
 
         driver.type(USERNAME_FIELD, USERNAME);
         driver.type(PASSWORD_FIELD, PASSWORD);
         driver.click(LOGIN_BUTTON);
-        driver.waitForPageToLoad(TIMEOUT);
+        driver.waitForCondition("var value = selenium.getText(\"//span[@class='status']\"); value == \"User logged in!\";",
+                TIMEOUT);
 
-        Assert.assertTrue("User should be logged in!", driver.isElementPresent(LOGGED_IN));
+        Assert.assertEquals("User should be logged in!", "User logged in!", driver.getText(LOGIN_STATUS));
+    }
 
+    @Test
+    @InSequence(2)
+    public void logoutPage() {
         driver.click(LOGOUT_BUTTON);
-        driver.waitForPageToLoad(TIMEOUT);
-        Assert.assertTrue("User should not be logged in!", driver.isElementPresent(LOGGED_OUT));
+        driver.waitForCondition("var value = selenium.getText(\"//span[@class='status']\"); value == \"Not logged in!\";",
+                TIMEOUT);
+        Assert.assertEquals("User should not be logged in!", "Not logged in!", driver.getText(LOGIN_STATUS));
+    }
 
+    private void openPage() {
+        URL url = this.getClass().getClassLoader().getResource(
+                "org/jboss/arquillian/drone/selenium/example/form.html");
+        driver.open(url.toString());
     }
 
 }
