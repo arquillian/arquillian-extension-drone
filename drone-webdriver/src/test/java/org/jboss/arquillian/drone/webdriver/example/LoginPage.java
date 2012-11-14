@@ -37,22 +37,25 @@ import com.google.common.base.Function;
  */
 public class LoginPage {
 
-    protected static final String USERNAME = "demo";
-    protected static final String PASSWORD = "demo";
+    private static final String USERNAME = "demo";
+    private static final String PASSWORD = "demo";
 
-    private static final By LOGGED_IN = By.xpath("//li[contains(text(),'Welcome')]");
-    private static final By LOGGED_OUT = By.xpath("//li[contains(text(),'Goodbye')]");
+    private static final By LOGIN_STATUS = By.id("login-status");
 
-    private static final By USERNAME_FIELD = By.id("loginForm:username");
-    private static final By PASSWORD_FIELD = By.id("loginForm:password");
+    private static final By USERNAME_FIELD = By.id("username");
+    private static final By PASSWORD_FIELD = By.id("password");
 
-    private static final By LOGIN_BUTTON = By.id("loginForm:login");
-    private static final By LOGOUT_BUTTON = By.id("loginForm:logout");
+    private static final By LOGIN_BUTTON = By.id("login-button");
+    private static final By LOGOUT_BUTTON = By.id("logout-button");
 
     private final WebDriver driver;
     private final URL contextPath;
 
-    public LoginPage(WebDriver driver, URL contextPath) {
+    public LoginPage(WebDriver driver) {
+        this(driver, LoginPage.class.getClassLoader().getResource("org/jboss/arquillian/drone/webdriver/example/form.html"));
+    }
+
+    private LoginPage(WebDriver driver, URL contextPath) {
         this.driver = driver;
         this.contextPath = contextPath;
     }
@@ -61,26 +64,26 @@ public class LoginPage {
         Assert.assertNotNull("Path is not null", contextPath);
         Assert.assertNotNull("WebDriver is not null", driver);
 
-        driver.get(contextPath + "home.jsf");
+        driver.get(contextPath.toString());
 
         driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
         driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
         driver.findElement(LOGIN_BUTTON).click();
-        checkElementPresence(driver, LOGGED_IN, "User should be logged in!");
+        checkElementContent(LOGIN_STATUS, "User logged in!", "User should be logged in!");
     }
 
     public void logout() {
         driver.findElement(LOGOUT_BUTTON).click();
-        checkElementPresence(driver, LOGGED_OUT, "User should not be logged in!");
+        checkElementContent(LOGIN_STATUS, "Not logged in!", "User should not be logged in!");
     }
 
     // check is element is presence on page, fails otherwise
-    protected void checkElementPresence(final WebDriver driver, final By by, final String errorMsg) {
+    protected void checkElementContent(final By by, final String expectedContent, final String errorMsg) {
         new WebDriverWaitWithMessage(driver, 10).failWith(errorMsg).until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver webDriver) {
                 try {
-                    return driver.findElement(by).isDisplayed();
+                    return expectedContent.equals(driver.findElement(by).getText());
                 } catch (NoSuchElementException ignored) {
                     return false;
                 } catch (StaleElementReferenceException ignored) {

@@ -16,16 +16,10 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-import java.net.URL;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.webdriver.example.Deployments;
 import org.jboss.arquillian.drone.webdriver.example.LoginPage;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -35,14 +29,6 @@ import qualifier.CapabilitiesArq1030;
 @RunWith(Arquillian.class)
 public class CapabilityConfigurationTestCase {
 
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return Deployments.createDeployment();
-    }
-
-    @ArquillianResource
-    URL contextPath;
-
     @Drone
     @CapabilitiesArq1030
     WebDriver webdriver;
@@ -50,7 +36,7 @@ public class CapabilityConfigurationTestCase {
     @Test
     @InSequence(1)
     public void simpleWebdriverTest() {
-        LoginPage page = new LoginPage(webdriver, contextPath);
+        LoginPage page = new LoginPage(webdriver);
         page.login("demo", "demo");
         page.logout();
     }
@@ -58,7 +44,7 @@ public class CapabilityConfigurationTestCase {
     @Test
     @InSequence(2)
     public void simpleWebdriverChromeTest() {
-        LoginPage page = new LoginPage(webdriver, contextPath);
+        LoginPage page = new LoginPage(webdriver);
         page.login("demo", "demo");
         page.logout();
     }

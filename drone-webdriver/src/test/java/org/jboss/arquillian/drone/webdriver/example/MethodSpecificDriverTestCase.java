@@ -16,14 +16,9 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import java.net.URL;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,18 +35,10 @@ import qualifier.MethodSpecific;
 @RunWith(Arquillian.class)
 public class MethodSpecificDriverTestCase {
 
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return Deployments.createDeployment();
-    }
-
-    @ArquillianResource
-    URL contextPath;
-
     @Test
     @InSequence(1)
     public void simpleWebdriverTest(@Drone @MethodSpecific FirefoxDriver webdriver) {
-        LoginPage page = new LoginPage(webdriver, contextPath);
+        LoginPage page = new LoginPage(webdriver);
         page.login("demo", "demo");
         page.logout();
     }
@@ -59,7 +46,7 @@ public class MethodSpecificDriverTestCase {
     @Test
     @InSequence(2)
     public void simpleWebdriverChromeTest(@Drone @MethodSpecific ChromeDriver webdriver) {
-        LoginPage page = new LoginPage(webdriver, contextPath);
+        LoginPage page = new LoginPage(webdriver);
         page.login("demo", "demo");
         page.logout();
     }

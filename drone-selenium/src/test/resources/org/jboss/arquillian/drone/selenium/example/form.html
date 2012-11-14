@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="../../../../../../js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript"><!--
+$(document).ready(function() {
+  // simulate login action when clicking on login button
+  $('#login-button').click(function() {
+	if($('#username').val()==$('#password').val()) {
+		$('#login-status').text('User logged in!');	
+	}
+	else {
+		$('#login-status').text('Invalid username or password!');
+	}
+  });
+  //simulate logout action when clicking on logout button
+  $('#logout-button').click(function() {
+	$('#login-status').text('Not logged in!');	
+  });
+});
+--></script>
+<title>Login page</title>
+</head>
+<body>
+    <h1 id="header">Login Page</h1>
+
+    <div id="simple-form">
+        <span class="label">Username: </span>
+        <input type="text" id="username" />
+        <br /> <span class="label">Password: </span>
+        <input type="password" id="password" />
+        <br />
+        <input type="button" id="login-button" value="Login" />
+        <input type="button" id="logout-button" value="Logout" />
+        <br />
+    </div>
+    <span id="login-status" class="status">Not logged in!</span>
+    <hr />
+    <div class="hints">This page simulates a very stupid login page. It uses jQuery to modify the page in order to
+        simulate that user can login/logout. User logs in successfully when he provides the same user name as password.</div>
+</body>
+</html>

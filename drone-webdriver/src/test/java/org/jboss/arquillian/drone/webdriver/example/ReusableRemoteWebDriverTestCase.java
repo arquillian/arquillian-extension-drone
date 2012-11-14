@@ -16,12 +16,10 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,16 +46,6 @@ public class ReusableRemoteWebDriverTestCase {
 
     // sessionId is set to be static, so it can be shared between test methods
     private static SessionId sessionId;
-
-    /**
-     * Creates a WAR of a Weld based application using ShrinkWrap
-     *
-     * @return WebArchive to be tested
-     */
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return Deployments.createDeployment();
-    }
 
     @BeforeClass
     public static void checkIfWebdriverHubIsRunning() {
