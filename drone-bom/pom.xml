@@ -39,8 +39,8 @@
 
     <properties>
         <version.com.opera>1.1</version.com.opera>
-        <version.org.seleniumhq.selenium.server>2.25.0</version.org.seleniumhq.selenium.server>
-        <version.org.seleniumhq.selenium>2.25.0</version.org.seleniumhq.selenium>
+        <version.org.seleniumhq.selenium.server>2.27.0</version.org.seleniumhq.selenium.server>
+        <version.org.seleniumhq.selenium>2.27.0</version.org.seleniumhq.selenium>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
