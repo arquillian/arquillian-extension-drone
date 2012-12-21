@@ -30,7 +30,7 @@ public enum URIValueMapper implements ValueMapper<URI> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return URI.class.isAssignableFrom(type);
     }
 

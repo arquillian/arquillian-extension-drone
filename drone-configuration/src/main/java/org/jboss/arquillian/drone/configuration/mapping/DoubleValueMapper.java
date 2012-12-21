@@ -27,7 +27,7 @@ public enum DoubleValueMapper implements ValueMapper<Double> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return Double.class.isAssignableFrom(type) || double.class.isAssignableFrom(type);
     }
 

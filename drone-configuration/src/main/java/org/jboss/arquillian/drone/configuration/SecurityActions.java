@@ -121,6 +121,7 @@ final class SecurityActions {
         }
     }
 
+    // Finds all fields of source class that are of generic type implementing java.util.Map parameterized by parameters.
     static List<Field> getMapFields(final Class<?> source, final Class<?>... parameters) {
         try {
             List<Field> value = AccessController.doPrivileged(new PrivilegedExceptionAction<List<Field>>() {
@@ -136,9 +137,12 @@ final class SecurityActions {
                             // check generic parameters
                             if (genericType instanceof ParameterizedType) {
                                 ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                                for (Type actualType : parameterizedType.getActualTypeArguments()) {
-                                    for (Class<?> desiredType : parameters) {
-                                        if (!desiredType.isAssignableFrom(((Class<?>) actualType))) {
+                                if (parameterizedType.getActualTypeArguments().length != parameters.length) {
+                                    parameterMatched = false;
+                                } else {
+                                    for(int i = 0; i < parameterizedType.getActualTypeArguments().length; i++) {
+                                        Class<?> actualType = (Class<?>) parameterizedType.getActualTypeArguments()[i];
+                                        if(!actualType.equals(parameters[i])) {
                                             parameterMatched = false;
                                             break;
                                         }
