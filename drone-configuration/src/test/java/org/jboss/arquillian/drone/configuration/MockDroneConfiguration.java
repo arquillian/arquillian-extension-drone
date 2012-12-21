@@ -46,7 +46,7 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     private Integer integerField;
 
-    private Map<String, String> mapMap;
+    private Map<String, Object> mapMap;
 
     /*
      * (non-Javadoc)
@@ -93,11 +93,11 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
         this.booleanField = booleanField;
     }
 
-    public Map<String, String> getMapMap() {
+    public Map<String, Object> getMapMap() {
         return mapMap;
     }
 
-    public void setMapMap(Map<String, String> mapMap) {
+    public void setMapMap(Map<String, Object> mapMap) {
         this.mapMap = mapMap;
     }
 

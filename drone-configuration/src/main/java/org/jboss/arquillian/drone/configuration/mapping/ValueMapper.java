@@ -29,9 +29,10 @@ public interface ValueMapper<T> {
      * Checks if given type is supported by this handler
      *
      * @param type Type to be supported
+     * @param parameters Types that have to match in case type is generic type
      * @return {@code true} if this is supported, {@code false} otherwise
      */
-    boolean handles(Class<?> type);
+    boolean handles(Class<?> type, Class<?>... parameters);
 
     /**
      * Returns converted value from a string

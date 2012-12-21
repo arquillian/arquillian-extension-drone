@@ -186,7 +186,7 @@ public class TypedWebDriverConfiguration<T extends WebDriverConfigurationType> i
     @Deprecated
     protected boolean operaRestart = true;
 
-    protected Map<String, String> capabilityMap;
+    protected Map<String, Object> capabilityMap;
 
     protected String browserCapabilities;
 

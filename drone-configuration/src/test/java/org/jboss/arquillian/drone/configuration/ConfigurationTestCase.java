@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.configuration;
 
+import java.util.Map;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -181,8 +183,45 @@ public class ConfigurationTestCase {
 
         Assert.assertEquals("Map entry was mapped", "true", configuration.getMapMap().get("opera.no_quit"));
         Assert.assertEquals("Map entry was mapped", "JSON value", configuration.getMapMap().get("firefox_profile"));
-        Assert.assertEquals("Map entry was mapped", "true", configuration.getMapMap().get("acceptSslCerts"));
+        Assert.assertEquals("Map entry was mapped", Boolean.TRUE, configuration.getMapMap().get("acceptSslCerts"));
 
+    }
+
+    @Test
+    public void mapPropertiesNeededToBeCast() {
+
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+                .property("loggingPrefs", "driver=WARNING,profiling=INFO").property("webStorageEnabled", "false")
+                .property("acceptSslCerts", "true");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new MockDroneConfiguration(), Default.class);
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+
+        Assert.assertEquals("Map has three entries", 3, configuration.getMapMap().size());
+        Assert.assertEquals("Map entry was mapped", Boolean.FALSE, configuration.getMapMap().get("webStorageEnabled"));
+        Assert.assertEquals("Map entry was mapped", Boolean.TRUE, configuration.getMapMap().get("acceptSslCerts"));
+
+        @SuppressWarnings("unchecked")
+        Map<String,String> loggingPrefs = (Map<String,String>) configuration.getMapMap().get("loggingPrefs");
+        Assert.assertEquals("Logging Preferencies have two entries", 2, loggingPrefs.size());
+        Assert.assertTrue("Logging Preferencies contain driver", loggingPrefs.keySet().contains("driver"));
+        Assert.assertTrue("Logging Preferencies contain profiling", loggingPrefs.keySet().contains("profiling"));
+        Assert.assertEquals("Logging Preferencies contain WARNING for driver", "WARNING", loggingPrefs.get("driver"));
+        Assert.assertEquals("Logging Preferencies contain INFO for profiling", "INFO", loggingPrefs.get("profiling"));
+
+    }
+
+    @Test
+    public void mapTypedDroneConfiguration() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("typedmockdrone");
+
+        TypedMockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+                new TypedMockDroneConfiguration(), Default.class);
+
+        Assert.assertNotNull("Map<String, Object> was created", configuration.getObjectMap());
+        Assert.assertNull("Map<String, String> was not created", configuration.getStringMap());
     }
 
     private void validateConfiguration(MockDroneConfiguration configuration, int expectedInt, boolean expectedBoolean,
