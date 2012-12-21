@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -27,6 +26,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.ChromeDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.utils.Utils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -119,21 +119,14 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
     }
 
     private List<String> getChromeSwitches(String valueString) {
-        List<String> properties = new ArrayList<String>();
-
-        // FIXME this should accept properties encapsulated in quotes as well
-        StringTokenizer tokenizer = new StringTokenizer(valueString, " ");
-        while (tokenizer.hasMoreTokens()) {
-            String property = tokenizer.nextToken().trim();
-
-            if (property.indexOf("--") == -1) {
-                continue;
+        List<String> properties = new ArrayList<String>(Utils.parse(valueString));
+        List<String> chromeSwitches = new ArrayList<String>();
+        for (String property : properties) {
+            if (property.startsWith("--")) {
+                chromeSwitches.add(property);
             }
-
-            properties.add(property);
         }
-
-        return properties;
+        return chromeSwitches;
     }
 
 }
