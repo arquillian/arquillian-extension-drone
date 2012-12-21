@@ -27,7 +27,7 @@ public enum StringValueMapper implements ValueMapper<String> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return String.class.isAssignableFrom(type);
     }
 

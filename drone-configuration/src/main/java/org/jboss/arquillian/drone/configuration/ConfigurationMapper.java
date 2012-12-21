@@ -131,15 +131,15 @@ public class ConfigurationMapper {
     static <T extends DroneConfiguration<T>> T mapFromNameValuePairs(T configuration, Map<String, String> nameValuePairs) {
         Map<String, Field> fields = SecurityActions.getAccessableFields(configuration.getClass());
 
-        // extract all Map<String,String> in the configuration and initialize them
-        List<Field> maps = SecurityActions.getMapFields(configuration.getClass(), String.class, String.class);
+        // extract all Map<String,Object> in the configuration and initialize them
+        List<Field> maps = SecurityActions.getMapFields(configuration.getClass(), String.class, Object.class);
         for (Field mapField : maps) {
             try {
                 // get or create a map
                 @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) mapField.get(configuration);
+                Map<String, Object> map = (Map<String, Object>) mapField.get(configuration);
                 if (map == null) {
-                    map = new HashMap<String, String>();
+                    map = new HashMap<String, Object>();
                 }
                 mapField.set(configuration, map);
             } catch (Exception e) {
@@ -316,15 +316,14 @@ public class ConfigurationMapper {
 
         try {
             for (Field mapField : maps) {
-                try {
-                    // put property into a map
-                    @SuppressWarnings("unchecked")
-                    Map<String, String> map = (Map<String, String>) mapField.get(configuration);
-                    map.put(propertyName, value);
-                } catch (Exception e) {
-                    throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
-                            + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
+                Object typedValue = value;
+                if (CapabilityTypeMapper.isCastNeeded(propertyName)) {
+                    typedValue = CapabilityTypeMapper.createTypedObjectFromString(propertyName, value);
                 }
+                // put property into a map
+                @SuppressWarnings("unchecked")
+                Map<String, Object> map = (Map<String, Object>) mapField.get(configuration);
+                map.put(propertyName, typedValue);
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName() + ") for "

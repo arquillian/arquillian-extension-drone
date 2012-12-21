@@ -30,7 +30,7 @@ public enum NegatingBooleanValueMapper implements ValueMapper<Boolean> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return BooleanValueMapper.INSTANCE.handles(type);
     }
 

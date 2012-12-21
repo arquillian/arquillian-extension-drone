@@ -47,6 +47,10 @@
     <extension qualifier="webdriver-capabilitiesarq1030">
         <property name="browserCapabilities">firefox</property>
         <property name="webdriver.firefox.profile">selenium</property>
+        <!-- ARQ-1251 -->
+        <property name="acceptSslCerts">true</property>
+        <property name="webStorageEnabled">true</property>
+        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
     </extension>
 
 </arquillian>
