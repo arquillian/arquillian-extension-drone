@@ -30,7 +30,7 @@ public enum URLValueMapper implements ValueMapper<URL> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return URL.class.isAssignableFrom(type);
     }
 

@@ -27,7 +27,7 @@ public enum IntegerValueMapper implements ValueMapper<Integer> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return Integer.class.isAssignableFrom(type) || int.class.isAssignableFrom(type);
     }
 

@@ -27,7 +27,7 @@ public enum BooleanValueMapper implements ValueMapper<Boolean> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return Boolean.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type);
     }
 

@@ -27,7 +27,7 @@ public enum LongValueMapper implements ValueMapper<Long> {
     INSTANCE;
 
     @Override
-    public boolean handles(Class<?> type) {
+    public boolean handles(Class<?> type, Class<?>... parameters) {
         return Long.class.isAssignableFrom(type) || long.class.isAssignableFrom(type);
     }
 
