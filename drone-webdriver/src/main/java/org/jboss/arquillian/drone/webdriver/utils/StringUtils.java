@@ -22,12 +22,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utility class.
+ * Utility class to parse a list of strings
  *
  * @author <a href="trepel@redhat.com>Tomas Repel</a>
  *
  */
-public class Utils {
+public class StringUtils {
 
     /**
      * Parse string to tokens. Tokens are separated by whitespace. In case some token contains whitespace,
@@ -37,18 +37,18 @@ public class Utils {
      * @param stringToBeParsed - string to be parsed to tokens
      * @return List of tokens, returns empty list rather that null value
      */
-    public static List<String> parse(String stringToBeParsed) {
+    public static List<String> tokenize(String stringToBeParsed) {
 
         final String TOKEN = "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"|\\S+";
         final String QUOTED_TOKEN = "^\"(.*)\"$";
 
         List<String> options = new ArrayList<String>();
-        if (stringToBeParsed != null) {
+        if (stringToBeParsed != null && stringToBeParsed.length() != 0) {
             Pattern p = Pattern.compile(TOKEN, Pattern.DOTALL);
             Matcher m = p.matcher(stringToBeParsed);
             while (m.find()) {
-                if ( !(m.group().trim().equals("")) ) {
-                   options.add(Pattern.compile(QUOTED_TOKEN, Pattern.DOTALL).matcher(m.group().trim()).replaceAll("$1"));
+                if (!(m.group().trim().equals(""))) {
+                    options.add(Pattern.compile(QUOTED_TOKEN, Pattern.DOTALL).matcher(m.group().trim()).replaceAll("$1"));
                 }
             }
         }

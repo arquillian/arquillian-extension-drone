@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.utils.Utils;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -87,13 +87,13 @@ public class FirefoxDriverFactory implements
         FirefoxProfile firefoxProfile = new FirefoxProfile();
         capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
 
-        if (Validate.nonEmpty((String) configuration.getCapabilities().getCapability("firefoxExtensions"))) {
-            for (String extensionPath : Utils.parse((String) configuration.getCapabilities().getCapability("firefoxExtensions"))) {
-                try {
-                    firefoxProfile.addExtension(new File(extensionPath));
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Cannot read XPI extension file: " + extensionPath,e);
-                }
+        final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
+        // no check is needed here, it will return empty array if null
+        for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
+            try {
+                firefoxProfile.addExtension(new File(extensionPath));
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Cannot read XPI extension file: " + extensionPath, e);
             }
         }
 
