@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.ChromeDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.utils.Utils;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -119,9 +119,8 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
     }
 
     private List<String> getChromeSwitches(String valueString) {
-        List<String> properties = new ArrayList<String>(Utils.parse(valueString));
         List<String> chromeSwitches = new ArrayList<String>();
-        for (String property : properties) {
+        for (String property : StringUtils.tokenize(valueString)) {
             if (property.startsWith("--")) {
                 chromeSwitches.add(property);
             }
