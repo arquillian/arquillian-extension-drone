@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -176,65 +177,20 @@
                 <version>${version.arquillian.core}</version>
             </dependency>
 
-            <!-- Selenium Server -->
+            <!-- Selenium and Selenium Server dependecies -->
             <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-server</artifactId>
-                <version>${version.selenium.server}</version>
+                <groupId>org.jboss.arquillian.selenium</groupId>
+                <artifactId>selenium-bom</artifactId>
+                <version>${version.selenium}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- Selenium dependecies -->
+            <!-- Selenium dependencies not present in the Selenium BOM file -->
             <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-api</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-java</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-support</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-
-            <!-- Drivers -->
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-android-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-chrome-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-htmlunit-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-ie-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-iphone-driver</artifactId>
-                <version>${version.selenium}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-remote-driver</artifactId>
-                <version>${version.selenium}</version>
+                <groupId>com.opera</groupId>
+                <artifactId>operadriver</artifactId>
+                <version>${version.com.opera}</version>
             </dependency>
 
         </dependencies>

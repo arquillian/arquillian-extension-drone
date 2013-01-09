@@ -106,8 +106,7 @@
         </dependency>
         <dependency>
             <groupId>com.opera</groupId>
-            <artifactId>operadriver</artifactId>
-            <version>${version.com.opera}</version>
+            <artifactId>operadriver</artifactId>            
             <scope>provided</scope>
         </dependency>
 
