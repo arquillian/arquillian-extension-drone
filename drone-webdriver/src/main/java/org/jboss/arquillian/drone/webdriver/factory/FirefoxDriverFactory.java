@@ -18,14 +18,12 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -39,9 +37,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class FirefoxDriverFactory implements
-        Configurator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>,
-        Instantiator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>, Destructor<FirefoxDriver> {
+public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver> implements
+        Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
+        Destructor<FirefoxDriver> {
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Firefox().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -69,7 +69,7 @@ public class FirefoxDriverFactory implements
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public FirefoxDriver createInstance(TypedWebDriverConfiguration<FirefoxDriverConfiguration> configuration) {
+    public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
 
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -102,17 +102,9 @@ public class FirefoxDriverFactory implements
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
     @Override
-    public TypedWebDriverConfiguration<FirefoxDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<FirefoxDriverConfiguration>(FirefoxDriverConfiguration.class).configure(
-                descriptor, qualifier);
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
 }

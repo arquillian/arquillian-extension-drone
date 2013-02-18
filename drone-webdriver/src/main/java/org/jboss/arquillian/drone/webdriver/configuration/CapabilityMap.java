@@ -1,8 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -12,17 +12,17 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @see DesiredCapabilities
  */
-enum CapabilityMap {
+public class CapabilityMap {
 
-    ANDROID {
+    public static class Android implements BrowserCapabilities {
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.android.AndroidDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.android();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.android().asMap();
         }
 
         @Override
@@ -31,21 +31,22 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return AndroidDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
 
-    },
-    CHROME {
+    };
+
+    public static class Chrome implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.chrome.ChromeDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.chrome();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.chrome().asMap();
         }
 
         @Override
@@ -54,21 +55,21 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return ChromeDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
+    };
 
-    },
-    FIREFOX {
+    public static class Firefox implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.firefox.FirefoxDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.firefox();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.firefox().asMap();
         }
 
         @Override
@@ -77,21 +78,21 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return FirefoxDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
+    };
 
-    },
-    HTMLUNIT {
+    public static class HtmlUnit implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.htmlunit.HtmlUnitDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.htmlUnit();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.htmlUnit().asMap();
         }
 
         @Override
@@ -100,21 +101,21 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return HtmlUnitDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
+    };
 
-    },
-    INTERNETEXPLORER {
+    public static class InternetExplorer implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.ie.InternetExplorerDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.internetExplorer();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.internetExplorer().asMap();
         }
 
         @Override
@@ -123,21 +124,21 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return InternetExplorerDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
+    };
 
-    },
-    IPHONE {
+    public static class IPhone implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.iphone.IPhoneDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.iphone();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.iphone().asMap();
         }
 
         @Override
@@ -146,21 +147,22 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return IPhoneDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
 
-    },
-    OPERA {
+    };
+
+    public static class Opera implements BrowserCapabilities {
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "com.opera.core.systems.OperaDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.opera();
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.opera().asMap();
         }
 
         @Override
@@ -169,12 +171,12 @@ enum CapabilityMap {
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return OperaDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
+    };
 
-    },
-    REMOTE {
+    public static class Remote implements BrowserCapabilities {
 
         @Override
         public String getReadableName() {
@@ -182,109 +184,21 @@ enum CapabilityMap {
         }
 
         @Override
-        public String getImplementationClass() {
+        public String getImplementationClassName() {
             return "org.openqa.selenium.remote.RemoteWebDriver";
         }
 
         @Override
-        public DesiredCapabilities getCapabilities() {
+        public Map<String, ?> getRawCapabilities() {
+            // we might want empty map here instead
             return null;
         }
 
         @Override
-        public Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType() {
-            return RemoteReusableWebDriverConfiguration.class;
+        public int getPrecedence() {
+            return 0;
         }
 
-    };
-
-    /**
-     * Gets a human readable name of the browser capabilities
-     *
-     * @return readable name
-     */
-    public abstract String getReadableName();
-
-    /**
-     * Gets an implementation class of given browser
-     *
-     * @return Implementation class
-     */
-    public abstract String getImplementationClass();
-
-    /**
-     * Gets desired capabilities of given browser
-     *
-     * @return desired capabilities
-     */
-    public abstract DesiredCapabilities getCapabilities();
-
-    public abstract Class<? extends WebDriverConfigurationType> getWebDriverConfigurationType();
-
-    /**
-     * Returns a capability map based on desired capabilities
-     *
-     * @param capabilities Name of desired capabilities set
-     * @return The capability map which reflects given browser
-     */
-    public static CapabilityMap byDesiredCapabilities(String capabilities) {
-
-        if (capabilities == null || capabilities.length() == 0) {
-            return null;
-        }
-        try {
-            return CapabilityMap.valueOf(CapabilityMap.class, capabilities.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            StringBuilder sb = new StringBuilder();
-            for (CapabilityMap map : values()) {
-                sb.append(map.getReadableName()).append(" ");
-            }
-
-            throw new IllegalArgumentException("Capabilities \"" + capabilities
-                    + "\" are not supported. The list of supported browser via capabilities is: " + sb.toString());
-        }
-    }
-
-    /**
-     * Gets a capability map based on a implementation class
-     *
-     * @param implementationClass Name of implementation class
-     * @return
-     */
-    public static CapabilityMap byImplementationClass(String implementationClass) {
-
-        if (implementationClass == null || implementationClass.length() == 0) {
-            return null;
-        }
-
-        return IMPLEMENTATION_CLASS_CACHE.get(implementationClass);
-    }
-
-    public static CapabilityMap byWebDriverConfigurationType(Class<? extends WebDriverConfigurationType> configurationType) {
-
-        if (configurationType == null) {
-            return null;
-        }
-
-        return CONFIGURATION_TYPE_CACHE.get(configurationType);
-    }
-
-    private static final Map<String, CapabilityMap> IMPLEMENTATION_CLASS_CACHE = new HashMap<String, CapabilityMap>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (CapabilityMap map : CapabilityMap.values()) {
-                this.put(map.getImplementationClass(), map);
-            }
-        }
-    };
-
-    private static final Map<Class<? extends WebDriverConfigurationType>, CapabilityMap> CONFIGURATION_TYPE_CACHE = new HashMap<Class<? extends WebDriverConfigurationType>, CapabilityMap>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (CapabilityMap map : CapabilityMap.values()) {
-                this.put(map.getWebDriverConfigurationType(), map);
-            }
-        }
     };
 
 }

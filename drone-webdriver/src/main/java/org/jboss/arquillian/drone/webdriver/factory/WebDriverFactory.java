@@ -16,18 +16,14 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -40,8 +36,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>,
-        Instantiator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>, Destructor<WebDriver> {
+public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implements
+        Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
 
     private static final Logger log = Logger.getLogger(WebDriverFactory.class.getName());
 
@@ -91,7 +87,7 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
      */
     @SuppressWarnings("unchecked")
     @Override
-    public WebDriver createInstance(TypedWebDriverConfiguration<WebDriverConfiguration> configuration) {
+    public WebDriver createInstance(WebDriverConfiguration configuration) {
 
         @SuppressWarnings("rawtypes")
         Instantiator instantiator;
@@ -104,12 +100,6 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
         // get real implementation class name based on capabilitiesBrowser and
         // deprecated implementationClassName
         else {
-            String browserCapabilities = configuration.getBrowserCapabilities();
-            if (Validate.empty(browserCapabilities)) {
-                configuration.setBrowserCapabilities(TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
-                log.log(Level.INFO, "Property \"browserCapabilities\" was not specified, using default value of {0}",
-                        TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
-            }
 
             implementationClassName = configuration.getImplementationClass();
 
@@ -141,17 +131,9 @@ public class WebDriverFactory implements Configurator<WebDriver, TypedWebDriverC
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
     @Override
-    public TypedWebDriverConfiguration<WebDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<WebDriverConfiguration>(WebDriverConfiguration.class).configure(descriptor,
-                qualifier);
+    protected String getDriverReadableName() {
+        return null;
     }
 
     @SuppressWarnings({ "rawtypes" })

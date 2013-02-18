@@ -43,6 +43,12 @@ class Validate {
         return !empty(object);
     }
 
+    static void isEmpty(Object object, String message) throws IllegalArgumentException {
+        if (empty(object)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     static void isEmpty(String object, String message) throws IllegalArgumentException {
         if (empty(object)) {
             throw new IllegalArgumentException(message);

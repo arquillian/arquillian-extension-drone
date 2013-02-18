@@ -16,20 +16,18 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.RemoteReusableWebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PersistReusedSessionsEvent;
@@ -46,12 +44,13 @@ import org.openqa.selenium.remote.SessionId;
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
-public class RemoteWebDriverFactory implements
-        Configurator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>,
-        Instantiator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>,
+public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDriver> implements
+        Configurator<RemoteWebDriver, WebDriverConfiguration>, Instantiator<RemoteWebDriver, WebDriverConfiguration>,
         Destructor<RemoteWebDriver> {
 
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Remote().getReadableName();
 
     @Inject
     Instance<ReusedSessionStore> sessionStore;
@@ -66,24 +65,24 @@ public class RemoteWebDriverFactory implements
     }
 
     @Override
-    public RemoteWebDriver createInstance(TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration) {
+    public RemoteWebDriver createInstance(WebDriverConfiguration configuration) {
 
         URL remoteAddress = configuration.getRemoteAddress();
 
         // default remote address
         if (Validate.empty(remoteAddress)) {
-            remoteAddress = TypedWebDriverConfiguration.DEFAULT_REMOTE_URL;
+            remoteAddress = WebDriverConfiguration.DEFAULT_REMOTE_URL;
             log.log(Level.INFO, "Property \"remoteAdress\" was not specified, using default value of {0}",
-                    TypedWebDriverConfiguration.DEFAULT_REMOTE_URL);
+                    WebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
 
         String browserCapabilities = configuration.getBrowserCapabilities();
         if (Validate.empty(browserCapabilities)) {
-            configuration.setBrowserCapabilities(TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+            configuration.setBrowserCapabilities(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             log.log(Level.INFO, "Property \"browserCapabilities\" was not specified, using default value of {0}",
-                    TypedWebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+                    WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
         }
 
         Validate.isEmpty(configuration.getBrowserCapabilities(), "The browser capabilities are not set.");
@@ -118,17 +117,8 @@ public class RemoteWebDriverFactory implements
     }
 
     @Override
-    public TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> createConfiguration(
-            ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-
-        TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration = new TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>(
-                RemoteReusableWebDriverConfiguration.class).configure(descriptor, qualifier);
-        if (!configuration.isRemote()) {
-            configuration.setRemote(true);
-            log.log(Level.FINE, "Forcing RemoteWebDriver configuration to be remote-based.");
-        }
-
-        return configuration;
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
     protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {

@@ -16,24 +16,34 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
-
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.OperaDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.opera.core.systems.OperaDriver;
 
 /**
+ * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for OperaDriver.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
-public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>,
-        Instantiator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>, Destructor<OperaDriver> {
+public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> implements
+        Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,
+        Destructor<OperaDriver> {
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Opera().getReadableName();
+
+    @Inject
+    Instance<BrowserCapabilitiesRegistry> registryInstance;
 
     @Override
     public int getPrecedence() {
@@ -41,14 +51,7 @@ public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDri
     }
 
     @Override
-    public TypedWebDriverConfiguration<OperaDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<OperaDriverConfiguration>(OperaDriverConfiguration.class).configure(descriptor,
-                qualifier);
-    }
-
-    @Override
-    public OperaDriver createInstance(TypedWebDriverConfiguration<OperaDriverConfiguration> configuration) {
+    public OperaDriver createInstance(WebDriverConfiguration configuration) {
 
         DesiredCapabilities operaCapabilities = new DesiredCapabilities(configuration.getCapabilities());
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
@@ -58,6 +61,11 @@ public class OperaDriverFactory implements Configurator<OperaDriver, TypedWebDri
     @Override
     public void destroyInstance(OperaDriver instance) {
         instance.quit();
+    }
+
+    @Override
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
 }

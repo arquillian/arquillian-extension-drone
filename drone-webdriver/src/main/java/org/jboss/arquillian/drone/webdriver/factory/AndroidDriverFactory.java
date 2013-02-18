@@ -25,8 +25,8 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.AndroidDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -37,11 +37,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class AndroidDriverFactory implements
-        Configurator<AndroidDriver, TypedWebDriverConfiguration<AndroidDriverConfiguration>>,
-        Instantiator<AndroidDriver, TypedWebDriverConfiguration<AndroidDriverConfiguration>>, Destructor<AndroidDriver> {
+public class AndroidDriverFactory extends AbstractWebDriverFactory<AndroidDriver> implements
+        Configurator<AndroidDriver, WebDriverConfiguration>, Instantiator<AndroidDriver, WebDriverConfiguration>,
+        Destructor<AndroidDriver> {
 
     private static final Logger log = Logger.getLogger(AndroidDriverFactory.class.getName());
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Android().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -69,15 +71,15 @@ public class AndroidDriverFactory implements
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public AndroidDriver createInstance(TypedWebDriverConfiguration<AndroidDriverConfiguration> configuration) {
+    public AndroidDriver createInstance(WebDriverConfiguration configuration) {
 
         URL remoteAddress = configuration.getRemoteAddress();
 
         // default remote address
         if (Validate.empty(remoteAddress)) {
-            remoteAddress = TypedWebDriverConfiguration.DEFAULT_REMOTE_URL;
+            remoteAddress = WebDriverConfiguration.DEFAULT_REMOTE_URL;
             log.log(Level.INFO, "Property \"remoteAdress\" was not specified, using default value of {0}",
-                    TypedWebDriverConfiguration.DEFAULT_REMOTE_URL);
+                    WebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
@@ -95,18 +97,19 @@ public class AndroidDriverFactory implements
      * ArquillianDescriptor, java.lang.Class)
      */
     @Override
-    public TypedWebDriverConfiguration<AndroidDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-
-        TypedWebDriverConfiguration<AndroidDriverConfiguration> configuration = new TypedWebDriverConfiguration<AndroidDriverConfiguration>(
-                AndroidDriverConfiguration.class).configure(descriptor, qualifier);
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, qualifier);
         if (!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing AndroidDriver configuration to be remote-based.");
         }
 
         return configuration;
+    }
 
+    @Override
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
 }

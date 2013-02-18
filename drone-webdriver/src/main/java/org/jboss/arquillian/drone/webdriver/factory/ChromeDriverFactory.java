@@ -16,16 +16,14 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.ChromeDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,10 +36,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>,
-        Instantiator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>, Destructor<ChromeDriver> {
+public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> implements
+        Configurator<ChromeDriver, WebDriverConfiguration>, Instantiator<ChromeDriver, WebDriverConfiguration>,
+        Destructor<ChromeDriver> {
 
     private static final String CHROME_DRIVER_BINARY_KEY = "webdriver.chrome.driver";
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Chrome().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -69,7 +70,7 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public ChromeDriver createInstance(TypedWebDriverConfiguration<ChromeDriverConfiguration> configuration) {
+    public ChromeDriver createInstance(WebDriverConfiguration configuration) {
 
         // set capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
@@ -105,17 +106,9 @@ public class ChromeDriverFactory implements Configurator<ChromeDriver, TypedWebD
                 new Object[] { capabilities }, ChromeDriver.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
     @Override
-    public TypedWebDriverConfiguration<ChromeDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<ChromeDriverConfiguration>(ChromeDriverConfiguration.class).configure(
-                descriptor, qualifier);
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
     private List<String> getChromeSwitches(String valueString) {

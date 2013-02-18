@@ -16,16 +16,14 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -38,11 +36,13 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class HtmlUnitDriverFactory implements
-        Configurator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>,
-        Instantiator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>, Destructor<HtmlUnitDriver> {
+public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriver> implements
+        Configurator<HtmlUnitDriver, WebDriverConfiguration>, Instantiator<HtmlUnitDriver, WebDriverConfiguration>,
+        Destructor<HtmlUnitDriver> {
 
     private static final Logger log = Logger.getLogger(HtmlUnitDriverFactory.class.getName());
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.HtmlUnit().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -70,7 +70,7 @@ public class HtmlUnitDriverFactory implements
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public HtmlUnitDriver createInstance(TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> configuration) {
+    public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
 
         // this is support for legacy constructor
         String applicationName = configuration.getApplicationName();
@@ -99,17 +99,8 @@ public class HtmlUnitDriverFactory implements
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
     @Override
-    public TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-        return new TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>(HtmlUnitDriverConfiguration.class).configure(
-                descriptor, qualifier);
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
-
 }

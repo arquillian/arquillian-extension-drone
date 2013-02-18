@@ -16,14 +16,469 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
+import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 /**
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface WebDriverConfiguration extends AndroidDriverConfiguration, ChromeDriverConfiguration,
-        FirefoxDriverConfiguration, HtmlUnitDriverConfiguration, InternetExplorerDriverConfiguration,
-        IPhoneDriverConfiguration, OperaDriverConfiguration, RemoteWebDriverConfiguration, RemoteReusableWebDriverConfiguration {
+public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration> {
+
+    private static final Logger log = Logger.getLogger(WebDriverConfiguration.class.getName());
+
+    public static final String CONFIGURATION_NAME = "webdriver";
+
+    public static URL DEFAULT_REMOTE_URL;
+    static {
+        try {
+            DEFAULT_REMOTE_URL = new URL("http://localhost:14444/wd/hub");
+        } catch (MalformedURLException e) {
+            // ignore invalid url exception
+        }
+    }
+
+    public static final String DEFAULT_BROWSER_CAPABILITIES = new CapabilityMap.HtmlUnit().getReadableName();
+
+    @Deprecated
+    private String implementationClass;
+
+    private int iePort;
+
+    @Deprecated
+    private String applicationName;
+
+    @Deprecated
+    private String applicationVersion;
+
+    @Deprecated
+    private String userAgent;
+
+    @Deprecated
+    private String firefoxProfile;
+
+    @Deprecated
+    private String firefoxBinary;
+
+    @Deprecated
+    private String chromeBinary;
+
+    private String chromeDriverBinary;
+
+    @Deprecated
+    private String chromeSwitches;
+
+    private URL remoteAddress;
+
+    @Deprecated
+    private float browserVersionNumeric;
+
+    @Deprecated
+    private boolean useJavaScript = true;
+
+    @Deprecated
+    private String operaArguments;
+
+    @Deprecated
+    private boolean operaAutostart = true;
+
+    @Deprecated
+    private String operaBinary;
+
+    @Deprecated
+    private int operaDisplay = -1;
+
+    @Deprecated
+    private boolean operaIdle = false;
+
+    @Deprecated
+    private String operaLauncher;
+
+    @Deprecated
+    private String operaLoggingFile;
+
+    @Deprecated
+    private String operaLoggingLevel = "INFO";
+
+    @Deprecated
+    private int operaPort = 0;
+
+    @Deprecated
+    private String operaProfile;
+
+    @Deprecated
+    private String operaProduct;
+
+    @Deprecated
+    private boolean operaQuit = true;
+
+    @Deprecated
+    private boolean operaRestart = true;
+
+    private String browserCapabilities;
+
+    private boolean remoteReusable;
+
+    private boolean remote;
+
+    private Map<String, Object> capabilityMap;
+
+    // internal variables
+    // ARQ-1022
+    private String _originalBrowserCapabilities;
+
+    private BrowserCapabilities _browserCapabilities;
+
+    public WebDriverConfiguration(BrowserCapabilities browser) {
+        if (browser != null) {
+            this._browserCapabilities = browser;
+            this._originalBrowserCapabilities = browser.getReadableName();
+            this.browserCapabilities = _originalBrowserCapabilities;
+        }
+    }
+
+    public void setBrowserCapabilitiesInternal(BrowserCapabilities browser) {
+        if (browser != null) {
+            this._browserCapabilities = browser;
+            this.browserCapabilities = browser.getReadableName();
+        }
+    }
+
+    @Deprecated
+    public WebDriverConfiguration(String implementationClass) {
+        this.implementationClass = implementationClass;
+    }
+
+    @Override
+    public WebDriverConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
+        ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+
+        // ARQ-1022, we need to check if we haven't overriden original browser
+        // capabilities in an incompatible way
+        if (_originalBrowserCapabilities != null && !_originalBrowserCapabilities.equals(this.browserCapabilities)) {
+            log.log(Level.WARNING,
+                    "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, Arquillian configuration will be ignored.",
+                    new Object[] { browserCapabilities, _originalBrowserCapabilities });
+            this.browserCapabilities = _originalBrowserCapabilities;
+        }
+        return this;
+    }
+
+    @Deprecated
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    @Deprecated
+    public String getApplicationVersion() {
+        return applicationVersion;
+    }
+
+    public String getBrowserCapabilities() {
+
+        // if we have created a browser capability object by using a specific factory, e.g. AndroidDriverFactory, ignore value
+        // specified by end user
+        if (_browserCapabilities != null) {
+            return _browserCapabilities.getReadableName();
+        }
+
+        return browserCapabilities;
+    }
+
+    @Deprecated
+    public float getBrowserVersionNumeric() {
+        return browserVersionNumeric;
+    }
+
+    public Capabilities getCapabilities() {
+        // return a merge of original capability plus capabilities user has specified in configuration
+        return new DesiredCapabilities(new DesiredCapabilities(_browserCapabilities.getRawCapabilities()),
+                new DesiredCapabilities(this.capabilityMap));
+    }
+
+    @Deprecated
+    public String getChromeBinary() {
+        return chromeBinary;
+    }
+
+    public String getChromeDriverBinary() {
+        return chromeDriverBinary;
+    }
+
+    @Deprecated
+    public String getChromeSwitches() {
+        return chromeSwitches;
+    }
+
+    @Override
+    public String getConfigurationName() {
+        return CONFIGURATION_NAME;
+    }
+
+    @Deprecated
+    public String getFirefoxBinary() {
+        return firefoxBinary;
+    }
+
+    @Deprecated
+    public String getFirefoxProfile() {
+        return firefoxProfile;
+    }
+
+    public int getIePort() {
+        return iePort;
+    }
+
+    public String getImplementationClass() {
+
+        String implementationClassName = this.implementationClass;
+
+        // get real implementation class value
+        if (implementationClassName == null && _browserCapabilities != null) {
+            implementationClassName = _browserCapabilities.getImplementationClassName();
+        }
+
+        return implementationClassName;
+    }
+
+    @Deprecated
+    public String getOperaArguments() {
+        return operaArguments;
+    }
+
+    @Deprecated
+    public String getOperaBinary() {
+        return operaBinary;
+    }
+
+    @Deprecated
+    public int getOperaDisplay() {
+        return operaDisplay;
+    }
+
+    @Deprecated
+    public String getOperaLauncher() {
+        return operaLauncher;
+    }
+
+    @Deprecated
+    public String getOperaLoggingFile() {
+        return operaLoggingFile;
+    }
+
+    @Deprecated
+    public String getOperaLoggingLevel() {
+        return operaLoggingLevel;
+    }
+
+    @Deprecated
+    public int getOperaPort() {
+        return operaPort;
+    }
+
+    @Deprecated
+    public String getOperaProduct() {
+        return operaProduct;
+    }
+
+    @Deprecated
+    public String getOperaProfile() {
+        return operaProfile;
+    }
+
+    public URL getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    @Deprecated
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    @Deprecated
+    public boolean isOperaAutostart() {
+        return operaAutostart;
+    }
+
+    @Deprecated
+    public boolean isOperaIdle() {
+        return operaIdle;
+    }
+
+    @Deprecated
+    public boolean isOperaQuit() {
+        return operaQuit;
+    }
+
+    @Deprecated
+    public boolean isOperaRestart() {
+        return operaRestart;
+    }
+
+    public boolean isRemote() {
+        return remote;
+    }
+
+    public boolean isRemoteReusable() {
+        return remoteReusable;
+    }
+
+    @Deprecated
+    public boolean isUseJavaScript() {
+        return useJavaScript;
+    }
+
+    @Deprecated
+    public void setApplicationName(final String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    @Deprecated
+    public void setApplicationVersion(final String applicationVersion) {
+        this.applicationVersion = applicationVersion;
+    }
+
+    public void setBrowserCapabilities(final String browserCapabilities) {
+        this.browserCapabilities = browserCapabilities;
+    }
+
+    @Deprecated
+    public void setBrowserVersionNumeric(final float browserVersionNumeric) {
+        this.browserVersionNumeric = browserVersionNumeric;
+    }
+
+    @Deprecated
+    public void setChromeBinary(final String chromeBinary) {
+        this.chromeBinary = chromeBinary;
+    }
+
+    public void setChromeDriverBinary(final String chromeDriverBinary) {
+        this.chromeDriverBinary = chromeDriverBinary;
+    }
+
+    @Deprecated
+    public void setChromeSwitches(final String chromeSwitches) {
+        this.chromeSwitches = chromeSwitches;
+    }
+
+    @Deprecated
+    public void setFirefoxBinary(final String firefoxBinary) {
+        this.firefoxBinary = firefoxBinary;
+    }
+
+    @Deprecated
+    public void setFirefoxProfile(final String firefoxProfile) {
+        this.firefoxProfile = firefoxProfile;
+    }
+
+    public void setIePort(final int iePort) {
+        this.iePort = iePort;
+    }
+
+    @Deprecated
+    public void setImplementationClass(String implementationClass) {
+        this.implementationClass = implementationClass;
+    }
+
+    @Deprecated
+    public void setOperaArguments(final String operaArguments) {
+        this.operaArguments = operaArguments;
+    }
+
+    @Deprecated
+    public void setOperaAutostart(final boolean operaAutostart) {
+        this.operaAutostart = operaAutostart;
+    }
+
+    @Deprecated
+    public void setOperaBinary(final String operaBinary) {
+        this.operaBinary = operaBinary;
+    }
+
+    @Deprecated
+    public void setOperaDisplay(final int operaDisplay) {
+        this.operaDisplay = operaDisplay;
+    }
+
+    @Deprecated
+    public void setOperaIdle(final boolean operaIdle) {
+        this.operaIdle = operaIdle;
+    }
+
+    @Deprecated
+    public void setOperaLauncher(final String operaLauncher) {
+        this.operaLauncher = operaLauncher;
+    }
+
+    @Deprecated
+    public void setOperaLoggingFile(final String operaLoggingFile) {
+        this.operaLoggingFile = operaLoggingFile;
+    }
+
+    @Deprecated
+    public void setOperaLoggingLevel(final String operaLoggingLevel) {
+        this.operaLoggingLevel = operaLoggingLevel;
+    }
+
+    @Deprecated
+    public void setOperaPort(final int operaPort) {
+        this.operaPort = operaPort;
+    }
+
+    @Deprecated
+    public void setOperaProduct(final String operaProduct) {
+        this.operaProduct = operaProduct;
+    }
+
+    @Deprecated
+    public void setOperaProfile(final String operaProfile) {
+        this.operaProfile = operaProfile;
+    }
+
+    @Deprecated
+    public void setOperaQuit(final boolean operaQuit) {
+        this.operaQuit = operaQuit;
+    }
+
+    @Deprecated
+    public void setOperaRestart(final boolean operaRestart) {
+        this.operaRestart = operaRestart;
+    }
+
+    public void setRemote(final boolean remote) {
+        this.remote = remote;
+    }
+
+    public void setRemoteAddress(final URL remoteAddress) {
+        this.remoteAddress = remoteAddress;
+    }
+
+    public void setRemoteReusable(final boolean remoteReusable) {
+        this.remoteReusable = remoteReusable;
+    }
+
+    @Deprecated
+    public void setUseJavaScript(final boolean useJavaScript) {
+        this.useJavaScript = useJavaScript;
+    }
+
+    @Deprecated
+    public void setUserAgent(final String userAgent) {
+        this.userAgent = userAgent;
+    }
 
 }

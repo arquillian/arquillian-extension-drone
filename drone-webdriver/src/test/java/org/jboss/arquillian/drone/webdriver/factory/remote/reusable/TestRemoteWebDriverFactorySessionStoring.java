@@ -30,8 +30,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.webdriver.configuration.RemoteReusableWebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -52,7 +51,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     @Mock
     private ServiceLoader serviceLoader;
     @Mock
-    private TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration;
+    private WebDriverConfiguration configuration;
 
     @Inject
     private Instance<ReusedSessionStore> sessionStore;

@@ -20,6 +20,7 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.factory.AndroidDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
@@ -32,6 +33,8 @@ import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverExtension;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentFileStorage;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentStorage;
+import org.jboss.arquillian.drone.webdriver.impl.BrowserCapabilitiesRegistrar;
+import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 
 /**
  * Arquillian Drone support for WebDriver
@@ -77,6 +80,17 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(Configurator.class, RemoteWebDriverFactory.class);
         builder.service(Instantiator.class, RemoteWebDriverFactory.class);
         builder.service(Destructor.class, RemoteWebDriverFactory.class);
+
+        builder.observer(BrowserCapabilitiesRegistrar.class);
+
+        builder.service(BrowserCapabilities.class, CapabilityMap.Android.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.Chrome.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.Firefox.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.HtmlUnit.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.InternetExplorer.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.IPhone.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.Opera.class);
+        builder.service(BrowserCapabilities.class, CapabilityMap.Remote.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
         builder.service(ReusedSessionPernamentStorage.class, ReusedSessionPernamentFileStorage.class);

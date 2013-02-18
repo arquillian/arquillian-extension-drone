@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,34 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.configuration;
+package org.jboss.arquillian.drone.webdriver.spi;
+
+import java.util.Map;
+
+import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
- * Configuration for Firefox Driver
+ * A mapping between browserCapabilities and Selenium capabilities
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public interface FirefoxDriverConfiguration extends CommonWebDriverConfiguration {
+public interface BrowserCapabilities extends Sortable {
 
     /**
-     * @return the firefoxProfile
+     * Returns class name of appropriate Selenium browser
+     *
+     * @return
      */
-    String getFirefoxProfile();
+    String getImplementationClassName();
 
     /**
-     * @param firefoxProfile the firefoxProfile to set
+     * Returns a map of Selenium capabilities of the browser
+     *
+     * @return
      */
-    void setFirefoxProfile(String firefoxProfile);
+    Map<String, ?> getRawCapabilities();
 
     /**
-     * @return the firefoxBinary
+     * Returns a name of browserCapabilities used to match the browser
+     *
+     * @return
      */
-    String getFirefoxBinary();
-
-    /**
-     * @param firefoxBinary the firefoxBinary to set
-     */
-    void setFirefoxBinary(String firefoxBinary);
+    String getReadableName();
 
 }

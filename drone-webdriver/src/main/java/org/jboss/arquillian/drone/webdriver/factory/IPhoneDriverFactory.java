@@ -25,8 +25,8 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.IPhoneDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.iphone.IPhoneDriver;
 
 /**
@@ -36,10 +36,13 @@ import org.openqa.selenium.iphone.IPhoneDriver;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>,
-        Instantiator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>, Destructor<IPhoneDriver> {
+public class IPhoneDriverFactory extends AbstractWebDriverFactory<IPhoneDriver> implements
+        Configurator<IPhoneDriver, WebDriverConfiguration>, Instantiator<IPhoneDriver, WebDriverConfiguration>,
+        Destructor<IPhoneDriver> {
 
     private static final Logger log = Logger.getLogger(IPhoneDriverFactory.class.getName());
+
+    private static final String BROWSER_CAPABILITIES = new CapabilityMap.IPhone().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -67,15 +70,15 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebD
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public IPhoneDriver createInstance(TypedWebDriverConfiguration<IPhoneDriverConfiguration> configuration) {
+    public IPhoneDriver createInstance(WebDriverConfiguration configuration) {
 
         URL remoteAddress = configuration.getRemoteAddress();
 
         // default remote address
         if (Validate.empty(remoteAddress)) {
-            remoteAddress = TypedWebDriverConfiguration.DEFAULT_REMOTE_URL;
+            remoteAddress = WebDriverConfiguration.DEFAULT_REMOTE_URL;
             log.log(Level.INFO, "Property \"remoteAdress\" was not specified, using default value of {0}",
-                    TypedWebDriverConfiguration.DEFAULT_REMOTE_URL);
+                    WebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
@@ -92,11 +95,8 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebD
      * ArquillianDescriptor, java.lang.Class)
      */
     @Override
-    public TypedWebDriverConfiguration<IPhoneDriverConfiguration> createConfiguration(ArquillianDescriptor descriptor,
-            Class<? extends Annotation> qualifier) {
-
-        TypedWebDriverConfiguration<IPhoneDriverConfiguration> configuration = new TypedWebDriverConfiguration<IPhoneDriverConfiguration>(
-                IPhoneDriverConfiguration.class).configure(descriptor, qualifier);
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, qualifier);
         if (!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing IPhoneDriver configuration to be remote-based.");
@@ -104,6 +104,11 @@ public class IPhoneDriverFactory implements Configurator<IPhoneDriver, TypedWebD
 
         return configuration;
 
+    }
+
+    @Override
+    protected String getDriverReadableName() {
+        return BROWSER_CAPABILITIES;
     }
 
 }
