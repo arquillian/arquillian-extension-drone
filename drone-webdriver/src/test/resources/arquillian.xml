@@ -30,6 +30,15 @@
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
+    <!-- Set a different remote address then default for RemoteReusableTesting -->
+    <extension qualifier="webdriver-reusecookies">
+        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="remoteReusable">true</property>
+        <property name="browserCapabilities">chrome</property>
+        <property name="reuseCookies">true</property>
+        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
+    </extension>
+
     <!-- test with old configuration -->
     <extension qualifier="webdriver-legacyconfiguration">
         <property name="implementationClass">org.openqa.selenium.firefox.FirefoxDriver</property>

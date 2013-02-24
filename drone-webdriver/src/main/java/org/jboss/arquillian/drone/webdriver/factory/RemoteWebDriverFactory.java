@@ -89,11 +89,21 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         // construct capabilities
         Capabilities desiredCapabilities = configuration.getCapabilities();
 
+        RemoteWebDriver driver = null;
+
         if (configuration.isRemoteReusable()) {
-            return createReusableDriver(remoteAddress, desiredCapabilities);
+            driver = createReusableDriver(remoteAddress, desiredCapabilities);
         } else {
-            return createRemoteDriver(remoteAddress, desiredCapabilities);
+            driver = createRemoteDriver(remoteAddress, desiredCapabilities);
         }
+
+        // ARQ-1206
+        // by default, we are clearing Cookies on reusable browsers
+        if(!configuration.isReuseCookies()) {
+            driver.manage().deleteAllCookies();
+        }
+
+        return driver;
     }
 
     @Override

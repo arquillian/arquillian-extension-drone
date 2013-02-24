@@ -136,6 +136,9 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private boolean remote;
 
+    // ARQ-1206, ability to delete all cookies in reused browsers
+    private boolean reuseCookies;
+
     private Map<String, Object> capabilityMap;
 
     // internal variables
@@ -484,6 +487,14 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     @Deprecated
     public void setUserAgent(final String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public boolean isReuseCookies() {
+        return reuseCookies;
+    }
+
+    public void setReuseCookies(boolean reuseCookies) {
+        this.reuseCookies = reuseCookies;
     }
 
 }
