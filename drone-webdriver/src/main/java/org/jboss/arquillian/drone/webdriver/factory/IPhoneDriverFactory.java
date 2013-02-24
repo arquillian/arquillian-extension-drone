@@ -25,7 +25,6 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.iphone.IPhoneDriver;
 
@@ -42,7 +41,7 @@ public class IPhoneDriverFactory extends AbstractWebDriverFactory<IPhoneDriver> 
 
     private static final Logger log = Logger.getLogger(IPhoneDriverFactory.class.getName());
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.IPhone().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.IPhone().getReadableName();
 
     /*
      * (non-Javadoc)

@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -42,7 +41,7 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
 
     private static final Logger log = Logger.getLogger(HtmlUnitDriverFactory.class.getName());
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.HtmlUnit().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
 
     /*
      * (non-Javadoc)

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,33 +16,32 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
- * InternetExplorerDriver.
+ * PhantomJSDriver.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<InternetExplorerDriver> implements
-        Configurator<InternetExplorerDriver, WebDriverConfiguration>,
-        Instantiator<InternetExplorerDriver, WebDriverConfiguration>, Destructor<InternetExplorerDriver> {
+public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDriver> implements
+        Configurator<PhantomJSDriver, WebDriverConfiguration>, Instantiator<PhantomJSDriver, WebDriverConfiguration>,
+        Destructor<PhantomJSDriver> {
 
-    private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
+    // that's the only property we need to verify here
+    // the rest is already extracted from capabilities
+    private static final String PHANTOMJS_DRIVER_BINARY_KEY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
-    public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
-
-    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.InternetExplorer().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.PhantomJS().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -60,7 +59,7 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     @Override
-    public void destroyInstance(InternetExplorerDriver instance) {
+    public void destroyInstance(PhantomJSDriver instance) {
         instance.quit();
     }
 
@@ -70,23 +69,26 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public InternetExplorerDriver createInstance(WebDriverConfiguration configuration) {
+    public PhantomJSDriver createInstance(WebDriverConfiguration configuration) {
 
-        int port = configuration.getIePort();
+        // set capabilities
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        // capabilities based
-        if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                    new Object[] { configuration.getCapabilities() }, InternetExplorerDriver.class);
-        }
-        // port specified, we cannot use capabilities
-        else {
-            log.log(Level.FINE, "Creating InternetExplorerDriver bound to port {0}", port);
+        String driverBinary = (String) capabilities.getCapability(PHANTOMJS_DRIVER_BINARY_KEY);
 
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { int.class },
-                    new Object[] { port }, InternetExplorerDriver.class);
+        if (Validate.empty(driverBinary)) {
+            driverBinary = SecurityActions.getProperty(PHANTOMJS_DRIVER_BINARY_KEY);
         }
 
+        // driver binary configuration
+        if (Validate.nonEmpty(driverBinary)) {
+            Validate.isValidPath(driverBinary, "PhantomJS driver binary must represent a valid path, " + driverBinary);
+            Validate.isExecutable(driverBinary, "PhantomJS driver binary must point to an executable file, " + driverBinary);
+        }
+
+        // create the instance
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { capabilities }, PhantomJSDriver.class);
     }
 
     @Override

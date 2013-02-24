@@ -21,7 +21,7 @@ import java.util.Map;
 import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
- * A mapping between browserCapabilities and Selenium capabilities
+ * A mapping between browserCapabilities representation in Drone and Selenium capabilities
  *
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *

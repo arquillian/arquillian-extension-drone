@@ -21,7 +21,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
@@ -40,7 +39,7 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
         Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,
         Destructor<OperaDriver> {
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Opera().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Opera().getReadableName();
 
     @Inject
     Instance<BrowserCapabilitiesRegistry> registryInstance;

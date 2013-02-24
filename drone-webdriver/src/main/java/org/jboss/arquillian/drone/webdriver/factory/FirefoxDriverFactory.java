@@ -22,7 +22,6 @@ import java.io.IOException;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
@@ -41,7 +40,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
         Destructor<FirefoxDriver> {
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Firefox().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
 
     /*
      * (non-Javadoc)

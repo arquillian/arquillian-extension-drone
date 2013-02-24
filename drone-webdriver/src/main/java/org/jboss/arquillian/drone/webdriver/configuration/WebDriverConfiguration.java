@@ -19,6 +19,7 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -51,7 +53,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         }
     }
 
-    public static final String DEFAULT_BROWSER_CAPABILITIES = new CapabilityMap.HtmlUnit().getReadableName();
+    public static final String DEFAULT_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
 
     @Deprecated
     private String implementationClass;
@@ -206,7 +208,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public Capabilities getCapabilities() {
         // return a merge of original capability plus capabilities user has specified in configuration
-        return new DesiredCapabilities(new DesiredCapabilities(_browserCapabilities.getRawCapabilities()),
+        // safely ignore null value here
+        return new DesiredCapabilities(new DesiredCapabilities(
+                _browserCapabilities.getRawCapabilities() == null ? new HashMap<String, Object>()
+                        : _browserCapabilities.getRawCapabilities()),
                 new DesiredCapabilities(this.capabilityMap));
     }
 

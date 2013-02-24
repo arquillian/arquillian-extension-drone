@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
@@ -50,7 +49,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Remote().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Remote().getReadableName();
 
     @Inject
     Instance<ReusedSessionStore> sessionStore;

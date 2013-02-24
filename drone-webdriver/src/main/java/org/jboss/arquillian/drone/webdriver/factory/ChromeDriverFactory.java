@@ -16,13 +16,16 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.configuration.CapabilityMap;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
@@ -40,9 +43,11 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         Configurator<ChromeDriver, WebDriverConfiguration>, Instantiator<ChromeDriver, WebDriverConfiguration>,
         Destructor<ChromeDriver> {
 
+    private static final Logger log = Logger.getLogger(ChromeDriverFactory.class.getName());
+
     private static final String CHROME_DRIVER_BINARY_KEY = "webdriver.chrome.driver";
 
-    private static final String BROWSER_CAPABILITIES = new CapabilityMap.Chrome().getReadableName();
+    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
 
     /*
      * (non-Javadoc)
@@ -109,6 +114,17 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     @Override
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
+    }
+
+    @Override
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, qualifier);
+        if (!configuration.isRemote()) {
+            configuration.setRemote(true);
+            log.log(Level.FINE, "Forcing ChromeDriver configuration to be remote-based.");
+        }
+
+        return configuration;
     }
 
     private List<String> getChromeSwitches(String valueString) {

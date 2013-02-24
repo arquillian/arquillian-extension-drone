@@ -1,4 +1,4 @@
-package org.jboss.arquillian.drone.webdriver.configuration;
+package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @see DesiredCapabilities
  */
-public class CapabilityMap {
+public class BrowserCapabilitiesList {
 
     public static class Android implements BrowserCapabilities {
         @Override
@@ -190,7 +190,30 @@ public class CapabilityMap {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            // we might want empty map here instead
+            return null;
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+
+    };
+
+    public static class PhantomJS implements BrowserCapabilities {
+
+        @Override
+        public String getReadableName() {
+            return "phantomjs";
+        }
+
+        @Override
+        public String getImplementationClassName() {
+            return "org.openqa.selenium.phantomjs.PhantomJSDriver";
+        }
+
+        @Override
+        public Map<String, ?> getRawCapabilities() {
             return null;
         }
 
