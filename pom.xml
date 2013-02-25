@@ -36,7 +36,7 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.2.Final</version.arquillian.core>
+        <version.arquillian.core>1.0.3.Final</version.arquillian.core>
         <version.com.opera>1.1</version.com.opera>
         <version.com.github.detro.ghostdriver>1.0.1</version.com.github.detro.ghostdriver>
         <version.selenium>2.30.0</version.selenium>
