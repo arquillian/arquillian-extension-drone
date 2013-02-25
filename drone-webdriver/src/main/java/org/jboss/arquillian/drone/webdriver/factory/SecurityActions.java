@@ -157,8 +157,11 @@ final class SecurityActions {
             throw new IllegalStateException("Unable to instantiate a " + className
                     + " instance, access refused by SecurityManager.", e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("Unable to instantiate Drone via " + getConstructorName(className, argumentTypes),
-                    e.getCause());
+            throw new RuntimeException(
+                    String.format("Unable to instantiate Drone via %s: %s",
+                    getConstructorName(className, argumentTypes),
+                    e.getCause()), // this provides the message of the ITE cause, which is also important!
+                    e.getCause()); // this provides stack trace of the ITE cause
         }
 
         // Cast
