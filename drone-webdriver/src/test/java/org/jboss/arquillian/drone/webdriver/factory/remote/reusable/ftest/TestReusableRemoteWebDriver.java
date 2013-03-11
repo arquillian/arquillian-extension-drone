@@ -50,7 +50,7 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
         Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
-        ReusableRemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities,
+        RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities,
                 reusedSessionId);
         reusedDriver.navigate().to(HUB_URL.toString());
     }

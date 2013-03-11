@@ -16,9 +16,14 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
+import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.SessionId;
 
 /**
@@ -28,12 +33,19 @@ public class ReusedSession implements Serializable {
 
     private static final long serialVersionUID = 4363274772718639918L;
 
+    private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
+
     private String opaqueKey;
     private Capabilities capabilities;
 
-    public ReusedSession(SessionId sessionId, Capabilities capabilities) {
+    ReusedSession(SessionId sessionId, Capabilities capabilities) {
         this.opaqueKey = sessionId.toString();
-        this.capabilities = capabilities;
+        this.capabilities = createReusableCapabilities(capabilities);
+    }
+
+    public static ReusedSession createInstance(SessionId sessionId, Capabilities capabilities) {
+        DesiredCapabilities reusableCapabilities = createReusableCapabilities(capabilities);
+        return new ReusedSession(sessionId, reusableCapabilities);
     }
 
     public SessionId getSessionId() {
@@ -42,6 +54,27 @@ public class ReusedSession implements Serializable {
 
     public Capabilities getCapabilities() {
         return capabilities;
+    }
+
+    static DesiredCapabilities createReusableCapabilities(Capabilities driverCapabilities) {
+        DesiredCapabilities capabilitiesForReuse = new DesiredCapabilities();
+        for (Entry<String, ?> capability : driverCapabilities.asMap().entrySet()) {
+            String key = capability.getKey();
+            Object value = capability.getValue();
+            if (value instanceof Serializable) {
+                try {
+                    SerializationUtils.serializeToBytes((Serializable) value);
+                    capabilitiesForReuse.setCapability(capability.getKey(), capability.getValue());
+                } catch (IOException e) {
+                    String type = (value != null ? value.getClass().getName() : null);
+                    log.warning(String.format("The capability '%s' has unserializable value of type '%s' and value '%s' - cause: %s" , key, type, value, e.getCause()));
+                }
+            } else {
+                String type = (value != null ? value.getClass().getName() : null);
+                log.warning(String.format("The capability '%s' has unserializable value of type '%s' and value '%s'", key, type, value));
+            }
+        }
+        return capabilitiesForReuse;
     }
 
     @Override
@@ -75,4 +108,8 @@ public class ReusedSession implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ReusedSession [opaqueKey=" + opaqueKey + ", capabilities=" + capabilities + "]";
+    }
 }

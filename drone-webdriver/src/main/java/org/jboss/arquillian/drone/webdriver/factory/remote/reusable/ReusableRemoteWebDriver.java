@@ -21,6 +21,7 @@ import java.net.URL;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.remote.CommandExecutor;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -37,17 +38,22 @@ import org.openqa.selenium.remote.SessionId;
  */
 public class ReusableRemoteWebDriver extends RemoteWebDriver {
 
-    ReusableRemoteWebDriver() {
-    }
-
     /**
      * Creates the {@link ReusableRemoteWebDriver} from valid {@link RemoteWebDriver} instance.
      *
      * @param remoteWebDriver valid {@link RemoteWebDriver} instance.
      * @return the {@link RemoteWebDriver} wrapped as {@link ReusableRemoteWebDriver}
      */
-    public static ReusableRemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
-        return new ReusableRemoteWebDriver(remoteWebDriver);
+    public static RemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
+
+        RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteWebDriver.getCommandExecutor(),
+                remoteWebDriver.getCapabilities(), remoteWebDriver.getSessionId());
+        try {
+            checkReusability(remoteWebDriver.getSessionId(), driver);
+            return driver;
+        } catch (UnableReuseSessionException e) {
+            throw new IllegalStateException("Reusing RemoteWebDriver session unexpectedly failed", e);
+        }
     }
 
     /**
@@ -58,31 +64,24 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
      * @param desiredCapabilities fully-initialized capabilities returned from previous {@link RemoteWebDriver} session
      * @param sessionId sessionId from previous {@link RemoteWebDriver} session
      */
-    public static ReusableRemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities,
-            SessionId sessionId) throws UnableReuseSessionException {
-        return new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities, sessionId);
-    }
-
-    private ReusableRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
-        super();
-        setCommandExecutor(remoteWebDriver.getCommandExecutor());
-
-        reuseSession(remoteWebDriver.getSessionId(), remoteWebDriver.getCapabilities());
-        try {
-            checkReusability();
-        } catch (UnableReuseSessionException e) {
-            throw new IllegalStateException("Reusing RemoteWebDriver session unexpectedly failed", e);
-        }
-    }
-
-    private ReusableRemoteWebDriver(URL remoteAddress, Capabilities desiredCapabilities, SessionId sessionId)
+    public static RemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities, SessionId sessionId)
             throws UnableReuseSessionException {
-        super();
-        setCommandExecutor(new HttpCommandExecutor(remoteAddress));
-        startClient();
 
-        reuseSession(sessionId, desiredCapabilities);
-        checkReusability();
+        RemoteWebDriver driver = new ReusableRemoteWebDriver(new HttpCommandExecutor(remoteAddress), desiredCapabilities,
+                sessionId);
+        checkReusability(sessionId, driver);
+        return driver;
+    }
+
+    ReusableRemoteWebDriver() {
+        super();
+    }
+
+    protected ReusableRemoteWebDriver(CommandExecutor executor, Capabilities capabilities, SessionId sessionId) {
+        super();
+        setCommandExecutor(executor);
+        setSessionId(sessionId.toString());
+        setReusedCapabilities(capabilities);
     }
 
     /**
@@ -92,22 +91,15 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
      *
      * @throws UnableReuseSessionException
      */
-    private void checkReusability() throws UnableReuseSessionException {
+    private static void checkReusability(SessionId oldSessionId, RemoteWebDriver driver) throws UnableReuseSessionException {
+        if (!oldSessionId.equals(driver.getSessionId())) {
+            throw new UnableReuseSessionException("The created session has another id then session we tried to reuse");
+        }
         try {
-            this.getCurrentUrl();
+            driver.getCurrentUrl();
         } catch (WebDriverException e) {
             throw new UnableReuseSessionException(e);
         }
-    }
-
-    protected final void reuseSession(SessionId sessionId, Capabilities desiredCapabilities) {
-        setReusedSessionId(sessionId);
-        setReusedCapabilities(desiredCapabilities);
-    }
-
-    void setReusedSessionId(SessionId sessionId) {
-        Field sessionIdField = getFieldSafely(this, RemoteWebDriver.class, "sessionId");
-        writeValueToField(this, sessionIdField, sessionId);
     }
 
     void setReusedCapabilities(Capabilities capabilities) {
