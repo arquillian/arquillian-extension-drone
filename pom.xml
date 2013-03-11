@@ -38,8 +38,8 @@
         <!-- Versioning -->
         <version.arquillian.core>1.0.3.Final</version.arquillian.core>
         <version.com.opera>1.1</version.com.opera>
-        <version.com.github.detro.ghostdriver>1.0.1</version.com.github.detro.ghostdriver>
-        <version.selenium>2.30.0</version.selenium>
+        <version.com.github.detro.ghostdriver>1.0.3-dev</version.com.github.detro.ghostdriver>
+        <version.selenium>2.31.0</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>

@@ -117,6 +117,11 @@
             <artifactId>operadriver</artifactId>
             <version>${version.com.opera}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.detro.ghostdriver</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>${version.com.github.detro.ghostdriver}</version>
+        </dependency>
     </dependencies>
 
 </project>
