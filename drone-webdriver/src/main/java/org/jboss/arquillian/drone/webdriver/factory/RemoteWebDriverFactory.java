@@ -35,6 +35,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessio
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
@@ -57,6 +58,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     Instance<InitializationParametersMap> initParams;
     @Inject
     Event<PersistReusedSessionsEvent> persistEvent;
+
+    private Augmenter augmenter = new Augmenter();
 
     @Override
     public int getPrecedence() {
@@ -166,6 +169,9 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         }
 
         initParams.get().put(driver.getSessionId(), initParam);
+
+        driver = (RemoteWebDriver) augmenter.augment(driver);
+
         return driver;
     }
 }
