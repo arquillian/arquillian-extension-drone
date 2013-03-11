@@ -99,7 +99,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         // ARQ-1206
         // by default, we are clearing Cookies on reusable browsers
-        if(!configuration.isReuseCookies()) {
+        if (!configuration.isReuseCookies()) {
             driver.manage().deleteAllCookies();
         }
 
@@ -107,22 +107,24 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     }
 
     @Override
-    public void destroyInstance(RemoteWebDriver instance) {
-        if (instance.getSessionId() == null) {
+    public void destroyInstance(RemoteWebDriver driver) {
+        if (driver.getSessionId() == null) {
             log.warning("The driver has been already destroyed and can't be destroyed again.");
             return;
         }
 
-        InitializationParameter param = initParams.get().remove(instance.getSessionId());
+        SessionId sessionId = driver.getSessionId();
+        Capabilities driverCapabilities = driver.getCapabilities();
+
+        InitializationParameter param = initParams.get().remove(sessionId);
 
         if (param != null) {
-            ReusedSession session = new ReusedSession(instance.getSessionId(), instance.getCapabilities());
+            ReusedSession session = ReusedSession.createInstance(sessionId, driverCapabilities);
             sessionStore.get().store(param, session);
             persistEvent.fire(new PersistReusedSessionsEvent());
         } else {
-            instance.quit();
+            driver.quit();
         }
-
     }
 
     @Override
@@ -134,11 +136,11 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         return new RemoteWebDriver(remoteAddress, desiredCapabilities);
     }
 
-    private ReusableRemoteWebDriver createReusableDriver(URL remoteAddress, Capabilities desiredCapabilities) {
+    private RemoteWebDriver createReusableDriver(URL remoteAddress, Capabilities desiredCapabilities) {
         // construct init params
         InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities);
 
-        ReusableRemoteWebDriver driver = null;
+        RemoteWebDriver driver = null;
 
         // try to reuse the session
         // retrieve the session id
@@ -146,8 +148,9 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         // get all the stored sessions for given initParam
         while (stored != null) {
             SessionId reusedSessionId = stored.getSessionId();
+            Capabilities reusedCapabilities = stored.getCapabilities();
             try {
-                driver = ReusableRemoteWebDriver.fromReusedSession(remoteAddress, desiredCapabilities, reusedSessionId);
+                driver = ReusableRemoteWebDriver.fromReusedSession(remoteAddress, reusedCapabilities, reusedSessionId);
                 break;
             } catch (UnableReuseSessionException ex) {
                 log.log(Level.WARNING, "Unable to reuse session: {0}", stored.getSessionId());
@@ -165,5 +168,4 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         initParams.get().put(driver.getSessionId(), initParam);
         return driver;
     }
-
 }

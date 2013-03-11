@@ -19,13 +19,11 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import static junit.framework.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.SessionId;
 
 /**
  * @author Lukas Fryc
@@ -33,21 +31,11 @@ import org.openqa.selenium.remote.SessionId;
 @RunWith(MockitoJUnitRunner.class)
 public class TestPrivateAccessCompatibility {
 
-    ReusableRemoteWebDriver driver;
+    private ReusableRemoteWebDriver driver;
 
     @Before
     public void initializeReusableRemoteWebDriver() {
         driver = new ReusableRemoteWebDriver();
-    }
-
-    @Test
-    public void testSettingSessionIdCompatibility() {
-        SessionId sessionId = mock(SessionId.class);
-
-        driver.setReusedSessionId(sessionId);
-
-        assertSame("Something must change internally in RemoteWebDriver, since sessionId cannot be set", sessionId,
-                driver.getSessionId());
     }
 
     @Test
