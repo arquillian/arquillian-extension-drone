@@ -39,9 +39,9 @@
     </developers>
 
     <properties>
-        <version.com.github.detro.ghostdriver>1.0.1</version.com.github.detro.ghostdriver>
+        <version.com.github.detro.ghostdriver>1.0.3</version.com.github.detro.ghostdriver>
         <version.com.opera>1.1</version.com.opera>
-        <version.org.jboss.arquillian.selenium>2.30.0</version.org.jboss.arquillian.selenium>
+        <version.org.jboss.arquillian.selenium>2.31.0</version.org.jboss.arquillian.selenium>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
