@@ -29,6 +29,7 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneReady;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -102,6 +103,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(EnrichedClass.class));
+        assertEventFired(DroneReady.class);
 
         DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
@@ -136,6 +138,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
+        assertEventFired(DroneReady.class);
 
         MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
         Assert.assertNotNull("Method context object holder was created in the context", mc);
@@ -167,6 +170,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
         fire(new Before(instance, testMethod));
+        assertEventFired(DroneReady.class);
 
         MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
         Assert.assertNotNull("Method context object holder was created in the context", mc);
