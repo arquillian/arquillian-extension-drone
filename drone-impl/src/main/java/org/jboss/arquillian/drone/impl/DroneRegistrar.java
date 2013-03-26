@@ -20,7 +20,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -82,7 +81,7 @@ public class DroneRegistrar {
     private void registerConfigurators() {
         @SuppressWarnings("rawtypes")
         List<Configurator> list = new ArrayList<Configurator>(serviceLoader.get().all(Configurator.class));
-        Collections.sort(list, SORTABLE_COMPARATOR);
+        Collections.sort(list, PrecedenceComparator.getReversedOrder());
 
         for (Configurator<?, ?> configurator : list) {
             Class<?> type = getFirstGenericParameterType(configurator.getClass(), Configurator.class);
@@ -95,7 +94,7 @@ public class DroneRegistrar {
     public void registerInstantiators() {
         @SuppressWarnings("rawtypes")
         List<Instantiator> list = new ArrayList<Instantiator>(serviceLoader.get().all(Instantiator.class));
-        Collections.sort(list, SORTABLE_COMPARATOR);
+        Collections.sort(list, PrecedenceComparator.getReversedOrder());
 
         for (Instantiator<?, ?> instantiator : list) {
             Class<?> type = getFirstGenericParameterType(instantiator.getClass(), Instantiator.class);
@@ -108,7 +107,7 @@ public class DroneRegistrar {
     public void registerDestructors() {
         @SuppressWarnings("rawtypes")
         List<Destructor> list = new ArrayList<Destructor>(serviceLoader.get().all(Destructor.class));
-        Collections.sort(list, SORTABLE_COMPARATOR);
+        Collections.sort(list, PrecedenceComparator.getReversedOrder());
 
         for (Destructor<?> destructor : list) {
             Class<?> type = getFirstGenericParameterType(destructor.getClass(), Destructor.class);
@@ -129,12 +128,4 @@ public class DroneRegistrar {
         }
         return null;
     }
-
-    // comparator
-    private static final Comparator<Sortable> SORTABLE_COMPARATOR = new Comparator<Sortable>() {
-        public int compare(Sortable o1, Sortable o2) {
-            return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
-        }
-    };
-
 }

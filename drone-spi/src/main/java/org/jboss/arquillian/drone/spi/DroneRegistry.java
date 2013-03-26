@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi;
 
+
 /**
  * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
  *
@@ -39,16 +40,16 @@ public interface DroneRegistry {
      * Registers a configurator for given object type
      *
      * @param key Type to be registered
-     * @param configurator Configurator to be stored
+     * @param configurator {@link Configurator} to be stored
      * @return Modified registry
      */
     DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator);
 
     /**
-     * Registers a instantiator for given object type
+     * Registers an instantiator for given object type
      *
      * @param key Type to be registered
-     * @param value Instantiator to be stored
+     * @param value {@link Instantiator} to be stored
      * @return Modified registry
      */
     DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value);
@@ -57,7 +58,7 @@ public interface DroneRegistry {
      * Registers a destructor for given object type
      *
      * @param key Type to be registered
-     * @param value Destructor to be stored
+     * @param value {@link Destructor} to be stored
      * @return Modified registry
      */
     DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value);
