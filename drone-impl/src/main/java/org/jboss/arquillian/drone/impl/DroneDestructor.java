@@ -19,15 +19,20 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.Enhancer;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
@@ -59,6 +64,9 @@ public class DroneDestructor {
     private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());
 
     @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
+    @Inject
     private Instance<DroneRegistry> registry;
 
     @SuppressWarnings("unchecked")
@@ -76,6 +84,7 @@ public class DroneDestructor {
             // if deployment failed, there is nothing to be destroyed
             Object instance = droneContext.get(typeClass, qualifier);
             if (instance != null) {
+                instance = deenhance(typeClass, qualifier, instance);
                 destructor.destroyInstance(instance);
             }
             droneContext.remove(typeClass, qualifier);
@@ -93,13 +102,16 @@ public class DroneDestructor {
             if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
+                Class<?> type = parameterTypes[i];
+
                 @SuppressWarnings("rawtypes")
-                Destructor destructor = getDestructorFor(parameterTypes[i]);
+                Destructor destructor = getDestructorFor(type);
 
                 // get instance to be destroyed
                 // if deployment failed, there is nothing to be destroyed
                 Object instance = droneMethodContext.get(parameterTypes[i], qualifier);
                 if (instance != null) {
+                    instance = deenhance(type, qualifier, instance);
                     destructor.destroyInstance(instance);
                 }
 
@@ -123,4 +135,21 @@ public class DroneDestructor {
         return destructor;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Object deenhance(Class<?> type, Class<? extends Annotation> qualifier, Object instance) {
+        List<Enhancer> enhancers = new ArrayList<Enhancer>(serviceLoader.get().all(Enhancer.class));
+        Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
+
+        for (Enhancer enhancer : enhancers) {
+            if (enhancer.canEnhance(type, qualifier)) {
+                if (log.isLoggable(Level.FINE)) {
+                    log.fine("Deenhancing using enhancer: " + enhancer.getClass().getName() + ", with precedence "
+                            + enhancer.getPrecedence());
+                }
+                instance = enhancer.deenhance(instance, qualifier);
+            }
+        }
+
+        return instance;
+    }
 }
