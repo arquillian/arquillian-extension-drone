@@ -63,5 +63,7 @@ public class TestReusingWebDriverSession extends AbstractInBrowserTest {
         } else {
             assertEquals(sessionId, rd.getSessionId());
         }
+
+        rd.get(HUB_URL.toExternalForm());
     }
 }

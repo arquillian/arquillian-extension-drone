@@ -26,6 +26,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
@@ -35,7 +36,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessio
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.Augmenter;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
@@ -53,13 +54,11 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Remote().getReadableName();
 
     @Inject
-    Instance<ReusedSessionStore> sessionStore;
+    private Instance<ReusedSessionStore> sessionStore;
     @Inject
-    Instance<InitializationParametersMap> initParams;
+    private Instance<InitializationParametersMap> initParams;
     @Inject
-    Event<PersistReusedSessionsEvent> persistEvent;
-
-    private Augmenter augmenter = new Augmenter();
+    private Event<PersistReusedSessionsEvent> persistEvent;
 
     @Override
     public int getPrecedence() {
@@ -90,7 +89,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         Validate.isEmpty(configuration.getBrowserCapabilities(), "The browser capabilities are not set.");
 
         // construct capabilities
-        Capabilities desiredCapabilities = configuration.getCapabilities();
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         RemoteWebDriver driver = null;
 
@@ -99,6 +98,10 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         } else {
             driver = createRemoteDriver(remoteAddress, desiredCapabilities);
         }
+
+        // ARQ-1351
+        // marks the driver instance for augmentation by AugmentingEnhancer
+        ((DesiredCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
 
         // ARQ-1206
         // by default, we are clearing Cookies on reusable browsers
@@ -169,8 +172,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         }
 
         initParams.get().put(driver.getSessionId(), initParam);
-
-        driver = (RemoteWebDriver) augmenter.augment(driver);
 
         return driver;
     }

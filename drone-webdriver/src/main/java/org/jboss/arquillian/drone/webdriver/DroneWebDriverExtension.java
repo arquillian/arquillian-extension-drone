@@ -19,7 +19,9 @@ package org.jboss.arquillian.drone.webdriver;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.Enhancer;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
 import org.jboss.arquillian.drone.webdriver.factory.AndroidDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
@@ -100,5 +102,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
         builder.service(ReusedSessionPernamentStorage.class, ReusedSessionPernamentFileStorage.class);
+
+        builder.service(Enhancer.class, AugmentingEnhancer.class);
     }
 }

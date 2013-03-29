@@ -123,7 +123,7 @@ public class DroneCreator {
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
         for (Enhancer enhancer : enhancers) {
-            if (enhancer.canEnhance(type, qualifier)) {
+            if (enhancer.canEnhance(instance.getClass(), qualifier)) {
                 if (log.isLoggable(Level.FINE)) {
                     log.fine("Applying enhancer: " + enhancer.getClass().getName() + ", with precedence "
                             + enhancer.getPrecedence());

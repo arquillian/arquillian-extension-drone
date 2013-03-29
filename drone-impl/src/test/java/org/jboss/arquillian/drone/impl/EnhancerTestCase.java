@@ -178,7 +178,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         @Override
         public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-            return type.isAssignableFrom(MockDrone.class);
+            return MockDrone.class.isAssignableFrom(type);
         }
 
         @Override
@@ -206,7 +206,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         @Override
         public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-            return type.isAssignableFrom(MockDrone.class);
+            return true;
         }
 
         @Override
