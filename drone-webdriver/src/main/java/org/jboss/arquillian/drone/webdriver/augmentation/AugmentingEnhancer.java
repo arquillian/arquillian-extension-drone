@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.Augmenter;
@@ -64,7 +65,7 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
 
     @Override
     public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-        return RemoteWebDriver.class.isAssignableFrom(type);
+        return RemoteWebDriver.class == type || ReusableRemoteWebDriver.class == type;
     }
 
     /**
