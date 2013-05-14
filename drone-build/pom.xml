@@ -148,6 +148,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- override the version from Arquillian BOM -->
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-bom</artifactId>
+                <version>${version.shrinkwrap_resolver}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Arquillian -->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
@@ -194,11 +203,10 @@
 
             <!-- PhanthomJS dependencies not present in the Selenium BOM file -->
             <dependency>
-                <groupId>com.github.detro.ghostdriver</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>${version.com.github.detro.ghostdriver}</version>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-phantom-driver</artifactId>
+                <version>${version.phantom.driver}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
