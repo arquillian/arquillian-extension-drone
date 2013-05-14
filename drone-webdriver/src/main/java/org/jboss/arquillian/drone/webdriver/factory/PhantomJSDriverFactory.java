@@ -16,14 +16,17 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.io.IOException;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.phantom.resolver.ResolvingPhantomJSDriverService;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.service.DriverService;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -78,17 +81,22 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
 
         if (Validate.empty(driverBinary)) {
             driverBinary = SecurityActions.getProperty(PHANTOMJS_DRIVER_BINARY_KEY);
+            capabilities.setCapability(PHANTOMJS_DRIVER_BINARY_KEY, driverBinary);
         }
 
-        // driver binary configuration
+        // create an instance with the resolving binary
         if (Validate.nonEmpty(driverBinary)) {
-            Validate.isValidPath(driverBinary, "PhantomJS driver binary must represent a valid path, " + driverBinary);
-            Validate.isExecutable(driverBinary, "PhantomJS driver binary must point to an executable file, " + driverBinary);
+            try {
+                return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { DriverService.class, Capabilities.class },
+                    new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
+            }
+        // create an instance with the common behaviour
+        } else {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                    new Object[] { capabilities }, PhantomJSDriver.class);
         }
-
-        // create the instance
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, PhantomJSDriver.class);
     }
 
     @Override
