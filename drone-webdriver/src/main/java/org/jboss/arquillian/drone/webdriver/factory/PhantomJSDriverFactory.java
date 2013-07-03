@@ -16,7 +16,9 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.io.File;
 import java.io.IOException;
+
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
@@ -42,7 +44,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
 
     // that's the only property we need to verify here
     // the rest is already extracted from capabilities
-    private static final String PHANTOMJS_DRIVER_BINARY_KEY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+    private static final String PHANTOMJS_EXECUTABLE_PATH = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.PhantomJS().getReadableName();
 
@@ -74,28 +76,24 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
     @Override
     public PhantomJSDriver createInstance(WebDriverConfiguration configuration) {
 
-        // set capabilities
+        // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String driverBinary = (String) capabilities.getCapability(PHANTOMJS_DRIVER_BINARY_KEY);
+        String executablePath = (String) capabilities.getCapability(PHANTOMJS_EXECUTABLE_PATH);
 
-        if (Validate.empty(driverBinary)) {
-            driverBinary = SecurityActions.getProperty(PHANTOMJS_DRIVER_BINARY_KEY);
-            capabilities.setCapability(PHANTOMJS_DRIVER_BINARY_KEY, driverBinary);
+        if (Validate.empty(executablePath)) {
+            executablePath = SecurityActions.getProperty(PHANTOMJS_EXECUTABLE_PATH);
         }
 
-        // create an instance with the resolving binary
-        if (Validate.nonEmpty(driverBinary)) {
-            try {
-                return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { DriverService.class, Capabilities.class },
-                    new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
-            }
-        // create an instance with the common behaviour
-        } else {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                    new Object[] { capabilities }, PhantomJSDriver.class);
+        if (Validate.empty(executablePath)) {
+            capabilities.setCapability(PHANTOMJS_EXECUTABLE_PATH, new File("target/drone-phantomjs").getAbsolutePath());
+        }
+
+        try {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { DriverService.class, Capabilities.class },
+                new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
         }
     }
 
