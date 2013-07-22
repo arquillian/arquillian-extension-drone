@@ -25,6 +25,7 @@ import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.AugmenterProvider;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.ExecuteMethod;
 import org.openqa.selenium.remote.InterfaceImplementation;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -65,7 +66,15 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
 
     @Override
     public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-        return RemoteWebDriver.class == type || ReusableRemoteWebDriver.class == type;
+        if (RemoteWebDriver.class == type || ReusableRemoteWebDriver.class == type) {
+            return true;
+        }
+
+        if (RemoteWebDriver.class.isAssignableFrom(type) && DroneAugmented.class.isAssignableFrom(type)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -73,7 +82,8 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
      */
     @Override
     public RemoteWebDriver enhance(RemoteWebDriver instance, Class<? extends Annotation> qualifier) {
-        return (RemoteWebDriver) augmenter.augment(instance);
+        RemoteWebDriver enhanced = (RemoteWebDriver) augmenter.augment(instance);
+        return enhanced;
     }
 
     /**
@@ -82,7 +92,17 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
     @Override
     public RemoteWebDriver deenhance(RemoteWebDriver enhancedInstance, Class<? extends Annotation> qualifier) {
         if (enhancedInstance instanceof DroneAugmented) {
-            return (RemoteWebDriver) ((DroneAugmented) enhancedInstance).getWrapped();
+
+            RemoteWebDriver original = (RemoteWebDriver) ((DroneAugmented) enhancedInstance).getWrapped();
+
+            Capabilities capabilities = enhancedInstance.getCapabilities();
+
+            if (capabilities != null) {
+                ((DesiredCapabilities) enhancedInstance.getCapabilities()).setCapability(DRONE_AUGMENTED, Boolean.FALSE);
+            }
+
+            return original;
+
         }
         return enhancedInstance;
     }
@@ -92,7 +112,7 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
      */
     private class DroneAugmentedImpl implements InterfaceImplementation {
 
-        private RemoteWebDriver original;
+        private transient RemoteWebDriver original;
 
         public DroneAugmentedImpl(RemoteWebDriver original) {
             this.original = original;

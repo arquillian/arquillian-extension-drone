@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.junit.Test;
 import org.openqa.selenium.TakesScreenshot;
@@ -24,8 +25,11 @@ public class TestAugmentingEnhancer {
     @Test
     public void testCanEnhance() {
         assertTrue(enhancer.canEnhance(RemoteWebDriver.class, Default.class));
-        assertTrue(enhancer.canEnhance(mock(RemoteWebDriver.class).getClass(), Default.class));
+        assertTrue(enhancer.canEnhance(ReusableRemoteWebDriver.class, Default.class));
+
         assertFalse(enhancer.canEnhance(WebDriver.class, Default.class));
+        // extensions of supported classes can't be automatically enhanced
+        assertFalse(enhancer.canEnhance(mock(RemoteWebDriver.class).getClass(), Default.class));
     }
 
     @Test
