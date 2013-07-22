@@ -109,8 +109,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.detro.ghostdriver</groupId>
-            <artifactId>phantomjsdriver</artifactId>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-phantom-driver</artifactId>
             <scope>provided</scope>
         </dependency>
 
