@@ -148,15 +148,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- override the version from Arquillian BOM -->
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>${version.shrinkwrap_resolver}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- Arquillian -->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>

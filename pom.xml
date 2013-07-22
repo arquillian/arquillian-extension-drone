@@ -35,17 +35,15 @@
 
     <properties>
         <!-- Versioning -->
-        <version.arquillian.core>1.0.3.Final</version.arquillian.core>
+        <version.arquillian.core>1.1.0.Final</version.arquillian.core>
         <version.com.opera>1.1</version.com.opera>
         <version.com.github.detro.ghostdriver>1.0.3</version.com.github.detro.ghostdriver>
-        <version.phantom.driver>1.0.3-1-SNAPSHOT</version.phantom.driver>
+        <version.phantom.driver>1.0.3</version.phantom.driver>
         <version.selenium>2.31.0</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
         <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
-
-        <version.shrinkwrap_resolver>2.0.0-beta-3</version.shrinkwrap_resolver>
     </properties>
 
     <build>
