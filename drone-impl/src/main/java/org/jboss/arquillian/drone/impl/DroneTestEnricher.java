@@ -54,9 +54,7 @@ public class DroneTestEnricher implements TestEnricher {
     @Inject
     private Instance<DroneContext> droneContext;
 
-    @Inject
-    private Instance<MethodContext> droneMethodContext;
-
+    @Override
     public void enrich(Object testCase) {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
         if (!droneEnrichements.isEmpty()) {
@@ -66,6 +64,7 @@ public class DroneTestEnricher implements TestEnricher {
 
     }
 
+    @Override
     public Object[] resolve(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
@@ -77,10 +76,10 @@ public class DroneTestEnricher implements TestEnricher {
                     log.fine("Resolving method " + method.getName() + " argument at position " + i);
                 }
 
-                Validate.notNull(droneMethodContext.get(), "Method context should not be null");
+                Validate.notNull(droneContext.get(), "Method context should not be null");
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
-                Object value = droneMethodContext.get().get(parameterTypes[i], qualifier);
+                Object value = droneContext.get().get(parameterTypes[i], qualifier);
                 Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
 
                 resolution[i] = value;

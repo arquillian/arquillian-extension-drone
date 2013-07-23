@@ -92,7 +92,7 @@ public class DroneDestructor {
     }
 
     @SuppressWarnings("unchecked")
-    public void destroyMethodScopedDrone(@Observes After event, MethodContext droneMethodContext) {
+    public void destroyMethodScopedDrone(@Observes After event, DroneContext droneContext) {
 
         Method method = event.getTestMethod();
         Class<?>[] parameterTypes = method.getParameterTypes();
@@ -109,13 +109,13 @@ public class DroneDestructor {
 
                 // get instance to be destroyed
                 // if deployment failed, there is nothing to be destroyed
-                Object instance = droneMethodContext.get(parameterTypes[i], qualifier);
+                Object instance = droneContext.get(parameterTypes[i], qualifier);
                 if (instance != null) {
                     instance = deenhance(type, qualifier, instance);
                     destructor.destroyInstance(instance);
                 }
 
-                droneMethodContext.remove(parameterTypes[i], qualifier);
+                droneContext.remove(parameterTypes[i], qualifier);
             }
         }
 

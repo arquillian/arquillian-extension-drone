@@ -29,6 +29,12 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -103,13 +109,17 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(DummyClass.class));
         fire(new Before(instance, testMethod));
 
-        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNull("Drone context was not created", dc);
-        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
-        Assert.assertNull("Method context was not created", mc);
+        assertEventFired(BeforeDroneCallableCreated.class, 0);
+        assertEventFired(AfterDroneCallableCreated.class, 0);
+
+        assertEventFired(BeforeDroneInstantiated.class, 0);
+        assertEventFired(AfterDroneInstantiated.class, 0);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(DummyClass.class));
+
+        assertEventFired(BeforeDroneDestroyed.class, 0);
+        assertEventFired(AfterDroneDestroyed.class, 0);
 
     }
 

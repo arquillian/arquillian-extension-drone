@@ -47,7 +47,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
     // represents a "raw" list of reused sessions, storing sessions with timeout information
     // we cannot use Deque, since it is 1.6+
-    private Map<ByteArray, LinkedList<ByteArray>> rawStore;
+    private final Map<ByteArray, LinkedList<ByteArray>> rawStore;
 
     public ReusedSessionStoreImpl() {
         this.rawStore = new HashMap<ByteArray, LinkedList<ByteArray>>();
@@ -61,6 +61,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             // find key
             for (Entry<ByteArray, LinkedList<ByteArray>> entry : rawStore.entrySet()) {
                 InitializationParameter candidate = entry.getKey().as(InitializationParameter.class);
+
                 if (candidate != null && candidate.equals(key)) {
                     queue = entry.getValue();
                     break;
@@ -89,6 +90,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     @Override
     public void store(InitializationParameter key, ReusedSession session) {
         synchronized (rawStore) {
+
             // update map of raw data
             ByteArray rawKey = ByteArray.fromObject(key);
             if (rawKey == null) {
@@ -212,9 +214,9 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     private static class TimeStampedSession implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private Date timestamp;
+        private final Date timestamp;
 
-        private ByteArray rawSession;
+        private final ByteArray rawSession;
 
         public TimeStampedSession(ByteArray rawSession) {
             this.timestamp = new Date();

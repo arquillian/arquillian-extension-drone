@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -32,6 +33,7 @@ import qualifier.Reusable;
  * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>
  */
 @RunWith(Arquillian.class)
+// FIXME what should be tested by this class, actually?
 public class TestReusingVariousDrivers extends AbstractInBrowserTest {
 
     private static SessionId sessionId;
@@ -41,31 +43,33 @@ public class TestReusingVariousDrivers extends AbstractInBrowserTest {
     RemoteWebDriver driver;
 
     @Test
+    @InSequence(1)
     public void testReusableSessionId1(@Drone @Reusable RemoteWebDriver driver) {
+        sessionId = driver.getSessionId();
         testReusableSessionId(driver);
     }
 
     @Test
+    @InSequence(2)
     public void testReusableSessionId2(@Drone @Reusable RemoteWebDriver driver) {
         testReusableSessionId(driver);
     }
 
     @Test
+    @InSequence(3)
     public void testReusableSessionId3(@Drone @Reusable WebDriver driver) {
+        sessionId=((RemoteWebDriver) driver).getSessionId();
         testReusableSessionId(driver);
     }
 
     @Test
+    @InSequence(4)
     public void testReusableSessionId4(@Drone @Reusable WebDriver driver) {
         testReusableSessionId(driver);
     }
 
     private void testReusableSessionId(WebDriver d) {
         RemoteWebDriver rd = (RemoteWebDriver) d;
-        if (sessionId == null) {
-            sessionId = rd.getSessionId();
-        } else {
-            assertEquals(sessionId, rd.getSessionId());
-        }
+        assertEquals(sessionId, rd.getSessionId());
     }
 }

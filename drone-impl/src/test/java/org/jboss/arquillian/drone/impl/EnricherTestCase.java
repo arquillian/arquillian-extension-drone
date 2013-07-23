@@ -29,7 +29,6 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
-import org.jboss.arquillian.drone.spi.DroneReady;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -81,14 +80,17 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
+        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
+        getManager().inject(instanceCreator);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+        Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
+
     }
 
     @Test
@@ -103,7 +105,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(EnrichedClass.class));
-        assertEventFired(DroneReady.class);
 
         DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
@@ -138,16 +139,15 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
-        assertEventFired(DroneReady.class);
 
-        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
-        Assert.assertNotNull("Method context object holder was created in the context", mc);
+        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("DroneContext object holder was created in the class context for method", dc);
 
-        Object droneInstance = mc.get(MockDrone.class, MethodArgumentOne.class);
+        Object droneInstance = dc.get(MockDrone.class, MethodArgumentOne.class);
         Assert.assertNotNull("Enricher created the instance of mock browser", droneInstance);
 
         fire(new After(instance, testMethod));
-        droneInstance = mc.get(MockDrone.class, MethodArgumentOne.class);
+        droneInstance = dc.get(MockDrone.class, MethodArgumentOne.class);
         Assert.assertNull("Enricher created the instance of mock browser was destroyed", droneInstance);
 
     }
@@ -170,10 +170,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
         fire(new Before(instance, testMethod));
-        assertEventFired(DroneReady.class);
 
-        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
-        Assert.assertNotNull("Method context object holder was created in the context", mc);
+        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("Drone context object holder was created in the context", dc);
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
         getManager().inject(testEnricher);

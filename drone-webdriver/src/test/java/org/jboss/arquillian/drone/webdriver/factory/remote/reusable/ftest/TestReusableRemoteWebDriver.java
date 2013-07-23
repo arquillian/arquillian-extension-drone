@@ -48,7 +48,9 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
     public void whenBrowserIsCreatedThenCouldBeReused(@Drone @Reusable RemoteWebDriver driver) throws UnableReuseSessionException {
 
         driver.navigate().to(SERVER_URL.toString());
+
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
+
         Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
