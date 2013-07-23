@@ -22,12 +22,14 @@ import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDronePriorityFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
+import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -80,7 +82,8 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
-        Assert.assertNotNull("Configurator for MockDrone was created", registry.getEntryFor(MockDrone.class, Configurator.class));
+        Assert.assertNotNull("Configurator for MockDrone was created",
+                registry.getEntryFor(MockDrone.class, Configurator.class));
 
         Assert.assertTrue("Configurator is of MockDronePriorityFactory type",
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDronePriorityFactory);
@@ -90,7 +93,8 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
-        MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class);
+        MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class, Default.class).asInstance(
+                MockDroneConfiguration.class);
         Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",
                 MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());
     }

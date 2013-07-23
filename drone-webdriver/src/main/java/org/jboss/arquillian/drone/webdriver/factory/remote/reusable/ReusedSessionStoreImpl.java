@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,10 +48,10 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
     // represents a "raw" list of reused sessions, storing sessions with timeout information
     // we cannot use Deque, since it is 1.6+
-    private Map<ByteArray, LinkedList<ByteArray>> rawStore;
+    private final Map<ByteArray, LinkedList<ByteArray>> rawStore;
 
     public ReusedSessionStoreImpl() {
-        this.rawStore = new HashMap<ByteArray, LinkedList<ByteArray>>();
+        this.rawStore = new LinkedHashMap<ByteArray, LinkedList<ByteArray>>();
     }
 
     @Override
@@ -58,9 +59,11 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
         synchronized (rawStore) {
 
             LinkedList<ByteArray> queue = null;
+
             // find key
             for (Entry<ByteArray, LinkedList<ByteArray>> entry : rawStore.entrySet()) {
                 InitializationParameter candidate = entry.getKey().as(InitializationParameter.class);
+
                 if (candidate != null && candidate.equals(key)) {
                     queue = entry.getValue();
                     break;
@@ -82,6 +85,8 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             RawDisposableReusedSession disposableSession = sessions.getLast();
             disposableSession.dispose();
 
+            log.log(Level.FINE, "Reusing session {0} ", disposableSession.getSession().getSessionId());
+
             return disposableSession.getSession();
         }
     }
@@ -89,6 +94,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     @Override
     public void store(InitializationParameter key, ReusedSession session) {
         synchronized (rawStore) {
+
             // update map of raw data
             ByteArray rawKey = ByteArray.fromObject(key);
             if (rawKey == null) {
@@ -112,13 +118,14 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             TimeStampedSession timeStampedSession = new TimeStampedSession(rawSession);
             rawList.add(ByteArray.fromObject(timeStampedSession));
 
+            log.log(Level.FINE, "Stored session {0}", timeStampedSession.getSession().getSessionId());
         }
     }
 
     private LinkedList<RawDisposableReusedSession> getValidSessions(LinkedList<ByteArray> rawQueue) {
 
         if (rawQueue == null || rawQueue.size() == 0) {
-            return null;
+            return new LinkedList<RawDisposableReusedSession>();
         }
 
         LinkedList<RawDisposableReusedSession> sessions = new LinkedList<RawDisposableReusedSession>();
@@ -212,9 +219,9 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     private static class TimeStampedSession implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private Date timestamp;
+        private final Date timestamp;
 
-        private ByteArray rawSession;
+        private final ByteArray rawSession;
 
         public TimeStampedSession(ByteArray rawSession) {
             this.timestamp = new Date();
@@ -269,6 +276,14 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
                 return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(timestamp).append(" ").append(getSession());
+            return sb.toString();
+        }
+
     }
 
     /**

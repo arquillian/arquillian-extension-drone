@@ -14,47 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.spi;
+package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+
 /**
- * This event is fired when Drone instance is ready to be used, which is right after instantiation.
+ * This event is fired after Drone instance is enhanced via {@link Enhancer}
  *
- * @author Lukas Fryc
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
  */
-public class DroneReady {
+public class AfterDroneEnhanced extends BaseDroneEvent implements DroneEnhancementEvent {
 
-    private Class<?> type;
-    private Class<? extends Annotation> qualifier;
-    private Object instance;
+    private final InstanceOrCallableInstance instance;
 
-    public DroneReady(Class<?> type, Class<? extends Annotation> qualifier, Object instance) {
-        this.type = type;
-        this.qualifier = qualifier;
+    public AfterDroneEnhanced(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+        super(droneType, qualifier);
         this.instance = instance;
     }
 
-    /**
-     * The type requested to be injected by Drone
-     */
-    public Class<?> getType() {
-        return type;
-    }
-
-    /**
-     * The qualifier associated with given injection point
-     */
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
-    }
-
-    /**
-     * The injected instance
-     *
-     * @return
-     */
-    public Object getInstance() {
+    public InstanceOrCallableInstance getInstance() {
         return instance;
     }
 }

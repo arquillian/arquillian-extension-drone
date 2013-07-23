@@ -29,6 +29,12 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -63,7 +69,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
-        extensions.add(DroneCreator.class);
+        extensions.add(DroneCallableCreator.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
     }
@@ -75,6 +81,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
                 .property("field", "foobar");
 
         TestEnricher testEnricher = new DroneTestEnricher();
+        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
@@ -82,6 +89,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+        Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
     }
 
     @Test
@@ -103,13 +111,17 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(DummyClass.class));
         fire(new Before(instance, testMethod));
 
-        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNull("Drone context was not created", dc);
-        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
-        Assert.assertNull("Method context was not created", mc);
+        assertEventFired(BeforeDroneCallableCreated.class, 0);
+        assertEventFired(AfterDroneCallableCreated.class, 0);
+
+        assertEventFired(BeforeDroneInstantiated.class, 0);
+        assertEventFired(AfterDroneInstantiated.class, 0);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(DummyClass.class));
+
+        assertEventFired(BeforeDroneDestroyed.class, 0);
+        assertEventFired(AfterDroneDestroyed.class, 0);
 
     }
 

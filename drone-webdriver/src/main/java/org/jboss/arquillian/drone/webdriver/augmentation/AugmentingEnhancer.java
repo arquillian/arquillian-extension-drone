@@ -82,6 +82,7 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
      */
     @Override
     public RemoteWebDriver enhance(RemoteWebDriver instance, Class<? extends Annotation> qualifier) {
+
         RemoteWebDriver enhanced = (RemoteWebDriver) augmenter.augment(instance);
         return enhanced;
     }
@@ -91,6 +92,7 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
      */
     @Override
     public RemoteWebDriver deenhance(RemoteWebDriver enhancedInstance, Class<? extends Annotation> qualifier) {
+
         if (enhancedInstance instanceof DroneAugmented) {
 
             RemoteWebDriver original = (RemoteWebDriver) ((DroneAugmented) enhancedInstance).getWrapped();

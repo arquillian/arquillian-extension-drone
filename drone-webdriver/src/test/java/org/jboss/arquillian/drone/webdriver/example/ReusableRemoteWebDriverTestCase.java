@@ -57,16 +57,16 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(1)
     public void testReusableSessionId1(@Drone @Reusable RemoteWebDriver d) {
-        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
-        sessionId = ((RemoteWebDriver) d).getSessionId();
+        Assert.assertNotNull("Browser has sessionId set up", d.getSessionId());
+        sessionId = d.getSessionId();
     }
 
     @Test
     @InSequence(2)
     public void testReusableSessionId2(@Drone @Reusable RemoteWebDriver d) {
         Assert.assertTrue("Drone instance is reusable", d instanceof ReusableRemoteWebDriver);
-        Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
-        Assert.assertEquals("SessionId was reused", sessionId, ((RemoteWebDriver) d).getSessionId());
+        Assert.assertNotNull("Browser has sessionId set up", d.getSessionId());
+        Assert.assertEquals("SessionId was reused", sessionId, d.getSessionId());
         sessionId = null;
     }
 

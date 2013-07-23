@@ -33,11 +33,15 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
+import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
@@ -83,7 +87,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
-        extensions.add(DroneCreator.class);
+        extensions.add(DroneCallableCreator.class);
+        extensions.add(DroneEnhancer.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
     }
@@ -96,15 +101,18 @@ public class EnhancerTestCase extends AbstractTestTestBase {
                 .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
+        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
+        getManager().inject(instanceCreator);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
-        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator>asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator>asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator>asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
         Mockito.when(serviceLoader.all(Enhancer.class)).thenReturn(
-                Arrays.<Enhancer>asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
+                Arrays.<Enhancer> asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
 
         notEnhanced = null;
@@ -119,14 +127,20 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(EnrichedClass.class));
 
         DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
+        InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
 
-        MockDrone droneInstance = (MockDrone) context.get(MockDrone.class, Default.class);
-        assertThat("both enhancerns were applied", droneInstance, equalTo(enhanced2));
+        // as this is usually fired by enriched, we need to fire this on our own
+        droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
+        fire(new AfterDroneInstantiated(droneInstance, MockDrone.class, Default.class));
+
+        assertThat("both enhancerns were applied", droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
 
+        droneInstance = context.get(MockDrone.class, Default.class);
         fire(new AfterClass(EnrichedClass.class));
 
-        droneInstance = (MockDrone) context.get(MockDrone.class, Default.class);
+        droneInstance = context.get(MockDrone.class, Default.class);
         assertThat(droneInstance, is(nullValue()));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
@@ -143,14 +157,19 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
-        MethodContext mc = getManager().getContext(TestContext.class).getObjectStore().get(MethodContext.class);
+        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
+        InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
 
-        MockDrone droneInstance = (MockDrone) mc.get(MockDrone.class, Default.class);
-        assertThat(droneInstance, equalTo(enhanced2));
+        // as this is usually fired by enriched, we need to fire this on our own
+        droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
+        fire(new AfterDroneInstantiated(droneInstance, MockDrone.class, Default.class));
+
+        assertThat(droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
         assertThat(notEnhanced, is(not(nullValue())));
 
         fire(new After(instance, testMethod));
-        droneInstance = (MockDrone) mc.get(MockDrone.class, Default.class);
+        droneInstance = context.get(MockDrone.class, Default.class);
         assertThat(droneInstance, is(nullValue()));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }

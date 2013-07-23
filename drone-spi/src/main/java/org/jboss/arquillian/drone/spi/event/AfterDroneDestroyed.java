@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,14 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.impl;
+package org.jboss.arquillian.drone.spi.event;
+
+import java.lang.annotation.Annotation;
+
+import org.jboss.arquillian.drone.spi.DroneContext;
 
 /**
- * Holder of Drone context for method based life cycle. It is able to store different instances of drone instances as well as
- * their configurations and to retrieve them during testing.
+ * This event is called after Drone instance is destroyed and it is no longer available in the {@link DroneContext}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class MethodContext extends DroneContext {
+public class AfterDroneDestroyed extends BaseDroneEvent implements DroneLifecycleEvent {
+
+    public AfterDroneDestroyed(Class<?> droneType, Class<? extends Annotation> qualifier) {
+        super(droneType, qualifier);
+    }
 }

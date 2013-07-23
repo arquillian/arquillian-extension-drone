@@ -40,27 +40,18 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * ones with highes precedence are kept. See {@link Sortable#getPrecedence()}
  *
  * <p>
- * Consumes:
- * </p>
- * <ol>
- * <li>{@link org.jboss.arquillian.core.spi.ServiceLoader}</li>
- * </ol>
- *
- * <p>
  * Produces:
  * </p>
  * <ol>
- * <li>{@link DroneRegistry}</li>
+ * {@link DroneRegistry}
  * </ol>
  *
  * <p>
  * Observes:
  * </p>
- * <ol>
- * <li>{@link BeforeSuite}</li>
- * </ol>
+ * {@link BeforeSuite}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneRegistrar {

@@ -23,29 +23,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * Enriches test with drone instance and context path. Injects existing instance into every field annotated with {@link Drone}.
  * Handles enrichment for method arguments as well.
  *
- * <p>
- * Consumes:
- * </p>
- * <ol>
- * <li>{@link DroneContext}</li>
- * <li>{@link MethodContext}</li>
- * <li>{@link ArquillianDescriptor}</li>
- * <li>{@link DroneRegistry}</li>
- * </ol>
+ * This enricher is responsible for firing chain of events that transform a callable into real instance by firing
+ * {@link BeforeDroneInstantiated} event.
  *
- *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneTestEnricher implements TestEnricher {
@@ -55,17 +50,17 @@ public class DroneTestEnricher implements TestEnricher {
     private Instance<DroneContext> droneContext;
 
     @Inject
-    private Instance<MethodContext> droneMethodContext;
+    private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
+    @Override
     public void enrich(Object testCase) {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
         if (!droneEnrichements.isEmpty()) {
-            Validate.notNull(droneContext.get(), "Drone Test context should not be null");
             droneEnrichement(testCase, droneEnrichements);
         }
-
     }
 
+    @Override
     public Object[] resolve(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
@@ -77,10 +72,9 @@ public class DroneTestEnricher implements TestEnricher {
                     log.fine("Resolving method " + method.getName() + " argument at position " + i);
                 }
 
-                Validate.notNull(droneMethodContext.get(), "Method context should not be null");
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
-                Object value = droneMethodContext.get().get(parameterTypes[i], qualifier);
+                Object value = getDroneInstance(parameterTypes[i], qualifier);
                 Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
 
                 resolution[i] = value;
@@ -101,13 +95,28 @@ public class DroneTestEnricher implements TestEnricher {
                 Class<?> typeClass = f.getType();
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-                Object value = droneContext.get().get(typeClass, qualifier);
-                Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
-
+                Object value = getDroneInstance(typeClass, qualifier);
                 f.set(testCase, value);
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not enrich test with Drone members", e);
         }
+    }
+
+    private <T> T getDroneInstance(Class<T> type, Class<? extends Annotation> qualifier) {
+        Validate.stateNotNull(droneContext.get(), "Drone Context must not be null");
+
+        InstanceOrCallableInstance union = droneContext.get().get(type, qualifier);
+
+        Validate.notNull(union, "Retrieved a null from context, which is not a valid Drone browser object");
+
+        // execute chain to convert callable into browser
+        if (union.isInstanceCallable()) {
+            droneLifecycleEvent.fire(new BeforeDroneInstantiated(union, type, qualifier));
+        }
+
+        // return browser
+        return union.asInstance(type);
+
     }
 }

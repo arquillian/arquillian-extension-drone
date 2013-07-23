@@ -36,10 +36,6 @@ public class TestReusingVariousDrivers extends AbstractInBrowserTest {
 
     private static SessionId sessionId;
 
-    @Drone
-    @Reusable
-    RemoteWebDriver driver;
-
     @Test
     public void testReusableSessionId1(@Drone @Reusable RemoteWebDriver driver) {
         testReusableSessionId(driver);

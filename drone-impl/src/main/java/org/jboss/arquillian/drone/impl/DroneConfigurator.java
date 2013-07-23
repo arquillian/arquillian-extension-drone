@@ -30,51 +30,38 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.event.DroneConfigured;
-import org.jboss.arquillian.drone.event.MethodDroneConfigured;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
+import org.jboss.arquillian.drone.spi.event.DroneConfigurationEvent;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
-import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
- * Configurator of Drone Configuration. Creates a configuration for every field annotated with {@link Drone}.
+ * Creator of Drone configurations. Drone configuration is created either before class or before method, depending on the scope
+ * of Drone instance, based on data provided in arquillian.xml.
  *
  * <p>
- * Consumes:
+ * Creates:
  * </p>
- * <ol>
- * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
- * <li>{@link DroneRegistry}</li>
- * </ol>
- *
- * <p>
- * Produces:
- * </p>
- * <ol>
- * <li>{@link DroneContext}</li>
- * <li>{@link MethodContext}</li>
- * </ol>
- *
- * <p>
- * Fires:
- * </p>
- * <ol>
- * <li>{@link DroneConfigured}</li>
- * <li>{@link MethodDroneConfigured}</li>
- * </ol>
+ * {@link DroneContext}
  *
  * <p>
  * Observes:
  * </p>
- * <ol>
- * <li>{@link BeforeClass}</li>
- * </ol>
+ * {@link BeforeClass} {@link Before}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * <p>
+ * Fires:
+ * </p>
+ * {@link BeforeDroneConfigured} {@link AfterDroneConfigured}
+ *
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneConfigurator {
@@ -85,35 +72,35 @@ public class DroneConfigurator {
     private InstanceProducer<DroneContext> droneContext;
 
     @Inject
-    @TestScoped
-    private InstanceProducer<MethodContext> droneMethodContext;
-
-    @Inject
     private Instance<ArquillianDescriptor> arquillianDescriptor;
 
     @Inject
-    private Event<DroneConfigured> afterConfiguration;
+    private Event<DroneConfigurationEvent> droneConfigurationEvent;
 
-    @Inject
-    private Event<MethodDroneConfigured> afterMethodConfiguration;
+    public void prepareDroneConfiguration(@Observes BeforeClass event, DroneRegistry registry) {
 
-    public void configureDrone(@Observes BeforeClass event, DroneRegistry registry) {
+        // create Drone Context
+        droneContext.set(new DroneContextImpl());
+
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
         if (fields.isEmpty()) {
             return;
         }
 
-        droneContext.set(new DroneContext());
         for (Field f : fields) {
-            Class<?> typeClass = f.getType();
+            Class<?> droneType = f.getType();
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
             Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
-            Configurator<?, ?> configurator = registry.getEntryFor(typeClass, Configurator.class);
+            Configurator<?, ?> configurator = registry.getEntryFor(droneType, Configurator.class);
+
+            droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
             DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-            droneContext.get().add(configuration.getClass(), qualifier, configuration);
-            afterConfiguration.fire(new DroneConfigured(f, qualifier, configuration));
+            InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+
+            droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
+            droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
         }
 
     }
@@ -128,7 +115,8 @@ public class DroneConfigurator {
             return;
         }
 
-        droneMethodContext.set(new MethodContext());
+        Validate.stateNotNull(droneContext.get(), "DroneContext should be available while working with method scoped instances");
+
         for (int i = 0; i < parameterTypes.length; i++) {
             if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
                 if (log.isLoggable(Level.FINE)) {
@@ -139,11 +127,13 @@ public class DroneConfigurator {
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
                 Configurator<?, ?> configurator = registry.getEntryFor(parameterTypes[i], Configurator.class);
+
+                droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, parameterTypes[i], qualifier));
                 DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-                droneMethodContext.get().add(configuration.getClass(), qualifier, configuration);
-                afterMethodConfiguration.fire(new MethodDroneConfigured(parameterTypes[i], qualifier, configuration));
+                InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+                droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
+                droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, parameterTypes[i], qualifier));
             }
         }
-
     }
 }

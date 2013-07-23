@@ -14,36 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.impl;
-
-import java.util.Collections;
-import java.util.Comparator;
-
-import org.jboss.arquillian.drone.spi.Sortable;
+package org.jboss.arquillian.drone.spi.event;
 
 /**
- * Comparator of {@link Sortable} interfaces
+ * Representation of event related to Drone instance enhancement and denhancement.
  *
- * @author Lukas Fryc
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-class PrecedenceComparator implements Comparator<Sortable> {
+public interface DroneEnhancementEvent extends DroneLifecycleEvent {
 
-    private static final PrecedenceComparator INSTANCE = new PrecedenceComparator();
-
-    private PrecedenceComparator() {
-    }
-
-    public static Comparator<Sortable> getInstance() {
-        return INSTANCE;
-    }
-
-    public static Comparator<Sortable> getReversedOrder() {
-        return Collections.reverseOrder(INSTANCE);
-    }
-
-    @Override
-    public int compare(Sortable o1, Sortable o2) {
-        return new Integer(o2.getPrecedence()).compareTo(new Integer(o1.getPrecedence()));
-    }
 }
