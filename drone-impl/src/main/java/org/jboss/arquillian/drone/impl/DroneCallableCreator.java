@@ -38,8 +38,8 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class DroneCreator {
-    private static final Logger log = Logger.getLogger(DroneCreator.class.getName());
+public class DroneCallableCreator {
+    private static final Logger log = Logger.getLogger(DroneCallableCreator.class.getName());
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
@@ -50,8 +50,8 @@ public class DroneCreator {
     @Inject
     private Event<AfterDroneCallableCreated> afterDroneCallableCreated;
 
-    @SuppressWarnings("rawtypes")
-    public void createDrone(@Observes AfterDroneConfigured event, DroneRegistry registry, DroneContext droneContext) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void createDroneCallable(@Observes AfterDroneConfigured event, DroneRegistry registry, DroneContext droneContext) {
 
         final Class<?> type = event.getDroneType();
         final Class<? extends Annotation> qualifier = event.getQualifier();
@@ -68,7 +68,6 @@ public class DroneCreator {
 
         // create future instance
         Callable<?> instanceCallable = new Callable<Object>() {
-            @SuppressWarnings("unchecked")
             @Override
             public Object call() throws Exception {
                 return instantiator.createInstance(configuration);

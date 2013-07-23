@@ -4,8 +4,8 @@ import java.lang.annotation.Annotation;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -17,7 +17,11 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 
 public class DroneInstanceCreator {
 
-    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    // this executor will run callables in the same thread as caller
+    // we need this in order to allow better Drone based code debugging
+    private static final ExecutorService executorService = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy());
+    // Executors.newSingleThreadExecutor();
 
     @Inject
     private Instance<DroneContext> context;

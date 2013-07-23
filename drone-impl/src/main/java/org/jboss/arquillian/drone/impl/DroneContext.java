@@ -188,7 +188,7 @@ public class DroneContext {
         Object candidate = context.peek();
         // here we execute Callable to get real instance
         if (candidate instanceof Callable<?>) {
-            Object instance = instanceCreator.createDroneInstance((Callable<?>) candidate, droneType, qualifier, 600,
+            Object instance = instanceCreator.createDroneInstance((Callable<?>) candidate, droneType, qualifier, 30,
                     TimeUnit.SECONDS);
             return instance;
         }

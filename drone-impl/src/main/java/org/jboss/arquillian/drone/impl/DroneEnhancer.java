@@ -7,13 +7,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.event.AfterDroneDeenhanced;
+import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneEnhanced;
 
 public class DroneEnhancer {
 
@@ -21,6 +26,18 @@ public class DroneEnhancer {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
+
+    @Inject
+    private Event<BeforeDroneEnhanced> beforeDroneEnhanced;
+
+    @Inject
+    private Event<AfterDroneEnhanced> afterDroneEnhanced;
+
+    @Inject
+    private Event<BeforeDroneDeenhanced> beforeDroneDeenhanced;
+
+    @Inject
+    private Event<AfterDroneDeenhanced> afterDroneDeenhanced;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void enhanceDrone(@Observes AfterDroneInstantiated droneInstance, DroneContext context) {
@@ -38,8 +55,10 @@ public class DroneEnhancer {
                             + enhancer.getPrecedence());
                 }
 
+                beforeDroneEnhanced.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
                 // we actually need browser instance to be updated in context for us
                 browser = enhancer.enhance(browser, qualifier);
+                afterDroneEnhanced.fire(new AfterDroneEnhanced(browser, type, qualifier));
             }
         }
 
@@ -65,8 +84,10 @@ public class DroneEnhancer {
                             + enhancer.getPrecedence());
                 }
 
+                beforeDroneDeenhanced.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
                 // we actually need browser instance to be updated in context for us
                 browser = enhancer.deenhance(browser, qualifier);
+                afterDroneDeenhanced.fire(new AfterDroneDeenhanced(browser, type, qualifier));
             }
         }
 
