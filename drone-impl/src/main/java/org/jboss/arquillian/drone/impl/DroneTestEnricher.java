@@ -20,14 +20,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
@@ -39,9 +40,7 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * </p>
  * <ol>
  * <li>{@link DroneContext}</li>
- * <li>{@link MethodContext}</li>
- * <li>{@link ArquillianDescriptor}</li>
- * <li>{@link DroneRegistry}</li>
+ * <li>{@link DroneInstanceCreator}</li>
  * </ol>
  *
  *
@@ -54,11 +53,13 @@ public class DroneTestEnricher implements TestEnricher {
     @Inject
     private Instance<DroneContext> droneContext;
 
+    @Inject
+    private Instance<DroneInstanceCreator> instanceCreator;
+
     @Override
     public void enrich(Object testCase) {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
         if (!droneEnrichements.isEmpty()) {
-            Validate.notNull(droneContext.get(), "Drone Test context should not be null");
             droneEnrichement(testCase, droneEnrichements);
         }
 
@@ -76,10 +77,9 @@ public class DroneTestEnricher implements TestEnricher {
                     log.fine("Resolving method " + method.getName() + " argument at position " + i);
                 }
 
-                Validate.notNull(droneContext.get(), "Method context should not be null");
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
 
-                Object value = droneContext.get().get(parameterTypes[i], qualifier);
+                Object value = getDroneInstance(parameterTypes[i], qualifier);
                 Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
 
                 resolution[i] = value;
@@ -100,13 +100,28 @@ public class DroneTestEnricher implements TestEnricher {
                 Class<?> typeClass = f.getType();
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-                Object value = droneContext.get().get(typeClass, qualifier);
-                Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
-
+                Object value = getDroneInstance(typeClass, qualifier);
                 f.set(testCase, value);
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not enrich test with Drone members", e);
         }
+    }
+
+    private <T> T getDroneInstance(Class<T> type, Class<? extends Annotation> qualifier) {
+        Validate.stateNotNull(droneContext.get(), "Drone Context must not be null");
+
+        InstanceOrCallableInstance union = droneContext.get().get(type, qualifier);
+
+        Validate.notNull(union, "Retrieved a null from context, which is not a valid Drone browser object");
+
+        // execute chain to convert callable into browser
+        if (union.isInstanceCallable()) {
+            instanceCreator.get().createDroneInstance(union, type, qualifier, 5, TimeUnit.SECONDS);
+        }
+
+        // return browser
+        return union.asInstance(type);
+
     }
 }

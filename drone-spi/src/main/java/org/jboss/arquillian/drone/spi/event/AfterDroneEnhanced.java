@@ -18,19 +18,21 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+
 public class AfterDroneEnhanced {
 
-    private final Object instance;
+    private final InstanceOrCallableInstance instance;
     private final Class<?> droneType;
     private final Class<? extends Annotation> qualifier;
 
-    public AfterDroneEnhanced(Object instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+    public AfterDroneEnhanced(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
         this.instance = instance;
         this.droneType = droneType;
         this.qualifier = qualifier;
     }
 
-    public Object getInstance() {
+    public InstanceOrCallableInstance getInstance() {
         return instance;
     }
 

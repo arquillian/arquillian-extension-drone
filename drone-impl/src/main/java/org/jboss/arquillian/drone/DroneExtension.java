@@ -17,8 +17,8 @@
 package org.jboss.arquillian.drone;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneCallableCreator;
+import org.jboss.arquillian.drone.impl.DroneConfigurator;
 import org.jboss.arquillian.drone.impl.DroneDestructor;
 import org.jboss.arquillian.drone.impl.DroneEnhancer;
 import org.jboss.arquillian.drone.impl.DroneInstanceCreator;
@@ -34,11 +34,11 @@ public class DroneExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(TestEnricher.class, DroneTestEnricher.class);
-        builder.service(DroneInstanceCreator.class, DroneInstanceCreator.class);
 
         builder.observer(DroneRegistrar.class);
         builder.observer(DroneConfigurator.class);
         builder.observer(DroneCallableCreator.class);
+        builder.observer(DroneInstanceCreator.class);
         builder.observer(DroneEnhancer.class);
         builder.observer(DroneDestructor.class);
 

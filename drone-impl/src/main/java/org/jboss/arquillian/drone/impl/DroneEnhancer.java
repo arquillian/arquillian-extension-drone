@@ -12,6 +12,8 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Enhancer;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
@@ -20,6 +22,11 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneEnhanced;
 
+/**
+ *
+ * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ *
+ */
 public class DroneEnhancer {
 
     private static final Logger log = Logger.getLogger(DroneEnhancer.class.getName());
@@ -44,7 +51,7 @@ public class DroneEnhancer {
         List<Enhancer> enhancers = new ArrayList<Enhancer>(serviceLoader.get().all(Enhancer.class));
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
-        Object browser = droneInstance.getInstance();
+        InstanceOrCallableInstance browser = droneInstance.getInstance();
         final Class<?> type = droneInstance.getDroneType();
         final Class<? extends Annotation> qualifier = droneInstance.getQualifier();
 
@@ -56,14 +63,11 @@ public class DroneEnhancer {
                 }
 
                 beforeDroneEnhanced.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
-                // we actually need browser instance to be updated in context for us
-                browser = enhancer.enhance(browser, qualifier);
+                Object newBrowser = enhancer.enhance(browser.asInstance(type), qualifier);
+                browser.set(newBrowser);
                 afterDroneEnhanced.fire(new AfterDroneEnhanced(browser, type, qualifier));
             }
         }
-
-        // replace in context with enriched instance
-        context.replace(type, qualifier, browser);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -73,7 +77,7 @@ public class DroneEnhancer {
         // here we are deenhancing in reversed order
         Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
 
-        Object browser = droneInstance.getInstance();
+        InstanceOrCallableInstance browser = droneInstance.getInstance();
         final Class<?> type = droneInstance.getDroneType();
         final Class<? extends Annotation> qualifier = droneInstance.getQualifier();
 
@@ -85,14 +89,11 @@ public class DroneEnhancer {
                 }
 
                 beforeDroneDeenhanced.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
-                // we actually need browser instance to be updated in context for us
-                browser = enhancer.deenhance(browser, qualifier);
+                Object newBrowser = enhancer.deenhance(browser.asInstance(type), qualifier);
+                browser.set(newBrowser);
                 afterDroneDeenhanced.fire(new AfterDroneDeenhanced(browser, type, qualifier));
             }
         }
-
-        // replace in context with deenriched instance
-        context.replace(type, qualifier, browser);
     }
 
 }

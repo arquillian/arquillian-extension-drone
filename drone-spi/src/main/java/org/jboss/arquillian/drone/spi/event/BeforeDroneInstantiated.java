@@ -17,21 +17,23 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
-import java.util.concurrent.Callable;
+
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 
 public class BeforeDroneInstantiated {
 
-    private final Callable<?> instanceCallable;
+    private final InstanceOrCallableInstance instanceCallable;
     private final Class<?> droneType;
     private final Class<? extends Annotation> qualifier;
 
-    public BeforeDroneInstantiated(Callable<?> instanceCallable, Class<?> droneType, Class<? extends Annotation> qualifier) {
+    public BeforeDroneInstantiated(InstanceOrCallableInstance instanceCallable, Class<?> droneType,
+            Class<? extends Annotation> qualifier) {
         this.instanceCallable = instanceCallable;
         this.droneType = droneType;
         this.qualifier = qualifier;
     }
 
-    public Callable<?> getInstanceCallable() {
+    public InstanceOrCallableInstance getInstanceCallable() {
         return instanceCallable;
     }
 

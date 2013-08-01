@@ -19,52 +19,32 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.spi.DroneContext;
 
 /**
- * Holder of Drones.
- *
- * Allows storing following types:
- *
- * <ul>
- * <li>Drone instance</li>
- * <li>Drone callables</li>
- * <li>Drone configurations</li>
- * </ul>
- *
- * All instances are distinguished by Class type and optional qualifier annotation. If a callable is about to be retrieved, it
- * is automatically converted into a real instance using {@link DroneInstanceCreator} service.
- *
- * The implementation allows to store both class and method scoped Drones.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class DroneContext {
+public class DroneContextImpl implements DroneContext {
 
     // cache holder
     private final Map<QualifiedKey, DroneInstanceContext> cache;
 
-    // instance creator service
-    private final DroneInstanceCreator instanceCreator;
-
-    public DroneContext(DroneInstanceCreator instanceCreator) {
+    public DroneContextImpl() {
         this.cache = new ConcurrentHashMap<QualifiedKey, DroneInstanceContext>();
-        this.instanceCreator = instanceCreator;
     }
 
     /**
      * Gets object stored under {@link Default} qualifier and given key
      *
-     * @param <T> Type of the object
      * @param key Key used to find the object
      * @return Object stored under given qualified key
      */
-    public <T> T get(Class<T> key) {
+    public InstanceOrCallableInstance get(Class<?> key) {
         return get(key, Default.class);
     }
 
@@ -76,26 +56,19 @@ public class DroneContext {
      * @param qualifier Qualifier used to find the object
      * @return Object stored under given qualified key
      */
-    public <T> T get(Class<T> key, Class<? extends Annotation> qualifier) {
+    @Override
+    public InstanceOrCallableInstance get(Class<?> key, Class<? extends Annotation> qualifier) {
 
         DroneInstanceContext context = cache.get(new QualifiedKey(key, qualifier));
         if (context == null) {
             return null;
         }
 
-        return key.cast(getOrExecuteCallable(context, key, qualifier));
-    }
+        if (context.isEmpty()) {
+            throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
+        }
 
-    /**
-     * Adds object under given key and {@link Default} qualifier
-     *
-     * @param <T> Type of the object
-     * @param key Key used to store the object
-     * @param instance Object to be stored
-     * @return Modified context
-     */
-    public <T> DroneContext add(Class<T> key, T instance) {
-        return add(key, Default.class, instance);
+        return context.peek();
     }
 
     /**
@@ -107,7 +80,8 @@ public class DroneContext {
      * @param instance Object to be stored
      * @return Modified context
      */
-    public <T> DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, T instance) {
+    @Override
+    public DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, InstanceOrCallableInstance instance) {
         QualifiedKey k = new QualifiedKey(key, qualifier);
         DroneInstanceContext context = cache.get(k);
         if (context == null) {
@@ -120,39 +94,13 @@ public class DroneContext {
     }
 
     /**
-     * Replaces entry under key and qualifier if it exists, adds otherwise
-     *
-     * @param <T> Type of the object
-     * @param key Key used to store the object
-     * @param qualifier Qualifier used to store the object
-     * @param instance Object to be stored
-     * @return Modified context
-     */
-    public <T> DroneContext replace(Class<?> key, Class<? extends Annotation> qualifier, T instance) {
-        return remove(key, qualifier).add(key, qualifier, instance);
-    }
-
-    public <T> DroneContext replace(Class<?> key, T instance) {
-        return replace(key, Default.class, instance);
-    }
-
-    /**
-     * Removes object under given key and {@link Default} qualifier
-     *
-     * @param key Key used to find the object
-     * @return Modified context
-     */
-    public DroneContext remove(Class<?> key) {
-        return remove(key, Default.class);
-    }
-
-    /**
      * Removes object under given key and given qualifier
      *
      * @param key Key used to find the object
      * @param qualifier Qualifier used to find the object
      * @return Modified context
      */
+    @Override
     public DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier) {
         QualifiedKey k = new QualifiedKey(key, qualifier);
         DroneInstanceContext context = cache.get(k);
@@ -169,30 +117,6 @@ public class DroneContext {
         }
 
         return this;
-
-    }
-
-    /**
-     * Retrieves an instance from current context. This co
-     *
-     * @param context
-     * @param droneType
-     * @param qualifier
-     * @return
-     */
-    private Object getOrExecuteCallable(DroneInstanceContext context, Class<?> droneType, Class<? extends Annotation> qualifier) {
-        if (context.isEmpty()) {
-            throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
-        }
-
-        Object candidate = context.peek();
-        // here we execute Callable to get real instance
-        if (candidate instanceof Callable<?>) {
-            Object instance = instanceCreator.createDroneInstance((Callable<?>) candidate, droneType, qualifier, 30,
-                    TimeUnit.SECONDS);
-            return instance;
-        }
-        return candidate;
 
     }
 
@@ -254,25 +178,25 @@ public class DroneContext {
     }
 
     static class DroneInstanceContext {
-        private final Stack<Object> stack;
+        private final Stack<InstanceOrCallableInstance> stack;
 
         public DroneInstanceContext() {
-            this.stack = new Stack<Object>();
+            this.stack = new Stack<InstanceOrCallableInstance>();
         }
 
-        public DroneInstanceContext push(Object object) {
+        public DroneInstanceContext push(InstanceOrCallableInstance object) {
             stack.push(object);
             return this;
         }
 
-        public Object peek() {
+        public InstanceOrCallableInstance peek() {
             if (isEmpty()) {
                 throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
             }
             return stack.peek();
         }
 
-        public Object pop() {
+        public InstanceOrCallableInstance pop() {
             if (isEmpty()) {
                 throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
             }
@@ -283,5 +207,4 @@ public class DroneContext {
             return stack.isEmpty();
         }
     }
-
 }

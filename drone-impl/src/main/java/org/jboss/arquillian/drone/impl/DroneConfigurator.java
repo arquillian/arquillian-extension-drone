@@ -29,10 +29,11 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
@@ -41,40 +42,29 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
- * Configurator of Drone Configuration. Creates a configuration for every field annotated with {@link Drone}.
+ * Creator of Drone configurations. Drone configuration is created either before class or before method, depending on the scope
+ * of Drone instance, based on data provided in arquillian.xml.
  *
  * <p>
- * Consumes:
+ * Creates:
  * </p>
- * <ol>
- * <li>{@link org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor}</li>
- * <li>{@link DroneRegistry}</li>
- * </ol>
- *
- * <p>
- * Produces:
- * </p>
- * <ol>
- * <li>{@link DroneContext}</li>
- * <li>{@link MethodContext}</li>
- * </ol>
+ * {@see DroneContext}
  *
  * <p>
  * Observes:
  * </p>
- * <ol>
- * <li>{@link BeforeClass}</li>
- * <li>{@link Before}</li>
- * </ol>
+ * {@see BeforeClass} {@see Before}
+ *
+ * <p>
+ * Fires:
+ * </p>
+ * {@see BeforeDroneConfigured} {@see AfterDroneConfigured}
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneConfigurator {
     private static Logger log = Logger.getLogger(DroneConfigurator.class.getName());
-
-    @Inject
-    private Instance<ServiceLoader> serviceLoader;
 
     @Inject
     @ClassScoped
@@ -91,8 +81,8 @@ public class DroneConfigurator {
 
     public void configureDrone(@Observes BeforeClass event, DroneRegistry registry) {
 
-        // create DroneContext
-        droneContext.set(new DroneContext(getDroneInstanceCreatorService()));
+        // create Drone Context
+        droneContext.set(new DroneContextImpl());
 
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
@@ -109,8 +99,10 @@ public class DroneConfigurator {
 
             beforeDroneConfigured.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
             DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-            droneContext.get().add(configuration.getClass(), qualifier, configuration);
-            afterDroneConfigured.fire(new AfterDroneConfigured(configuration, droneType, qualifier));
+            InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+
+            droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
+            afterDroneConfigured.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
         }
 
     }
@@ -140,13 +132,10 @@ public class DroneConfigurator {
 
                 beforeDroneConfigured.fire(new BeforeDroneConfigured(configurator, parameterTypes[i], qualifier));
                 DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-                droneContext.get().add(configuration.getClass(), qualifier, configuration);
-                afterDroneConfigured.fire(new AfterDroneConfigured(configuration, parameterTypes[i], qualifier));
+                InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+                droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
+                afterDroneConfigured.fire(new AfterDroneConfigured(droneConfiguration, parameterTypes[i], qualifier));
             }
         }
-    }
-
-    private DroneInstanceCreator getDroneInstanceCreatorService() {
-        return serviceLoader.get().onlyOne(DroneInstanceCreator.class);
     }
 }

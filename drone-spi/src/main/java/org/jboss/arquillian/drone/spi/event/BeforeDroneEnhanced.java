@@ -18,15 +18,17 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Enhancer;
 
 public class BeforeDroneEnhanced {
     private final Enhancer<?> enhancer;
-    private final Object instance;
+    private final InstanceOrCallableInstance instance;
     private final Class<?> droneType;
     private final Class<? extends Annotation> qualifier;
 
-    public BeforeDroneEnhanced(Enhancer<?> enhancer, Object instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+    public BeforeDroneEnhanced(Enhancer<?> enhancer, InstanceOrCallableInstance instance, Class<?> droneType,
+            Class<? extends Annotation> qualifier) {
         this.enhancer = enhancer;
         this.instance = instance;
         this.droneType = droneType;
@@ -37,7 +39,7 @@ public class BeforeDroneEnhanced {
         return enhancer;
     }
 
-    public Object getInstance() {
+    public InstanceOrCallableInstance getInstance() {
         return instance;
     }
 

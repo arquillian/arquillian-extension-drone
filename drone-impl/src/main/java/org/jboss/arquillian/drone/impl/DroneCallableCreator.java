@@ -27,6 +27,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
@@ -34,6 +36,22 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
 
 /**
+ * Creator of {@link Callable} wrappers for Drone instances. The purpose of this is to be able to:
+ *
+ * <ol>
+ * <li>Limit time needed to create a Drone instance and fail gracefully if time limit is not met</li>
+ * <li>Allow instance to created as late as possible, allowing other extensions to start all required services</li>
+ * </ol>
+ *
+ * <p>
+ * Observes:
+ * </p>
+ * {@see AfterDroneConfigured}
+ *
+ * <p>
+ * Fires:
+ * </p>
+ * {@see BeforeDroneCallableCreated} {@see AfterDroneCallableCreated}
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
@@ -55,7 +73,7 @@ public class DroneCallableCreator {
 
         final Class<?> type = event.getDroneType();
         final Class<? extends Annotation> qualifier = event.getQualifier();
-        final DroneConfiguration<?> configuration = event.getConfiguration();
+        final DroneConfiguration<?> configuration = event.getConfiguration().asInstance(DroneConfiguration.class);
 
         // @SuppressWarnings({ "rawtypes" })
         final Instantiator instantiator = registry.getEntryFor(type, Instantiator.class);
@@ -73,8 +91,9 @@ public class DroneCallableCreator {
                 return instantiator.createInstance(configuration);
             }
         };
+        InstanceOrCallableInstance futureDrone = new InstanceOrCallableInstanceImpl(instanceCallable);
 
-        droneContext.add(type, qualifier, instanceCallable);
-        afterDroneCallableCreated.fire(new AfterDroneCallableCreated(instanceCallable, type, qualifier));
+        droneContext.add(type, qualifier, futureDrone);
+        afterDroneCallableCreated.fire(new AfterDroneCallableCreated(futureDrone, type, qualifier));
     }
 }

@@ -81,6 +81,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
                 .property("field", "foobar");
 
         TestEnricher testEnricher = new DroneTestEnricher();
+        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
@@ -88,6 +89,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+        Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
     }
 
     @Test

@@ -18,21 +18,22 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 
 public class AfterDroneConfigured {
 
-    private final DroneConfiguration<?> configuration;
+    private final InstanceOrCallableInstance configuration;
     private final Class<?> droneType;
     private final Class<? extends Annotation> qualifier;
 
-    public AfterDroneConfigured(DroneConfiguration<?> configuration, Class<?> droneType, Class<? extends Annotation> qualifier) {
+    public AfterDroneConfigured(InstanceOrCallableInstance configuration, Class<?> droneType,
+            Class<? extends Annotation> qualifier) {
         this.configuration = configuration;
         this.droneType = droneType;
         this.qualifier = qualifier;
     }
 
-    public DroneConfiguration<?> getConfiguration() {
+    public InstanceOrCallableInstance getConfiguration() {
         return configuration;
     }
 
