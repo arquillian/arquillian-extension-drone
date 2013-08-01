@@ -18,8 +18,15 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
+/**
+ * This event is fired after Drone callable is transformed into real Drone instance. This event is never expected to recieve
+ * {@link Callable} but it always contains real browser instance
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class AfterDroneInstantiated {
 
     private final InstanceOrCallableInstance instance;

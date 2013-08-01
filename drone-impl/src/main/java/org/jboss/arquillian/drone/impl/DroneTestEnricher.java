@@ -20,31 +20,26 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * Enriches test with drone instance and context path. Injects existing instance into every field annotated with {@link Drone}.
  * Handles enrichment for method arguments as well.
  *
- * <p>
- * Consumes:
- * </p>
- * <ol>
- * <li>{@link DroneContext}</li>
- * <li>{@link DroneInstanceCreator}</li>
- * </ol>
+ * This enricher is responsible for firing chain of events that transform a callable into real instance by firing
+ * {@link BeforeDroneInstantiated} event.
  *
- *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneTestEnricher implements TestEnricher {
@@ -54,7 +49,7 @@ public class DroneTestEnricher implements TestEnricher {
     private Instance<DroneContext> droneContext;
 
     @Inject
-    private Instance<DroneInstanceCreator> instanceCreator;
+    private Event<BeforeDroneInstantiated> beforeDroneInstantiated;
 
     @Override
     public void enrich(Object testCase) {
@@ -62,7 +57,6 @@ public class DroneTestEnricher implements TestEnricher {
         if (!droneEnrichements.isEmpty()) {
             droneEnrichement(testCase, droneEnrichements);
         }
-
     }
 
     @Override
@@ -117,7 +111,7 @@ public class DroneTestEnricher implements TestEnricher {
 
         // execute chain to convert callable into browser
         if (union.isInstanceCallable()) {
-            instanceCreator.get().createDroneInstance(union, type, qualifier, 5, TimeUnit.SECONDS);
+            beforeDroneInstantiated.fire(new BeforeDroneInstantiated(union, type, qualifier));
         }
 
         // return browser

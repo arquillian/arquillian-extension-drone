@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
+ * Default implementation of {@link DroneContext}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  */
 public class DroneContextImpl implements DroneContext {
 
@@ -38,24 +38,6 @@ public class DroneContextImpl implements DroneContext {
         this.cache = new ConcurrentHashMap<QualifiedKey, DroneInstanceContext>();
     }
 
-    /**
-     * Gets object stored under {@link Default} qualifier and given key
-     *
-     * @param key Key used to find the object
-     * @return Object stored under given qualified key
-     */
-    public InstanceOrCallableInstance get(Class<?> key) {
-        return get(key, Default.class);
-    }
-
-    /**
-     * Gets object stored under given qualifier and given key
-     *
-     * @param <T> Type of the object
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Object stored under given qualified key
-     */
     @Override
     public InstanceOrCallableInstance get(Class<?> key, Class<? extends Annotation> qualifier) {
 
@@ -71,15 +53,6 @@ public class DroneContextImpl implements DroneContext {
         return context.peek();
     }
 
-    /**
-     * Adds object under given key and given qualifier
-     *
-     * @param <T> Type of the object
-     * @param key Key used to store the object
-     * @param qualifier Qualifier used to store the object
-     * @param instance Object to be stored
-     * @return Modified context
-     */
     @Override
     public DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, InstanceOrCallableInstance instance) {
         QualifiedKey k = new QualifiedKey(key, qualifier);
@@ -93,13 +66,6 @@ public class DroneContextImpl implements DroneContext {
         return this;
     }
 
-    /**
-     * Removes object under given key and given qualifier
-     *
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Modified context
-     */
     @Override
     public DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier) {
         QualifiedKey k = new QualifiedKey(key, qualifier);
@@ -120,6 +86,11 @@ public class DroneContextImpl implements DroneContext {
 
     }
 
+    /**
+     * Implements a key that allows to treat class type and qualifier as an atomic key into table
+     *
+     *
+     */
     static class QualifiedKey {
         private final Class<?> key;
         private final Class<? extends Annotation> qualifier;
@@ -177,6 +148,10 @@ public class DroneContextImpl implements DroneContext {
 
     }
 
+    /**
+     * Implements a stack of Drone instance. This stack allows method scoped Drone to be stored on top of Class scoped ones.
+     *
+     */
     static class DroneInstanceContext {
         private final Stack<InstanceOrCallableInstance> stack;
 

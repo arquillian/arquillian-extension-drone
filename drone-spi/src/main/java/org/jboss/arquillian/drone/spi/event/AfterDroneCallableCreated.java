@@ -17,9 +17,19 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
+import java.util.concurrent.Callable;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
+/**
+ * This event is fired after Drone instance callable is created and stored in {@link DroneContext}.
+ *
+ * By modifying the {@link Callable} you can change way how Drone instance will be created.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class AfterDroneCallableCreated {
 
     private final InstanceOrCallableInstance instanceCallable;

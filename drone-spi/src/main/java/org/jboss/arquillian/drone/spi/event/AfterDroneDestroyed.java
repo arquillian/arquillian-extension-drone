@@ -16,6 +16,32 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
+import java.lang.annotation.Annotation;
+
+import org.jboss.arquillian.drone.spi.DroneContext;
+
+/**
+ * This event is called after Drone instance is destroyed and it is no longer available in the {@link DroneContext}
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class AfterDroneDestroyed {
+
+    private final Class<?> droneType;
+    private final Class<? extends Annotation> qualifier;
+
+    public AfterDroneDestroyed(Class<?> droneType, Class<? extends Annotation> qualifier) {
+        this.droneType = droneType;
+        this.qualifier = qualifier;
+    }
+
+    public Class<?> getDroneType() {
+        return droneType;
+    }
+
+    public Class<? extends Annotation> getQualifier() {
+        return qualifier;
+    }
 
 }

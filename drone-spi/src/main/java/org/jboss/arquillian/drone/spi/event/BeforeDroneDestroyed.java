@@ -18,8 +18,16 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
+/**
+ * This event is fired before Drone instance is destroyed by {@link Destructor}. It is expected that it will never contain a
+ * {@link Callable} Drone, but rather a real instance.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class BeforeDroneDestroyed {
 
     private final InstanceOrCallableInstance instance;

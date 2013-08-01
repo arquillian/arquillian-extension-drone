@@ -21,6 +21,12 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
+/**
+ * This event is called before Drone {@link Callable} is created.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class BeforeDroneCallableCreated {
 
     private final Instantiator<?, ? extends DroneConfiguration<?>> instantiator;

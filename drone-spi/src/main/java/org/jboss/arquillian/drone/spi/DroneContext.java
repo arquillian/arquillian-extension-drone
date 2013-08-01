@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.spi;
 
 import java.lang.annotation.Annotation;
-import java.util.concurrent.Callable;
 
 /**
  * Context for Drone instance, Drone callable instances and Drone configuration.
@@ -57,54 +56,5 @@ public interface DroneContext {
      * @return Modified context
      */
     DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier);
-
-    /**
-     * Holder of either instance or Callable that after invoked, will result into the instance.
-     *
-     */
-    static interface InstanceOrCallableInstance {
-
-        /**
-         * Sets value to {@code object}. This is a convenient method to modify content of {@see DroneContext} from various
-         * events.
-         *
-         * @param object new value
-         * @return modified instance
-         * @throws IllegalArgumentException If new value is {@code null}
-         */
-        InstanceOrCallableInstance set(Object object) throws IllegalArgumentException;
-
-        /**
-         * Checks whether context contains a real instance
-         *
-         * @return {@code true} if instance is hold, {@code false} otherwise
-         */
-        boolean isInstance();
-
-        /**
-         * Checks whether context contains a real instance
-         *
-         * @return {@code true} if instance is hold, {@code false} otherwise
-         */
-        boolean isInstanceCallable();
-
-        /**
-         * Wraps as instance
-         *
-         * @param type Type of the instance
-         * @return wrapped instance
-         * @throws IllegalStateException If content is not an instance
-         */
-        <T> T asInstance(Class<T> type) throws IllegalStateException;
-
-        /**
-         * Wraps as callable
-         *
-         * @param type Type of the callable
-         * @return wrapped callable
-         * @throws IllegalStateException If content is not a callable
-         */
-        <T> Callable<T> asCallableInstance(Class<T> type) throws IllegalStateException;
-    }
 
 }

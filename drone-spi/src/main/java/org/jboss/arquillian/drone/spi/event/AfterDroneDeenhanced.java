@@ -18,8 +18,16 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
+/**
+ * This event is fired after Drone instance is deenhanced via {@link Enhancer}. It is supposed it will never contain a
+ * {@link Callable} instance.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class AfterDroneDeenhanced {
 
     private final InstanceOrCallableInstance instance;

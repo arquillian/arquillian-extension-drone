@@ -18,8 +18,16 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Instantiator;
 
+/**
+ * This event is fired before Drone {@link Callable} is transformed into real instance via {@link Instantiator}. It is supposed
+ * that it will always contain a {@link Callable} instance.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class BeforeDroneInstantiated {
 
     private final InstanceOrCallableInstance instanceCallable;

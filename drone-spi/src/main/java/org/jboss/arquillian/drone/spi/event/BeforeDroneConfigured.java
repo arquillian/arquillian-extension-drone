@@ -18,9 +18,17 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
+/**
+ * This event is fired before Drone configuration is created. You'd need to modify {@link ArquillianDescriptor} in order to
+ * change configuration before it is created.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class BeforeDroneConfigured {
 
     private final Configurator<?, ? extends DroneConfiguration<?>> configurator;

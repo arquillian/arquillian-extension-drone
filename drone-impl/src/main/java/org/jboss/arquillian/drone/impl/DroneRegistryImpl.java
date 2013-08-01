@@ -26,24 +26,15 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
- * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
+ * Default implementation of {@link DroneRegistry}
  *
- * Stores only one of them per type, so {@link DroneRegistrar} is responsible for selecting correct implementations.
- *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneRegistryImpl implements DroneRegistry {
 
-    private Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
+    private final Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
 
-    /**
-     * Registers a configurator for given object type
-     *
-     * @param key Type to be registered
-     * @param configurator Configurator to be stored
-     * @return Modified registry
-     */
     @Override
     public DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator) {
         RegistryValue entry = registry.get(key);
@@ -55,13 +46,6 @@ public class DroneRegistryImpl implements DroneRegistry {
         return this;
     }
 
-    /**
-     * Registers a instantiator for given object type
-     *
-     * @param key Type to be registered
-     * @param value Instantiator to be stored
-     * @return Modified registry
-     */
     @Override
     public DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value) {
         RegistryValue entry = registry.get(key);
@@ -73,13 +57,6 @@ public class DroneRegistryImpl implements DroneRegistry {
         return this;
     }
 
-    /**
-     * Registers a destructor for given object type
-     *
-     * @param key Type to be registered
-     * @param value Destructor to be stored
-     * @return Modified registry
-     */
     @Override
     public DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value) {
         RegistryValue entry = registry.get(key);

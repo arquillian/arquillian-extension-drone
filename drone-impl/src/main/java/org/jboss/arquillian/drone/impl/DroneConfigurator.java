@@ -33,8 +33,8 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
@@ -48,19 +48,19 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * <p>
  * Creates:
  * </p>
- * {@see DroneContext}
+ * {@link DroneContext}
  *
  * <p>
  * Observes:
  * </p>
- * {@see BeforeClass} {@see Before}
+ * {@link BeforeClass} {@link Before}
  *
  * <p>
  * Fires:
  * </p>
- * {@see BeforeDroneConfigured} {@see AfterDroneConfigured}
+ * {@link BeforeDroneConfigured} {@link AfterDroneConfigured}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneConfigurator {
@@ -79,7 +79,7 @@ public class DroneConfigurator {
     @Inject
     private Event<AfterDroneConfigured> afterDroneConfigured;
 
-    public void configureDrone(@Observes BeforeClass event, DroneRegistry registry) {
+    public void prepareDroneConfiguration(@Observes BeforeClass event, DroneRegistry registry) {
 
         // create Drone Context
         droneContext.set(new DroneContextImpl());

@@ -28,8 +28,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
@@ -46,14 +46,14 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
  * <p>
  * Observes:
  * </p>
- * {@see AfterDroneConfigured}
+ * {@link AfterDroneConfigured}
  *
  * <p>
  * Fires:
  * </p>
- * {@see BeforeDroneCallableCreated} {@see AfterDroneCallableCreated}
+ * {@link BeforeDroneCallableCreated} {@link AfterDroneCallableCreated}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneCallableCreator {

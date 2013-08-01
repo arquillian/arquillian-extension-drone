@@ -18,9 +18,16 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
+/**
+ * This event is fired before Drone instance is enhanced by {@link Enhancer}. It is expected that it will never contain a
+ * {@link Callable} Drone, but rather a real instance.
+ *
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ *
+ */
 public class BeforeDroneEnhanced {
     private final Enhancer<?> enhancer;
     private final InstanceOrCallableInstance instance;

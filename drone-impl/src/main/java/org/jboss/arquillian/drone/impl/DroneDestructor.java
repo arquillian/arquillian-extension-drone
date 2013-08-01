@@ -30,35 +30,27 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
 /**
- * Destructor of drone instances. Disposes instance of every field annotated with {@link Drone}. Disposes Drones created for
- * method arguments as well.
- *
- * <p>
- * Consumes:
- * </p>
- * <ol>
- * <li>{@link DroneContext}</li>
- * <li>{@link DroneRegistry}</li>
- * <li>{@link MethodContext}</li>
- * </ol>
+ * Destructor of Drone instance. Disposes both class scoped Drones as well as method scoped ones.
  *
  * <p>
  * Observes:
  * </p>
- * <ol>
- * <li>{@link After}</li>
- * <li>{@link AfterClass}</li>
- * </ol>
+ * {@link AfterClass} {@link After}
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * <p>
+ * Fires:
+ * </p>
+ * {@link BeforeDroneDestroyed} {@link AfterDroneDestroyed}
+ *
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneDestructor {
@@ -94,7 +86,7 @@ public class DroneDestructor {
                 beforeDroneDestroyed.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                 destructor.destroyInstance(instance.asInstance(droneType));
                 droneContext.remove(droneType, qualifier);
-                afterDroneDestroyed.fire(new AfterDroneDestroyed());
+                afterDroneDestroyed.fire(new AfterDroneDestroyed(droneType, qualifier));
             }
 
         }
@@ -123,7 +115,7 @@ public class DroneDestructor {
                     beforeDroneDestroyed.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                     destructor.destroyInstance(instance.asInstance(droneType));
                     droneContext.remove(droneType, qualifier);
-                    afterDroneDestroyed.fire(new AfterDroneDestroyed());
+                    afterDroneDestroyed.fire(new AfterDroneDestroyed(droneType, qualifier));
                 }
             }
         }

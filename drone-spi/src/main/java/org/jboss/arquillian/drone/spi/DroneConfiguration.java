@@ -26,7 +26,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
  *
  * <p>
  * A matching extension in the descriptor with is searched by using
- * configuration name. If {@link org.jboss.arquillian.drone.spi.Qualifier} extension differs from {@see
+ * configuration name. If {@link org.jboss.arquillian.drone.spi.Qualifier} extension differs from {@link
  * Default}, it is used to get the configuration if it exists, otherwise the
  * default one is used.
  * </p>

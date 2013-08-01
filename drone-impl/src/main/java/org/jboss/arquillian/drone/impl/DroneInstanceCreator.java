@@ -1,6 +1,23 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.drone.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
@@ -10,20 +27,28 @@ import java.util.concurrent.TimeoutException;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneContext.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
- * Transformer of callables into real instances. Uses current thread to invoke {@see Callable} that defines Drone instance
+ * Transformer of callables into real instances. Uses current thread to invoke {@link Callable} that defines Drone instance.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ *
+ * <p>
+ * Observes:
+ * </p>
+ * {@link BeforeDroneInstantiated}
+ *
+ * <p>
+ * Fires:
+ * </p>
+ * {@link AfterDroneInstantiated}
+ *
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
  */
 public class DroneInstanceCreator {
@@ -34,38 +59,27 @@ public class DroneInstanceCreator {
             new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy());
 
     @Inject
-    @SuiteScoped
-    private InstanceProducer<DroneInstanceCreator> droneInstanceCreator;
-
-    @Inject
     private Instance<DroneContext> context;
-
-    @Inject
-    private Event<BeforeDroneInstantiated> beforeDroneInstantiated;
 
     @Inject
     private Event<AfterDroneInstantiated> afterDroneInstantiated;
 
-    public void configureDroneServices(@Observes BeforeSuite event) {
-        // create Drone Instance Creator Service
-        droneInstanceCreator.set(this);
-    }
+    public void createDroneInstance(@Observes(precedence = Integer.MAX_VALUE) BeforeDroneInstantiated event) {
 
-    public Object createDroneInstance(InstanceOrCallableInstance union, Class<?> droneType,
-            Class<? extends Annotation> qualifier, long timeout, TimeUnit timeoutTimeUnit) {
+        InstanceOrCallableInstance union = event.getInstanceCallable();
+        Class<?> droneType = event.getDroneType();
+        Class<? extends Annotation> qualifier = event.getQualifier();
+
         try {
-            beforeDroneInstantiated.fire(new BeforeDroneInstantiated(union, droneType, qualifier));
-            Object browser = executorService.submit(union.asCallableInstance(droneType)).get(timeout, timeoutTimeUnit);
+            Object browser = executorService.submit(union.asCallableInstance(droneType)).get(5, TimeUnit.SECONDS);
             union.set(browser);
             afterDroneInstantiated.fire(new AfterDroneInstantiated(union, droneType, qualifier));
-            return union.asInstance(droneType);
-
         } catch (InterruptedException e) {
             throw new RuntimeException("Unable to retrieve Drone Instance", e);
         } catch (ExecutionException e) {
             throw new RuntimeException("Unable to retrieve Drone Instance", e);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + "" + timeoutTimeUnit, e);
+            throw new RuntimeException("Unable to retrieve Drone Instance within " + 5 + "" + TimeUnit.SECONDS, e);
         }
     }
 }
