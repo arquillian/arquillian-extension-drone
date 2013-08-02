@@ -29,29 +29,18 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class BeforeDroneConfigured {
+public class BeforeDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 
     private final Configurator<?, ? extends DroneConfiguration<?>> configurator;
-    private final Class<?> droneType;
-    private final Class<? extends Annotation> qualifier;
 
     public BeforeDroneConfigured(Configurator<?, ? extends DroneConfiguration<?>> configurator, Class<?> droneType,
             Class<? extends Annotation> qualifier) {
+        super(droneType, qualifier);
         this.configurator = configurator;
-        this.droneType = droneType;
-        this.qualifier = qualifier;
     }
 
     public Configurator<?, ? extends DroneConfiguration<?>> getConfigurator() {
         return configurator;
-    }
-
-    public Class<?> getDroneType() {
-        return droneType;
-    }
-
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
     }
 
 }

@@ -34,6 +34,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 
 /**
  * Creator of {@link Callable} wrappers for Drone instances. The purpose of this is to be able to:
@@ -63,10 +64,7 @@ public class DroneCallableCreator {
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    private Event<BeforeDroneCallableCreated> beforeDroneCallableCreated;
-
-    @Inject
-    private Event<AfterDroneCallableCreated> afterDroneCallableCreated;
+    private Event<DroneLifecycleEvent> droneLifeCycleEvent;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void createDroneCallable(@Observes AfterDroneConfigured event, DroneRegistry registry, DroneContext droneContext) {
@@ -82,7 +80,7 @@ public class DroneCallableCreator {
                     + instantiator.getPrecedence());
         }
 
-        beforeDroneCallableCreated.fire(new BeforeDroneCallableCreated(instantiator, type, qualifier));
+        droneLifeCycleEvent.fire(new BeforeDroneCallableCreated(instantiator, type, qualifier));
 
         // create future instance
         Callable<?> instanceCallable = new Callable<Object>() {
@@ -94,6 +92,6 @@ public class DroneCallableCreator {
         InstanceOrCallableInstance futureDrone = new InstanceOrCallableInstanceImpl(instanceCallable);
 
         droneContext.add(type, qualifier, futureDrone);
-        afterDroneCallableCreated.fire(new AfterDroneCallableCreated(futureDrone, type, qualifier));
+        droneLifeCycleEvent.fire(new AfterDroneCallableCreated(futureDrone, type, qualifier));
     }
 }

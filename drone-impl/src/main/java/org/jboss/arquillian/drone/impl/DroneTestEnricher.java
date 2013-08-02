@@ -30,6 +30,7 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
@@ -49,7 +50,7 @@ public class DroneTestEnricher implements TestEnricher {
     private Instance<DroneContext> droneContext;
 
     @Inject
-    private Event<BeforeDroneInstantiated> beforeDroneInstantiated;
+    private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
     @Override
     public void enrich(Object testCase) {
@@ -111,7 +112,7 @@ public class DroneTestEnricher implements TestEnricher {
 
         // execute chain to convert callable into browser
         if (union.isInstanceCallable()) {
-            beforeDroneInstantiated.fire(new BeforeDroneInstantiated(union, type, qualifier));
+            droneLifecycleEvent.fire(new BeforeDroneInstantiated(union, type, qualifier));
         }
 
         // return browser

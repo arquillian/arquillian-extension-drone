@@ -34,6 +34,7 @@ import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
+import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
@@ -63,10 +64,7 @@ public class DroneDestructor {
     private Instance<DroneRegistry> registry;
 
     @Inject
-    private Event<BeforeDroneDestroyed> beforeDroneDestroyed;
-
-    @Inject
-    private Event<AfterDroneDestroyed> afterDroneDestroyed;
+    private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
     @SuppressWarnings("unchecked")
     public void destroyClassScopedDrone(@Observes AfterClass event, DroneContext droneContext) {
@@ -83,10 +81,10 @@ public class DroneDestructor {
             // if deployment failed, there is nothing to be destroyed
             InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
             if (instance != null) {
-                beforeDroneDestroyed.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
+                droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                 destructor.destroyInstance(instance.asInstance(droneType));
                 droneContext.remove(droneType, qualifier);
-                afterDroneDestroyed.fire(new AfterDroneDestroyed(droneType, qualifier));
+                droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
             }
 
         }
@@ -112,10 +110,10 @@ public class DroneDestructor {
                 // if deployment failed, there is nothing to be destroyed
                 InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
                 if (instance != null) {
-                    beforeDroneDestroyed.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
+                    droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                     destructor.destroyInstance(instance.asInstance(droneType));
                     droneContext.remove(droneType, qualifier);
-                    afterDroneDestroyed.fire(new AfterDroneDestroyed(droneType, qualifier));
+                    droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
                 }
             }
         }

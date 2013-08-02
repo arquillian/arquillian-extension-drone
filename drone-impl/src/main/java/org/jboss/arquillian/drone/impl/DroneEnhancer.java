@@ -37,6 +37,7 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneEnhanced;
+import org.jboss.arquillian.drone.spi.event.DroneEnhancementEvent;
 
 /**
  * Enhancer/deenhancer of Drone instance with {@link Enhancer} implementation available on the classpath.
@@ -64,16 +65,7 @@ public class DroneEnhancer {
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
-    private Event<BeforeDroneEnhanced> beforeDroneEnhanced;
-
-    @Inject
-    private Event<AfterDroneEnhanced> afterDroneEnhanced;
-
-    @Inject
-    private Event<BeforeDroneDeenhanced> beforeDroneDeenhanced;
-
-    @Inject
-    private Event<AfterDroneDeenhanced> afterDroneDeenhanced;
+    private Event<DroneEnhancementEvent> droneEnhancementEvent;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void enhanceDrone(@Observes AfterDroneInstantiated droneInstance, DroneContext context) {
@@ -91,10 +83,10 @@ public class DroneEnhancer {
                             + enhancer.getPrecedence());
                 }
 
-                beforeDroneEnhanced.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
+                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
                 Object newBrowser = enhancer.enhance(browser.asInstance(type), qualifier);
                 browser.set(newBrowser);
-                afterDroneEnhanced.fire(new AfterDroneEnhanced(browser, type, qualifier));
+                droneEnhancementEvent.fire(new AfterDroneEnhanced(browser, type, qualifier));
             }
         }
     }
@@ -117,10 +109,10 @@ public class DroneEnhancer {
                             + enhancer.getPrecedence());
                 }
 
-                beforeDroneDeenhanced.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
+                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
                 Object newBrowser = enhancer.deenhance(browser.asInstance(type), qualifier);
                 browser.set(newBrowser);
-                afterDroneDeenhanced.fire(new AfterDroneDeenhanced(browser, type, qualifier));
+                droneEnhancementEvent.fire(new AfterDroneDeenhanced(browser, type, qualifier));
             }
         }
     }

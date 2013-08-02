@@ -37,6 +37,7 @@ import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
+import org.jboss.arquillian.drone.spi.event.DroneConfigurationEvent;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -74,10 +75,7 @@ public class DroneConfigurator {
     private Instance<ArquillianDescriptor> arquillianDescriptor;
 
     @Inject
-    private Event<BeforeDroneConfigured> beforeDroneConfigured;
-
-    @Inject
-    private Event<AfterDroneConfigured> afterDroneConfigured;
+    private Event<DroneConfigurationEvent> droneConfigurationEvent;
 
     public void prepareDroneConfiguration(@Observes BeforeClass event, DroneRegistry registry) {
 
@@ -97,12 +95,12 @@ public class DroneConfigurator {
             Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
             Configurator<?, ?> configurator = registry.getEntryFor(droneType, Configurator.class);
 
-            beforeDroneConfigured.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
+            droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
             DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
             InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
 
             droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
-            afterDroneConfigured.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
+            droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
         }
 
     }
@@ -130,11 +128,11 @@ public class DroneConfigurator {
 
                 Configurator<?, ?> configurator = registry.getEntryFor(parameterTypes[i], Configurator.class);
 
-                beforeDroneConfigured.fire(new BeforeDroneConfigured(configurator, parameterTypes[i], qualifier));
+                droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, parameterTypes[i], qualifier));
                 DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
                 InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
                 droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
-                afterDroneConfigured.fire(new AfterDroneConfigured(droneConfiguration, parameterTypes[i], qualifier));
+                droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, parameterTypes[i], qualifier));
             }
         }
     }

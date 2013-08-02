@@ -33,6 +33,7 @@ import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 
 /**
  * Transformer of callables into real instances. Uses current thread to invoke {@link Callable} that defines Drone instance.
@@ -62,7 +63,7 @@ public class DroneInstanceCreator {
     private Instance<DroneContext> context;
 
     @Inject
-    private Event<AfterDroneInstantiated> afterDroneInstantiated;
+    private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
     public void createDroneInstance(@Observes(precedence = Integer.MAX_VALUE) BeforeDroneInstantiated event) {
 
@@ -73,7 +74,7 @@ public class DroneInstanceCreator {
         try {
             Object browser = executorService.submit(union.asCallableInstance(droneType)).get(5, TimeUnit.SECONDS);
             union.set(browser);
-            afterDroneInstantiated.fire(new AfterDroneInstantiated(union, droneType, qualifier));
+            droneLifecycleEvent.fire(new AfterDroneInstantiated(union, droneType, qualifier));
         } catch (InterruptedException e) {
             throw new RuntimeException("Unable to retrieve Drone Instance", e);
         } catch (ExecutionException e) {

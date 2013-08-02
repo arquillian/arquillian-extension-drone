@@ -28,29 +28,17 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class BeforeDroneInstantiated {
+public class BeforeDroneInstantiated extends BaseDroneEvent implements DroneLifecycleEvent {
 
     private final InstanceOrCallableInstance instanceCallable;
-    private final Class<?> droneType;
-    private final Class<? extends Annotation> qualifier;
 
     public BeforeDroneInstantiated(InstanceOrCallableInstance instanceCallable, Class<?> droneType,
             Class<? extends Annotation> qualifier) {
+        super(droneType, qualifier);
         this.instanceCallable = instanceCallable;
-        this.droneType = droneType;
-        this.qualifier = qualifier;
     }
 
     public InstanceOrCallableInstance getInstanceCallable() {
         return instanceCallable;
     }
-
-    public Class<?> getDroneType() {
-        return droneType;
-    }
-
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
-    }
-
 }

@@ -27,29 +27,18 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class AfterDroneConfigured {
+public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 
     private final InstanceOrCallableInstance configuration;
-    private final Class<?> droneType;
-    private final Class<? extends Annotation> qualifier;
 
     public AfterDroneConfigured(InstanceOrCallableInstance configuration, Class<?> droneType,
             Class<? extends Annotation> qualifier) {
+        super(droneType, qualifier);
         this.configuration = configuration;
-        this.droneType = droneType;
-        this.qualifier = qualifier;
     }
 
     public InstanceOrCallableInstance getConfiguration() {
         return configuration;
-    }
-
-    public Class<?> getDroneType() {
-        return droneType;
-    }
-
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
     }
 
 }
