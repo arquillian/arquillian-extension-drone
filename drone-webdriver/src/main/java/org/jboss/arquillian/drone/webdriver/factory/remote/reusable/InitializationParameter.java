@@ -77,6 +77,6 @@ public class InitializationParameter implements Serializable {
 
     @Override
     public String toString() {
-        return url.toString() + "/" + desiredCapabilities.toString();
+        return url.toString() + "#" + desiredCapabilities.toString();
     }
 }

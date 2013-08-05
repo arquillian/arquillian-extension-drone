@@ -62,8 +62,8 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
     @SuppressWarnings("unchecked")
     @Override
     public void destroyInstance(WebDriver instance) {
-        // check if there is a better destructor than default one
 
+        // check if there is a better destructor than default one
         // FIXME: this line should be written generally, not only for subclasses of RemoteWebDriver
         Class<?> instanceClass = instance instanceof RemoteWebDriver ? RemoteWebDriver.class : instance.getClass();
 
@@ -75,7 +75,9 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         }
         if (destructor != null && !destructor.getClass().equals(this.getClass())) {
             destructor.destroyInstance(instance);
-        } else {
+        }
+        // this is default destructor
+        else {
             instance.quit();
         }
     }
@@ -141,5 +143,4 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         DroneRegistry registry = registryInstance.get();
         return registry.getEntryFor(RemoteWebDriver.class, Instantiator.class);
     }
-
 }
