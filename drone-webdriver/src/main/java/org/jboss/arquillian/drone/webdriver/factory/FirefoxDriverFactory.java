@@ -18,11 +18,13 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.utils.FirefoxPrefsReader;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -93,6 +95,26 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 firefoxProfile.addExtension(new File(extensionPath));
             } catch (IOException e) {
                 throw new IllegalArgumentException("Cannot read XPI extension file: " + extensionPath, e);
+            }
+        }
+
+        // add user preferences from file
+        final String userPreferences = (String) capabilities.getCapability("firefoxUserPreferences");
+        if (Validate.nonEmpty(userPreferences)) {
+            Validate.isValidPath(userPreferences, "User preferences does not point to a valid path " + userPreferences);
+            // we need to manually parse preferences, as Selenium provides no way to set these value
+            for (Map.Entry<String, Object> preference : FirefoxPrefsReader.getPreferences(new File(userPreferences)).entrySet()) {
+                String key = preference.getKey();
+                Object value = preference.getValue();
+                if (value instanceof Boolean) {
+                    firefoxProfile.setPreference(key, (Boolean) value);
+                }
+                else if (value instanceof Integer) {
+                    firefoxProfile.setPreference(key, (Integer) value);
+                }
+                else if (value instanceof String) {
+                    firefoxProfile.setPreference(key, (String) value);
+                }
             }
         }
 

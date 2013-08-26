@@ -69,5 +69,10 @@
         <property name="webStorageEnabled">true</property>
         <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
     </extension>
+    
+    <extension qualifier="webdriver-firefoxuserprefs">
+        <property name="browser">firefox</property>
+        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+    </extension>
 
 </arquillian>
