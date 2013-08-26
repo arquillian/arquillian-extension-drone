@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.drone.configuration.legacy.LegacyPropertyToCapabilityMapper;
+import org.jboss.arquillian.drone.configuration.legacy.LegacyConfigurationMapper;
 import org.jboss.arquillian.drone.configuration.mapping.BooleanValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.DoubleValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.IntegerValueMapper;
@@ -296,10 +296,17 @@ public class ConfigurationMapper {
             }
 
             // remap the property into capability if this is a legacy one
-            if (LegacyPropertyToCapabilityMapper.isLegacy(fieldName)) {
-                String capabilityName = LegacyPropertyToCapabilityMapper.remapKey(fieldName);
-                String capabilityValue = LegacyPropertyToCapabilityMapper.remapValue(fieldName, value);
-                injectMapProperty(configuration, maps, fields, capabilityName, capabilityValue);
+            // or remap the property into different property field
+            if (LegacyConfigurationMapper.isLegacy(fieldName)) {
+                String newKey = LegacyConfigurationMapper.remapKey(fieldName);
+                String newValue = LegacyConfigurationMapper.remapValue(fieldName, value);
+
+                if (LegacyConfigurationMapper.remapsToCapability(fieldName)) {
+                    injectMapProperty(configuration, maps, fields, newKey, newValue);
+                }
+                else {
+                    injectField(configuration, maps, fields, newKey, newValue);
+                }
             }
 
             f.set(configuration, convert(f.getType(), value));

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,7 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
-import qualifier.Arq1209;
+import qualifier.PhantomJs;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -34,10 +34,9 @@ import qualifier.Arq1209;
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
-public class PhantomJsDriverTestCase extends AbstractWebDriver {
+public class PhantomJsLegacyDriverTestCase extends AbstractWebDriver {
 
-    @Drone
-    @Arq1209
+    @Drone @PhantomJs
     WebDriver driver;
 
     /*

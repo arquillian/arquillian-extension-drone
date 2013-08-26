@@ -93,7 +93,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         RemoteWebDriverFactory factory1 = new MockRemoteWebDriverFactory();
         injector.get().inject(factory1);
 
-        when(configuration.getBrowserCapabilities()).thenReturn("xyz");
+        when(configuration.getBrowser()).thenReturn("xyz");
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
@@ -120,7 +120,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         injector.get().inject(factory1);
         injector.get().inject(factory2);
 
-        when(configuration.getBrowserCapabilities()).thenReturn("xyz");
+        when(configuration.getBrowser()).thenReturn("xyz");
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);

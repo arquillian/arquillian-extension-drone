@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian"
-    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <extension qualifier="webdriver">
         <!-- ChromeDriver only -->
-        <property name="browserCapabilities">chrome</property>
+        <property name="browser">chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
@@ -18,7 +17,7 @@
     <extension qualifier="webdriver-arq1047">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remote">true</property>
-        <property name="browserCapabilities">chrome</property>
+        <property name="browser">chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
@@ -26,7 +25,7 @@
     <extension qualifier="webdriver-reusable">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remoteReusable">true</property>
-        <property name="browserCapabilities">chrome</property>
+        <property name="browser">chrome</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
@@ -34,7 +33,7 @@
     <extension qualifier="webdriver-reusecookies">
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remoteReusable">true</property>
-        <property name="browserCapabilities">chrome</property>
+        <property name="browser">chrome</property>
         <property name="reuseCookies">true</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
@@ -46,20 +45,24 @@
 
     <!-- ARQ-1022 This should use local instances because configuration is not capability related -->
     <extension qualifier="webdriver-methodspecific">
-        <property name="browserCapabilities">firefox</property>
+        <property name="browser">firefox</property>
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <!-- ChromeDriver only -->
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
 
     <extension qualifier="webdriver-phantomjs">
-        <property name="browserCapabilities">phantomjs</property>
+        <property name="browser">phantomjs</property>
         <property name="phantomjs.binary.path">target/phantomjs</property>
+    </extension>
+
+    <extension qualifier="webdriver-arq1209">
+        <property name="browserCapabilities">phantomjs</property>
     </extension>
 
     <!-- ARQ-1030 -->
     <extension qualifier="webdriver-capabilitiesarq1030">
-        <property name="browserCapabilities">firefox</property>
+        <property name="browser">firefox</property>
         <property name="webdriver.firefox.profile">selenium</property>
         <!-- ARQ-1251 -->
         <property name="acceptSslCerts">true</property>

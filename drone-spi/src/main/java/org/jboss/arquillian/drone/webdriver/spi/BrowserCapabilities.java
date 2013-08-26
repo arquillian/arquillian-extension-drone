@@ -21,7 +21,7 @@ import java.util.Map;
 import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
- * A mapping between browserCapabilities representation in Drone and Selenium capabilities
+ * A mapping between browser representation in Drone and WebDriver capabilities
  *
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
@@ -43,7 +43,7 @@ public interface BrowserCapabilities extends Sortable {
     Map<String, ?> getRawCapabilities();
 
     /**
-     * Returns a name of browserCapabilities used to match the browser
+     * Returns a name of browser used to match the BrowserCapabilities object
      *
      * @return
      */

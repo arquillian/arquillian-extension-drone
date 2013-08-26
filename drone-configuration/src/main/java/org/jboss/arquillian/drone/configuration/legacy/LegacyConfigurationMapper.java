@@ -30,13 +30,17 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-public class LegacyPropertyToCapabilityMapper {
-    private static final Logger log = Logger.getLogger(LegacyPropertyToCapabilityMapper.class.getName());
+public class LegacyConfigurationMapper {
+    private static final Logger log = Logger.getLogger(LegacyConfigurationMapper.class.getName());
 
     // FIXME this should be in SPI with a proper event MODEL
-    private static final Map<String, DefaultCapabilityMapping> LEGACY_MAP;
+    private static final Map<String, LegacyMapping> LEGACY_MAP;
     static {
-        LEGACY_MAP = new HashMap<String, DefaultCapabilityMapping>();
+        LEGACY_MAP = new HashMap<String, LegacyMapping>();
+
+        // general changes
+        LEGACY_MAP.put("browserCapabilities", new FieldMapping("browser"));
+
         // firefox
         LEGACY_MAP.put("firefoxBinary", new DefaultCapabilityMapping("firefox_binary"));
         LEGACY_MAP.put("firefoxProfile", new DefaultCapabilityMapping("firefox_profile"));
@@ -68,6 +72,19 @@ public class LegacyPropertyToCapabilityMapper {
         return LEGACY_MAP.containsKey(propertyName);
     }
 
+    public static boolean remapsToProperty(String propertyName) {
+        LegacyMapping mapping = LEGACY_MAP.get(propertyName);
+        if (mapping == null) {
+            throw new IllegalStateException("Legacy mapping for property name " + propertyName + " is not defined.");
+        }
+
+        return mapping.remapsToProperty();
+    }
+
+    public static boolean remapsToCapability(String propertyName) {
+        return !remapsToProperty(propertyName);
+    }
+
     public static String remapKey(String propertyKey) {
         if (isLegacy(propertyKey)) {
             return LEGACY_MAP.get(propertyKey).remapKey(propertyKey);
@@ -86,7 +103,45 @@ public class LegacyPropertyToCapabilityMapper {
         return propertyValue;
     }
 
-    private static class DefaultCapabilityMapping implements CapabilityMapping {
+    private static class FieldMapping implements LegacyMapping {
+        private final String fieldName;
+        private final ValueMapper<?> mapper;
+
+        public FieldMapping(String fieldName) {
+            this(fieldName, StringValueMapper.INSTANCE);
+        }
+
+        public FieldMapping(String fieldName, ValueMapper<?> mapper) {
+            this.fieldName = fieldName;
+            this.mapper = mapper;
+        }
+
+        @Override
+        public boolean remapsToProperty() {
+            return true;
+        }
+
+        @Override
+        public boolean remapsToCapability() {
+            return !remapsToProperty();
+        }
+
+        @Override
+        public String remapKey(String oldFieldName) {
+
+            log.log(Level.WARNING,
+                    "Configuration property \"{0}\" is deprecated, please replace it with property \"{1}\" instead.",
+                    new Object[] { oldFieldName, fieldName });
+            return fieldName;
+        }
+
+        @Override
+        public String remapValue(String value) {
+            return ((Object) mapper.transform(value)).toString();
+        }
+    }
+
+    private static class DefaultCapabilityMapping implements LegacyMapping {
         private final String capabilityName;
         private final ValueMapper<?> mapper;
 
@@ -97,6 +152,16 @@ public class LegacyPropertyToCapabilityMapper {
         public DefaultCapabilityMapping(String capabilityName, ValueMapper<?> mapper) {
             this.capabilityName = capabilityName;
             this.mapper = mapper;
+        }
+
+        @Override
+        public boolean remapsToCapability() {
+            return true;
+        }
+
+        @Override
+        public boolean remapsToProperty() {
+            return !remapsToCapability();
         }
 
         public String remapKey(String fieldName) {

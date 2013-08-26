@@ -130,6 +130,9 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     @Deprecated
     private boolean operaRestart = true;
 
+    private String browser;
+
+    @Deprecated
     private String browserCapabilities;
 
     private boolean remoteReusable;
@@ -143,22 +146,22 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     // internal variables
     // ARQ-1022
-    private String _originalBrowserCapabilities;
+    private String _originalBrowser;
 
-    private BrowserCapabilities _browserCapabilities;
+    private BrowserCapabilities _browser;
 
     public WebDriverConfiguration(BrowserCapabilities browser) {
         if (browser != null) {
-            this._browserCapabilities = browser;
-            this._originalBrowserCapabilities = browser.getReadableName();
-            this.browserCapabilities = _originalBrowserCapabilities;
+            this._browser = browser;
+            this._originalBrowser = browser.getReadableName();
+            this.browser = _originalBrowser;
         }
     }
 
-    public void setBrowserCapabilitiesInternal(BrowserCapabilities browser) {
+    public void setBrowserInternal(BrowserCapabilities browser) {
         if (browser != null) {
-            this._browserCapabilities = browser;
-            this.browserCapabilities = browser.getReadableName();
+            this._browser = browser;
+            this.browser = browser.getReadableName();
         }
     }
 
@@ -174,11 +177,11 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
         // ARQ-1022, we need to check if we haven't overriden original browser
         // capabilities in an incompatible way
-        if (_originalBrowserCapabilities != null && !_originalBrowserCapabilities.equals(this.browserCapabilities)) {
+        if (_originalBrowser != null && !_originalBrowser.equals(this.browser)) {
             log.log(Level.WARNING,
                     "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, Arquillian configuration will be ignored.",
-                    new Object[] { browserCapabilities, _originalBrowserCapabilities });
-            this.browserCapabilities = _originalBrowserCapabilities;
+                    new Object[] { browser, _originalBrowser });
+            this.browser = _originalBrowser;
         }
         return this;
     }
@@ -193,15 +196,25 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return applicationVersion;
     }
 
+    @Deprecated
     public String getBrowserCapabilities() {
 
         // if we have created a browser capability object by using a specific factory, e.g. AndroidDriverFactory, ignore value
         // specified by end user
-        if (_browserCapabilities != null) {
-            return _browserCapabilities.getReadableName();
+        if (_browser != null) {
+            return _browser.getReadableName();
         }
 
         return browserCapabilities;
+    }
+
+    public String getBrowser() {
+
+        if (_browser != null) {
+            return _browser.getReadableName();
+        }
+
+        return browser;
     }
 
     @Deprecated
@@ -213,8 +226,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         // return a merge of original capability plus capabilities user has specified in configuration
         // safely ignore null value here
         return new DesiredCapabilities(new DesiredCapabilities(
-                _browserCapabilities.getRawCapabilities() == null ? new HashMap<String, Object>()
-                        : _browserCapabilities.getRawCapabilities()),
+                _browser.getRawCapabilities() == null ? new HashMap<String, Object>()
+                        : _browser.getRawCapabilities()),
                 new DesiredCapabilities(this.capabilityMap));
     }
 
@@ -256,8 +269,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         String implementationClassName = this.implementationClass;
 
         // get real implementation class value
-        if (implementationClassName == null && _browserCapabilities != null) {
-            implementationClassName = _browserCapabilities.getImplementationClassName();
+        if (implementationClassName == null && _browser != null) {
+            implementationClassName = _browser.getImplementationClassName();
         }
 
         return implementationClassName;
@@ -360,8 +373,13 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         this.applicationVersion = applicationVersion;
     }
 
+    @Deprecated
     public void setBrowserCapabilities(final String browserCapabilities) {
         this.browserCapabilities = browserCapabilities;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
     }
 
     @Deprecated

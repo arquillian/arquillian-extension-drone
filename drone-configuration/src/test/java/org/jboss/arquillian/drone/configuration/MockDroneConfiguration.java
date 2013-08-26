@@ -48,6 +48,10 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     private Map<String, Object> mapMap;
 
+    private String browser;
+
+    private String browserCapabilities;
+
     /*
      * (non-Javadoc)
      *
@@ -131,6 +135,22 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     public void setIntegerField(Integer integerField) {
         this.integerField = integerField;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public String getBrowserCapabilities() {
+        return browserCapabilities;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
+
+    public void setBrowserCapabilities(String browserCapabilities) {
+        this.browserCapabilities = browserCapabilities;
     }
 
 }

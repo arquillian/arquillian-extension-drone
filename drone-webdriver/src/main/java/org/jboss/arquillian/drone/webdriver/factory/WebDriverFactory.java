@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -38,8 +36,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implements
         Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
-
-    private static final Logger log = Logger.getLogger(WebDriverFactory.class.getName());
 
     @Inject
     private Instance<DroneRegistry> registryInstance;
@@ -106,9 +102,9 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
             implementationClassName = configuration.getImplementationClass();
 
             Validate.isEmpty(implementationClassName,
-                    "The combination of browserCapabilities=" + configuration.getBrowserCapabilities()
+                    "The combination of browser=" + configuration.getBrowser()
                             + ", implemenationClass=" + implementationClassName
-                            + " does not to a valid browser. Please specify supported browserCapabilities");
+                            + " does not represent a valid browser. Please specify supported browser.");
 
             DroneRegistry registry = registryInstance.get();
             Class<?> implementationClass = SecurityActions.getClass(implementationClassName);

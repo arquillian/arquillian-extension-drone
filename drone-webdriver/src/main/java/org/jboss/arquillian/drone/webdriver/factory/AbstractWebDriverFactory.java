@@ -39,32 +39,32 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
                 log.log(Level.FINE, "Available implementationClasses are {}", getAvailableImplementationClasses());
                 throw new IllegalStateException(
                         MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a browserCapabilities property instead of implementationClass {1}. Available options are: {0}",
+                                .format("Unable to initialize WebDriver instance. Please specify a browser property instead of implementationClass {1}. Available options are: {0}",
                                         getAvailableBrowserCapabilities(), configuration.getImplementationClass()));
             }
-            configuration.setBrowserCapabilitiesInternal(browser);
+            configuration.setBrowserInternal(browser);
             log.log(Level.WARNING,
-                    "Please use browserCapability to specify browser type instead of implementationClass. Available options are: {0}",
+                    "Please use \"browser\" to specify browser type instead of implementationClass. Available options are: {0}",
                     getAvailableBrowserCapabilities());
         }
-        // otherwise, we hit a webdriver configuration and we want to use browserCapabilities
-        if (browser == null && Validate.nonEmpty(configuration.getBrowserCapabilities())) {
-            browser = registry.getEntryFor(configuration.getBrowserCapabilities());
+        // otherwise, we hit a webdriver configuration and we want to use browser capabilities
+        if (browser == null && Validate.nonEmpty(configuration.getBrowser())) {
+            browser = registry.getEntryFor(configuration.getBrowser());
             if (browser == null) {
                 throw new IllegalStateException(
                         MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a valid browserCapabilities instead of {1}. Available options are: {0}",
-                                        getAvailableBrowserCapabilities(), configuration.getBrowserCapabilities()));
+                                .format("Unable to initialize WebDriver instance. Please specify a valid browser instead of {1}. Available options are: {0}",
+                                        getAvailableBrowserCapabilities(), configuration.getBrowser()));
             }
-            configuration.setBrowserCapabilitiesInternal(browser);
+            configuration.setBrowserInternal(browser);
         }
 
         // if it is still null, go with defaults
         if (browser == null) {
             browser = registry.getEntryFor(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
-            log.log(Level.INFO, "Property \"browserCapabilities\" was not specified, using default value of {0}",
+            log.log(Level.INFO, "Property \"browser\" was not specified, using default value of {0}",
                     WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
-            configuration.setBrowserCapabilitiesInternal(browser);
+            configuration.setBrowserInternal(browser);
         }
 
         return configuration;

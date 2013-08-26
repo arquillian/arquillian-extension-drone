@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.webdriver.spi;
 import java.util.Collection;
 
 /**
- * A registry that holds all browserCapabilities mappable types
+ * A registry that holds all browser mappable types
  *
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  *
@@ -29,7 +29,7 @@ public interface BrowserCapabilitiesRegistry {
     /**
      * Checks if the registry has an entry for given key
      *
-     * @param key the human readable browserCapabilities for the browser, e.g. firefox
+     * @param key the human readable name for the browser, e.g. firefox
      * @return The BrowserCapabilities object for given key or {@code null} if key is {@code null}, empty or it is not in the
      *         registry
      */
