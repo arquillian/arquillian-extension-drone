@@ -29,12 +29,16 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.Configurator;
+import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.DroneConfigurationEvent;
@@ -77,10 +81,19 @@ public class DroneConfigurator {
     @Inject
     private Event<DroneConfigurationEvent> droneConfigurationEvent;
 
-    public void prepareDroneConfiguration(@Observes BeforeClass event, DroneRegistry registry) {
-
+    public void prepareGlobalDroneConfiguration(@Observes(precedence = 10) BeforeClass event, DroneRegistry registry) {
         // create Drone Context
         droneContext.set(new DroneContextImpl());
+
+        GlobalDroneFactory configurator = new GlobalDroneFactory();
+        droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, GlobalDrone.class, Default.class));
+        GlobalDroneConfiguration configuration = configurator.createConfiguration(arquillianDescriptor.get(), Default.class);
+        InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+        droneContext.get().add(configuration.getClass(), Default.class, droneConfiguration);
+        droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, GlobalDrone.class, Default.class));
+    }
+
+    public void prepareDroneConfiguration(@Observes BeforeClass event, DroneRegistry registry) {
 
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
@@ -136,4 +149,87 @@ public class DroneConfigurator {
             }
         }
     }
+
+    /**
+     * Global Drone configuration. Applicable to any Drone type
+     *
+     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+     *
+     */
+    public static class GlobalDroneConfiguration implements DroneConfiguration<GlobalDroneConfiguration> {
+
+        private static final String CONFIGURATION_NAME = "drone";
+
+        private int instantiationTimeoutInSeconds = 5;
+
+        @Override
+        public String getConfigurationName() {
+            return CONFIGURATION_NAME;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public GlobalDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+            // qualifier is ignored
+            ConfigurationMapper.fromArquillianDescriptor(descriptor, this, Default.class);
+            ConfigurationMapper.fromSystemConfiguration(this, Default.class);
+
+            // if debugging is enabled
+            if (Boolean.parseBoolean(SecurityActions.getProperty("arquillian.debug"))) {
+                this.instantiationTimeoutInSeconds = 0;
+            }
+
+            return this;
+        }
+
+        public int getInstantiationTimeoutInSeconds() {
+            return instantiationTimeoutInSeconds;
+        }
+
+        public void setInstantiationTimeoutInSeconds(int instantiationTimeoutInSeconds) {
+            this.instantiationTimeoutInSeconds = instantiationTimeoutInSeconds;
+        }
+    }
+
+    /**
+     * Global Drone configuration creator
+     *
+     *
+     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+     *
+     */
+    public static class GlobalDroneFactory implements Configurator<GlobalDrone, GlobalDroneConfiguration>,
+            Instantiator<GlobalDrone, GlobalDroneConfiguration>, Destructor<GlobalDrone> {
+        @Override
+        public GlobalDroneConfiguration createConfiguration(ArquillianDescriptor descriptor,
+                Class<? extends Annotation> qualifier) {
+            return new GlobalDroneConfiguration().configure(descriptor, qualifier);
+        }
+
+        @Override
+        public GlobalDrone createInstance(GlobalDroneConfiguration configuration) {
+            return new GlobalDrone();
+        }
+
+        @Override
+        public void destroyInstance(GlobalDrone instance) {
+
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+    }
+
+    /**
+     * This is a virtual representation of global Drone browser. This way we allow extension creators to intercept
+     * configuration the very same way as any other configuration.
+     *
+     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+     *
+     */
+    public static class GlobalDrone {
+    }
+
 }

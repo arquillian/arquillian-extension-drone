@@ -29,6 +29,8 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.impl.DroneConfigurator.GlobalDroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
@@ -71,8 +73,20 @@ public class DroneInstanceCreator {
         Class<?> droneType = event.getDroneType();
         Class<? extends Annotation> qualifier = event.getQualifier();
 
+        InstanceOrCallableInstance globalConfigurationUnion = context.get().get(GlobalDroneConfiguration.class, Default.class);
+        Validate.stateNotNull(globalConfigurationUnion, "Drone global configuration should be available in the context");
+        GlobalDroneConfiguration globalDroneConfiguration = globalConfigurationUnion.asInstance(GlobalDroneConfiguration.class);
+        int timeout = globalDroneConfiguration.getInstantiationTimeoutInSeconds();
+
         try {
-            Object browser = executorService.submit(union.asCallableInstance(droneType)).get(5, TimeUnit.SECONDS);
+            Object browser = null;
+            if (timeout > 0) {
+                browser = executorService.submit(union.asCallableInstance(droneType)).get(timeout, TimeUnit.SECONDS);
+            }
+            // here we ignore the timeout, for instance if debugging is enabled
+            else {
+                browser = executorService.submit(union.asCallableInstance(droneType)).get();
+            }
             union.set(browser);
             droneLifecycleEvent.fire(new AfterDroneInstantiated(union, droneType, qualifier));
         } catch (InterruptedException e) {
@@ -80,7 +94,7 @@ public class DroneInstanceCreator {
         } catch (ExecutionException e) {
             throw new RuntimeException("Unable to retrieve Drone Instance", e);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance within " + 5 + "" + TimeUnit.SECONDS, e);
+            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + "" + TimeUnit.SECONDS, e);
         }
     }
 }

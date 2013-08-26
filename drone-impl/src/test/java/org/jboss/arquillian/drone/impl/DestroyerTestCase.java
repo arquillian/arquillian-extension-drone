@@ -29,11 +29,11 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -85,15 +85,18 @@ public class DestroyerTestCase extends AbstractTestTestBase {
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
-        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(Arrays.<Configurator> asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(Arrays.<Instantiator> asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
+                Arrays.<Configurator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
+                Arrays.<Instantiator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(
+                Arrays.<Destructor> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
         Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
     }
 
     @Test
-    public void testDestructorWontTriggerAndFail() throws Exception {
+    public void mockDestructorWontTriggerAndWontFail() throws Exception {
         getManager().getContext(ClassContext.class).activate(DummyClass.class);
 
         Object instance = new DummyClass();
@@ -111,8 +114,8 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(DummyClass.class));
         fire(new Before(instance, testMethod));
 
-        assertEventFired(BeforeDroneCallableCreated.class, 0);
-        assertEventFired(AfterDroneCallableCreated.class, 0);
+        assertEventFired(BeforeDroneCallableCreated.class, 1);
+        assertEventFired(AfterDroneCallableCreated.class, 1);
 
         assertEventFired(BeforeDroneInstantiated.class, 0);
         assertEventFired(AfterDroneInstantiated.class, 0);

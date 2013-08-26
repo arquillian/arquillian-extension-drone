@@ -99,7 +99,7 @@ public class DroneRegistryImpl implements DroneRegistry {
                 + " was found for object of type "
                 + unregistered.getName()
                 + ".\n"
-                + "Make sure you have a proper Drone extension on the classpath, that is arquillian-drone-selenium for Selenium browsers, arquillian-drone-webdriver for WebDriver browsers and arquillian-ajocado-drone for AjaxSelenium browsers. If you are using your own browser extension, please make sure it is on classpath.\n");
+                + "Make sure you have Drone extension depchain for the given browser on the classpath, that is org.jboss.arquillian.extension:arquillian-drone-webdriver-depchain:pom for WebDriver browsers, org.jboss.arquillian.extension:arquillian-drone-selenium-depchain:pom for Selenium 1 browsers and org.jboss.arquillian.graphene:graphene-webdriver:pom for Graphene2 browsers. If you are using different browser extension, please make sure it is on classpath.\n");
 
         sb.append("Currently registered " + registeredType + "s are: ");
 
