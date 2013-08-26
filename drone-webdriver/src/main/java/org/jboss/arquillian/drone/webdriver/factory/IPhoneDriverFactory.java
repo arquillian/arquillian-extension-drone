@@ -35,6 +35,7 @@ import org.openqa.selenium.iphone.IPhoneDriver;
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
+@Deprecated
 public class IPhoneDriverFactory extends AbstractWebDriverFactory<IPhoneDriver> implements
         Configurator<IPhoneDriver, WebDriverConfiguration>, Instantiator<IPhoneDriver, WebDriverConfiguration>,
         Destructor<IPhoneDriver> {
