@@ -36,10 +36,10 @@
     <properties>
         <!-- Versioning -->
         <version.arquillian.core>1.1.0.Final</version.arquillian.core>
-        <version.com.opera>1.3</version.com.opera>
+        <version.com.opera>1.5</version.com.opera>
         <version.com.github.detro.ghostdriver>1.0.4</version.com.github.detro.ghostdriver>
         <version.phantom.driver>1.1.0.Beta1</version.phantom.driver>
-        <version.selenium>2.33.0</version.selenium>
+        <version.selenium>2.35.0</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
