@@ -90,11 +90,13 @@ public class DroneInstanceCreator {
             union.set(browser);
             droneLifecycleEvent.fire(new AfterDroneInstantiated(union, droneType, qualifier));
         } catch (InterruptedException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance", e);
+            throw new RuntimeException("Unable to retrieve Drone Instance, thread interrupted", e);
         } catch (ExecutionException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance", e);
+            Throwable cause = e.getCause();
+            throw new RuntimeException(cause.getMessage(), cause);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + "" + TimeUnit.SECONDS, e);
+            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + " "
+                    + TimeUnit.SECONDS.toString().toLowerCase(), e);
         }
     }
 }

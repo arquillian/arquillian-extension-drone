@@ -82,7 +82,7 @@ public class DroneDestructor {
             InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
             if (instance != null) {
                 droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
-                destructor.destroyInstance(instance.asInstance(droneType));
+                destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
                 droneContext.remove(droneType, qualifier);
                 droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
             }
@@ -111,7 +111,7 @@ public class DroneDestructor {
                 InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
                 if (instance != null) {
                     droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
-                    destructor.destroyInstance(instance.asInstance(droneType));
+                    destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
                     droneContext.remove(droneType, qualifier);
                     droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
                 }
@@ -132,5 +132,16 @@ public class DroneDestructor {
         }
 
         return destructor;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void destroyInstanceIfInstantiated(@SuppressWarnings("rawtypes") Destructor destructor,
+            InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+        try {
+            destructor.destroyInstance(instance.asInstance(droneType));
+        } catch (IllegalStateException e) {
+            log.log(Level.WARNING, "Ignoring destruction of the instance {} @{}, it was not instantiated previously.",
+                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
+        }
     }
 }

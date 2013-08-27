@@ -158,9 +158,11 @@ public class DroneConfigurator {
      */
     public static class GlobalDroneConfiguration implements DroneConfiguration<GlobalDroneConfiguration> {
 
-        private static final String CONFIGURATION_NAME = "drone";
+        public static final String CONFIGURATION_NAME = "drone";
 
-        private int instantiationTimeoutInSeconds = 5;
+        public static final int DEFAULT_INSTANTIATION_TIMEOUT = 30;
+
+        private int instantiationTimeoutInSeconds = DEFAULT_INSTANTIATION_TIMEOUT;
 
         @Override
         public String getConfigurationName() {

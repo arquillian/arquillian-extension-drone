@@ -72,20 +72,20 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
         // then
-        verifyTimeout(5);
+        verifyTimeout(DroneConfigurator.GlobalDroneConfiguration.DEFAULT_INSTANTIATION_TIMEOUT);
     }
 
     @Test
     public void specificConfiguration() throws Exception {
         // given
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-                .extension("drone").property("instantiationTimeoutInSeconds", "30");
+                .extension("drone").property("instantiationTimeoutInSeconds", "40");
 
         getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
         // then
-        verifyTimeout(30);
+        verifyTimeout(40);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
             // given
             System.setProperty("arquillian.debug", "true");
             ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-                    .extension("drone").property("instantiationTimeoutInSeconds", "30");
+                    .extension("drone").property("instantiationTimeoutInSeconds", "40");
 
             getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
             getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
