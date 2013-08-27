@@ -77,15 +77,21 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
         String profile = (String) configuration.getCapabilities().getCapability(FirefoxDriver.PROFILE);
 
-        // verify binary and profile values
+        // verify firefox binary if set
         if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
         }
+
+        // set firefox profile from path if specified
+        FirefoxProfile firefoxProfile;
         if (Validate.nonEmpty(profile)) {
             Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
+            firefoxProfile = new FirefoxProfile(new File(profile));
+        }
+        else {
+            firefoxProfile = new FirefoxProfile();
         }
 
-        FirefoxProfile firefoxProfile = new FirefoxProfile();
         capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
 
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
