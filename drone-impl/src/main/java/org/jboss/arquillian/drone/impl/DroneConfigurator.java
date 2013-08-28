@@ -160,7 +160,7 @@ public class DroneConfigurator {
 
         public static final String CONFIGURATION_NAME = "drone";
 
-        public static final int DEFAULT_INSTANTIATION_TIMEOUT = 30;
+        public static final int DEFAULT_INSTANTIATION_TIMEOUT = 60;
 
         private int instantiationTimeoutInSeconds = DEFAULT_INSTANTIATION_TIMEOUT;
 

@@ -65,7 +65,7 @@ public class InstanceOrCallableInstanceImpl implements InstanceOrCallableInstanc
     public <T> Callable<T> asCallableInstance(Class<T> type) throws IllegalStateException {
         if (!(holder instanceof Callable<?>)) {
             throw new IllegalStateException(
-                    "Unexpected callable present in Drone Context, should be already instantiated at this moment.");
+                    "Unexpected object present in Drone Context, should not be instantiated at this moment yet.");
         }
 
         return (Callable<T>) holder;
