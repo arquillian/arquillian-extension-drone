@@ -179,7 +179,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         // capabilities in an incompatible way
         if (_originalBrowser != null && !_originalBrowser.equals(this.browser)) {
             log.log(Level.WARNING,
-                    "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, Arquillian configuration will be ignored.",
+                    "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, \"browser\" property will be set to {1}.",
                     new Object[] { browser, _originalBrowser });
             this.browser = _originalBrowser;
         }
