@@ -67,7 +67,7 @@ public class DroneInstanceCreator {
     @Inject
     private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
-    public void createDroneInstance(@Observes(precedence = Integer.MAX_VALUE) BeforeDroneInstantiated event) {
+    public void createDroneInstance(@Observes(precedence = Integer.MIN_VALUE) BeforeDroneInstantiated event) {
 
         InstanceOrCallableInstance union = event.getInstanceCallable();
         Class<?> droneType = event.getDroneType();
