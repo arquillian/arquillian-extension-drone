@@ -32,6 +32,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,8 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
     @Mock
     private ServiceLoader serviceLoader;
 
+    private String oldDebugValue;
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneRegistrar.class);
@@ -58,8 +61,14 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
     }
 
     @Before
-    public void setMocks() {
+    public void storeArquillianDebug() {
+        oldDebugValue = System.getProperty("arquillian.debug", "false");
+        System.setProperty("arquillian.debug", "false");
+    }
 
+    @After
+    public void restoreArquillianDebug() {
+        System.setProperty("arquillian.debug", oldDebugValue);
     }
 
     @Test
@@ -91,21 +100,16 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
     @Test
     public void specificConfigurationWithDebugMode() throws Exception {
 
-        String oldDebugValue = System.getProperty("arquillian.debug", "false");
-        try {
-            // given
-            System.setProperty("arquillian.debug", "true");
-            ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-                    .extension("drone").property("instantiationTimeoutInSeconds", "40");
+        // given
+        System.setProperty("arquillian.debug", "true");
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
+                .extension("drone").property("instantiationTimeoutInSeconds", "40");
 
-            getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-            getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
+        getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+        getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
-            // then
-            verifyTimeout(0);
-        } finally {
-            System.setProperty("arquillian.debug", oldDebugValue);
-        }
+        // then
+        verifyTimeout(0);
     }
 
     private void verifyTimeout(int timeout) {
