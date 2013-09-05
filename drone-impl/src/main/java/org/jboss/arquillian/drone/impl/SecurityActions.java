@@ -19,12 +19,15 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Qualifier;
@@ -154,6 +157,31 @@ final class SecurityActions {
         }
     }
 
+    static Map<Integer, Annotation[]> getParametersWithAnnotation(final Method method,
+            final Class<? extends Annotation> annotationClass) {
+
+        Map<Integer, Annotation[]> declaredParameters = AccessController
+                .doPrivileged(new PrivilegedAction<Map<Integer, Annotation[]>>() {
+
+                    @Override
+                    public Map<Integer, Annotation[]> run() {
+                        Map<Integer, Annotation[]> foundParameters = new LinkedHashMap<Integer, Annotation[]>();
+
+                        Class<?>[] parameterTypes = method.getParameterTypes();
+                        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+
+                        for (int i = 0; i < parameterTypes.length; i++) {
+                            if (isAnnotationPresent(parameterAnnotations[i], annotationClass)) {
+                                foundParameters.put(i, parameterAnnotations[i]);
+                            }
+                        }
+                        return foundParameters;
+                    }
+
+                });
+        return declaredParameters;
+    }
+
     static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) {
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
@@ -193,6 +221,64 @@ final class SecurityActions {
         });
 
         return getQualifier(annotations);
+    }
+
+    static Object getFieldValue(final Object instance, final Field field) {
+        try {
+            Object value = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                public Object run() throws IllegalArgumentException, IllegalAccessException {
+                    return field.get(instance);
+                }
+            });
+            return value;
+        } catch (PrivilegedActionException e) {
+            final Throwable t = e.getCause();
+            // Rethrow
+            if (t instanceof IllegalArgumentException) {
+                throw (IllegalArgumentException) t;
+            } else if (t instanceof IllegalAccessException) {
+                throw new IllegalStateException("Unable to get field value of " + field.getName() + " due to: "
+                        + t.getMessage(), t.getCause());
+            } else {
+                // No other checked Exception thrown by Class.getConstructor
+                try {
+                    throw (RuntimeException) t;
+                }
+                // Just in case we've really messed up
+                catch (final ClassCastException cce) {
+                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+                }
+            }
+        }
+    }
+
+    static void setFieldValue(final Object instance, final Field field, final Object value) {
+        try {
+            AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
+                public Void run() throws IllegalArgumentException, IllegalAccessException {
+                    field.set(instance, value);
+                    return null;
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            final Throwable t = e.getCause();
+            // Rethrow
+            if (t instanceof IllegalArgumentException) {
+                throw (IllegalArgumentException) t;
+            } else if (t instanceof IllegalAccessException) {
+                throw new IllegalStateException("Unable to set field value of " + field.getName() + " due to: "
+                        + t.getMessage(), t.getCause());
+            } else {
+                // No other checked Exception thrown by Class.getConstructor
+                try {
+                    throw (RuntimeException) t;
+                }
+                // Just in case we've really messed up
+                catch (final ClassCastException cce) {
+                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+                }
+            }
+        }
     }
 
     static Class<? extends Annotation> getQualifier(Annotation[] annotations) {

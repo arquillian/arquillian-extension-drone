@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,57 +98,53 @@ public class DroneConfigurator {
 
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
-        if (fields.isEmpty()) {
-            return;
-        }
 
         for (Field f : fields) {
             Class<?> droneType = f.getType();
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-            Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
-            Configurator<?, ?> configurator = registry.getEntryFor(droneType, Configurator.class);
+            log.log(Level.FINE, "Configuring Drone for field {0}, argument {1}", new Object[] { f.getName() });
 
-            droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
-            DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-            InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
-
-            droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
-            droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
+            configureDrone(registry, droneType, qualifier);
         }
 
     }
 
     public void configureDrone(@Observes Before event, DroneRegistry registry) {
+
+        // check if any parameter is @Drone annotated
         Method method = event.getTestMethod();
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        Map<Integer, Annotation[]> droneParameters = SecurityActions.getParametersWithAnnotation(method, Drone.class);
 
-        // check if any field is @Drone annotated
-        if (parameterTypes.length == 0) {
-            return;
-        }
+        Class<?>[] parameters = method.getParameterTypes();
+        for (int i = 0; i < parameters.length; i++) {
+            if (droneParameters.containsKey(i)) {
+                Class<?> droneType = parameters[i];
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneParameters.get(i));
 
-        Validate.stateNotNull(droneContext.get(), "DroneContext should be available while working with method scoped instances");
+                log.log(Level.FINE, "Configuring Drone for method {0}, argument {1}", new Object[] { method.getName(),
+                        parameters[i].getName() });
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine("Resolving method " + method.getName() + " argument at position " + i);
-                }
-
-                Validate.notNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
-                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
-
-                Configurator<?, ?> configurator = registry.getEntryFor(parameterTypes[i], Configurator.class);
-
-                droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, parameterTypes[i], qualifier));
-                DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
-                InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
-                droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
-                droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, parameterTypes[i], qualifier));
+                configureDrone(registry, droneType, qualifier);
             }
         }
+    }
+
+    private void configureDrone(DroneRegistry registry, Class<?> droneType, Class<? extends Annotation> qualifier) {
+
+        Validate.stateNotNull(arquillianDescriptor.get(), "ArquillianDescriptor should not be null");
+        Validate.stateNotNull(droneContext.get(),
+                "DroneContext should be available while working with method scoped instances");
+
+        Configurator<?, ?> configurator = registry.getEntryFor(droneType, Configurator.class);
+
+        droneConfigurationEvent.fire(new BeforeDroneConfigured(configurator, droneType, qualifier));
+        DroneConfiguration<?> configuration = configurator.createConfiguration(arquillianDescriptor.get(), qualifier);
+        InstanceOrCallableInstance droneConfiguration = new InstanceOrCallableInstanceImpl(configuration);
+
+        droneContext.get().add(configuration.getClass(), qualifier, droneConfiguration);
+        droneConfigurationEvent.fire(new AfterDroneConfigured(droneConfiguration, droneType, qualifier));
+
     }
 
     /**

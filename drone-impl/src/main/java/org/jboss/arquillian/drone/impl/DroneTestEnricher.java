@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,52 +56,46 @@ public class DroneTestEnricher implements TestEnricher {
     @Override
     public void enrich(Object testCase) {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
-        if (!droneEnrichements.isEmpty()) {
-            droneEnrichement(testCase, droneEnrichements);
+
+        for (Field f : droneEnrichements) {
+            // omit setting if already set
+            if (SecurityActions.getFieldValue(testCase, f) != null) {
+                continue;
+            }
+
+            log.log(Level.FINE, "Injecting @Drone for field {0}", new Object[] { f.getName() });
+
+            Class<?> typeClass = f.getType();
+            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+            Object value = getDroneInstance(typeClass, qualifier);
+            Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
+            SecurityActions.setFieldValue(testCase, f, value);
         }
     }
 
     @Override
     public Object[] resolve(Method method) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        Object[] resolution = new Object[parameterTypes.length];
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine("Resolving method " + method.getName() + " argument at position " + i);
-                }
+        Map<Integer, Annotation[]> droneEnrichements = SecurityActions.getParametersWithAnnotation(method, Drone.class);
+        Class<?>[] parameters = method.getParameterTypes();
+        Object[] resolution = new Object[parameters.length];
 
-                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
+        for (int i = 0; i < parameters.length; i++) {
+            Class<?> droneType = parameters[i];
+            if (droneEnrichements.containsKey(i)) {
 
-                Object value = getDroneInstance(parameterTypes[i], qualifier);
-                Validate.notNull(value, "Retrieved a null from context, which is not a valid Drone browser object");
+                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1}", new Object[] { method.getName(),
+                        parameters[i].getName() });
 
+                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneEnrichements.get(i));
+                Object value = getDroneInstance(droneType, qualifier);
+                Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
                 resolution[i] = value;
             }
         }
 
         return resolution;
-    }
-
-    private void droneEnrichement(Object testCase, List<Field> fields) {
-        try {
-            for (Field f : fields) {
-                // omit setting if already set
-                if (f.get(testCase) != null) {
-                    return;
-                }
-
-                Class<?> typeClass = f.getType();
-                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
-
-                Object value = getDroneInstance(typeClass, qualifier);
-                f.set(testCase, value);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Could not enrich test with Drone members", e);
-        }
     }
 
     private <T> T getDroneInstance(Class<T> type, Class<? extends Annotation> qualifier) {

@@ -140,7 +140,7 @@ public class DroneDestructor {
         try {
             destructor.destroyInstance(instance.asInstance(droneType));
         } catch (IllegalStateException e) {
-            log.log(Level.WARNING, "Ignoring destruction of the instance {} @{}, it was not instantiated previously.",
+            log.log(Level.WARNING, "Ignoring destruction of the instance {0} @{1}, it was not instantiated previously.",
                     new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
         }
     }
