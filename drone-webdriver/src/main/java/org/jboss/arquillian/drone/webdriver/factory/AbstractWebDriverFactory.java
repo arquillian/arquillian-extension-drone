@@ -36,7 +36,7 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
         if (browser == null && Validate.nonEmpty(configuration.getImplementationClass())) {
             browser = registry.getEntryByImplementationClassName(configuration.getImplementationClass());
             if (browser == null) {
-                log.log(Level.FINE, "Available implementationClasses are {}", getAvailableImplementationClasses());
+                log.log(Level.FINE, "Available implementationClasses are {0}", getAvailableImplementationClasses());
                 throw new IllegalStateException(
                         MessageFormat
                                 .format("Unable to initialize WebDriver instance. Please specify a browser property instead of implementationClass {1}. Available options are: {0}",
