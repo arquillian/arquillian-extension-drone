@@ -63,10 +63,11 @@ public class DroneTestEnricher implements TestEnricher {
                 continue;
             }
 
-            log.log(Level.FINE, "Injecting @Drone for field {0}", new Object[] { f.getName() });
-
             Class<?> typeClass = f.getType();
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+            log.log(Level.FINE, "Injecting @Drone for field {0} @{1} {2}",
+                    new Object[] { typeClass.getSimpleName(), qualifier.getSimpleName(), f.getName() });
 
             Object value = getDroneInstance(typeClass, qualifier);
             Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
@@ -85,10 +86,10 @@ public class DroneTestEnricher implements TestEnricher {
             Class<?> droneType = parameters[i];
             if (droneEnrichements.containsKey(i)) {
 
-                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1}", new Object[] { method.getName(),
-                        parameters[i].getName() });
-
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneEnrichements.get(i));
+                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} {3}", new Object[] { method.getName(),
+                        droneType.getSimpleName(), qualifier.getSimpleName(), parameters[i].getName() });
+
                 Object value = getDroneInstance(droneType, qualifier);
                 Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
                 resolution[i] = value;
