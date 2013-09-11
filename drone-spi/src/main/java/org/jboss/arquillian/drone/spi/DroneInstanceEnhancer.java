@@ -20,29 +20,26 @@ import java.lang.annotation.Annotation;
 
 /**
  * Enhances Drone instance in order to give it additional capabilities.
- * This class is deprecated and will be removed. Please use {@link DroneInstanceEnhancer} instead.
  *
+ * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  * @author Lukas Fryc
  */
-@Deprecated
-public interface Enhancer<T> extends Sortable {
+public interface DroneInstanceEnhancer<T> extends Sortable {
 
     /**
-     * Returns true when this {@link Enhancer} is able to enhance given type.
+     * Returns {@code true} when this {@link DroneInstanceEnhancer} is able to enhance or deenhance given type.
      *
-     * @param type the type of field or parameter which can be enhanced
+     * @param instance instance of Drone to be enhanced / deenhanced
+     * @param droneType the field or parameter type defined in test
      * @param qualifier the qualifier associated with the injected type
-     * @return true when this {@link Enhancer} is able to enhance given type.
+     * @return {@code true} when this {@link DroneInstanceEnhancer} is able to enhance or deenhance given type, {@code false}
+     *         otherwise
      */
-    boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier);
+    boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier);
 
     /**
      * <p>
      * Takes the instance instantiated by Drone and returns its enhanced version.
-     * </p>
-     *
-     * <p>
-     * Note: No enhancement can be done in this method.
      * </p>
      *
      * @param instance the instance to be enhanced
@@ -53,16 +50,12 @@ public interface Enhancer<T> extends Sortable {
 
     /**
      * <p>
-     * Takes the instance which was previously enhanced by {@link #enhance(Object)} method and cancels the enhancement.
-     * </p>
-     *
-     * <p>
-     * No: No de-enhancement can be done in this method.
+     * Takes the instance which was previously enhanced by {@link #enhance(Object, Class)} method and cancels the enhancement.
      * </p>
      *
      * @param enhancedInstance the instance which was previously enhanced by {@link #enhance(Object)}.
      * @param qualifier the qualifier associated with an instance
-     * @return the de-enhanced instance
+     * @return the deenhanced instance
      */
     T deenhance(T enhancedInstance, Class<? extends Annotation> qualifier);
 }

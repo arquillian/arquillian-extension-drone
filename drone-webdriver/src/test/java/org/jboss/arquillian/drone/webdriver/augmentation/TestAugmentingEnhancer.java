@@ -5,10 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.junit.Test;
@@ -24,12 +26,23 @@ public class TestAugmentingEnhancer {
 
     @Test
     public void testCanEnhance() {
-        assertTrue(enhancer.canEnhance(RemoteWebDriver.class, Default.class));
-        assertTrue(enhancer.canEnhance(ReusableRemoteWebDriver.class, Default.class));
+        RemoteWebDriver driver = mock(RemoteWebDriver.class);
+        ReusableRemoteWebDriver reusableDriver = mock(ReusableRemoteWebDriver.class);
+        InstanceOrCallableInstance instance = mock(InstanceOrCallableInstance.class);
 
-        assertFalse(enhancer.canEnhance(WebDriver.class, Default.class));
-        // extensions of supported classes can't be automatically enhanced
-        assertFalse(enhancer.canEnhance(mock(RemoteWebDriver.class).getClass(), Default.class));
+        doReturn(driver).when(instance).asInstance(RemoteWebDriver.class);
+        doReturn(driver).when(instance).asInstance(WebDriver.class);
+        doReturn(driver).when(instance).asInstance(driver.getClass());
+        doReturn(reusableDriver).when(instance).asInstance(ReusableRemoteWebDriver.class);
+
+        System.out.println(driver.getClass());
+
+        assertTrue(enhancer.canEnhance(instance, RemoteWebDriver.class, Default.class));
+        assertTrue(enhancer.canEnhance(instance, ReusableRemoteWebDriver.class, Default.class));
+
+        assertFalse(enhancer.canEnhance(instance, WebDriver.class, Default.class));
+        // extensions of supported classes can't be automatically augmented
+        assertFalse(enhancer.canEnhance(instance, driver.getClass(), Default.class));
     }
 
     @Test

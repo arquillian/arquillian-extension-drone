@@ -19,7 +19,8 @@ package org.jboss.arquillian.drone.webdriver.augmentation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
+import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
@@ -35,7 +36,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  *
  * @author Lukas Fryc
  */
-public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
+public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver> {
 
     public static final String DRONE_AUGMENTED = "droneAugmented";
 
@@ -65,12 +66,16 @@ public class AugmentingEnhancer implements Enhancer<RemoteWebDriver> {
     }
 
     @Override
-    public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-        if (RemoteWebDriver.class == type || ReusableRemoteWebDriver.class == type) {
+    public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+
+        if (RemoteWebDriver.class == droneType || ReusableRemoteWebDriver.class == droneType) {
             return true;
         }
 
-        if (RemoteWebDriver.class.isAssignableFrom(type) && DroneAugmented.class.isAssignableFrom(type)) {
+        Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
+
+        if (RemoteWebDriver.class.isAssignableFrom(realInstanceClass)
+                && DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
             return true;
         }
 

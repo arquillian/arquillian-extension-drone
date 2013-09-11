@@ -18,28 +18,28 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
- * This event is fired before Drone instance is enhanced by {@link Enhancer}. It is expected that it will never contain a
+ * This event is fired before Drone instance is enhanced by {@link DroneInstanceEnhancer}. It is expected that it will never contain a
  * {@link Callable} Drone, but rather a real instance.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class BeforeDroneEnhanced extends BaseDroneEvent implements DroneEnhancementEvent {
-    private final Enhancer<?> enhancer;
+    private final DroneInstanceEnhancer<?> enhancer;
     private final InstanceOrCallableInstance instance;
 
-    public BeforeDroneEnhanced(Enhancer<?> enhancer, InstanceOrCallableInstance instance, Class<?> droneType,
+    public BeforeDroneEnhanced(DroneInstanceEnhancer<?> enhancer, InstanceOrCallableInstance instance, Class<?> droneType,
             Class<? extends Annotation> qualifier) {
         super(droneType, qualifier);
         this.enhancer = enhancer;
         this.instance = instance;
     }
 
-    public Enhancer<?> getEnhancer() {
+    public DroneInstanceEnhancer<?> getEnhancer() {
         return enhancer;
     }
 

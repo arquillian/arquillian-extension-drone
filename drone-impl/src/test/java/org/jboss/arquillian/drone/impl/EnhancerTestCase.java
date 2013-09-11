@@ -38,6 +38,7 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.Enhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
@@ -82,6 +83,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
     private MockDrone notEnhanced;
     private MockDrone deEnhanced;
+    private MockDrone deprecatedEnhanced;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -114,12 +116,15 @@ public class EnhancerTestCase extends AbstractTestTestBase {
                 Arrays.<Instantiator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
+        Mockito.when(serviceLoader.all(DroneInstanceEnhancer.class)).thenReturn(
+                Arrays.<DroneInstanceEnhancer> asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
         Mockito.when(serviceLoader.all(Enhancer.class)).thenReturn(
-                Arrays.<Enhancer> asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
+                Arrays.<Enhancer> asList(new DeprecatedDroneEnhancer()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
 
         notEnhanced = null;
         deEnhanced = null;
+        deprecatedEnhanced = null;
     }
 
     @Test
@@ -139,12 +144,14 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         assertThat("both enhancerns were applied", droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
+        assertThat("deprecated enhancer was applied", deprecatedEnhanced, is(not(nullValue())));
 
         droneInstance = context.get(MockDrone.class, Default.class);
         fire(new AfterClass(EnrichedClass.class));
 
         droneInstance = context.get(MockDrone.class, Default.class);
         assertThat(droneInstance, is(nullValue()));
+        assertThat("deprecated deenhancer was applied", deprecatedEnhanced, is(nullValue()));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
 
@@ -170,10 +177,12 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         assertThat(droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
         assertThat(notEnhanced, is(not(nullValue())));
+        assertThat("deprecated enhancer was applied", deprecatedEnhanced, is(not(nullValue())));
 
         fire(new After(instance, testMethod));
         droneInstance = context.get(MockDrone.class, Default.class);
         assertThat(droneInstance, is(nullValue()));
+        assertThat("deprecated deenhancer was applied", deprecatedEnhanced, is(nullValue()));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
 
@@ -191,7 +200,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
     }
 
-    private class MockDroneEnhancer1 implements Enhancer<MockDrone> {
+    private class MockDroneEnhancer1 implements DroneInstanceEnhancer<MockDrone> {
 
         @Override
         public int getPrecedence() {
@@ -199,8 +208,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
 
         @Override
-        public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
-            return MockDrone.class.isAssignableFrom(type);
+        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+            return MockDrone.class.isAssignableFrom(droneType);
         }
 
         @Override
@@ -219,7 +228,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
     }
 
-    private class MockDroneEnhancer2 implements Enhancer<MockDrone> {
+    private class MockDroneEnhancer2 implements DroneInstanceEnhancer<MockDrone> {
 
         @Override
         public int getPrecedence() {
@@ -227,7 +236,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
 
         @Override
-        public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
+        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
             return true;
         }
 
@@ -242,6 +251,33 @@ public class EnhancerTestCase extends AbstractTestTestBase {
             assertThat(enhancedInstance, equalTo(enhanced2));
             return enhanced1;
         }
+    }
+
+    private class DeprecatedDroneEnhancer implements Enhancer<MockDrone> {
+
+        @Override
+        public int getPrecedence() {
+            return 50;
+        }
+
+        @Override
+        public boolean canEnhance(Class<?> type, Class<? extends Annotation> qualifier) {
+            return true;
+        }
+
+        @Override
+        public MockDrone enhance(MockDrone instance, Class<? extends Annotation> qualifier) {
+
+            deprecatedEnhanced = instance;
+            return instance;
+        }
+
+        @Override
+        public MockDrone deenhance(MockDrone enhancedInstance, Class<? extends Annotation> qualifier) {
+            deprecatedEnhanced = null;
+            return enhancedInstance;
+        }
+
     }
 
 }

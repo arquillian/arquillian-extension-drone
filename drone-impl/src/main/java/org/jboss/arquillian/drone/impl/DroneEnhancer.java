@@ -29,8 +29,10 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.Enhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Sortable;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
@@ -40,7 +42,8 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.DroneEnhancementEvent;
 
 /**
- * Enhancer/deenhancer of Drone instance with {@link Enhancer} implementation available on the classpath.
+ * DroneInstanceEnhancer/deenhancer of Drone instance with {@link DroneInstanceEnhancer} implementation available on the
+ * classpath.
  *
  * This allows to modify behavior of the instance easily
  *
@@ -69,24 +72,47 @@ public class DroneEnhancer {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void enhanceDrone(@Observes AfterDroneInstantiated droneInstance, DroneContext context) {
-        List<Enhancer> enhancers = new ArrayList<Enhancer>(serviceLoader.get().all(Enhancer.class));
+
+        // until deprecated Enhancers are removed, we need to pick both of these classes
+        List<Sortable> enhancers = new ArrayList<Sortable>(serviceLoader.get().all(DroneInstanceEnhancer.class));
+        enhancers.addAll(serviceLoader.get().all(Enhancer.class));
+
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
         InstanceOrCallableInstance browser = droneInstance.getInstance();
         final Class<?> type = droneInstance.getDroneType();
         final Class<? extends Annotation> qualifier = droneInstance.getQualifier();
 
-        for (Enhancer enhancer : enhancers) {
-            if (enhancer.canEnhance(type, qualifier)) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine("Eenhancing using enhancer: " + enhancer.getClass().getName() + ", with precedence "
-                            + enhancer.getPrecedence());
-                }
+        for (Sortable candidate : enhancers) {
 
-                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
-                Object newBrowser = enhancer.enhance(browser.asInstance(type), qualifier);
-                browser.set(newBrowser);
-                droneEnhancementEvent.fire(new AfterDroneEnhanced(browser, type, qualifier));
+            if (candidate instanceof DroneInstanceEnhancer) {
+                DroneInstanceEnhancer enhancer = (DroneInstanceEnhancer) candidate;
+                if (enhancer.canEnhance(browser, type, qualifier)) {
+                    log.log(Level.FINE,
+                            "Enhancing {0} @{1} using enhancer {2} with precedence {3}",
+                            new Object[] { type.getSimpleName(), qualifier.getSimpleName(), enhancer.getClass().getName(),
+                                    enhancer.getPrecedence() });
+
+                    droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, browser, type, qualifier));
+                    Object newBrowser = enhancer.enhance(browser.asInstance(type), qualifier);
+                    browser.set(newBrowser);
+                    droneEnhancementEvent.fire(new AfterDroneEnhanced(browser, type, qualifier));
+                }
+            }
+            else if (candidate instanceof Enhancer) {
+                Enhancer enhancer = (Enhancer) candidate;
+                if (enhancer.canEnhance(type, qualifier)) {
+                    log.log(Level.WARNING,
+                            "Deprecated Enhancer type, please implement DroneInstanceEnhancer instead. Enhancing {0} @{1} using enhancer {2} with precedence {3}",
+                            new Object[] { type.getSimpleName(), qualifier.getSimpleName(), enhancer.getClass().getName(),
+                                    enhancer.getPrecedence() });
+
+                    droneEnhancementEvent.fire(new BeforeDroneEnhanced(new DeprecatedEnhancerWrap(enhancer), browser, type,
+                            qualifier));
+                    Object newBrowser = enhancer.enhance(browser.asInstance(type), qualifier);
+                    browser.set(newBrowser);
+                    droneEnhancementEvent.fire(new AfterDroneEnhanced(browser, type, qualifier));
+                }
             }
         }
     }
@@ -94,7 +120,10 @@ public class DroneEnhancer {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void deenhanceDrone(@Observes BeforeDroneDestroyed droneInstance, DroneContext context) {
 
-        List<Enhancer> enhancers = new ArrayList<Enhancer>(serviceLoader.get().all(Enhancer.class));
+        List<Sortable> enhancers = new ArrayList<Sortable>(serviceLoader.get().all(
+                DroneInstanceEnhancer.class));
+        enhancers.addAll(serviceLoader.get().all(Enhancer.class));
+
         // here we are deenhancing in reversed order
         Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
 
@@ -102,19 +131,69 @@ public class DroneEnhancer {
         final Class<?> type = droneInstance.getDroneType();
         final Class<? extends Annotation> qualifier = droneInstance.getQualifier();
 
-        for (Enhancer enhancer : enhancers) {
-            if (enhancer.canEnhance(type, qualifier)) {
-                if (log.isLoggable(Level.FINE)) {
-                    log.fine("Deenhancing using enhancer: " + enhancer.getClass().getName() + ", with precedence "
-                            + enhancer.getPrecedence());
-                }
+        for (Sortable candidate : enhancers) {
+            if (candidate instanceof DroneInstanceEnhancer) {
+                DroneInstanceEnhancer enhancer = (DroneInstanceEnhancer) candidate;
+                if (enhancer.canEnhance(browser, type, qualifier)) {
+                    log.log(Level.FINE,
+                            "Deenhancing {0} @{1} using enhancer {2} with precedence {3}",
+                            new Object[] { type.getSimpleName(), qualifier.getSimpleName(), enhancer.getClass().getName(),
+                                    enhancer.getPrecedence() });
 
-                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
-                Object newBrowser = enhancer.deenhance(browser.asInstance(type), qualifier);
-                browser.set(newBrowser);
-                droneEnhancementEvent.fire(new AfterDroneDeenhanced(browser, type, qualifier));
+                    droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, browser, type, qualifier));
+                    Object newBrowser = enhancer.deenhance(browser.asInstance(type), qualifier);
+                    browser.set(newBrowser);
+                    droneEnhancementEvent.fire(new AfterDroneDeenhanced(browser, type, qualifier));
+                }
             }
+            else if (candidate instanceof Enhancer) {
+                Enhancer enhancer = (Enhancer) candidate;
+                if (enhancer.canEnhance(type, qualifier)) {
+                    log.log(Level.WARNING,
+                            "Deprecated Enhancer type, please implement DroneInstanceEnhancer instead. Deenhancing {0} @{1} using enhancer {2} with precedence {3}",
+                            new Object[] { type.getSimpleName(), qualifier.getSimpleName(), enhancer.getClass().getName(),
+                                    enhancer.getPrecedence() });
+
+                    droneEnhancementEvent.fire(new BeforeDroneDeenhanced(new DeprecatedEnhancerWrap(enhancer), browser, type,
+                            qualifier));
+                    Object newBrowser = enhancer.deenhance(browser.asInstance(type), qualifier);
+                    browser.set(newBrowser);
+                    droneEnhancementEvent.fire(new AfterDroneDeenhanced(browser, type, qualifier));
+                }
+            }
+
         }
+    }
+
+    @Deprecated
+    private static class DeprecatedEnhancerWrap<T> implements DroneInstanceEnhancer<T> {
+
+        private final Enhancer<T> deprecated;
+
+        public DeprecatedEnhancerWrap(Enhancer<T> deprecated) {
+            this.deprecated = deprecated;
+        }
+
+        @Override
+        public int getPrecedence() {
+            return deprecated.getPrecedence();
+        }
+
+        @Override
+        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+            return deprecated.canEnhance(droneType, qualifier);
+        }
+
+        @Override
+        public T enhance(T instance, Class<? extends Annotation> qualifier) {
+            return deprecated.enhance(instance, qualifier);
+        }
+
+        @Override
+        public T deenhance(T enhancedInstance, Class<? extends Annotation> qualifier) {
+            return deprecated.deenhance(enhancedInstance, qualifier);
+        }
+
     }
 
 }

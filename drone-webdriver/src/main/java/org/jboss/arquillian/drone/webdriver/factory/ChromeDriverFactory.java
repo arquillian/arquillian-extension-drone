@@ -105,8 +105,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
             capabilities.setCapability("chrome.switches", getChromeSwitches(chromeSwitches));
         }
 
-        // FIXME this call will not be supported for a long time
-        // Chrome will be using ChromeOptions object
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { capabilities }, ChromeDriver.class);
     }

@@ -18,7 +18,7 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
@@ -29,10 +29,10 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
  *
  */
 public class BeforeDroneDeenhanced extends BaseDroneEvent implements DroneEnhancementEvent {
-    private final Enhancer<?> enhancer;
+    private final DroneInstanceEnhancer<?> enhancer;
     private final InstanceOrCallableInstance instance;
 
-    public BeforeDroneDeenhanced(Enhancer<?> enhancer, InstanceOrCallableInstance instance, Class<?> droneType,
+    public BeforeDroneDeenhanced(DroneInstanceEnhancer<?> enhancer, InstanceOrCallableInstance instance, Class<?> droneType,
             Class<? extends Annotation> qualifier) {
         super(droneType, qualifier);
         this.enhancer = enhancer;
@@ -43,7 +43,7 @@ public class BeforeDroneDeenhanced extends BaseDroneEvent implements DroneEnhanc
         return instance;
     }
 
-    public Enhancer<?> getEnhancer() {
+    public DroneInstanceEnhancer<?> getEnhancer() {
         return enhancer;
     }
 }

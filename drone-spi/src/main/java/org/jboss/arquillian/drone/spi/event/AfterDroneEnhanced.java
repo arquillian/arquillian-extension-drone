@@ -18,11 +18,11 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
-import org.jboss.arquillian.drone.spi.Enhancer;
+import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
- * This event is fired after Drone instance is enhanced via {@link Enhancer}
+ * This event is fired after Drone instance is enhanced via {@link DroneInstanceEnhancer}
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
