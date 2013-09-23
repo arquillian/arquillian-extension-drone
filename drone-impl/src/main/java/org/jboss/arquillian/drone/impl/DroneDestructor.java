@@ -66,7 +66,6 @@ public class DroneDestructor {
     @Inject
     private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
-    @SuppressWarnings("unchecked")
     public void destroyClassScopedDrone(@Observes AfterClass event, DroneContext droneContext) {
 
         Class<?> clazz = event.getTestClass().getJavaClass();
@@ -90,7 +89,6 @@ public class DroneDestructor {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void destroyMethodScopedDrone(@Observes After event, DroneContext droneContext) {
 
         Method method = event.getTestMethod();
