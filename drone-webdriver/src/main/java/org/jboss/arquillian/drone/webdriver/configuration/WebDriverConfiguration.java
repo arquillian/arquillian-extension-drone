@@ -150,6 +150,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private BrowserCapabilities _browser;
 
+    private String dimensions;
+
     public WebDriverConfiguration(BrowserCapabilities browser) {
         if (browser != null) {
             this._browser = browser;
@@ -363,6 +365,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return useJavaScript;
     }
 
+    public String getDimensions() {
+        return dimensions;
+    }
+
     @Deprecated
     public void setApplicationName(final String applicationName) {
         this.applicationName = applicationName;
@@ -513,6 +519,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setReuseCookies(boolean reuseCookies) {
         this.reuseCookies = reuseCookies;
+    }
+
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
     }
 
 }

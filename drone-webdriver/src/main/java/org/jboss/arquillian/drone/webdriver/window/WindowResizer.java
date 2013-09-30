@@ -30,9 +30,9 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 /**
  * Support for resizing WebDriver windows to value defined in capabilities via {@code dimensions}.
@@ -44,7 +44,6 @@ public class WindowResizer {
 
     private static final Logger log = Logger.getLogger(WindowResizer.class.getName());
 
-    static final String DIMENSIONS_CAPABILITY = "dimensions";
     static final Pattern DIMENSIONS_PATTERN = Pattern.compile("([0-9]+)x([0-9]+)");
 
     @Inject
@@ -79,35 +78,40 @@ public class WindowResizer {
             return;
         }
 
-        // some browsers, like Opera, does not support window operations right now
         Object browser = instance.asInstance(droneType);
         WebDriver driver = (WebDriver) browser;
-        try {
-            driver.manage().window();
-        } catch (UnsupportedOperationException e) {
-            log.log(Level.WARNING, "Ignoring request to resize browser window for {0} @{1}, not supported for {2}",
-                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), realInstanceClass.getName() });
-            return;
-        }
 
-        // we can't rely on browser capabilities, because they are not stored in browser instance
-        // instead, get capabilities from Drone configuration, e.g. desired capabilities
+        // let's get browser configuration
         Validate.stateNotNull(droneContext.get(), "DroneContext must not be null");
         InstanceOrCallableInstance configurationInstance = droneContext.get().get(WebDriverConfiguration.class, qualifier);
         Validate.stateNotNull(configurationInstance, "WebDriver configuration must not be null");
         WebDriverConfiguration configuration = configurationInstance.asInstance(WebDriverConfiguration.class);
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
-        Capabilities capabilities = configuration.getCapabilities();
-        Validate.stateNotNull(capabilities, "WebDriver capabilities must not be null");
 
-        String dimensions = (String) capabilities.getCapability(DIMENSIONS_CAPABILITY);
+        String dimensions = (String) configuration.getDimensions();
+
         if (dimensions != null) {
             Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
             if (m.matches()) {
                 int width = Integer.valueOf(m.group(1)).intValue();
                 int height = Integer.valueOf(m.group(2)).intValue();
-                driver.manage().window().setSize(new Dimension(width, height));
+                safelyResizeWindow(driver, width, height, droneType, qualifier, realInstanceClass);
             }
+        }
+    }
+
+    private void safelyResizeWindow(WebDriver driver, int width, int height, Class<?> droneType,
+            Class<? extends Annotation> qualifier, Class<?> realInstanceClass) {
+        try {
+            driver.manage().window().setSize(new Dimension(width, height));
+        } catch (WebDriverException e) {
+            log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, not supported for {2}",
+                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), realInstanceClass.getName(), width,
+                            height });
+        } catch (UnsupportedOperationException e) {
+            log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, not supported for {2}",
+                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), realInstanceClass.getName(), width,
+                            height });
         }
     }
 }
