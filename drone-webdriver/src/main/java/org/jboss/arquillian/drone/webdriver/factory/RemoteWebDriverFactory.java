@@ -36,6 +36,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessio
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -114,8 +115,15 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
     @Override
     public void destroyInstance(RemoteWebDriver driver) {
+        // there is no sessionId
+        // this very likely mean that session was already destroyed
         if (driver.getSessionId() == null) {
-            log.warning("The driver has been already destroyed and can't be destroyed again.");
+            try {
+                driver.quit();
+            } catch (WebDriverException e) {
+                log.log(Level.WARNING, "@Drone {0} has been already destroyed and can't be destroyed again.", driver.getClass()
+                        .getSimpleName());
+            }
             return;
         }
 

@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -23,6 +26,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -36,6 +40,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implements
         Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
+
+    private static final Logger log = Logger.getLogger(WebDriverFactory.class.getName());
 
     @Inject
     private Instance<DroneRegistry> registryInstance;
@@ -59,16 +65,23 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
     @Override
     public void destroyInstance(WebDriver instance) {
 
-        // check if there is a better destructor than default one
-        // FIXME: this line should be written generally, not only for subclasses of RemoteWebDriver
-        Class<?> instanceClass = instance instanceof RemoteWebDriver ? RemoteWebDriver.class : instance.getClass();
-
         @SuppressWarnings("rawtypes")
         Destructor destructor = null;
-        try {
-            destructor = registryInstance.get().getEntryFor(instanceClass, Destructor.class);
-        } catch (Exception ignored) {
+
+        // get destructor which is able to handle RemoteReusable logic if set
+        if (instance instanceof ReusableRemoteWebDriver) {
+            destructor = getRemoteWebDriverDestructor();
         }
+        else {
+            try {
+                destructor = registryInstance.get().getEntryFor(instance.getClass(), Destructor.class);
+            } catch (Exception ignored) {
+                log.log(Level.WARNING,
+                        "Unable to get destructor for @Drone WebDriver, real class {0}, quitting instance using default disposal method",
+                        instance.getClass().getSimpleName());
+            }
+        }
+
         if (destructor != null && !destructor.getClass().equals(this.getClass())) {
             destructor.destroyInstance(instance);
         }
@@ -125,7 +138,7 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         }
 
         throw new IllegalStateException(
-                "Unable to create Arquillian WebDriver browser, please set \"browserCapabilites\" or \"implementationClass\" property");
+                "Unable to create Arquillian WebDriver browser, please set \"browser\" property");
 
     }
 
@@ -138,5 +151,11 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
     private Instantiator getRemoteWebDriverInstantiator() {
         DroneRegistry registry = registryInstance.get();
         return registry.getEntryFor(RemoteWebDriver.class, Instantiator.class);
+    }
+
+    @SuppressWarnings({ "rawtypes" })
+    private Destructor getRemoteWebDriverDestructor() {
+        DroneRegistry registry = registryInstance.get();
+        return registry.getEntryFor(RemoteWebDriver.class, Destructor.class);
     }
 }
