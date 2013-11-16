@@ -19,8 +19,10 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
+import org.jboss.arquillian.drone.impl.DroneContextImpl.QualifiedKey;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -99,11 +102,27 @@ public class DroneConfigurator {
         // check if any field is @Drone annotated
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(event.getTestClass().getJavaClass(), Drone.class);
 
+        DroneContext context = droneContext.get();
+        Validate.stateNotNull(context, "DroneContext should not be null");
+
         for (Field f : fields) {
             Class<?> droneType = f.getType();
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
 
-            log.log(Level.FINE, "Configuring Drone for field {0}, argument {1}", new Object[] { f.getName() });
+            // check whether there is not already the same instance
+            // ARQ-1543
+            if (context.get(droneType, qualifier) != null) {
+                log.log(Level.WARNING,
+                        "Skipping configuration of Drone {0} @{1} {2}, same type and qualifier was already configured for class scope.\n"
+                                + " This is likely a misconfiguration, if you want to use two different Drones in the same scope, please use qualifier to distinquish in between them.\n"
+                                + "Drone will reuse already existing instance.",
+                        new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), f.getName() });
+                continue;
+            }
+
+            log.log(Level.FINE, "Configuring class scoped Drone for field {0} @{1} {2}",
+                    new Object[] { droneType.getSimpleName(),
+                            qualifier.getSimpleName(), f.getName() });
 
             configureDrone(registry, droneType, qualifier);
         }
@@ -116,14 +135,39 @@ public class DroneConfigurator {
         Method method = event.getTestMethod();
         Map<Integer, Annotation[]> droneParameters = SecurityActions.getParametersWithAnnotation(method, Drone.class);
 
+        DroneContext context = droneContext.get();
+        Validate.stateNotNull(context, "DroneContext should not be null");
+
+        Set<QualifiedKey> presentInMethodScope = new HashSet<DroneContextImpl.QualifiedKey>();
+
         Class<?>[] parameters = method.getParameterTypes();
         for (int i = 0; i < parameters.length; i++) {
             if (droneParameters.containsKey(i)) {
                 Class<?> droneType = parameters[i];
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneParameters.get(i));
 
-                log.log(Level.FINE, "Configuring Drone for method {0}, argument {1}", new Object[] { method.getName(),
-                        parameters[i].getName() });
+                // for method scoped Drones, check is more complicated, as there might already be a
+                // Drone from class scope
+                QualifiedKey key = new QualifiedKey(droneType, qualifier);
+
+                if (presentInMethodScope.contains(key)) {
+                    log.log(Level.WARNING,
+                            "Skipping configuration of Drone {0} @{1}, same type and qualifier was already configured for method scope.\n"
+                                    + "This is likely a misconfiguration, if you want to use two different Drones in the same scope, please use qualifier to distinquish in between them.\n"
+                                    + "Drone will reuse already existing instance.",
+                            new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
+                    continue;
+                }
+
+                // check whether there is not already the same instance
+                // ARQ-1543
+                if (context.get(droneType, qualifier) != null) {
+                    presentInMethodScope.add(new QualifiedKey(droneType, qualifier));
+                }
+
+                log.log(Level.FINE, "Configuring method scoped Drone for parameter {0} @{1}",
+                        new Object[] { droneType.getSimpleName(),
+                                qualifier.getSimpleName() });
 
                 configureDrone(registry, droneType, qualifier);
             }
