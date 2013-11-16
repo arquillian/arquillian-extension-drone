@@ -39,7 +39,7 @@
         <version.com.opera>1.5</version.com.opera>
         <version.com.github.detro.ghostdriver>1.0.4</version.com.github.detro.ghostdriver>
         <version.phantom.driver>1.1.0.Final</version.phantom.driver>
-        <version.selenium>2.35.0</version.selenium>
+        <version.selenium>2.37.1</version.selenium>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
