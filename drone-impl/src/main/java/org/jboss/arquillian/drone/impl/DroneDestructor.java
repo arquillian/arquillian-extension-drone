@@ -69,9 +69,18 @@ public class DroneDestructor {
     public void destroyClassScopedDrone(@Observes AfterClass event, DroneContext droneContext) {
 
         Class<?> clazz = event.getTestClass().getJavaClass();
+
+        DroneScopeChecker scopeChecker = new DroneScopeChecker();
+
         for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class)) {
             Class<?> droneType = f.getType();
             Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+
+            if (!scopeChecker.isUniqueInScope(droneType, qualifier)) {
+                log.log(Level.FINE, "Avoiding multiple destruction invocation for Drone {0} @{1}",
+                        new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
+                continue;
+            }
 
             @SuppressWarnings("rawtypes")
             Destructor destructor = getDestructorFor(droneType);
@@ -80,6 +89,7 @@ public class DroneDestructor {
             // if deployment failed, there is nothing to be destroyed
             InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
             if (instance != null) {
+                log.log(Level.FINEST, "Firing BeforeDroneDestroyed instance: {0}", instance);
                 droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                 destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
                 droneContext.remove(droneType, qualifier);
@@ -95,11 +105,18 @@ public class DroneDestructor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
+        DroneScopeChecker scopeChecker = new DroneScopeChecker();
+
         for (int i = 0; i < parameterTypes.length; i++) {
             if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
-
                 Class<?> droneType = parameterTypes[i];
+
+                if (!scopeChecker.isUniqueInScope(droneType, qualifier)) {
+                    log.log(Level.FINE, "Avoiding multiple destruction invocation for Drone {0} @{1}",
+                            new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
+                    continue;
+                }
 
                 @SuppressWarnings("rawtypes")
                 Destructor destructor = getDestructorFor(droneType);
@@ -108,6 +125,7 @@ public class DroneDestructor {
                 // if deployment failed, there is nothing to be destroyed
                 InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
                 if (instance != null) {
+                    log.log(Level.FINEST, "Firing BeforeDroneDestroyed instance: {0}", instance);
                     droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
                     destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
                     droneContext.remove(droneType, qualifier);
@@ -124,7 +142,7 @@ public class DroneDestructor {
         // be determined in compile time
         Destructor destructor = registry.get().getEntryFor(typeClass, Destructor.class);
 
-        if (log.isLoggable(Level.FINE)) {
+        if (log.isLoggable(Level.FINER)) {
             log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "
                     + destructor.getPrecedence());
         }
@@ -136,6 +154,8 @@ public class DroneDestructor {
     private void destroyInstanceIfInstantiated(@SuppressWarnings("rawtypes") Destructor destructor,
             InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
         try {
+            log.log(Level.FINER, "Destroying Drone instance {0} @{1}",
+                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
             destructor.destroyInstance(instance.asInstance(droneType));
         } catch (IllegalStateException e) {
             log.log(Level.WARNING, "Ignoring destruction of the instance {0} @{1}, it was not instantiated previously.",

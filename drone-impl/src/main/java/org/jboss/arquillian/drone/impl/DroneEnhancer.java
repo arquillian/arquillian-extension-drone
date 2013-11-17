@@ -110,7 +110,7 @@ public class DroneEnhancer {
 
         for (DroneInstanceEnhancer enhancer : enhancers) {
             if (enhancer.canEnhance(browser, type, qualifier)) {
-                log.log(Level.FINE,
+                log.log(Level.FINER,
                         "Deenhancing {0} @{1} using enhancer {2} with precedence {3}",
                         new Object[] { type.getSimpleName(), qualifier.getSimpleName(), enhancer.getClass().getName(),
                                 enhancer.getPrecedence() });

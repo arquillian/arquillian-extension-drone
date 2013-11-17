@@ -19,6 +19,7 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -58,8 +59,10 @@ public class DroneTestEnricher implements TestEnricher {
         List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
 
         for (Field f : droneEnrichements) {
+
             // omit setting if already set
             if (SecurityActions.getFieldValue(testCase, f) != null) {
+                log.log(Level.FINER, "Skipped injection of field {0}", f.getName());
                 continue;
             }
 
@@ -69,7 +72,7 @@ public class DroneTestEnricher implements TestEnricher {
             log.log(Level.FINE, "Injecting @Drone for field {0} @{1} {2}",
                     new Object[] { typeClass.getSimpleName(), qualifier.getSimpleName(), f.getName() });
 
-            Object value = getDroneInstance(typeClass, qualifier);
+            Object value = getDroneInstance(DroneScope.CLASS_SCOPED, typeClass, qualifier);
             Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
             SecurityActions.setFieldValue(testCase, f, value);
         }
@@ -87,10 +90,10 @@ public class DroneTestEnricher implements TestEnricher {
             if (droneEnrichements.containsKey(i)) {
 
                 Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneEnrichements.get(i));
-                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} {3}", new Object[] { method.getName(),
-                        droneType.getSimpleName(), qualifier.getSimpleName(), parameters[i].getName() });
+                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} ", new Object[] { method.getName(),
+                        droneType.getSimpleName(), qualifier.getSimpleName() });
 
-                Object value = getDroneInstance(droneType, qualifier);
+                Object value = getDroneInstance(DroneScope.METHOD_SCOPED, droneType, qualifier);
                 Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
                 resolution[i] = value;
             }
@@ -99,10 +102,10 @@ public class DroneTestEnricher implements TestEnricher {
         return resolution;
     }
 
-    private <T> T getDroneInstance(Class<T> type, Class<? extends Annotation> qualifier) {
-        Validate.stateNotNull(droneContext.get(), "Drone Context must not be null");
+    private <T> T getDroneInstance(DroneScope scope, Class<T> type, Class<? extends Annotation> qualifier) {
 
-        InstanceOrCallableInstance union = droneContext.get().get(type, qualifier);
+        Validate.stateNotNull(droneContext.get(), "Drone Context must not be null");
+        InstanceOrCallableInstance union = scope.getScopedDroneInstance(droneContext.get(), type, qualifier);
 
         Validate.notNull(union, "Retrieved a null from context, which is not a valid Drone browser object");
 
@@ -114,5 +117,44 @@ public class DroneTestEnricher implements TestEnricher {
         // return browser
         return union.asInstance(type);
 
+    }
+
+    // ARQ-1543
+    private static enum DroneScope {
+
+        CLASS_SCOPED {
+            @Override
+            public <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
+                    Class<? extends Annotation> qualifier) {
+
+                // find the last candidate
+                InstanceOrCallableInstance droneInstance = null;
+                InstanceOrCallableInstance candidate = null;
+                LinkedList<InstanceOrCallableInstance> temporaryStorage = new LinkedList<InstanceOrCallableInstance>();
+                while ((candidate = context.get(type, qualifier)) != null) {
+                    temporaryStorage.add(candidate);
+                    context.remove(type, qualifier);
+                    droneInstance = candidate;
+                }
+
+                // push back candidates
+                for (int i = temporaryStorage.size() - 1; i >= 0; i--) {
+                    context.add(type, qualifier, temporaryStorage.get(i));
+                }
+
+                return droneInstance;
+            }
+        },
+
+        METHOD_SCOPED {
+            @Override
+            public <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
+                    Class<? extends Annotation> qualifier) {
+                return context.get(type, qualifier);
+            }
+        };
+
+        public abstract <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
+                Class<? extends Annotation> qualifier);
     }
 }
