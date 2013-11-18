@@ -24,6 +24,8 @@
     </developers>
 
     <properties>
+        <!-- m2e settings -->
+        <m2e.jpa.activation>false</m2e.jpa.activation>
     </properties>
 
     <!-- Dependencies -->
