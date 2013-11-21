@@ -32,6 +32,7 @@ import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactor
 import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.PhantomJSDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.SafariDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverExtension;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentFileStorage;
@@ -85,6 +86,10 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(Instantiator.class, RemoteWebDriverFactory.class);
         builder.service(Destructor.class, RemoteWebDriverFactory.class);
 
+        builder.service(Configurator.class, SafariDriverFactory.class);
+        builder.service(Instantiator.class, SafariDriverFactory.class);
+        builder.service(Destructor.class, SafariDriverFactory.class);
+
         builder.service(Configurator.class, PhantomJSDriverFactory.class);
         builder.service(Instantiator.class, PhantomJSDriverFactory.class);
         builder.service(Destructor.class, PhantomJSDriverFactory.class);
@@ -99,6 +104,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.IPhone.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Opera.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Remote.class);
+        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Safari.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.PhantomJS.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
