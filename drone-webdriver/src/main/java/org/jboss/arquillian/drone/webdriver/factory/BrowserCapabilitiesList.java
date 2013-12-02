@@ -238,7 +238,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return null;
+            return DesiredCapabilities.phantomjs().asMap();
         }
 
         @Override
