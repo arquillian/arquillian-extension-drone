@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
-
-import static junit.framework.Assert.fail;
+package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,8 +25,7 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest.AbstractInBrowserTest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +34,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 import qualifier.Reusable;
+import static junit.framework.Assert.fail;
 
 /**
  * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>
@@ -45,13 +43,15 @@ import qualifier.Reusable;
 public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
     @Test
-    public void whenBrowserIsCreatedThenCouldBeReused(@Drone @Reusable RemoteWebDriver driver) throws UnableReuseSessionException {
+    public void whenBrowserIsCreatedThenCouldBeReused(@Drone @Reusable RemoteWebDriver driver)
+            throws UnableReuseSessionException {
 
         driver.navigate().to(SERVER_URL.toString());
 
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
 
-        Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
+        Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
+                .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
         RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities,
@@ -64,7 +64,8 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
         driver.navigate().to(SERVER_URL.toString());
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
-        Capabilities reusedCapabilities = serializeDeserialize(driver.getCapabilities());
+        Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
+                .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
         driver.quit();
 
@@ -78,9 +79,11 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
     @SuppressWarnings("unchecked")
     private <T> T serializeDeserialize(T object) {
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
         try {
+
             out = new ObjectOutputStream(baos);
             out.writeObject(object);
         } catch (IOException ex) {

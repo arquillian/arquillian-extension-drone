@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -42,6 +38,11 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import static org.mockito.Mockito.when;
+
 /**
  * @author Lukas Fryc
  */
@@ -60,7 +61,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     @Inject
     Event<PersistReusedSessionsEvent> persistEvent;
 
-    private Capabilities desiredCapabilities = DesiredCapabilities.firefox();
+    private Capabilities desiredCapabilities;
     private URL hubUrl;
     private MockReusedSessionPernamentStorage pernamentStorage;
     private InitializationParameter initializationParameter;
@@ -68,10 +69,16 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ReusableRemoteWebDriverExtension.class);
+
     }
 
     @org.junit.Before
     public void setupMocks() {
+
+        // set browser capabilities to be the same as defined in arquillian.xml - webdriver-reusable configuration
+        MockBrowserCapabilitiesRegistry registry = MockBrowserCapabilitiesRegistry.createSingletonRegistry();
+        desiredCapabilities = new DesiredCapabilities(registry.getAllBrowserCapabilities().iterator().next()
+                .getRawCapabilities());
 
         pernamentStorage = new MockReusedSessionPernamentStorage();
         when(serviceLoader.onlyOne(ReusedSessionPernamentStorage.class)).thenReturn(pernamentStorage);
@@ -84,6 +91,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         }
 
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
+
     }
 
     @Test

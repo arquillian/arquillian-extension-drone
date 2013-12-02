@@ -51,11 +51,7 @@ public class LoginPage {
     private final WebDriver driver;
     private final URL contextPath;
 
-    public LoginPage(WebDriver driver) {
-        this(driver, LoginPage.class.getClassLoader().getResource("org/jboss/arquillian/drone/webdriver/example/form.html"));
-    }
-
-    private LoginPage(WebDriver driver, URL contextPath) {
+    public LoginPage(WebDriver driver, URL contextPath) {
         this.driver = driver;
         this.contextPath = contextPath;
     }
@@ -64,7 +60,7 @@ public class LoginPage {
         Assert.assertNotNull("Path is not null", contextPath);
         Assert.assertNotNull("WebDriver is not null", driver);
 
-        driver.get(contextPath.toString());
+        driver.get(contextPath.toString() + "form.html");
 
         driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
         driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);

@@ -16,35 +16,67 @@
  */
 package org.jboss.arquillian.drone.webdriver.example;
 
+import java.io.File;
+import java.net.URL;
+
+import junit.framework.Assert;
+
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assume;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
- * Tests Arquillian Selenium extension against Weld Login example.
- * 
- * Uses standard settings of Selenium 2.0, that is HtmlUnitDriver by default, but allows user to pass another driver specified
- * as a System property or in the Arquillian configuration.
- * 
+ * Tests Arquillian Drone WebDriver against currently used browser
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
- * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
+ *
  */
 @RunWith(Arquillian.class)
-public class WebDriverTestCase extends AbstractWebDriver {
+public class WebDriverTestCase {
+
+    protected static final String USERNAME = "demo";
+    protected static final String PASSWORD = "demo";
 
     @Drone
     WebDriver driver;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jboss.arquillian.drone.webdriver.example.AbstractWebDriverTestCase#driver()
-     */
-    @Override
-    protected WebDriver driver() {
-        return driver;
+    @ArquillianResource
+    URL contextPath;
+
+    @Deployment(testable = false)
+    public static WebArchive deploySample() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addAsWebResource(new File("src/test/resources/form.html"), "form.html")
+                .addAsWebResource(new File("src/test/resources/js/jquery-1.8.2.min.js"), "js/jquery-1.8.2.min.js");
     }
 
+    @Test
+    @InSequence(1)
+    public void login() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.login(USERNAME, PASSWORD);
+    }
+
+    @Test
+    @InSequence(2)
+    public void logout() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.logout();
+    }
+
+    @Test
+    public void runOnlyIfHtmlUnit() {
+        Assume.assumeTrue(driver instanceof HtmlUnitDriver);
+        HtmlUnitDriver htmlDriver = (HtmlUnitDriver) driver;
+        Assert.assertTrue("JavaScript is enabled", htmlDriver.isJavascriptEnabled());
+    }
 }

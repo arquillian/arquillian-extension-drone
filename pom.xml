@@ -41,6 +41,10 @@
         <version.phantom.driver>1.1.0.Final</version.phantom.driver>
         <version.selenium>2.37.1</version.selenium>
 
+        <!-- We are specifically using Jetty 7.6 to avoid collisions with Jetty packaged in Selenium Server -->
+        <version.org.eclipse.jetty>7.6.14.v20131031</version.org.eclipse.jetty>
+        <version.arquillian.jetty>1.0.0.CR2</version.arquillian.jetty>
+
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
         <maven.compiler.argument.source>1.5</maven.compiler.argument.source>

@@ -2,78 +2,69 @@
 <arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <extension qualifier="webdriver">
-        <!-- ChromeDriver only -->
-        <property name="browser">chrome</property>
-        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
+        <!-- browser is set externally -->
+        <property name="browser">${browser}</property>
+
         <property name="dimensions">1300x500</property>
-    </extension>
 
-    <!-- Set a different remote address then default for RemoteReusableTesting -->
-    <extension qualifier="webdriver-port4444">
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remote">true</property>
-    </extension>
-
-    <!-- Check that remote=true triggers RemoteWebDriver -->
-    <extension qualifier="webdriver-arq1047">
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remote">true</property>
-        <property name="browser">chrome</property>
+        <!-- These settings are related to Chrome -->
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    </extension>
 
-    <!-- Set a different remote address then default for RemoteReusableTesting -->
-    <extension qualifier="webdriver-reusable">
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remoteReusable">true</property>
-        <property name="browser">chrome</property>
-        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    </extension>
-
-    <!-- Set a different remote address then default for RemoteReusableTesting -->
-    <extension qualifier="webdriver-reusecookies">
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remoteReusable">true</property>
-        <property name="browser">chrome</property>
-        <property name="reuseCookies">true</property>
-        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    </extension>
-
-    <!-- test with old configuration -->
-    <extension qualifier="webdriver-legacyconfiguration">
-        <property name="implementationClass">org.openqa.selenium.firefox.FirefoxDriver</property>
-    </extension>
-
-    <!-- ARQ-1022 This should use local instances because configuration is not capability related -->
-    <extension qualifier="webdriver-methodspecific">
-        <property name="browser">firefox</property>
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <!-- ChromeDriver only -->
-        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
-    </extension>
-
-    <extension qualifier="webdriver-phantomjs">
-        <property name="browser">phantomjs</property>
-        <property name="phantomjs.binary.path">target/phantomjs</property>
-    </extension>
-
-    <extension qualifier="webdriver-arq1209">
-        <property name="browserCapabilities">phantomjs</property>
-    </extension>
-
-    <!-- ARQ-1030 -->
-    <extension qualifier="webdriver-capabilitiesarq1030">
-        <property name="browser">firefox</property>
+        <!-- All these capabilities are related to Firefox only -->
         <property name="webdriver.firefox.profile">selenium</property>
-        <!-- ARQ-1251 -->
+        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
         <property name="acceptSslCerts">true</property>
         <property name="webStorageEnabled">true</property>
         <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
     </extension>
 
-    <extension qualifier="webdriver-firefoxuserprefs">
-        <property name="browser">firefox</property>
+    <!-- Set a different remote address then default for RemoteReusableTesting -->
+    <extension qualifier="webdriver-reusable">
+        <!-- browser is set externally -->
+        <property name="browser">${browser}</property>
+
+        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="remoteReusable">true</property>
+
+        <property name="dimensions">1300x500</property>
+
+        <!-- These settings are related to Chrome -->
+        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
+
+        <!-- All these capabilities are related to Firefox only -->
+        <property name="webdriver.firefox.profile">selenium</property>
         <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+        <property name="acceptSslCerts">true</property>
+        <property name="webStorageEnabled">true</property>
+        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
     </extension>
 
+    <!-- Set a different remote address then default for RemoteReusableTesting -->
+    <extension qualifier="webdriver-reusecookies">
+        <!-- browser is set externally -->
+        <property name="browser">${browser}</property>
+
+        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="remoteReusable">true</property>
+
+        <property name="dimensions">1300x500</property>
+        <property name="reuseCookies">true</property>
+
+        <!-- These settings are related to Chrome -->
+        <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
+
+        <!-- All these capabilities are related to Firefox only -->
+        <property name="webdriver.firefox.profile">selenium</property>
+        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+        <property name="acceptSslCerts">true</property>
+        <property name="webStorageEnabled">true</property>
+        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+    </extension>
+
+
+
+    <!-- test with old configuration -->
+    <extension qualifier="webdriver-legacyconfiguration">
+        <property name="implementationClass">org.openqa.selenium.firefox.FirefoxDriver</property>
+    </extension>
 </arquillian>

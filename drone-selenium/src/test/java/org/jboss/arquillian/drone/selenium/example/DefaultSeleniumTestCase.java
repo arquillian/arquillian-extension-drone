@@ -16,11 +16,16 @@
  */
 package org.jboss.arquillian.drone.selenium.example;
 
+import java.io.File;
 import java.net.URL;
 
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +41,7 @@ import com.thoughtworks.selenium.DefaultSelenium;
  */
 @RunWith(Arquillian.class)
 public class DefaultSeleniumTestCase {
-    // load selenium driver
+
     @Drone
     DefaultSelenium driver;
 
@@ -53,11 +58,23 @@ public class DefaultSeleniumTestCase {
 
     private static final String TIMEOUT = "15000";
 
+    @ArquillianResource
+    URL contextRoot;
+
+    @Deployment(testable = false)
+    public static WebArchive deploySample() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addAsWebResource(new File("src/test/resources/form.html"), "form.html")
+                .addAsWebResource(new File("src/test/resources/js/jquery-1.8.2.min.js"), "js/jquery-1.8.2.min.js");
+    }
+
     @Test
     @InSequence(1)
     public void loginPage() {
         Assert.assertNotNull("Default Selenium is not null", driver);
-        openPage();
+        Assert.assertNotNull("Context root is not null", contextRoot);
+
+        driver.open(contextRoot.toString() + "form.html");
 
         driver.type(USERNAME_FIELD, USERNAME);
         driver.type(PASSWORD_FIELD, PASSWORD);
@@ -76,11 +93,4 @@ public class DefaultSeleniumTestCase {
                 TIMEOUT);
         Assert.assertEquals("User should not be logged in!", "Not logged in!", driver.getText(LOGIN_STATUS));
     }
-
-    private void openPage() {
-        URL url = this.getClass().getClassLoader().getResource(
-                "org/jboss/arquillian/drone/selenium/example/form.html");
-        driver.open(url.toString());
-    }
-
 }

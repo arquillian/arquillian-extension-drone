@@ -188,10 +188,122 @@
         </profile>
 
         <!-- Functional tests -->
+        <!-- if we activate this profile, surefire execution is not skipped -->
         <profile>
             <id>functional-tests</id>
 
-            <!-- if we activate this profile, surefire execution is not skipped -->
+            <activation>
+                <property>
+                    <!-- Test execution is enable for any browser that matches enforcer plugin -->
+                    <name>browser</name>
+                </property>
+            </activation>
+
+            <dependencies>
+                <!-- Container -->
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-jetty-embedded-7</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-webapp</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-plus</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <includes>
+                            <include>**/arquillian.xml</include>
+                        </includes>
+                        <filtering>true</filtering>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <excludes>
+                            <exclude>**/arquillian.xml</exclude>
+                        </excludes>
+                        <filtering>false</filtering>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>supported-browser</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireProperty>
+                                            <property>browser</property>
+                                            <message>browser property must be specified!</message>
+                                            <regex>firefox|android|htmlUnit|safari|chrome|opera|phantomjs|iphone|internetExplorer</regex>
+                                            <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit, safari, chrome, opera, phantomjs, iphone, internetExplorer but was ${browser}</regexMessage>
+                                        </requireProperty>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>firefox</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>firefox</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>firefox</browser>
+            </properties>
+        </profile>
+        <profile>
+            <id>chrome</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>chrome</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>chrome</browser>
+            </properties>
+        </profile>
+        <profile>
+            <id>phantomjs</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>phantomjs</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>phantomjs</browser>
+            </properties>
         </profile>
     </profiles>
 
