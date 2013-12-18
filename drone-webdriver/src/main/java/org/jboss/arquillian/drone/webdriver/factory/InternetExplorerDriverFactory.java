@@ -42,6 +42,8 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
 
     public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
 
+    private static final String IE_DRIVER_BINARY_KEY = "webdriver.ie.driver";
+
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.InternetExplorer().getReadableName();
 
     /*
@@ -73,6 +75,18 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
     public InternetExplorerDriver createInstance(WebDriverConfiguration configuration) {
 
         int port = configuration.getIePort();
+        String driverBinary = configuration.getIeDriverBinary();
+
+        if (Validate.empty(driverBinary)) {
+            driverBinary = SecurityActions.getProperty(IE_DRIVER_BINARY_KEY);
+        }
+
+        // driver binary configuration
+        // this is setting system property
+        if (Validate.nonEmpty(driverBinary)) {
+            Validate.isExecutable(driverBinary, "Internet Explorer driver binary must point to an executable file, " + driverBinary);
+            SecurityActions.setProperty(IE_DRIVER_BINARY_KEY, driverBinary);
+        }
 
         // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {

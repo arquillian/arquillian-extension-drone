@@ -16,6 +16,9 @@
         <property name="acceptSslCerts">true</property>
         <property name="webStorageEnabled">true</property>
         <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+
+        <!-- Settings for Internet Explorer -->
+        <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
@@ -37,6 +40,9 @@
         <property name="acceptSslCerts">true</property>
         <property name="webStorageEnabled">true</property>
         <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+
+        <!-- Settings for Internet Explorer -->
+        <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
@@ -59,6 +65,9 @@
         <property name="acceptSslCerts">true</property>
         <property name="webStorageEnabled">true</property>
         <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+
+        <!-- Settings for Internet Explorer -->
+        <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
     </extension>
 
 
