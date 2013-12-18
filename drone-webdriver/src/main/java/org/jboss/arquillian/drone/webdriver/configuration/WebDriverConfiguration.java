@@ -60,6 +60,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private int iePort;
 
+    private String ieDriverBinary;
+
     @Deprecated
     private String applicationName;
 
@@ -266,6 +268,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return iePort;
     }
 
+    public String getIeDriverBinary() {
+        return ieDriverBinary;
+    }
+
     public String getImplementationClass() {
 
         String implementationClassName = this.implementationClass;
@@ -419,6 +425,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setIePort(final int iePort) {
         this.iePort = iePort;
+    }
+
+    public void setIeDriverBinary(String ieDriverBinary) {
+        this.ieDriverBinary = ieDriverBinary;
     }
 
     @Deprecated
