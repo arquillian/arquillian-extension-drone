@@ -1,0 +1,143 @@
+= Arquillian Drone
+
+The Arquillian Drone provides a simple way how to write functional tests for an application with a web-based user interface. 
+Arquillian Drone brings the power of https://code.google.com/p/selenium[WebDriver] into the Arquillian framework. WebDriver provides a language how to communicate with a browser, like filling the forms, navigating on the pages and validating their content.
+
+== Why should I use Arquillian Drone instead of plain WebDriver?
+There are many reasons why you want to do that, the most important being:
+
+* Life cycle management of the browser
+* Interaction with deployments and containers provided by Arquillian
+* Simple usage of multiple browsers in a single test
+* Configuration kept on a single place, outside of the Java code
+* Fully compatible with the IDE
+* Integration with mobile based browsers testing (https://github.com/arquillian/arquillian-droidium[Arquillian Droidium])
+* Integration of JavaScript test suite execution (https://github.com/arquillian/arquillian-extension-qunit[Arquillian QUnit])
+* Compatible with WebDriver (Selenium 2), Selenium 1 and Selenium Grids
+
+If you are still not convinced that Arquillian Drone matches your needs, you might have a look at https://github.com/arquillian/arquillian-graphene[Arquillian Graphene 2], which is a wrapper on top of WebDriver, goes one step further and provides you a convenient way how to write tests for rich AJAX UIs with an ease, injections for Page Objects and Page Fragments and much more.
+
+== Getting Started
+
+The following example illustrates how Arquillian Drone can be used with WebDriver:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class WebDriverTest {
+ 
+    static final String USERNAME = "demo";
+    static final String PASSWORD = "demo";
+ 
+    @ArquillianResource
+    URL contextPath;
+ 
+    @Drone
+    WebDriver driver;
+ 
+    /**
+     * Creates a testing WAR application
+     *
+     * @return WebArchive to be tested
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return Deployments.createDeployment();
+    }
+ 
+    @Test
+    @InSequence(1)
+    public void login() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.login(USERNAME, PASSWORD);
+    }
+ 
+    @Test
+    @InSequence(2)
+    public void logout() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.logout();
+    }
+}
+----
+
+You need to put following configuration to the pom.xml file of your project:
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <!-- Arquillian Core dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Arquillian Drone dependencies and WebDriver/Selenium dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-bom</artifactId>
+            <version>${version.org.jboss.arquillian.drone}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <!-- To use Arquillian Graphene (2) -->
+    <dependency>
+        <groupId>org.jboss.arquillian.graphene</groupId>
+        <artifactId>graphene-webdriver</artifactId>
+        <version>${version.org.jboss.arquillian.graphene2}</version>
+        <type>pom</type>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+----
+
+NOTE: You can use +graphene-webdriver+ dependency chain even if you are willing to use plain WebDriver. 
+    Graphene will just bring you more goodies but it does not force you to change a single line of your code
+
+Comprehensive Drone documentation can be found at https://docs.jboss.org/author/display/ARQ/Drone. 
+
+== Building the project
+
+Prerequisites:
+
+* JDK 6 and newer
+* Maven 3.0.3 and newer
+
+=== Running test suite
+
+Prerequisites:
+
+* running Selenium Server at port 4444, with paths to binaries required for remote browser execution
+* installed web browsers you want to test
+* you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in _drone-webdriver_ module. Alternatively, you can override properties with 
+ +-Darq.extension.${extensionQualifier}.${propertyName}+
+
+In order to start Selenium Server, execute:
+
+[source,bash]
+java -jar selenium-server-standalone-2.38.0.jar -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary
+
+Once Selenium Server is running, you can run the tests by:
+
+[source,bash]
+mvn clean verify -Dbrowser=${browser}
+
+Where browser has the same value as browser property from arquillian.xml you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, etc.)
+
+TIP: VNC server instance can be used to let all the browsers pop out in separate display. Just prepend both commands with +DISPLAY=:${display.number}+
+
+=== Releasing new version
+
+Run following commands:
+
+[source,bash]
+mvn clean release:prepare release:perform
+
+Make sure that you push the tag, close all issues with given version in JIRA and mark version as released.
