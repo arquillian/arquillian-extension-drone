@@ -23,14 +23,30 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * The utility methods for serializing / deserializing objects
@@ -38,6 +54,39 @@ import java.io.StreamCorruptedException;
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
 public class SerializationUtils {
+
+    private static final SerializationWhitelist whitelist = new SerializationWhitelist();
+    static {
+
+        whitelist.enableClass(URL.class.getName());
+        whitelist.enableClass(URI.class.getName());
+        whitelist.enableClass(Date.class.getName());
+        whitelist.enableClass(File.class.getName());
+
+        // collections
+        whitelist.enableClass(LinkedHashMap.class.getName());
+        whitelist.enableClass(HashMap.class.getName());
+        whitelist.enableClass(Map.class.getName());
+
+        // lists
+        whitelist.enableClass(List.class.getName());
+        whitelist.enableClass(ArrayList.class.getName());
+        whitelist.enableClass(LinkedList.class.getName());
+
+        // webdriver
+        whitelist.enableClass(DesiredCapabilities.class.getName());
+        whitelist.enableClass(Capabilities.class.getName());
+        whitelist.enableClass(Platform.class.getName());
+
+        // internal implementation
+        whitelist.enableClass(ReusedSession.class.getName());
+        whitelist.enableClass(ReusedSessionStore.class.getName());
+        whitelist.enableClass(ReusedSessionStoreImpl.class.getName());
+        whitelist.enableClass(ReusedSessionStoreImpl.ByteArray.class.getName());
+        whitelist.enableClass(ReusedSessionStoreImpl.TimeStampedSession.class.getName());
+        whitelist.enableClass(InitializationParameter.class.getName());
+
+    }
 
     /**
      * Takes serializable object and serializes it to the byte array
@@ -69,10 +118,35 @@ public class SerializationUtils {
      * @throws IOException Any of the usual Input/Output related exceptions.
      */
     public static <T extends Serializable> T deserializeFromBytes(Class<T> classType, byte[] serializedObject)
-            throws IOException, ClassNotFoundException {
+        throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
-        ObjectInputStream ois = new ObjectInputStream(bais);
+        ObjectInputStream ois = new LookAheadObjectInputStream(bais, whitelist);
         return classType.cast(ois.readObject());
+    }
+
+    public static class LookAheadObjectInputStream extends ObjectInputStream {
+
+        private final SerializationWhitelist whitelist;
+
+        public LookAheadObjectInputStream(InputStream inputStream, SerializationWhitelist whitelist)
+            throws IOException {
+            super(inputStream);
+            this.whitelist = whitelist;
+        }
+
+        /**
+         * Only deserialize instances of our expected Bicycle class
+         */
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException,
+            ClassNotFoundException {
+
+            if (!whitelist.isEnabled(desc.getName())) {
+                throw new InvalidClassException("Unauthorized deserialization attempt", desc.getName());
+            }
+
+            return super.resolveClass(desc);
+        }
     }
 
 }

@@ -19,6 +19,7 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
@@ -31,7 +32,7 @@ import org.openqa.selenium.remote.SessionId;
  */
 public class ReusedSession implements Serializable {
 
-    private static final long serialVersionUID = 4363274772718639918L;
+    private static final long serialVersionUID = -5332705183394774548L;
 
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
@@ -66,12 +67,21 @@ public class ReusedSession implements Serializable {
                     SerializationUtils.serializeToBytes((Serializable) value);
                     capabilitiesForReuse.setCapability(capability.getKey(), capability.getValue());
                 } catch (IOException e) {
-                    String type = (value != null ? value.getClass().getName() : null);
-                    log.warning(String.format("The capability '%s' has unserializable value of type '%s' and value '%s' - cause: %s" , key, type, value, e.getCause()));
+                    log.log(Level.WARNING,
+                        "Capability {0} has unserializable value of type {1} and value {2}. Caused by {3}.",
+                        new Object[] {
+                            key,
+                            value != null ? value.getClass().getName() : "unknown",
+                            value,
+                            e.getCause() == null ? e : e.getCause() });
                 }
             } else {
-                String type = (value != null ? value.getClass().getName() : null);
-                log.warning(String.format("The capability '%s' has unserializable value of type '%s' and value '%s'", key, type, value));
+                log.log(Level.FINE,
+                    "Ignoring capability {0} of type {1} and value {2}, does not implement Serializable interface",
+                    new Object[] {
+                        key,
+                        value != null ? value.getClass().getName() : "unknown",
+                        value });
             }
         }
         return capabilitiesForReuse;

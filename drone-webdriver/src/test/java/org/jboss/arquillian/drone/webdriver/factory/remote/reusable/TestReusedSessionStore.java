@@ -43,7 +43,7 @@ public class TestReusedSessionStore extends AbstractTestTestBase {
     private ServiceLoader serviceLoader;
 
     @Mock
-    private ReusedSessionPernamentStorage pernamentStorage;
+    private ReusedSessionPermanentStorage permanentStorage;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -52,7 +52,7 @@ public class TestReusedSessionStore extends AbstractTestTestBase {
 
     @Before
     public void before() {
-        when(serviceLoader.onlyOne(ReusedSessionPernamentStorage.class)).thenReturn(pernamentStorage);
+        when(serviceLoader.onlyOne(ReusedSessionPermanentStorage.class)).thenReturn(permanentStorage);
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
     }
 
