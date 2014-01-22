@@ -17,11 +17,11 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 /**
- * Loads and writes {@link ReusedSessionStore} to pernament storage.
+ * Loads and writes {@link ReusedSessionStore} to permanent storage.
  *
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
-public interface ReusedSessionPernamentStorage {
+public interface ReusedSessionPermanentStorage {
 
     ReusedSessionStore loadStore();
 

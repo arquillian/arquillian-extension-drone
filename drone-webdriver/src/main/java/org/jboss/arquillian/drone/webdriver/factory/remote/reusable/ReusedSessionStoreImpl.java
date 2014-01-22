@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -98,8 +97,9 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             // update map of raw data
             ByteArray rawKey = ByteArray.fromObject(key);
             if (rawKey == null) {
-                log.severe("Unable to store browser initialization parameter in ReusedSessionStore for browser: "
-                        + key.getDesiredCapabilities().getBrowserName());
+                log.log(Level.SEVERE,
+                    "Unable to store browser initialization parameter in ReusedSessionStore for browser :{0}",
+                    key.getDesiredCapabilities().getBrowserName());
                 return;
             }
 
@@ -110,8 +110,9 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             }
             ByteArray rawSession = ByteArray.fromObject(session);
             if (rawSession == null) {
-                log.severe("Unable to store browser session in ReusedSessionStore for browser: "
-                        + key.getDesiredCapabilities().getBrowserName());
+                log.log(Level.SEVERE,
+                    "Unable to store browser initialization parameter in ReusedSessionStore for browser :{0}",
+                    key.getDesiredCapabilities().getBrowserName());
                 return;
             }
             // add a timestamp to the session and store in the list
@@ -154,7 +155,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
      *
      */
-    private static class ByteArray implements Serializable {
+    static class ByteArray implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private byte[] raw = new byte[0];
@@ -216,7 +217,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
      *
      */
-    private static class TimeStampedSession implements Serializable {
+    static class TimeStampedSession implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private final Date timestamp;
@@ -312,7 +313,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
                 ReusedSession wrappedKey = key.as(ReusedSession.class);
                 if (wrappedKey == null) {
                     throw new IllegalStateException(
-                            "Could not dispose a session from the storage, current session cannot be deserialized.");
+                        "Could not dispose a session from the storage, current session cannot be deserialized.");
                 }
 
                 // find appropriate object from parentList to be removed

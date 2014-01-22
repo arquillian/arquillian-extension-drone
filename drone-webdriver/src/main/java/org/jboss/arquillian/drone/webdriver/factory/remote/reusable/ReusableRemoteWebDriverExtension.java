@@ -40,23 +40,23 @@ public class ReusableRemoteWebDriverExtension {
 
     @Inject
     @ApplicationScoped
-    private InstanceProducer<ReusedSessionPernamentStorage> pernamentStorage;
+    private InstanceProducer<ReusedSessionPermanentStorage> permanentStorage;
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
     public void initialize(@Observes BeforeSuite event) {
-        initializePernamentStorage();
+        initializePermanentStorage();
         initializeStore();
     }
 
-    private void initializePernamentStorage() {
-        ReusedSessionPernamentStorage instance = serviceLoader.get().onlyOne(ReusedSessionPernamentStorage.class);
-        pernamentStorage.set(instance);
+    private void initializePermanentStorage() {
+        ReusedSessionPermanentStorage instance = serviceLoader.get().onlyOne(ReusedSessionPermanentStorage.class);
+        permanentStorage.set(instance);
     }
 
     private void initializeStore() {
-        ReusedSessionStore store = pernamentStorage.get().loadStore();
+        ReusedSessionStore store = permanentStorage.get().loadStore();
         if (store == null) {
             store = new ReusedSessionStoreImpl();
         }
@@ -66,6 +66,6 @@ public class ReusableRemoteWebDriverExtension {
     }
 
     public void persistStore(@Observes PersistReusedSessionsEvent event) {
-        pernamentStorage.get().writeStore(storeInstance.get());
+        permanentStorage.get().writeStore(storeInstance.get());
     }
 }

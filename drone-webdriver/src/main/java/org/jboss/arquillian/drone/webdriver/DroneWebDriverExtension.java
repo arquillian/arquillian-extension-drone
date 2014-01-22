@@ -35,8 +35,8 @@ import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.SafariDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverExtension;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentFileStorage;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPernamentStorage;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPermanentFileStorage;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionPermanentStorage;
 import org.jboss.arquillian.drone.webdriver.impl.BrowserCapabilitiesRegistrar;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
@@ -108,7 +108,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.PhantomJS.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
-        builder.service(ReusedSessionPernamentStorage.class, ReusedSessionPernamentFileStorage.class);
+        builder.service(ReusedSessionPermanentStorage.class, ReusedSessionPermanentFileStorage.class);
 
         builder.service(DroneInstanceEnhancer.class, AugmentingEnhancer.class);
         builder.observer(WindowResizer.class);

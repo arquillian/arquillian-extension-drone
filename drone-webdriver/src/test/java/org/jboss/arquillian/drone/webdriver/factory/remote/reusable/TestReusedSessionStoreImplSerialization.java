@@ -36,16 +36,16 @@ import org.openqa.selenium.remote.SessionId;
 @RunWith(MockitoJUnitRunner.class)
 public class TestReusedSessionStoreImplSerialization {
 
-    ReusedSessionPernamentFileStorage fileStore;
+    ReusedSessionPermanentFileStorage fileStore;
 
     @Test
     public void when_store_is_serialized_to_file_then_it_can_be_deserialized_and_reused() throws IOException {
 
         // given
         File tmpFile = File.createTempFile("drone-webdriver-session-store", "");
-        System.setProperty(ReusedSessionPernamentFileStorage.FILE_STORE_PROPERTY, tmpFile.getAbsolutePath());
+        System.setProperty(ReusedSessionPermanentFileStorage.FILE_STORE_PROPERTY, tmpFile.getAbsolutePath());
 
-        fileStore = new ReusedSessionPernamentFileStorage();
+        fileStore = new ReusedSessionPermanentFileStorage();
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         URL url = new URL("http://localhost/");
         InitializationParameter key = new InitializationParameter(url, DesiredCapabilities.firefox());
@@ -73,8 +73,8 @@ public class TestReusedSessionStoreImplSerialization {
 
         // given
         File nonExistent = new File("this-file-really-does-not-exists");
-        System.setProperty(ReusedSessionPernamentFileStorage.FILE_STORE_PROPERTY, nonExistent.getAbsolutePath());
-        fileStore = new ReusedSessionPernamentFileStorage();
+        System.setProperty(ReusedSessionPermanentFileStorage.FILE_STORE_PROPERTY, nonExistent.getAbsolutePath());
+        fileStore = new ReusedSessionPermanentFileStorage();
 
         // when
         ReusedSessionStore loadedStore = fileStore.loadStore();

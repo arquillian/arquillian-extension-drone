@@ -63,7 +63,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     private Capabilities desiredCapabilities;
     private URL hubUrl;
-    private MockReusedSessionPernamentStorage pernamentStorage;
+    private MockReusedSessionPermanentStorage permanentStorage;
     private InitializationParameter initializationParameter;
 
     @Override
@@ -80,8 +80,8 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         desiredCapabilities = new DesiredCapabilities(registry.getAllBrowserCapabilities().iterator().next()
                 .getRawCapabilities());
 
-        pernamentStorage = new MockReusedSessionPernamentStorage();
-        when(serviceLoader.onlyOne(ReusedSessionPernamentStorage.class)).thenReturn(pernamentStorage);
+        permanentStorage = new MockReusedSessionPermanentStorage();
+        when(serviceLoader.onlyOne(ReusedSessionPermanentStorage.class)).thenReturn(permanentStorage);
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
 
         try {
@@ -164,7 +164,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     }
 
-    public static class MockReusedSessionPernamentStorage implements ReusedSessionPernamentStorage {
+    public static class MockReusedSessionPermanentStorage implements ReusedSessionPermanentStorage {
 
         private byte[] stored;
 

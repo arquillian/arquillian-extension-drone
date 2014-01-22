@@ -29,27 +29,27 @@ import org.apache.commons.io.FileUtils;
  *
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
-public class ReusedSessionPernamentFileStorage implements ReusedSessionPernamentStorage {
+public class ReusedSessionPermanentFileStorage implements ReusedSessionPermanentStorage {
 
-    private static final Logger log = Logger.getLogger(ReusedSessionPernamentFileStorage.class.getName());
+    private static final Logger log = Logger.getLogger(ReusedSessionPermanentFileStorage.class.getName());
 
     public static String FILE_STORE_PROPERTY = "drone.webdriver.session.store";
     public static File DEFAULT_FILE = new File(System.getProperty("user.home"), ".drone-webdriver-session-store");
 
-    private final File pernamentFile;
+    private final File permanentFile;
 
     {
         String storeFileProperty = System.getProperty(FILE_STORE_PROPERTY);
         if (storeFileProperty != null) {
-            pernamentFile = new File(storeFileProperty);
+            permanentFile = new File(storeFileProperty);
         } else {
-            pernamentFile = DEFAULT_FILE;
+            permanentFile = DEFAULT_FILE;
         }
     }
 
     public ReusedSessionStore loadStore() {
         try {
-            byte[] readStore = readStore(pernamentFile);
+            byte[] readStore = readStore(permanentFile);
 
             if (readStore == null) {
                 return null;
@@ -60,15 +60,15 @@ public class ReusedSessionPernamentFileStorage implements ReusedSessionPernament
         } catch (InvalidClassException e) {
             log.log(Level.WARNING,
                     "Unable to get reused session store from file storage, likely it is due to its internal format change. "
-                            + "Drone will remove file " + pernamentFile + " with recent implementation. Cause: ", e);
+                            + "Drone will replace file " + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (ClassNotFoundException e) {
-            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file "
-                    + pernamentFile + " with recent implementation. Cause: ", e);
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will replace file "
+                    + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (IOException e) {
-            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will remove file "
-                    + pernamentFile + " with recent implementation. Cause: ", e);
+            log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will replace file "
+                    + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class ReusedSessionPernamentFileStorage implements ReusedSessionPernament
     public void writeStore(ReusedSessionStore store) {
         try {
             byte[] serialized = SerializationUtils.serializeToBytes(store);
-            writeStore(pernamentFile, serialized);
+            writeStore(permanentFile, serialized);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Unable to persist reused session store, session reuse will not work", e);
 
