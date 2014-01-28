@@ -28,7 +28,6 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.service.DriverService;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -90,7 +89,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
         }
 
         try {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { DriverService.class, Capabilities.class },
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
                 new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
