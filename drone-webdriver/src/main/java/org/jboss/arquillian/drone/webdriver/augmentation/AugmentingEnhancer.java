@@ -74,8 +74,8 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
 
         Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
 
-        if (RemoteWebDriver.class.isAssignableFrom(realInstanceClass)
-                && DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
+        if (RemoteWebDriver.class == realInstanceClass || ReusableRemoteWebDriver.class == realInstanceClass
+                || DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
             return true;
         }
 
