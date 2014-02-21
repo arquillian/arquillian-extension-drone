@@ -16,43 +16,39 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.command.DestroyDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Destructor of Drone instance. Disposes both class scoped Drones as well as method scoped ones.
- *
+ * <p/>
  * <p>
  * Observes:
  * </p>
  * {@link AfterClass} {@link After}
- *
+ * <p/>
  * <p>
  * Fires:
  * </p>
  * {@link BeforeDroneDestroyed} {@link AfterDroneDestroyed}
  *
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
- *
  */
 public class DroneDestructor {
     private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());
@@ -66,72 +62,34 @@ public class DroneDestructor {
     @Inject
     private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
-    public void destroyClassScopedDrone(@Observes AfterClass event, DroneContext droneContext) {
+    @Inject
+    private Event<DestroyDrone> destroyDroneCommand;
 
-        Class<?> clazz = event.getTestClass().getJavaClass();
+    @Inject
+    private Instance<DroneContext> droneContext;
 
-        DroneScopeChecker scopeChecker = new DroneScopeChecker();
-
-        for (Field f : SecurityActions.getFieldsWithAnnotation(clazz, Drone.class)) {
-            Class<?> droneType = f.getType();
-            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
-
-            if (!scopeChecker.isUniqueInScope(droneType, qualifier)) {
-                log.log(Level.FINE, "Avoiding multiple destruction invocation for Drone {0} @{1}",
-                        new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
-                continue;
-            }
-
-            @SuppressWarnings("rawtypes")
-            Destructor destructor = getDestructorFor(droneType);
-
-            // get instance to be destroyed
-            // if deployment failed, there is nothing to be destroyed
-            InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
-            if (instance != null) {
-                log.log(Level.FINEST, "Firing BeforeDroneDestroyed instance: {0}", instance);
-                droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
-                destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
-                droneContext.remove(droneType, qualifier);
-                droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
-            }
-
+    public void destroyDrone(@Observes DestroyDrone command) {
+        DroneContext context = droneContext.get();
+        InjectionPoint<?> injectionPoint = command.getInjectionPoint();
+        if (injectionPoint == null || !context.isDroneConfigurationStored(injectionPoint)) {
+            return;
         }
-    }
 
-    public void destroyMethodScopedDrone(@Observes After event, DroneContext droneContext) {
+        boolean wasInstantiated = context.isDroneInstantiated(injectionPoint);
+        if (wasInstantiated) {
+            Destructor destructor = getDestructorFor(injectionPoint.getDroneType());
+            Object drone = context.getDrone(injectionPoint);
 
-        Method method = event.getTestMethod();
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+            droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, injectionPoint));
 
-        DroneScopeChecker scopeChecker = new DroneScopeChecker();
+            destructor.destroyInstance(drone);
+        }
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (SecurityActions.isAnnotationPresent(parameterAnnotations[i], Drone.class)) {
-                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations[i]);
-                Class<?> droneType = parameterTypes[i];
+        context.removeDrone(injectionPoint);
+        context.removeDroneConfiguration(injectionPoint);
 
-                if (!scopeChecker.isUniqueInScope(droneType, qualifier)) {
-                    log.log(Level.FINE, "Avoiding multiple destruction invocation for Drone {0} @{1}",
-                            new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
-                    continue;
-                }
-
-                @SuppressWarnings("rawtypes")
-                Destructor destructor = getDestructorFor(droneType);
-
-                // get instance to be destroyed
-                // if deployment failed, there is nothing to be destroyed
-                InstanceOrCallableInstance instance = droneContext.get(droneType, qualifier);
-                if (instance != null) {
-                    log.log(Level.FINEST, "Firing BeforeDroneDestroyed instance: {0}", instance);
-                    droneLifecycleEvent.fire(new BeforeDroneDestroyed(instance, droneType, qualifier));
-                    destroyInstanceIfInstantiated(destructor, instance, droneType, qualifier);
-                    droneContext.remove(droneType, qualifier);
-                    droneLifecycleEvent.fire(new AfterDroneDestroyed(droneType, qualifier));
-                }
-            }
+        if (wasInstantiated) {
+            droneLifecycleEvent.fire(new AfterDroneDestroyed(injectionPoint));
         }
 
     }
@@ -143,23 +101,11 @@ public class DroneDestructor {
         Destructor destructor = registry.get().getEntryFor(typeClass, Destructor.class);
 
         if (log.isLoggable(Level.FINER)) {
+            // FIXME possible nullpointerexception?
             log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "
                     + destructor.getPrecedence());
         }
 
         return destructor;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void destroyInstanceIfInstantiated(@SuppressWarnings("rawtypes") Destructor destructor,
-            InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
-        try {
-            log.log(Level.FINER, "Destroying Drone instance {0} @{1}",
-                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
-            destructor.destroyInstance(instance.asInstance(droneType));
-        } catch (IllegalStateException e) {
-            log.log(Level.WARNING, "Ignoring destruction of the instance {0} @{1}, it was not instantiated previously.",
-                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName() });
-        }
     }
 }

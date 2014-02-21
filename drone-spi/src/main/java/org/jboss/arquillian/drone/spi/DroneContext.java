@@ -16,45 +16,120 @@
  */
 package org.jboss.arquillian.drone.spi;
 
-import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
- * Context for Drone instance, Drone callable instances and Drone configuration.
- *
+ * Context that stores drone configurations and cached drones.
+ * <p/>
  * Context allows to store both class scoped Drones and method scoped Drones.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneContext {
 
     /**
-     * Gets object stored under given qualifier and given key
-     *
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Object stored under given qualified key
+     * Returns drone extension configuration. This method is deprecated and will soon be replaced.
      */
-    InstanceOrCallableInstance get(Class<?> key, Class<? extends Annotation> qualifier);
+    // TODO to be removed in Alpha 2
+    @Deprecated
+    <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass);
 
     /**
-     * Adds object under given key and given qualifier
-     *
-     * @param <T> Type of the object
-     * @param key Key used to store the object
-     * @param qualifier Qualifier used to store the object
-     * @param union Object to be stored
-     * @return Modified context
+     * Sets drone extension configuration. This method is deprecated and will soon be replaced.
      */
-    DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, InstanceOrCallableInstance union);
+    // TODO to be removed in Alpha 2
+    @Deprecated
+    void setGlobalDroneConfiguration(DroneConfiguration<?> configuration);
 
     /**
-     * Removes object under given key and given qualifier
+     * Returns an instance of drone. If the drone was not yet instantiated, it will fire {@link BeforeDroneInstantiated}
+     * event, then instantiate the drone and fire {@link AfterDroneInstantiated} event.
      *
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Modified context
+     * @param <T> type of the drone
+     * @throws IllegalStateException
      */
-    DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier);
+    <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException;
 
+    /**
+     * Returns an instance of {@link DroneConfiguration} stored for specified injection point.
+     *
+     * @param configurationClass class to define the type of configuration to be returned
+     * @param <C>                type of configuration to be returned
+     * @throws IllegalArgumentException if there's no configuration stored for specified injection point
+     */
+    <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint,
+                                                              Class<C> configurationClass) throws
+            IllegalArgumentException;
+
+    /**
+     * Stores the {@link CachingCallable} for future drone instantiation.
+     * <p/>
+     * It throws {@link java.lang.IllegalStateException} if there is no configuration stored for specified injection
+     * point.
+     *
+     * @throws java.lang.IllegalStateException
+     */
+    <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone) throws IllegalStateException;
+
+    /**
+     * Stores the {@link DroneConfiguration} for specified injection point.
+     * <p/>
+     * It throws {@link java.lang.IllegalStateException} if there is already a configuration stored for specified
+     * injection point.
+     *
+     * @throws java.lang.IllegalStateException
+     */
+    <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
+                                                                      C configuration) throws IllegalStateException;
+
+    /**
+     * Returns true if {@link CachingCallable#isValueCached()} is true for specified injection point.
+     */
+    <T> boolean isDroneInstantiated(InjectionPoint<T> injectionPoint);
+
+    /**
+     * Returns true if {@link CachingCallable} is stored for specified injection point.
+     */
+    <T> boolean isFutureDroneStored(InjectionPoint<T> injectionPoint);
+
+    /**
+     * Returns true if {@link DroneConfiguration} for specified injection point is stored.
+     */
+    <T> boolean isDroneConfigurationStored(InjectionPoint<T> injectionPoint);
+
+    /**
+     * Removes future or instantiated drone, depending on the state, for specified injection point.
+     */
+    void removeDrone(InjectionPoint<?> injectionPoint);
+
+    /**
+     * Removes configuration for specified injection point.
+     */
+    void removeDroneConfiguration(InjectionPoint<?> injectionPoint);
+
+    /**
+     * Removes both future and instantiated drones for specified injection points.
+     */
+    void removeDrones(List<InjectionPoint<?>> injectionPoints);
+
+    /**
+     * Removes configurations for specified injection points.
+     */
+    void removeDroneConfigurations(List<InjectionPoint<?>> injectionPoints);
+
+    /**
+     * Returns a single injection point that get matched by all of specified filters and the backing drone type can
+     * be cast to specified type.
+     *
+     * @throws IllegalStateException if matched injection points count is not exactly one
+     */
+    <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass, Filter... filters) throws IllegalStateException;
+
+    /**
+     * Returns a list of injection points that get matched by all of specified filters and the backing drone type can
+     * be cast to specified type. When no filters are passed in, it returns all injection points with drone type that
+     * can be cast to specified type. Using the Object.class as the type, it returns all injection points stored.
+     */
+    <T> List<InjectionPoint<? extends T>> find(Class<T> droneClass, Filter... filters);
 }
+

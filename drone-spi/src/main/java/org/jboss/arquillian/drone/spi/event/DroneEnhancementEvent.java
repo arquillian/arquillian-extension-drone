@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.spi.event;
  * Representation of event related to Drone instance enhancement and denhancement.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneEnhancementEvent extends DroneLifecycleEvent {
 

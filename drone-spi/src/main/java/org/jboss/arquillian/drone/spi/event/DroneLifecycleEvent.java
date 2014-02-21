@@ -17,11 +17,10 @@
 package org.jboss.arquillian.drone.spi.event;
 
 /**
- * Representation of event related to Drone callable creation, Drone instance creation, Drone Enhancement, Drone Deenhancement
- * and Drone disposal.
+ * Representation of event related to Drone callable creation, Drone instance creation, Drone Enhancement,
+ * Drone Deenhancement and Drone disposal.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneLifecycleEvent extends DroneEvent {
 

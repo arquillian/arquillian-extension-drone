@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
@@ -38,14 +39,9 @@ public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfig
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
-    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        return new MockDroneConfiguration().configure(descriptor, qualifier);
+    @Override
+    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<MockDrone> injectionPoint) {
+        return new MockDroneConfiguration().configure(descriptor, injectionPoint.getQualifier());
     }
 
     /*

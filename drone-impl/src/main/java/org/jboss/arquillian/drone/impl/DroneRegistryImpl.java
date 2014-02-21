@@ -33,7 +33,11 @@ import org.jboss.arquillian.drone.spi.Sortable;
  */
 public class DroneRegistryImpl implements DroneRegistry {
 
-    private final Map<Class<?>, RegistryValue> registry = new HashMap<Class<?>, RegistryValue>();
+    private final Map<Class<?>, RegistryValue> registry;
+
+    public DroneRegistryImpl() {
+        registry = new HashMap<Class<?>, RegistryValue>();
+    }
 
     @Override
     public DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator) {
