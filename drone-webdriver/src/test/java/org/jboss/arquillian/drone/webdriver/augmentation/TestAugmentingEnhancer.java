@@ -18,9 +18,9 @@ package org.jboss.arquillian.drone.webdriver.augmentation;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,6 @@ import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.junit.Test;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -47,7 +46,6 @@ public class TestAugmentingEnhancer {
         RemoteWebDriver mockedRemoteDriver = mock(RemoteWebDriver.class);
         DroneAugmented augmentedDriver = mock(DroneAugmented.class);
         InstanceOrCallableInstance instance1 = mock(InstanceOrCallableInstance.class);
-        InstanceOrCallableInstance instance2 = mock(InstanceOrCallableInstance.class);
         InstanceOrCallableInstance instance3 = mock(InstanceOrCallableInstance.class);
         InstanceOrCallableInstance instance4 = mock(InstanceOrCallableInstance.class);
 
@@ -55,7 +53,6 @@ public class TestAugmentingEnhancer {
         doReturn(remoteDriver).when(instance1).asInstance(WebDriver.class);
         doReturn(augmentedDriver).when(instance1).asInstance(ReusableRemoteWebDriver.class);
         
-        doReturn(new FirefoxDriver()).when(instance2).asInstance(WebDriver.class);
         doReturn(mockedRemoteDriver).when(instance3).asInstance(WebDriver.class);
         doReturn(augmentedDriver).when(instance4).asInstance(WebDriver.class);
         
@@ -68,8 +65,6 @@ public class TestAugmentingEnhancer {
         assertTrue("AugmentingEnhancer should enhance when real instance already augmented!",
                 enhancer.canEnhance(instance4, WebDriver.class, Default.class));
         
-        assertFalse("AugmentingEnhancer should not enhance when real instance is not RemoteWebDriver || ReusableRemoteWebDriver",
-                enhancer.canEnhance(instance2, WebDriver.class, Default.class));
         assertFalse("AugmentingEnhancer should not enhance extensions of supported classes!",
                 enhancer.canEnhance(instance3, WebDriver.class, Default.class));
     }
