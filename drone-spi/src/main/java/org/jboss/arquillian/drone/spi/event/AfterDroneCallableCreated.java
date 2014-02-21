@@ -16,31 +16,21 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-import java.util.concurrent.Callable;
-
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
+
+import java.util.concurrent.Callable;
 
 /**
  * This event is fired after Drone instance callable is created and stored in {@link DroneContext}.
- *
+ * <p/>
  * By modifying the {@link Callable} you can change way how Drone instance will be created.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class AfterDroneCallableCreated extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    private final InstanceOrCallableInstance instanceCallable;
-
-    public AfterDroneCallableCreated(InstanceOrCallableInstance instanceCallable, Class<?> droneType,
-            Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
-        this.instanceCallable = instanceCallable;
-    }
-
-    public InstanceOrCallableInstance getInstanceCallable() {
-        return instanceCallable;
+    public AfterDroneCallableCreated(InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
     }
 }

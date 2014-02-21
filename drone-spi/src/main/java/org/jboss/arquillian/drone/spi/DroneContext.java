@@ -16,45 +16,74 @@
  */
 package org.jboss.arquillian.drone.spi;
 
-import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Context for Drone instance, Drone callable instances and Drone configuration.
- *
+ * <p/>
  * Context allows to store both class scoped Drones and method scoped Drones.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneContext {
 
-    /**
-     * Gets object stored under given qualifier and given key
-     *
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Object stored under given qualified key
-     */
-    InstanceOrCallableInstance get(Class<?> key, Class<? extends Annotation> qualifier);
+    // TODO to be removed in Alpha 2
+    @Deprecated
+    <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass);
+
+    // TODO to be removed in Alpha 2
+    @Deprecated
+    void setGlobalDroneConfiguration(DroneConfiguration<?> configuration);
 
     /**
-     * Adds object under given key and given qualifier
+     * Gets the instance of drone.
      *
-     * @param <T> Type of the object
-     * @param key Key used to store the object
-     * @param qualifier Qualifier used to store the object
-     * @param union Object to be stored
-     * @return Modified context
+     * @param injectionPoint
+     * @param <T>
+     * @return
+     * @throws IllegalStateException
      */
-    DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, InstanceOrCallableInstance union);
+    <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException;
+
+    <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint,
+                                                              Class<C> configurationClass) throws
+            IllegalArgumentException;
 
     /**
-     * Removes object under given key and given qualifier
      *
-     * @param key Key used to find the object
-     * @param qualifier Qualifier used to find the object
-     * @return Modified context
+     * @param injectionPoint
+     * @param drone
+     * @param <T>
+     * @throws
      */
-    DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier);
+    <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone);
 
+    <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
+                                                                      C configuration);
+
+    <T> boolean isDroneInstantiated(InjectionPoint<T> injectionPoint);
+
+    <T> boolean isFutureDroneStored(InjectionPoint<T> injectionPoint);
+
+    <T> boolean isDroneConfigurationStored(InjectionPoint<T> injectionPoint);
+
+    void removeDrone(InjectionPoint<?> injectionPoint);
+
+    void removeDroneConfiguration(InjectionPoint<?> injectionPoint);
+
+    void removeDrones(List<InjectionPoint<?>> injectionPoints);
+
+    void removeDroneConfigurations(List<InjectionPoint<?>> injectionPoints);
+
+    /**
+     * @param droneClass
+     * @param filters
+     * @param <T>
+     * @return
+     * @throws IllegalStateException If matched injection points count is not exactly 1
+     */
+    <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass, Filter... filters) throws IllegalStateException;
+
+    <T> List<InjectionPoint<? extends T>> find(Class<T> droneClass, Filter... filters);
 }
+

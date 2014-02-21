@@ -16,26 +16,25 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
- * This event is fired before Drone configuration is created. You'd need to modify {@link ArquillianDescriptor} in order to
+ * This event is fired before Drone configuration is created. You'd need to modify {@link ArquillianDescriptor} in
+ * order to
  * change configuration before it is created.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class BeforeDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 
     private final Configurator<?, ? extends DroneConfiguration<?>> configurator;
 
-    public BeforeDroneConfigured(Configurator<?, ? extends DroneConfiguration<?>> configurator, Class<?> droneType,
-            Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
+    public BeforeDroneConfigured(Configurator<?, ? extends DroneConfiguration<?>> configurator,
+                                 InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
         this.configurator = configurator;
     }
 

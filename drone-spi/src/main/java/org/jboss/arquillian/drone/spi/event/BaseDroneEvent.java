@@ -16,32 +16,23 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
  * Basic Drone event implementation
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public abstract class BaseDroneEvent implements DroneEvent {
 
-    protected final Class<?> droneType;
-    protected final Class<? extends Annotation> qualifier;
+    protected final InjectionPoint<?> injectionPoint;
 
-    public BaseDroneEvent(Class<?> droneType, Class<? extends Annotation> qualifier) {
-        this.droneType = droneType;
-        this.qualifier = qualifier;
+    public BaseDroneEvent(InjectionPoint<?> injectionPoint) {
+        this.injectionPoint = injectionPoint;
     }
 
     @Override
-    public Class<?> getDroneType() {
-        return droneType;
+    public InjectionPoint<?> getInjectionPoint() {
+        return injectionPoint;
     }
-
-    @Override
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
-    }
-
 }

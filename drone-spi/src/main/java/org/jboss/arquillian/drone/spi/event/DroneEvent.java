@@ -16,32 +16,20 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
-import org.jboss.arquillian.drone.api.annotation.Default;
-import org.jboss.arquillian.drone.api.annotation.Qualifier;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
  * Representation of event related to Arquillian Drone extension
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneEvent {
 
     /**
-     * Type of Drone instantiated. This reflect to {@link Field} type or parameter type specified next to Drone injection point.
+     * Unique identifier for each drone configuration and instance
      *
-     * @return Type of Drone
+     * @return Injection point for drone
      */
-    Class<?> getDroneType();
-
-    /**
-     * Qualifier of Drone instance. See {@link Qualifier}. By default, if no qualifier is specified, it returns {@link Default}
-     *
-     * @return Qualifier associated with Drone
-     */
-    Class<? extends Annotation> getQualifier();
+    InjectionPoint<?> getInjectionPoint();
 
 }

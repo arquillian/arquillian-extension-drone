@@ -16,27 +16,26 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
- * This event is fired after Drone callable is transformed into real Drone instance. This event is never expected to recieve
+ * This event is fired after Drone callable is transformed into real Drone instance. This event is never expected to
+ * recieve
  * {@link Callable} but it always contains real browser instance
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class AfterDroneInstantiated extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    private final InstanceOrCallableInstance instance;
+    private final Object drone;
 
-    public AfterDroneInstantiated(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
-        this.instance = instance;
+    public <T> AfterDroneInstantiated(T drone, InjectionPoint<T> injectionPoint) {
+        super(injectionPoint);
+        this.drone = drone;
     }
 
-    public InstanceOrCallableInstance getInstance() {
-        return instance;
+    public Object getDrone() {
+        return drone;
     }
+
 }

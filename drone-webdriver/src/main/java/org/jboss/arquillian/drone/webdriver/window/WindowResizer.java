@@ -16,17 +16,11 @@
  */
 package org.jboss.arquillian.drone.webdriver.window;
 
-import java.lang.annotation.Annotation;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
@@ -34,11 +28,15 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Support for resizing WebDriver windows to value defined in capabilities via {@code dimensions}.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class WindowResizer {
 
@@ -51,67 +49,63 @@ public class WindowResizer {
 
     public void resizeBrowserWindow(@Observes AfterDroneInstantiated event) {
         // get content of event
-        InstanceOrCallableInstance instance = event.getInstance();
-        Class<?> droneType = event.getDroneType();
-        Class<? extends Annotation> qualifier = event.getQualifier();
-        Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
+        Object drone = event.getDrone();
+        InjectionPoint<?> injectionPoint = event.getInjectionPoint();
 
-        resizeWindow(instance, droneType, qualifier, realInstanceClass);
-
+        resizeWindow(drone, injectionPoint);
     }
 
     public void resizeBrowserWindow(@Observes AfterDroneEnhanced event) {
-
         // get content of event
-        InstanceOrCallableInstance instance = event.getInstance();
-        Class<?> droneType = event.getDroneType();
-        Class<? extends Annotation> qualifier = event.getQualifier();
-        Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
+        Object drone = event.getDrone();
+        InjectionPoint<?> injectionPoint = event.getInjectionPoint();
 
-        resizeWindow(instance, droneType, qualifier, realInstanceClass);
-
+        resizeWindow(drone, injectionPoint);
     }
 
-    private void resizeWindow(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier,
-            Class<?> realInstanceClass) {
-        if (!WebDriver.class.isAssignableFrom(realInstanceClass)) {
+    private void resizeWindow(Object drone, InjectionPoint<?> injectionPoint) {
+        if (!WebDriver.class.isAssignableFrom(drone.getClass())) {
             return;
         }
 
-        Object browser = instance.asInstance(droneType);
-        WebDriver driver = (WebDriver) browser;
+        DroneContext context = droneContext.get();
+
+        WebDriver driver = (WebDriver) drone;
+
 
         // let's get browser configuration
-        Validate.stateNotNull(droneContext.get(), "DroneContext must not be null");
-        InstanceOrCallableInstance configurationInstance = droneContext.get().get(WebDriverConfiguration.class, qualifier);
-        Validate.stateNotNull(configurationInstance, "WebDriver configuration must not be null");
-        WebDriverConfiguration configuration = configurationInstance.asInstance(WebDriverConfiguration.class);
-        Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
+        Validate.stateNotNull(context, "DroneContext must not be null");
+        WebDriverConfiguration configuration = context.getDroneConfiguration(injectionPoint, WebDriverConfiguration
+                .class);
+        Validate.stateNotNull(configuration, "WebDriver configuration mus null");
 
-        String dimensions = (String) configuration.getDimensions();
+        String dimensions = configuration.getDimensions();
 
         if (dimensions != null) {
             Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
             if (m.matches()) {
-                int width = Integer.valueOf(m.group(1)).intValue();
-                int height = Integer.valueOf(m.group(2)).intValue();
-                safelyResizeWindow(driver, width, height, droneType, qualifier, realInstanceClass);
+                int width = Integer.valueOf(m.group(1));
+                int height = Integer.valueOf(m.group(2));
+                safelyResizeWindow(driver, width, height, injectionPoint);
             }
         }
     }
 
-    private void safelyResizeWindow(WebDriver driver, int width, int height, Class<?> droneType,
-            Class<? extends Annotation> qualifier, Class<?> realInstanceClass) {
+    private void safelyResizeWindow(WebDriver driver, int width, int height, InjectionPoint<?> injectionPoint) {
         try {
             driver.manage().window().setSize(new Dimension(width, height));
         } catch (WebDriverException e) {
-            log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, not supported for {2}",
-                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), realInstanceClass.getName(), width,
-                            height });
+            logRequestIgnored(driver, width, height, injectionPoint);
         } catch (UnsupportedOperationException e) {
-            log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, not supported for {2}",
-                    new Object[] { droneType.getSimpleName(), qualifier.getSimpleName(), realInstanceClass.getName(), width,
-                            height });
+            logRequestIgnored(driver, width, height, injectionPoint);
         }
+    }
+
+    private void logRequestIgnored(WebDriver driver, int width, int height, InjectionPoint<?> injectionPoint) {
+        log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, " +
+                "not supported for {2}",
+                new Object[] { injectionPoint.getDroneType().getSimpleName(),
+                        injectionPoint.getQualifier().getSimpleName(), driver.getClass().getName(), width,
+                        height });
     }
 }

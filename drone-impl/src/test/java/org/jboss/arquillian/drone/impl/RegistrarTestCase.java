@@ -16,12 +16,10 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
@@ -31,7 +29,8 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDronePriorityFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.test.spi.context.ClassContext;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
@@ -44,6 +43,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests Registar precedence and its retrieval chain.
@@ -72,7 +74,10 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator> asList(new MockDronePriorityFactory(), new MockDroneFactory()));
+                Arrays.<Configurator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
+                Arrays.<Instantiator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
+
     }
 
     @Test
@@ -90,10 +95,14 @@ public class RegistrarTestCase extends AbstractTestTestBase {
 
         getManager().fire(new BeforeClass(this.getClass()));
 
-        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
-        MockDroneConfiguration configuration = context.get(MockDroneConfiguration.class, Default.class).asInstance(
+        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
+                InjectionPoint.Scope.CLASS);
+
+        MockDroneConfiguration configuration = context.getDroneConfiguration(injectionPoint,
                 MockDroneConfiguration.class);
         Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",
                 MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());

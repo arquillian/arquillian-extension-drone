@@ -18,6 +18,8 @@ package org.jboss.arquillian.drone.spi.event;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
@@ -29,15 +31,14 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
  */
 public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 
-    private final InstanceOrCallableInstance configuration;
+    private final DroneConfiguration<?> configuration;
 
-    public AfterDroneConfigured(InstanceOrCallableInstance configuration, Class<?> droneType,
-            Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
+    public AfterDroneConfigured(DroneConfiguration<?> configuration, InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
         this.configuration = configuration;
     }
 
-    public InstanceOrCallableInstance getConfiguration() {
+    public DroneConfiguration<?> getConfiguration() {
         return configuration;
     }
 

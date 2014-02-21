@@ -19,6 +19,7 @@ package org.jboss.arquillian.drone.spi.event;
 import java.lang.annotation.Annotation;
 
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
@@ -30,14 +31,14 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
  */
 public class BeforeDroneDestroyed extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    private final InstanceOrCallableInstance instance;
+    private final Object drone;
 
-    public BeforeDroneDestroyed(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
-        this.instance = instance;
+    public BeforeDroneDestroyed(Object drone, InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
+        this.drone = drone;
     }
 
-    public InstanceOrCallableInstance getInstance() {
-        return instance;
+    public Object getDrone() {
+        return drone;
     }
 }

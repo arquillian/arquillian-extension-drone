@@ -16,24 +16,22 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
  * This event is called before Drone {@link Callable} is created.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class BeforeDroneCallableCreated extends BaseDroneEvent implements DroneLifecycleEvent {
 
     private final Instantiator<?, ? extends DroneConfiguration<?>> instantiator;
 
-    public BeforeDroneCallableCreated(Instantiator<?, ? extends DroneConfiguration<?>> instantiator, Class<?> droneType,
-            Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
+    public BeforeDroneCallableCreated(Instantiator<?, ? extends DroneConfiguration<?>> instantiator,
+                                      InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
         this.instantiator = instantiator;
     }
 

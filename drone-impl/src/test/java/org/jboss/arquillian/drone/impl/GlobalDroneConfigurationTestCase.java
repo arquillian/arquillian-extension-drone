@@ -16,19 +16,14 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.impl.DroneConfigurator.GlobalDroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
-import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
-import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -40,11 +35,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.List;
+
 /**
  * Global Drone configuration test cases
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
@@ -120,17 +116,16 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
-        // when
-        getManager().fire(new BeforeClass(this.getClass()));
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
 
-        // then
-        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("Drone object holder was created in the context", context);
-
-        InstanceOrCallableInstance globalConfiguration = context.get(GlobalDroneConfiguration.class, Default.class);
-        Assert.assertNotNull("Global Drone configuration was created", globalConfiguration);
+        GlobalDroneConfiguration globalDroneConfiguration = context.getGlobalDroneConfiguration
+                (GlobalDroneConfiguration.class);
+        Assert.assertNotNull("Global Drone configuration was created", globalDroneConfiguration);
         Assert.assertEquals("Drone timeout is set to " + timeout + " seconds", timeout,
-                globalConfiguration.asInstance(GlobalDroneConfiguration.class).getInstantiationTimeoutInSeconds());
+                globalDroneConfiguration.getInstantiationTimeoutInSeconds());
+
 
     }
 }

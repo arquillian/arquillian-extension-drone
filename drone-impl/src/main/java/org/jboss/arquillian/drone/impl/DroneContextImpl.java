@@ -16,13 +16,30 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Stack;
-import java.util.concurrent.ConcurrentHashMap;
-
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.drone.spi.CachingCallable;
+import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.Filter;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Default implementation of {@link DroneContext}
@@ -31,155 +48,269 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
  */
 public class DroneContextImpl implements DroneContext {
 
-    // cache holder
-    private final Map<QualifiedKey, DroneInstanceContext> cache;
+    private static final Logger LOGGER = Logger.getLogger(DroneContextImpl.class.getName());
 
-    public DroneContextImpl() {
-        this.cache = new ConcurrentHashMap<QualifiedKey, DroneInstanceContext>();
+    private Map<InjectionPoint<?>, DronePair<?, ?>> dronePairMap = new HashMap<InjectionPoint<?>, DronePair<?, ?>>();
+
+    @Deprecated
+    private DroneConfiguration<?> globalDroneConfiguration;
+
+    @Inject
+    private Instance<DroneExecutorService> executorService;
+
+    @Inject
+    private Event<BeforeDroneInstantiated> beforeDroneInstantiatedEvent;
+
+    @Inject
+    private Event<AfterDroneInstantiated> afterDroneInstantiatedEvent;
+
+    @Override
+    public <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass) {
+        return (C) globalDroneConfiguration;
     }
 
     @Override
-    public InstanceOrCallableInstance get(Class<?> key, Class<? extends Annotation> qualifier) {
-
-        DroneInstanceContext context = cache.get(new QualifiedKey(key, qualifier));
-        if (context == null) {
-            return null;
-        }
-
-        if (context.isEmpty()) {
-            throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
-        }
-
-        return context.peek();
+    public void setGlobalDroneConfiguration(DroneConfiguration<?> configuration) {
+        globalDroneConfiguration = configuration;
     }
 
     @Override
-    public DroneContext add(Class<?> key, Class<? extends Annotation> qualifier, InstanceOrCallableInstance instance) {
-        QualifiedKey k = new QualifiedKey(key, qualifier);
-        DroneInstanceContext context = cache.get(k);
-        if (context == null) {
-            context = new DroneInstanceContext();
-            cache.put(k, context);
+    public <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException {
+        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+        if (pair == null) {
+            throw new IllegalArgumentException("Injection point doesn't exist!");
         }
 
-        context.push(instance);
-        return this;
+        CachingCallable<T> droneCallable = pair.getDroneCallable();
+        if (droneCallable == null) {
+            throw new IllegalStateException("Drone callable not stored yet!");
+        }
+
+        boolean newInstance = !droneCallable.isValueCached();
+        if (newInstance) {
+            beforeDroneInstantiatedEvent.fire(new BeforeDroneInstantiated(droneCallable, injectionPoint));
+        }
+
+        T drone = instantiateDrone(droneCallable);
+
+        if (newInstance) {
+            afterDroneInstantiatedEvent.fire(new AfterDroneInstantiated(drone, injectionPoint));
+        }
+
+        CachingCallable<T> newDroneCallable = pair.getDroneCallable();
+
+        if (newDroneCallable != droneCallable) {
+            return getDrone(injectionPoint);
+        } else {
+            return drone;
+        }
     }
 
-    @Override
-    public DroneContext remove(Class<?> key, Class<? extends Annotation> qualifier) {
-        QualifiedKey k = new QualifiedKey(key, qualifier);
-        DroneInstanceContext context = cache.get(k);
-        if (context == null) {
-            // already removed, do nothing
-            return this;
-        }
+    private <T> T instantiateDrone(CachingCallable<T> droneCallable) {
+        // FIXME we need to make some kind of global drone configuration!
 
-        // remove instance
-        context.pop();
-        // remove DroneInstanceContext if empty
-        if (context.isEmpty()) {
-            cache.remove(k);
-        }
+        int timeout = getGlobalDroneConfiguration(DroneConfigurator.GlobalDroneConfiguration.class)
+                .getInstantiationTimeoutInSeconds();
 
-        return this;
-
-    }
-
-    /**
-     * Implements a key that allows to treat class type and qualifier as an atomic key into table
-     *
-     *
-     */
-    static class QualifiedKey {
-        private final Class<?> key;
-        private final Class<? extends Annotation> qualifier;
-
-        public QualifiedKey(Class<?> key, Class<? extends Annotation> qualifier) {
-            this.key = key;
-            this.qualifier = qualifier;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((qualifier == null) ? 0 : qualifier.hashCode());
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            return result;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            QualifiedKey other = (QualifiedKey) obj;
-            if (qualifier == null) {
-                if (other.qualifier != null)
-                    return false;
-            } else if (!qualifier.equals(other.qualifier))
-                return false;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return key.getName() + "/" + qualifier.getSimpleName();
-        }
-
-    }
-
-    /**
-     * Implements a stack of Drone instance. This stack allows method scoped Drone to be stored on top of Class scoped ones.
-     *
-     */
-    static class DroneInstanceContext {
-        private final Stack<InstanceOrCallableInstance> stack;
-
-        public DroneInstanceContext() {
-            this.stack = new Stack<InstanceOrCallableInstance>();
-        }
-
-        public DroneInstanceContext push(InstanceOrCallableInstance object) {
-            stack.push(object);
-            return this;
-        }
-
-        public InstanceOrCallableInstance peek() {
-            if (isEmpty()) {
-                throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
+        try {
+            T drone;
+            Future<T> futureDrone = executorService.get().submit(droneCallable);
+            if (timeout > 0) {
+                drone = futureDrone.get(timeout, TimeUnit.SECONDS);
             }
-            return stack.peek();
-        }
-
-        public InstanceOrCallableInstance pop() {
-            if (isEmpty()) {
-                throw new IllegalStateException("Unable to retrieve Drone instance, it was not initialized yet");
+            // here we ignore the timeout, for instance if debugging is enabled
+            else {
+                drone = futureDrone.get();
             }
-            return stack.pop();
+            return drone;
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Unable to retrieve Drone Instance, thread interrupted", e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            throw new RuntimeException(cause.getMessage(), cause);
+        } catch (TimeoutException e) {
+            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + " "
+                    + TimeUnit.SECONDS.toString().toLowerCase(), e);
+        }
+    }
+
+    @Override
+    public <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint, Class<C>
+            configurationClass) throws IllegalArgumentException {
+        DronePair<?, C> pair = (DronePair<?, C>) dronePairMap.get(injectionPoint);
+        if (pair == null) {
+            throw new IllegalArgumentException("Injection point doesn't exist!");
         }
 
-        public boolean isEmpty() {
-            return stack.isEmpty();
+        C configuration = pair.getConfiguration();
+        if (configuration == null) {
+            throw new IllegalStateException("Drone configuration not stored yet!");
+        }
+
+        return configuration;
+    }
+
+    @Override
+    public <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone) {
+        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+        if (pair == null) {
+            throw new IllegalArgumentException("Injection point doesn't exist!");
+        }
+
+        if (pair.getDroneCallable() != null) {
+            LOGGER.log(Level.FINE, "Future drone replaced at point: " + injectionPoint.toString());
+        }
+
+        pair.setDroneCallable(drone);
+    }
+
+    @Override
+    public <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
+                                                                             C configuration) {
+        DronePair<T, C> pair = (DronePair<T, C>) dronePairMap.get(injectionPoint);
+        if (pair != null) {
+            // FIXME shouldn't we just handle this peacefully with warning?
+            throw new IllegalStateException("Injection point already exists!");
+        }
+
+        pair = new DronePair<T, C>();
+        pair.setConfiguration(configuration);
+        dronePairMap.put(injectionPoint, pair);
+    }
+
+    @Override
+    public <T> boolean isDroneInstantiated(InjectionPoint<T> injectionPoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+        if (dronePair == null) {
+            return false;
+        }
+        if (dronePair.getDroneCallable() == null) {
+            return false;
+        }
+        return dronePair.getDroneCallable().isValueCached();
+    }
+
+    @Override
+    public <T> boolean isFutureDroneStored(InjectionPoint<T> injectionPoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+        if (dronePair == null) {
+            return false;
+        }
+        return dronePair.getDroneCallable() != null;
+    }
+
+    @Override
+    public <T> boolean isDroneConfigurationStored(InjectionPoint<T> injectionPoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+        if (dronePair == null) {
+            return false;
+        }
+        return dronePair.getConfiguration() != null;
+    }
+
+    @Override
+    public void removeDrone(InjectionPoint<?> injectionPoint) {
+        DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
+        if (pair == null) {
+            throw new IllegalStateException("Injection point doesn't exist!");
+        }
+        if (pair.getDroneCallable() == null) {
+            LOGGER.warning("Couldn't remove drone, because it wasn't set!");
+        }
+
+        pair.setDroneCallable(null);
+    }
+
+    @Override
+    public void removeDroneConfiguration(InjectionPoint<?> injectionPoint) {
+        DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
+        if (pair == null) {
+            throw new IllegalStateException("Injection point doesn't exist!");
+        }
+        if (pair.getDroneCallable() != null) {
+            LOGGER.warning("Drone is still set, but you won't be able to access it anymore!");
+        }
+        if (pair.getConfiguration() == null) {
+            LOGGER.warning("Couldn't remove configuration, because it wasn't set!");
+        }
+
+        pair.setConfiguration(null);
+
+        dronePairMap.remove(injectionPoint);
+    }
+
+    @Override
+    public void removeDrones(List<InjectionPoint<?>> injectionPoints) {
+        for (InjectionPoint<?> injectionPoint : injectionPoints) {
+            removeDrone(injectionPoint);
+        }
+    }
+
+    @Override
+    public void removeDroneConfigurations(List<InjectionPoint<?>> injectionPoints) {
+        for (InjectionPoint<?> injectionPoint : injectionPoints) {
+            removeDroneConfiguration(injectionPoint);
+        }
+    }
+
+    @Override
+    public <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass,
+                                                      Filter... filters) throws IllegalStateException {
+        List<InjectionPoint<? extends T>> injectionPoints = find(droneClass, filters);
+        int count = injectionPoints.size();
+        if (count != 1) {
+            throw new IllegalStateException("Total injection points matched not equal to 1! Actual: " + count);
+        }
+        return injectionPoints.get(0);
+    }
+
+    @Override
+    public <T> List<InjectionPoint<? extends T>> find(Class<T> droneClass, Filter... filters) {
+        List<InjectionPoint<? extends T>> matchedInjectionPoints = new ArrayList<InjectionPoint<? extends T>>();
+
+        for (InjectionPoint<?> injectionPoint : dronePairMap.keySet()) {
+            if (!droneClass.isAssignableFrom(injectionPoint.getDroneType())) {
+                continue;
+            }
+            @SuppressWarnings("unchecked")
+            InjectionPoint<? extends T> castInjectionPoint = (InjectionPoint<? extends T>) injectionPoint;
+
+            boolean matches = true;
+
+            for (Filter filter : filters) {
+                if (!filter.accept(castInjectionPoint)) {
+                    matches = false;
+                    break;
+                }
+            }
+
+            if (matches) {
+                matchedInjectionPoints.add(castInjectionPoint);
+            }
+        }
+
+
+        return matchedInjectionPoints;
+    }
+
+    private class DronePair<T, C extends DroneConfiguration<C>> {
+        private CachingCallable<T> droneCallable;
+        private C configuration;
+
+        public CachingCallable<T> getDroneCallable() {
+            return droneCallable;
+        }
+
+        public void setDroneCallable(CachingCallable<T> droneCallable) {
+            this.droneCallable = droneCallable;
+        }
+
+        public C getConfiguration() {
+            return configuration;
+        }
+
+        public void setConfiguration(C configuration) {
+            this.configuration = configuration;
         }
     }
 }

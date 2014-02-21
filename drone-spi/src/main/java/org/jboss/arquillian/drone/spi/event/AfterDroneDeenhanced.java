@@ -16,28 +16,27 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
- * This event is fired after Drone instance is deenhanced via {@link DroneInstanceEnhancer}. It is supposed it will never contain a
+ * This event is fired after Drone instance is deenhanced via {@link DroneInstanceEnhancer}. It is supposed it will
+ * never contain a
  * {@link Callable} instance.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class AfterDroneDeenhanced extends BaseDroneEvent implements DroneEnhancementEvent {
 
-    private final InstanceOrCallableInstance instance;
+    private final Object drone;
 
-    public AfterDroneDeenhanced(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
-        super(droneType, qualifier);
-        this.instance = instance;
+    public AfterDroneDeenhanced(Object drone, InjectionPoint<?> injectionPoint) {
+        super(injectionPoint);
+        this.drone = drone;
     }
 
-    public InstanceOrCallableInstance getInstance() {
-        return instance;
+    public Object getDrone() {
+        return drone;
     }
 }

@@ -16,20 +16,12 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
@@ -39,6 +31,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
@@ -57,7 +50,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
@@ -87,10 +98,10 @@ public class EnhancerTestCase extends AbstractTestTestBase {
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
-        extensions.add(DroneCallableCreator.class);
         extensions.add(DroneEnhancer.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
+        extensions.add(DroneExecutorService.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -101,22 +112,27 @@ public class EnhancerTestCase extends AbstractTestTestBase {
                 .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
-        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
-        getManager().inject(instanceCreator);
+        getManager().inject(testEnricher);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
-        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
+                Arrays.<Instantiator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
+        //Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
         Mockito.when(serviceLoader.all(DroneInstanceEnhancer.class)).thenReturn(
-                Arrays.<DroneInstanceEnhancer> asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
+                Arrays.<DroneInstanceEnhancer>asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+        Mockito.when(enhanced2.getField()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return notEnhanced.getField();
+            }
+        });
 
         notEnhanced = null;
         deEnhanced = null;
@@ -127,24 +143,30 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).activate(EnrichedClass.class);
         fire(new BeforeSuite());
 
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
+        Assert.assertNotNull("DroneContext created in the context", context);
+
         fire(new BeforeClass(EnrichedClass.class));
 
-        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
-        InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
+        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
+                InjectionPoint.Scope.CLASS);
 
-        // as this is usually fired by enriched, we need to fire this on our own
-        droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
-        fire(new AfterDroneInstantiated(droneInstance, MockDrone.class, Default.class));
+        MockDrone drone = context.getDrone(injectionPoint);
 
-        assertThat("both enhancerns were applied", droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
+        assertEquals("both enhancerns were applied", enhanced2, drone);
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
 
-        droneInstance = context.get(MockDrone.class, Default.class);
+        //InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
+        //InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
+
+        // as this is usually fired by enriched, we need to fire this on our own
+        //droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
+
+
         fire(new AfterClass(EnrichedClass.class));
 
-        droneInstance = context.get(MockDrone.class, Default.class);
-        assertThat(droneInstance, is(nullValue()));
+        assertFalse(context.isDroneInstantiated(injectionPoint));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
 
@@ -157,24 +179,35 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
+
+        DroneContext context = getManager()
+                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("DroneContext created in the context", context);
+
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
-        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
-        InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
+        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
+                InjectionPoint.Scope.METHOD);
 
-        // as this is usually fired by enriched, we need to fire this on our own
-        droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
-        fire(new AfterDroneInstantiated(droneInstance, MockDrone.class, Default.class));
+        MockDroneConfiguration droneConfiguration = context.getDroneConfiguration(injectionPoint,
+                MockDroneConfiguration.class);
 
-        assertThat(droneInstance.asInstance(MockDrone.class), equalTo(enhanced2));
-        assertThat(notEnhanced, is(not(nullValue())));
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+
+        testEnricher.enrich(instance);
+        Object[] parameters = testEnricher.resolve(testMethod);
+
+        assertTrue("Drone is created", context.isDroneInstantiated(injectionPoint));
+        assertEquals("Drone was enhanced with both enhancers", enhanced2, context.getDrone(injectionPoint));
+        assertNotNull(notEnhanced);
+
+        testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
-        droneInstance = context.get(MockDrone.class, Default.class);
-        assertThat(droneInstance, is(nullValue()));
-        assertThat(notEnhanced, equalTo(deEnhanced));
+        assertFalse("Drone was destroyed", context.isDroneInstantiated(injectionPoint));
+        assertEquals(deEnhanced, notEnhanced);
+
     }
 
     static class EnrichedClass {
@@ -184,7 +217,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
     static class MethodEnrichedClass {
 
-        public void testMethodEnrichment(@Drone MockDrone unused) {
+        public void testMethodEnrichment(@Drone @MethodArgumentOne MockDrone unused) {
             Assert.assertNotNull("Mock drone instance was created", unused);
             Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD,
                     unused.getField());
@@ -199,7 +232,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
 
         @Override
-        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType,
+                                  Class<? extends Annotation> qualifier) {
             return MockDrone.class.isAssignableFrom(droneType);
         }
 
@@ -227,7 +261,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         }
 
         @Override
-        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+        public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType,
+                                  Class<? extends Annotation> qualifier) {
             return true;
         }
 

@@ -16,34 +16,31 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * Enriches test with drone instance and context path. Injects existing instance into every field annotated with {@link Drone}.
+ * Enriches test with drone instance and context path. Injects existing instance into every field annotated with
+ * {@link Drone}.
  * Handles enrichment for method arguments as well.
- *
+ * <p/>
  * This enricher is responsible for firing chain of events that transform a callable into real instance by firing
  * {@link BeforeDroneInstantiated} event.
  *
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
- *
  */
 public class DroneTestEnricher implements TestEnricher {
     private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());
@@ -56,105 +53,51 @@ public class DroneTestEnricher implements TestEnricher {
 
     @Override
     public void enrich(Object testCase) {
-        List<Field> droneEnrichements = SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Drone.class);
+        DroneContext context = droneContext.get();
+        Map<Field, InjectionPoint<?>> injectionPoints = InjectionPoints.fieldsInClass(testCase.getClass());
 
-        for (Field f : droneEnrichements) {
-
+        for (Field field : injectionPoints.keySet()) {
             // omit setting if already set
-            if (SecurityActions.getFieldValue(testCase, f) != null) {
-                log.log(Level.FINER, "Skipped injection of field {0}", f.getName());
+            if (SecurityActions.getFieldValue(testCase, field) != null) {
+                log.log(Level.FINER, "Skipped injection of field {0}", field.getName());
                 continue;
             }
 
-            Class<?> typeClass = f.getType();
-            Class<? extends Annotation> qualifier = SecurityActions.getQualifier(f);
+            InjectionPoint<?> injectionPoint = injectionPoints.get(field);
 
             log.log(Level.FINE, "Injecting @Drone for field {0} @{1} {2}",
-                    new Object[] { typeClass.getSimpleName(), qualifier.getSimpleName(), f.getName() });
+                    new Object[] { injectionPoint.getDroneType().getSimpleName(),
+                            injectionPoint.getQualifier().getSimpleName(), field.getName() });
 
-            Object value = getDroneInstance(DroneScope.CLASS_SCOPED, typeClass, qualifier);
-            Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
-            SecurityActions.setFieldValue(testCase, f, value);
+            Object drone = context.getDrone(injectionPoint);
+            Validate.notNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
+            SecurityActions.setFieldValue(testCase, field, drone);
         }
     }
 
     @Override
     public Object[] resolve(Method method) {
-
-        Map<Integer, Annotation[]> droneEnrichements = SecurityActions.getParametersWithAnnotation(method, Drone.class);
-        Class<?>[] parameters = method.getParameterTypes();
-        Object[] resolution = new Object[parameters.length];
-
-        for (int i = 0; i < parameters.length; i++) {
-            Class<?> droneType = parameters[i];
-            if (droneEnrichements.containsKey(i)) {
-
-                Class<? extends Annotation> qualifier = SecurityActions.getQualifier(droneEnrichements.get(i));
-                log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} ", new Object[] { method.getName(),
-                        droneType.getSimpleName(), qualifier.getSimpleName() });
-
-                Object value = getDroneInstance(DroneScope.METHOD_SCOPED, droneType, qualifier);
-                Validate.notNull(value, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
-                resolution[i] = value;
+        DroneContext context = droneContext.get();
+        InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(method);
+        Object[] resolution = new Object[injectionPoints.length];
+        for (int i = 0; i < injectionPoints.length; i++) {
+            InjectionPoint<?> injectionPoint = injectionPoints[i];
+            if (injectionPoint == null) {
+                resolution[i] = null;
+                continue;
             }
+
+
+            log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} ",
+                    new Object[] { method.getName(),
+                            injectionPoint.getDroneType().getSimpleName(),
+                            injectionPoint.getQualifier().getSimpleName() });
+
+            Object drone = context.getDrone(injectionPoint);
+            Validate.notNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
+            resolution[i] = drone;
         }
 
         return resolution;
-    }
-
-    private <T> T getDroneInstance(DroneScope scope, Class<T> type, Class<? extends Annotation> qualifier) {
-
-        Validate.stateNotNull(droneContext.get(), "Drone Context must not be null");
-        InstanceOrCallableInstance union = scope.getScopedDroneInstance(droneContext.get(), type, qualifier);
-
-        Validate.notNull(union, "Retrieved a null from context, which is not a valid Drone browser object");
-
-        // execute chain to convert callable into browser
-        if (union.isInstanceCallable()) {
-            droneLifecycleEvent.fire(new BeforeDroneInstantiated(union, type, qualifier));
-        }
-
-        // return browser
-        return union.asInstance(type);
-
-    }
-
-    // ARQ-1543
-    private static enum DroneScope {
-
-        CLASS_SCOPED {
-            @Override
-            public <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
-                    Class<? extends Annotation> qualifier) {
-
-                // find the last candidate
-                InstanceOrCallableInstance droneInstance = null;
-                InstanceOrCallableInstance candidate = null;
-                LinkedList<InstanceOrCallableInstance> temporaryStorage = new LinkedList<InstanceOrCallableInstance>();
-                while ((candidate = context.get(type, qualifier)) != null) {
-                    temporaryStorage.add(candidate);
-                    context.remove(type, qualifier);
-                    droneInstance = candidate;
-                }
-
-                // push back candidates
-                for (int i = temporaryStorage.size() - 1; i >= 0; i--) {
-                    context.add(type, qualifier, temporaryStorage.get(i));
-                }
-
-                return droneInstance;
-            }
-        },
-
-        METHOD_SCOPED {
-            @Override
-            public <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
-                    Class<? extends Annotation> qualifier) {
-                return context.get(type, qualifier);
-            }
-        };
-
-        public abstract <T> InstanceOrCallableInstance getScopedDroneInstance(DroneContext context, Class<T> type,
-                Class<? extends Annotation> qualifier);
     }
 }

@@ -1,18 +1,18 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.WebDriver;
+
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configurator<T, WebDriverConfiguration> {
 
@@ -24,13 +24,15 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
     protected Instance<BrowserCapabilitiesRegistry> registryInstance;
 
     @Override
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<T>
+            injectionPoint) {
 
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
         // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
         BrowserCapabilities browser = registry.getEntryFor(getDriverReadableName());
-        WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(descriptor, qualifier);
+        WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(descriptor,
+                injectionPoint.getQualifier());
 
         // then, check if legacy implementationClass was set in the configuration and try to update accordingly
         if (browser == null && Validate.nonEmpty(configuration.getImplementationClass())) {
@@ -39,12 +41,14 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
                 log.log(Level.FINE, "Available implementationClasses are {0}", getAvailableImplementationClasses());
                 throw new IllegalStateException(
                         MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a browser property instead of implementationClass {1}. Available options are: {0}",
+                                .format("Unable to initialize WebDriver instance. Please specify a browser property " +
+                                        "instead of implementationClass {1}. Available options are: {0}",
                                         getAvailableBrowserCapabilities(), configuration.getImplementationClass()));
             }
             configuration.setBrowserInternal(browser);
             log.log(Level.WARNING,
-                    "Please use \"browser\" to specify browser type instead of implementationClass. Available options are: {0}",
+                    "Please use \"browser\" to specify browser type instead of implementationClass. Available options" +
+                            " are: {0}",
                     getAvailableBrowserCapabilities());
         }
         // otherwise, we hit a webdriver configuration and we want to use browser capabilities
@@ -53,7 +57,8 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
             if (browser == null) {
                 throw new IllegalStateException(
                         MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a valid browser instead of {1}. Available options are: {0}",
+                                .format("Unable to initialize WebDriver instance. Please specify a valid browser " +
+                                        "instead of {1}. Available options are: {0}",
                                         getAvailableBrowserCapabilities(), configuration.getBrowser()));
             }
             configuration.setBrowserInternal(browser);

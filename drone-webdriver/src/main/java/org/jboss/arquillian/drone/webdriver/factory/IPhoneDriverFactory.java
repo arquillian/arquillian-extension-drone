@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.iphone.IPhoneDriver;
@@ -88,22 +89,15 @@ public class IPhoneDriverFactory extends AbstractWebDriverFactory<IPhoneDriver> 
                 new Object[] { remoteAddress }, IPhoneDriver.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
     @Override
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        WebDriverConfiguration configuration = super.createConfiguration(descriptor, qualifier);
-        if (!configuration.isRemote()) {
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<IPhoneDriver>
+            injectionPoint) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, injectionPoint);
+        if(!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing IPhoneDriver configuration to be remote-based.");
         }
-
         return configuration;
-
     }
 
     @Override

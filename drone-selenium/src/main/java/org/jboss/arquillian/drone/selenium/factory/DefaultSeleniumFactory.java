@@ -22,6 +22,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.selenium.configuration.SeleniumConfiguration;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -71,13 +72,8 @@ public class DefaultSeleniumFactory implements Configurator<DefaultSelenium, Sel
         return selenium;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss
-     * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
-     */
-    public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        return new SeleniumConfiguration().configure(descriptor, qualifier);
+    @Override
+    public SeleniumConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<DefaultSelenium> injectionPoint) {
+        return new SeleniumConfiguration().configure(descriptor, injectionPoint.getQualifier());
     }
 }

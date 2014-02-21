@@ -16,16 +16,16 @@
  */
 package org.jboss.arquillian.drone.impl.mockdrone;
 
-import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- * 
  */
 public class MockDronePriorityFactory implements Configurator<MockDrone, MockDroneConfiguration>,
         Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
@@ -40,14 +40,10 @@ public class MockDronePriorityFactory implements Configurator<MockDrone, MockDro
         return 10;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jboss.arquillian.drone.spi.Configurator#createConfiguration(org.jboss.arquillian.impl.configuration.api.
-     * ArquillianDescriptor, java.lang.Class)
-     */
-    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, qualifier);
+    @Override
+    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<MockDrone>
+            injectionPoint) {
+        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, injectionPoint.getQualifier());
         configuration.setField(MOCK_DRONE_PRIORITY_FACTORY_FIELD);
         return configuration;
     }
@@ -63,7 +59,8 @@ public class MockDronePriorityFactory implements Configurator<MockDrone, MockDro
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
+     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi
+     * .DroneConfiguration)
      */
     public MockDrone createInstance(MockDroneConfiguration configuration) {
         MockDrone instance = new MockDrone(configuration.getField());
