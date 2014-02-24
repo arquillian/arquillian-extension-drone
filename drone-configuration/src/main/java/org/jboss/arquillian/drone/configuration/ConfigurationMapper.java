@@ -152,12 +152,16 @@ public class ConfigurationMapper {
         for (Map.Entry<String, String> nameValue : nameValuePairs.entrySet()) {
             String name = nameValue.getKey();
 
+
+            String reversedName = keyTransformReverse(name);
             // map a field which has a field directly available in the configuration
             if (fields.containsKey(name)) {
                 injectField(configuration, maps, fields, name, nameValue.getValue());
             }
             // map a field which comes from a system property which has a field available in the configuration
-            else if (fields.containsKey(keyTransformReverse(name))) {
+            // note, due to multiple deprecation, it might be possible that field we deprecated in favor of capability
+            // has reversed name value exactly the same as capability - ARQ-1638
+            else if (fields.containsKey(reversedName) && !LegacyConfigurationMapper.isLegacy(reversedName)) {
                 // we prefer new format arquillian.mockdriver.intField over arquillian.mockdriver.int.field
                 log.log(Level.WARNING,
                         "The system property \"{0}\" used in Arquillian \"{1}\" configuration is deprecated, please rather use new format \"{2}\"",
