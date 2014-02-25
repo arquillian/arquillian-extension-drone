@@ -17,8 +17,6 @@
 package org.jboss.arquillian.drone.impl;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
@@ -34,7 +32,6 @@ import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
@@ -151,7 +148,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(EnrichedClass.class));
 
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Scope.CLASS);
+                InjectionPoint.Lifecycle.CLASS);
 
         MockDrone drone = context.getDrone(injectionPoint);
 
@@ -189,7 +186,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new Before(instance, testMethod));
 
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
-                InjectionPoint.Scope.METHOD);
+                InjectionPoint.Lifecycle.METHOD);
 
         MockDroneConfiguration droneConfiguration = context.getDroneConfiguration(injectionPoint,
                 MockDroneConfiguration.class);

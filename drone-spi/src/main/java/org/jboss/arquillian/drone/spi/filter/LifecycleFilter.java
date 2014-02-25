@@ -1,8 +1,7 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.spi;
+package org.jboss.arquillian.drone.spi.filter;
 
-import java.lang.annotation.Annotation;
+import org.jboss.arquillian.drone.spi.Filter;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 
-/**
- * @author <a href="mailto:tkriz@redhat.com">Tadeas Kriz</a>
- */
-public interface InjectionPoint<DRONE> {
+public class LifecycleFilter implements Filter {
 
-    Class<DRONE> getDroneType();
+    private final InjectionPoint.Lifecycle lifecycle;
 
-    Class<? extends Annotation> getQualifier();
+    public LifecycleFilter(InjectionPoint.Lifecycle lifecycle) {
+        this.lifecycle = lifecycle;
+    }
 
-    Lifecycle getLifecycle();
-
-    public static enum Lifecycle {
-        METHOD, CLASS, DEPLOYMENT
+    @Override
+    public boolean accept(InjectionPoint<?> injectionPoint) {
+        return injectionPoint.getLifecycle() == lifecycle;
     }
 }

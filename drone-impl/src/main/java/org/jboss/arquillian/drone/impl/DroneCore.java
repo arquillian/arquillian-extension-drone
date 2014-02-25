@@ -35,9 +35,7 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.command.DestroyDrone;
-import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.test.spi.event.suite.After;
@@ -47,7 +45,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -104,7 +101,7 @@ public class DroneCore {
         Set<InjectionPoint<?>> injectionPoints = InjectionPoints.allInClass(testClass);
 
         for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            if (injectionPoint.getScope() == InjectionPoint.Scope.METHOD) {
+            if (injectionPoint.getLifecycle() == InjectionPoint.Lifecycle.METHOD) {
                 continue;
             }
 
@@ -116,7 +113,7 @@ public class DroneCore {
         InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(event.getTestMethod());
 
         for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            if (injectionPoint == null || injectionPoint.getScope() != InjectionPoint.Scope.METHOD) {
+            if (injectionPoint == null || injectionPoint.getLifecycle() != InjectionPoint.Lifecycle.METHOD) {
                 continue;
             }
 
@@ -128,7 +125,7 @@ public class DroneCore {
         InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(event.getTestMethod());
 
         for(InjectionPoint<?> injectionPoint : injectionPoints) {
-            if(injectionPoint == null || injectionPoint.getScope() != InjectionPoint.Scope.METHOD) {
+            if(injectionPoint == null || injectionPoint.getLifecycle() != InjectionPoint.Lifecycle.METHOD) {
                 continue;
             }
 
@@ -153,7 +150,7 @@ public class DroneCore {
         Set<InjectionPoint<?>> injectionPoints = InjectionPoints.allInClass(testClass);
 
         for(InjectionPoint<?> injectionPoint : injectionPoints) {
-            if(injectionPoint.getScope() == InjectionPoint.Scope.METHOD) {
+            if(injectionPoint.getLifecycle() == InjectionPoint.Lifecycle.METHOD) {
                 continue;
             }
 

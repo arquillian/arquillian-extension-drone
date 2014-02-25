@@ -14,21 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.spi.filter;
+package org.jboss.arquillian.drone.api.annotation.lifecycle;
 
-import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
 
-public class ScopeFilter implements Filter {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private final InjectionPoint.Scope scope;
-
-    public ScopeFilter(InjectionPoint.Scope scope) {
-        this.scope = scope;
-    }
-
-    @Override
-    public boolean accept(InjectionPoint<?> injectionPoint) {
-        return injectionPoint.getScope() == scope;
-    }
+@DroneLifecycle
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MethodLifecycle {
 }

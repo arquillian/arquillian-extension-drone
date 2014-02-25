@@ -101,7 +101,7 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Scope.CLASS);
+                InjectionPoint.Lifecycle.CLASS);
 
         MockDroneConfiguration configuration = context.getDroneConfiguration(injectionPoint,
                 MockDroneConfiguration.class);

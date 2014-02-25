@@ -121,9 +121,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(EnrichedClass.class));
 
         InjectionPoint<MockDrone> invalidInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.CLASS);
+                Default.class, InjectionPoint.Lifecycle.CLASS);
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Different.class, InjectionPoint.Scope.CLASS);
+                Different.class, InjectionPoint.Lifecycle.CLASS);
 
         MockDroneConfiguration configuration = context.getDroneConfiguration(injectionPoint,
                 MockDroneConfiguration.class);
@@ -168,7 +168,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = testEnricher.resolve(testMethod);
 
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                MethodArgumentOne.class, InjectionPoint.Scope.METHOD);
+                MethodArgumentOne.class, InjectionPoint.Lifecycle.METHOD);
         Assert.assertTrue("Drone created", context.isDroneInstantiated(injectionPoint));
 
         testMethod.invoke(instance, parameters);
@@ -208,7 +208,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = testEnricher.resolve(testMethod);
 
         InjectionPoint<Object> injectionPoint = new InjectionPointImpl<Object>(Object.class, Default.class,
-                InjectionPoint.Scope.METHOD);
+                InjectionPoint.Lifecycle.METHOD);
         Assert.assertTrue("Drone created", context.isDroneInstantiated(injectionPoint));
 
         testMethod.invoke(instance, parameters);

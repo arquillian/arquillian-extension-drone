@@ -18,9 +18,8 @@ package org.jboss.arquillian.drone.impl;
 
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.api.annotation.scope.ClassScope;
-import org.jboss.arquillian.drone.api.annotation.scope.DeploymentScope;
-import org.jboss.arquillian.drone.api.annotation.scope.MethodScope;
+import org.jboss.arquillian.drone.api.annotation.lifecycle.ClassLifecycle;
+import org.jboss.arquillian.drone.api.annotation.lifecycle.MethodLifecycle;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 import java.lang.annotation.Annotation;
@@ -110,7 +109,7 @@ public final class InjectionPoints {
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(field);
         OperateOnDeployment operateOnDeployment = SecurityActions.getAnnotation(field, OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Scope.CLASS,
+        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Lifecycle.CLASS,
                 operateOnDeployment);
     }
 
@@ -120,7 +119,7 @@ public final class InjectionPoints {
         OperateOnDeployment operateOnDeployment = SecurityActions.findAnnotation(parameterAnnotations,
                 OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Scope.METHOD,
+        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Lifecycle.METHOD,
                 operateOnDeployment);
     }
 
@@ -129,34 +128,28 @@ public final class InjectionPoints {
     static <T> InjectionPoint<T> createInjectionPoint(Class<T> droneType,
                                                       Class<? extends Annotation> qualifier,
                                                       Class<? extends Annotation> scopeAnnotation,
-                                                      InjectionPoint.Scope defaultScope,
+                                                      InjectionPoint.Lifecycle defaultLifecycle,
                                                       OperateOnDeployment operateOnDeployment) {
-        InjectionPoint.Scope scope = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultScope);
-        if (scope == InjectionPoint.Scope.DEPLOYMENT) {
+        InjectionPoint.Lifecycle lifecycle = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultLifecycle);
+        if (lifecycle == InjectionPoint.Lifecycle.DEPLOYMENT) {
             String deployment = operateOnDeployment.value();
-            return new DeploymentScopedInjectionPointImpl<T>(droneType, qualifier, scope, deployment);
+            return new DeploymentLifecycleInjectionPointImpl<T>(droneType, qualifier, lifecycle, deployment);
         } else {
-            return new InjectionPointImpl<T>(droneType, qualifier, scope);
+            return new InjectionPointImpl<T>(droneType, qualifier, lifecycle);
         }
     }
 
-    static InjectionPoint.Scope scopeForAnnotation(Class<? extends Annotation> annotation,
-                                                   OperateOnDeployment deployment, InjectionPoint.Scope defaultScope) {
-        if (annotation == ClassScope.class) {
-            return InjectionPoint.Scope.CLASS;
-        } else if (annotation == MethodScope.class) {
-            return InjectionPoint.Scope.METHOD;
-        } else if (annotation == DeploymentScope.class) {
-            if (deployment == null) {
-                throw new IllegalStateException("Drone marked as Deployment scoped, " +
-                        "but no @OperateOnDeployment found!");
-            }
-            return InjectionPoint.Scope.DEPLOYMENT;
+    static InjectionPoint.Lifecycle scopeForAnnotation(Class<? extends Annotation> annotation,
+                                                   OperateOnDeployment deployment, InjectionPoint.Lifecycle defaultLifecycle) {
+        if (annotation == ClassLifecycle.class) {
+            return InjectionPoint.Lifecycle.CLASS;
+        } else if (annotation == MethodLifecycle.class) {
+            return InjectionPoint.Lifecycle.METHOD;
         } else {
             if (deployment != null) {
-                return InjectionPoint.Scope.DEPLOYMENT;
+                return InjectionPoint.Lifecycle.DEPLOYMENT;
             } else {
-                return defaultScope;
+                return defaultLifecycle;
             }
         }
     }

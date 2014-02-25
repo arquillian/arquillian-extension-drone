@@ -17,8 +17,8 @@
 package org.jboss.arquillian.drone.impl;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
 import org.jboss.arquillian.drone.api.annotation.Qualifier;
-import org.jboss.arquillian.drone.api.annotation.Scope;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -336,7 +336,7 @@ final class SecurityActions {
     }
 
     static Class<? extends Annotation> getScope(Annotation[] annotations) {
-        List<Class<? extends Annotation>> candidates = findAnnotationAnnotatedWith(Scope.class, annotations);
+        List<Class<? extends Annotation>> candidates = findAnnotationAnnotatedWith(DroneLifecycle.class, annotations);
 
         if (candidates.isEmpty()) {
             return null;
@@ -344,7 +344,7 @@ final class SecurityActions {
             return candidates.get(0);
         }
 
-        throw new IllegalStateException("Unable to determine Scope, multiple (" + candidates.size() + ") Scope " +
+        throw new IllegalStateException("Unable to determine Lifecycle, multiple (" + candidates.size() + ") Lifecycle " +
                 "annotations were present");
     }
 

@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
-import org.jboss.arquillian.drone.spi.DeploymentScopedInjectionPoint;
+import org.jboss.arquillian.drone.spi.DeploymentLifecycleInjectionPoint;
 import org.jboss.arquillian.drone.spi.Filter;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
@@ -37,11 +37,11 @@ public class DeploymentFilter implements Filter {
 
     @Override
     public boolean accept(InjectionPoint<?> injectionPoint) {
-        if(!DeploymentScopedInjectionPoint.class.isAssignableFrom(injectionPoint.getClass())) {
+        if(!DeploymentLifecycleInjectionPoint.class.isAssignableFrom(injectionPoint.getClass())) {
             return false;
         }
 
-        DeploymentScopedInjectionPoint<?> castInjectionPoint = (DeploymentScopedInjectionPoint<?>)injectionPoint;
+        DeploymentLifecycleInjectionPoint<?> castInjectionPoint = (DeploymentLifecycleInjectionPoint<?>)injectionPoint;
         Matcher matcher = pattern.matcher(castInjectionPoint.getDeployment());
         return matcher.matches();
     }

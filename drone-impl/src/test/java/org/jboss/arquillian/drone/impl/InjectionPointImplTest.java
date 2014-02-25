@@ -28,9 +28,9 @@ public class InjectionPointImplTest {
     public void testClassScopeEquality() {
         // given
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.CLASS);
+                Default.class, InjectionPoint.Lifecycle.CLASS);
         InjectionPoint<MockDrone> injectionPoint1 = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.CLASS);
+                Default.class, InjectionPoint.Lifecycle.CLASS);
         // then
         Assert.assertEquals("Injection points are equal", injectionPoint, injectionPoint1);
     }
@@ -39,9 +39,9 @@ public class InjectionPointImplTest {
     public void testMethodScopeEquality() {
         // given
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.METHOD);
+                Default.class, InjectionPoint.Lifecycle.METHOD);
         InjectionPoint<MockDrone> injectionPoint1 = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.METHOD);
+                Default.class, InjectionPoint.Lifecycle.METHOD);
         // then
         Assert.assertEquals("Injection points are equal", injectionPoint, injectionPoint1);
     }
@@ -50,9 +50,9 @@ public class InjectionPointImplTest {
     public void testDeploymentScopeEquality() {
         // given
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.DEPLOYMENT);
+                Default.class, InjectionPoint.Lifecycle.DEPLOYMENT);
         InjectionPoint<MockDrone> injectionPoint1 = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Scope.DEPLOYMENT);
+                Default.class, InjectionPoint.Lifecycle.DEPLOYMENT);
         // then
         Assert.assertEquals("Injection points are equal", injectionPoint, injectionPoint1);
     }
@@ -83,11 +83,11 @@ public class InjectionPointImplTest {
     public void testVariousScopeInequality() {
         // given
         InjectionPoint<MockDrone> classScopePoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                null, InjectionPoint.Scope.CLASS);
+                null, InjectionPoint.Lifecycle.CLASS);
         InjectionPoint<MockDrone> methodScopePoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                null, InjectionPoint.Scope.METHOD);
+                null, InjectionPoint.Lifecycle.METHOD);
         InjectionPoint<MockDrone> deploymentScopePoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
-                null, InjectionPoint.Scope.DEPLOYMENT);
+                null, InjectionPoint.Lifecycle.DEPLOYMENT);
 
         // then
         Assert.assertNotSame("Injection points aren't equal", classScopePoint, methodScopePoint);

@@ -16,18 +16,19 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.drone.spi.DeploymentScopedInjectionPoint;
+import org.jboss.arquillian.drone.spi.DeploymentLifecycleInjectionPoint;
 
 import java.lang.annotation.Annotation;
 
-public class DeploymentScopedInjectionPointImpl<DRONE> extends InjectionPointImpl<DRONE> implements
-        DeploymentScopedInjectionPoint<DRONE> {
+public class DeploymentLifecycleInjectionPointImpl<DRONE> extends InjectionPointImpl<DRONE> implements
+        DeploymentLifecycleInjectionPoint<DRONE> {
 
     private final String deployment;
 
-    public DeploymentScopedInjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Scope
-            scope, String deployment) {
-        super(droneClass, qualifier, scope);
+    public DeploymentLifecycleInjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier,
+                                                 Lifecycle
+            lifecycle, String deployment) {
+        super(droneClass, qualifier, lifecycle);
 
         this.deployment = deployment;
     }

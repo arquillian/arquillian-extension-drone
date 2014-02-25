@@ -24,12 +24,12 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
 
     private final Class<DRONE> droneClass;
     private final Class<? extends Annotation> qualifier;
-    private final Scope scope;
+    private final Lifecycle lifecycle;
 
-    public InjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Scope scope) {
+    public InjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Lifecycle lifecycle) {
         this.droneClass = droneClass;
         this.qualifier = qualifier;
-        this.scope = scope;
+        this.lifecycle = lifecycle;
     }
 
     @Override
@@ -43,8 +43,8 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
     }
 
     @Override
-    public Scope getScope() {
-        return scope;
+    public Lifecycle getLifecycle() {
+        return lifecycle;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
 
         hash = 89 * hash + (droneClass != null ? droneClass.hashCode() : 0);
         hash = 89 * hash + (qualifier != null ? qualifier.hashCode() : 0);
-        hash = 89 * hash + (scope != null ? scope.hashCode() : 0);
+        hash = 89 * hash + (lifecycle != null ? lifecycle.hashCode() : 0);
 
         return hash;
     }
@@ -73,6 +73,6 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
     public String toString() {
         return "Drone type: " + (droneClass != null ? droneClass.getSimpleName() : " (null)") + ", " +
                 "Qualifier: " + (qualifier != null ? qualifier.getSimpleName() : " (null)") + ", " +
-                "Scope: " + (scope != null ? scope.name() : "(null)");
+                "Lifecycle: " + (lifecycle != null ? lifecycle.name() : "(null)");
     }
 }

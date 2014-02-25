@@ -1,8 +1,7 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.spi;
+package org.jboss.arquillian.drone.api.annotation.lifecycle;
 
-import java.lang.annotation.Annotation;
+import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
 
-/**
- * @author <a href="mailto:tkriz@redhat.com">Tadeas Kriz</a>
- */
-public interface InjectionPoint<DRONE> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    Class<DRONE> getDroneType();
-
-    Class<? extends Annotation> getQualifier();
-
-    Lifecycle getLifecycle();
-
-    public static enum Lifecycle {
-        METHOD, CLASS, DEPLOYMENT
-    }
+@DroneLifecycle
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ClassLifecycle {
 }
