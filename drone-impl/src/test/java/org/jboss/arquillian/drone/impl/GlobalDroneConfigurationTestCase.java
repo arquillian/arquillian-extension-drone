@@ -20,7 +20,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.drone.impl.DroneConfigurator.GlobalDroneConfiguration;
+import org.jboss.arquillian.drone.impl.DroneCore.GlobalDroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -52,8 +52,8 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DroneCore.class);
         extensions.add(DroneRegistrar.class);
-        extensions.add(DroneConfigurator.class);
     }
 
     @Before
@@ -77,7 +77,7 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
 
         // then
-        verifyTimeout(DroneConfigurator.GlobalDroneConfiguration.DEFAULT_INSTANTIATION_TIMEOUT);
+        verifyTimeout(DroneCore.GlobalDroneConfiguration.DEFAULT_INSTANTIATION_TIMEOUT);
     }
 
     @Test

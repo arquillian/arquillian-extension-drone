@@ -109,7 +109,7 @@ public class DroneContextImpl implements DroneContext {
     private <T> T instantiateDrone(CachingCallable<T> droneCallable) {
         // FIXME we need to make some kind of global drone configuration!
 
-        int timeout = getGlobalDroneConfiguration(DroneConfigurator.GlobalDroneConfiguration.class)
+        int timeout = getGlobalDroneConfiguration(DroneCore.GlobalDroneConfiguration.class)
                 .getInstantiationTimeoutInSeconds();
 
         try {
@@ -212,7 +212,8 @@ public class DroneContextImpl implements DroneContext {
     public void removeDrone(InjectionPoint<?> injectionPoint) {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
-            throw new IllegalStateException("Injection point doesn't exist!");
+            LOGGER.warning("Injection point doesn't exist!");
+            return;
         }
         if (pair.getDroneCallable() == null) {
             LOGGER.warning("Couldn't remove drone, because it wasn't set!");
@@ -225,7 +226,8 @@ public class DroneContextImpl implements DroneContext {
     public void removeDroneConfiguration(InjectionPoint<?> injectionPoint) {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
-            throw new IllegalStateException("Injection point doesn't exist!");
+            LOGGER.warning("Injection point doesn't exist!");
+            return;
         }
         if (pair.getDroneCallable() != null) {
             LOGGER.warning("Drone is still set, but you won't be able to access it anymore!");

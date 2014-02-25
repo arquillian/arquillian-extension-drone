@@ -28,27 +28,31 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class InjectionPoints {
 
-    private InjectionPoints() { }
+    private InjectionPoints() {
+    }
 
-    static List<InjectionPoint<?>> allInClass(Class<?> cls) {
+    static Set<InjectionPoint<?>> allInClass(Class<?> cls) {
         List<InjectionPoint<?>> injectionPoints = new ArrayList<InjectionPoint<?>>();
 
         injectionPoints.addAll(fieldsInClass(cls).values());
         for (InjectionPoint<?>[] methodInjectionPoints : parametersInClass(cls).values()) {
-            for(InjectionPoint<?> injectionPoint : methodInjectionPoints) {
-                if(injectionPoint == null) {
+            for (InjectionPoint<?> injectionPoint : methodInjectionPoints) {
+                if (injectionPoint == null) {
                     continue;
                 }
                 injectionPoints.add(injectionPoint);
             }
         }
 
-        return injectionPoints;
+        // We want no duplicates
+        return new HashSet<InjectionPoint<?>>(injectionPoints);
     }
 
     static Map<Field, InjectionPoint<?>> fieldsInClass(Class<?> cls) {

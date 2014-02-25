@@ -32,6 +32,15 @@ public class DeploymentScopedInjectionPointImpl<DRONE> extends InjectionPointImp
         this.deployment = deployment;
     }
 
+    @Override
+    public int hashCode() {
+        return 89 * super.hashCode() + (deployment != null ? deployment.hashCode() : 0);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 
     @Override
     public String getDeployment() {

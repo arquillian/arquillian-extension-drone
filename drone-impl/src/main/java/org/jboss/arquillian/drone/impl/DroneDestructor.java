@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -26,18 +25,15 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.command.DestroyDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
-import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Destructor of Drone instance. Disposes both class scoped Drones as well as method scoped ones.
@@ -67,80 +63,35 @@ public class DroneDestructor {
     private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
     @Inject
+    private Event<DestroyDrone> destroyDroneCommand;
+
+    @Inject
     private Instance<DroneContext> droneContext;
 
-    public void destroyMethodScopedDrones(@Observes After event, DroneContext context) {
+    public void destroyDrone(@Observes DestroyDrone command) {
+        DroneContext context = droneContext.get();
+        InjectionPoint<?> injectionPoint = command.getInjectionPoint();
+        if (injectionPoint == null || !context.isDroneConfigurationStored(injectionPoint)) {
+            return;
+        }
 
-        Method method = event.getTestMethod();
-        InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(method);
-
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            if (injectionPoint == null) {
-                continue;
-            }
-            if (injectionPoint.getScope() != InjectionPoint.Scope.METHOD) {
-                continue;
-            }
-
-            if (!context.isDroneInstantiated(injectionPoint)) {
-                continue;
-            }
-
+        boolean wasInstantiated = context.isDroneInstantiated(injectionPoint);
+        if (wasInstantiated) {
             Destructor destructor = getDestructorFor(injectionPoint.getDroneType());
-
             Object drone = context.getDrone(injectionPoint);
+
             droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, injectionPoint));
 
             destructor.destroyInstance(drone);
-            context.removeDrone(injectionPoint);
+        }
 
+        context.removeDrone(injectionPoint);
+        context.removeDroneConfiguration(injectionPoint);
+
+        if (wasInstantiated) {
             droneLifecycleEvent.fire(new AfterDroneDestroyed(injectionPoint));
         }
 
-    }
-
-    public void destroyDeploymentDrones(@Observes BeforeUnDeploy event) {
-        DroneContext context = droneContext.get();
-        DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
-        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, deploymentFilter);
-
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            destroyDrone(injectionPoint);
-        }
-
-    }
-
-    public void destroyClassDrones(@Observes AfterClass event) {
-        Class<?> cls = event.getTestClass().getJavaClass();
-        List<InjectionPoint<?>> injectionPoints = InjectionPoints.allInClass(cls);
-
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            /* FIXME add this after suite scoped drones are added
-            if(injectionPoint.getScope() == SUITE) {
-
-                continue;
-            }*/
-            destroyDrone(injectionPoint);
-        }
-    }
-
-    private void destroyDrone(InjectionPoint<?> injectionPoint) {
-        DroneContext context = droneContext.get();
-
-        if (context.isDroneInstantiated(injectionPoint)) {
-            Destructor destructor = getDestructorFor(injectionPoint.getDroneType());
-
-            Object drone = context.getDrone(injectionPoint);
-            droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, injectionPoint));
-            destructor.destroyInstance(drone);
-            droneLifecycleEvent.fire(new AfterDroneDestroyed(injectionPoint));
-        }
-        if (context.isFutureDroneStored(injectionPoint)) {
-            context.removeDrone(injectionPoint);
-        }
-        if (context.isDroneConfigurationStored(injectionPoint)) {
-            context.removeDroneConfiguration(injectionPoint);
-        }
     }
 
     @SuppressWarnings("rawtypes")

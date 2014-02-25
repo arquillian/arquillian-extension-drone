@@ -96,6 +96,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DroneCore.class);
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
         extensions.add(DroneEnhancer.class);
@@ -117,11 +118,11 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Instantiator>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
         //Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
         Mockito.when(serviceLoader.all(DroneInstanceEnhancer.class)).thenReturn(
