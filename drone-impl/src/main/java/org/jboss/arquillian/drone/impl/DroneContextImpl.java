@@ -32,10 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -47,10 +44,9 @@ import java.util.logging.Logger;
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  */
 public class DroneContextImpl implements DroneContext {
-
     private static final Logger LOGGER = Logger.getLogger(DroneContextImpl.class.getName());
 
-    private Map<InjectionPoint<?>, DronePair<?, ?>> dronePairMap = new HashMap<InjectionPoint<?>, DronePair<?, ?>>();
+    private final Map<InjectionPoint<?>, DronePair<?, ?>> dronePairMap;
 
     @Deprecated
     private DroneConfiguration<?> globalDroneConfiguration;
@@ -63,6 +59,10 @@ public class DroneContextImpl implements DroneContext {
 
     @Inject
     private Event<AfterDroneInstantiated> afterDroneInstantiatedEvent;
+
+    public DroneContextImpl() {
+        dronePairMap = new HashMap<InjectionPoint<?>, DronePair<?, ?>>();
+    }
 
     @Override
     public <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass) {

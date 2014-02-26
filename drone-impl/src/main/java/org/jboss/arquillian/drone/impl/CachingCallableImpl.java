@@ -22,8 +22,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class CachingCallableImpl<V> implements CachingCallable<V> {
 
-    private final AtomicBoolean valueCached = new AtomicBoolean();
+    private final AtomicBoolean valueCached;
     private V cachedValue;
+
+    public CachingCallableImpl() {
+        valueCached = new AtomicBoolean();
+    }
 
     @Override
     public boolean isValueCached() {
