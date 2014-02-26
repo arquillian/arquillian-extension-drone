@@ -40,7 +40,13 @@ public class DeploymentLifecycleInjectionPointImpl<DRONE> extends InjectionPoint
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        return hashCode() == obj.hashCode();
     }
 
     @Override
