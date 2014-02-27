@@ -48,31 +48,51 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 31;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        hash = 89 * hash + (droneClass != null ? droneClass.hashCode() : 0);
-        hash = 89 * hash + (qualifier != null ? qualifier.hashCode() : 0);
-        hash = 89 * hash + (lifecycle != null ? lifecycle.hashCode() : 0);
+        InjectionPointImpl that = (InjectionPointImpl) o;
 
-        return hash;
+        if (droneClass != null ? !droneClass.equals(that.droneClass) : that.droneClass != null) {
+            return false;
+        }
+        if (lifecycle != that.lifecycle) {
+            return false;
+        }
+        if (qualifier != null ? !qualifier.equals(that.qualifier) : that.qualifier != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-        return hashCode() == obj.hashCode();
+    public int hashCode() {
+        int result = droneClass != null ? droneClass.hashCode() : 0;
+        result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
+        result = 31 * result + (lifecycle != null ? lifecycle.hashCode() : 0);
+        return result;
     }
 
+    @Override
+    public String toString() {
+        return "InjectionPointImpl{" +
+                "droneClass=" + droneClass +
+                ", qualifier=" + qualifier +
+                ", lifecycle=" + lifecycle +
+                '}';
+    }
+
+/*
     @Override
     public String toString() {
         return "Drone type: " + (droneClass != null ? droneClass.getSimpleName() : " (null)") + ", " +
                 "Qualifier: " + (qualifier != null ? qualifier.getSimpleName() : " (null)") + ", " +
                 "Lifecycle: " + (lifecycle != null ? lifecycle.name() : "(null)");
-    }
+    }*/
 }

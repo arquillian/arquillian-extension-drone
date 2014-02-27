@@ -26,31 +26,42 @@ public class DeploymentLifecycleInjectionPointImpl<DRONE> extends InjectionPoint
     private final String deployment;
 
     public DeploymentLifecycleInjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier,
-                                                 Lifecycle
-            lifecycle, String deployment) {
+                                                 Lifecycle lifecycle, String deployment) {
         super(droneClass, qualifier, lifecycle);
 
         this.deployment = deployment;
     }
 
     @Override
-    public int hashCode() {
-        return 89 * super.hashCode() + (deployment != null ? deployment.hashCode() : 0);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-        return hashCode() == obj.hashCode();
-    }
-
-    @Override
     public String getDeployment() {
         return deployment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        DeploymentLifecycleInjectionPointImpl that = (DeploymentLifecycleInjectionPointImpl) o;
+
+        if (deployment != null ? !deployment.equals(that.deployment) : that.deployment != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (deployment != null ? deployment.hashCode() : 0);
+        return result;
     }
 }
