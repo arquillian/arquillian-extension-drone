@@ -86,8 +86,8 @@ public class DroneCore {
         beforeDroneExtensionConfiguredEvent.fire(new BeforeDroneExtensionConfigured());
 
         if (context.getGlobalDroneConfiguration(DroneConfiguration.class) == null) {
-            GlobalDroneFactory configurator = new GlobalDroneFactory();
-            GlobalDroneConfiguration configuration = configurator.createConfiguration(arquillianDescriptor.get(), null);
+            GlobalDroneConfiguration configuration =
+                    new GlobalDroneConfiguration().configure(arquillianDescriptor.get(), null);
             context.setGlobalDroneConfiguration(configuration);
         }
 
@@ -200,46 +200,6 @@ public class DroneCore {
         public void setInstantiationTimeoutInSeconds(int instantiationTimeoutInSeconds) {
             this.instantiationTimeoutInSeconds = instantiationTimeoutInSeconds;
         }
-    }
-
-    /**
-     * Global Drone configuration creator
-     *
-     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     */
-    @Deprecated
-    public static class GlobalDroneFactory implements Configurator<GlobalDrone, GlobalDroneConfiguration>,
-            Instantiator<GlobalDrone, GlobalDroneConfiguration>, Destructor<GlobalDrone> {
-        @Override
-        public GlobalDroneConfiguration createConfiguration(ArquillianDescriptor descriptor,
-                                                            InjectionPoint<GlobalDrone> injectionPoint) {
-            return new GlobalDroneConfiguration().configure(descriptor, null);
-        }
-
-        @Override
-        public GlobalDrone createInstance(GlobalDroneConfiguration configuration) {
-            return new GlobalDrone();
-        }
-
-        @Override
-        public void destroyInstance(GlobalDrone instance) {
-
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-    }
-
-    /**
-     * This is a virtual representation of global Drone browser. This way we allow extension creators to intercept
-     * configuration the very same way as any other configuration.
-     *
-     * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     */
-    @Deprecated
-    public static class GlobalDrone {
     }
 
 

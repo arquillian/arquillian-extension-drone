@@ -98,11 +98,11 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
+                Arrays.<Instantiator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(
-                Arrays.<Destructor>asList(new MockDroneFactory(), new DroneCore.GlobalDroneFactory()));
+                Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
         //Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
     }
