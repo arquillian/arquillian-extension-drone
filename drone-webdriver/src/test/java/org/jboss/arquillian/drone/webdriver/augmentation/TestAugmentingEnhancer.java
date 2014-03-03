@@ -16,14 +16,7 @@
  */
 package org.jboss.arquillian.drone.webdriver.augmentation;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.lang.reflect.Field;
 
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
@@ -37,14 +30,27 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class TestAugmentingEnhancer {
 
     private AugmentingEnhancer enhancer = new AugmentingEnhancer();
 
     @Test
-    public void testCanEnhance() {
-        RemoteWebDriver remoteDriver = new RemoteWebDriver(new DesiredCapabilities());
-        RemoteWebDriver mockedRemoteDriver = mock(RemoteWebDriver.class);
+    public void testCanEnhance() throws Exception {
+
+        Unsafe unsafe = new Unsafe();
+        RemoteWebDriver remoteDriver = unsafe.createInstanceWithoutInvokingConstructor(RemoteWebDriver.class);
+        RemoteWebDriver reusableRemoteDriver = mock(ReusableRemoteWebDriver.class);
         DroneAugmented augmentedDriver = mock(DroneAugmented.class);
         InstanceOrCallableInstance instance1 = mock(InstanceOrCallableInstance.class);
         InstanceOrCallableInstance instance2 = mock(InstanceOrCallableInstance.class);
@@ -54,24 +60,25 @@ public class TestAugmentingEnhancer {
         doReturn(remoteDriver).when(instance1).asInstance(RemoteWebDriver.class);
         doReturn(remoteDriver).when(instance1).asInstance(WebDriver.class);
         doReturn(augmentedDriver).when(instance1).asInstance(ReusableRemoteWebDriver.class);
-        
-        doReturn(new FirefoxDriver()).when(instance2).asInstance(WebDriver.class);
-        doReturn(mockedRemoteDriver).when(instance3).asInstance(WebDriver.class);
+
+        doReturn(unsafe.createInstanceWithoutInvokingConstructor(FirefoxDriver.class)).when(instance2)
+            .asInstance(WebDriver.class);
+        doReturn(reusableRemoteDriver).when(instance3).asInstance(WebDriver.class);
         doReturn(augmentedDriver).when(instance4).asInstance(WebDriver.class);
-        
+
         assertTrue("AugmentingEnhancer should enhance when droneType == RemoteWebDriver.class",
-                enhancer.canEnhance(instance1, RemoteWebDriver.class, Default.class));
+            enhancer.canEnhance(instance1, RemoteWebDriver.class, Default.class));
         assertTrue("AugmentingEnhancer should enhance when droneType == ReusableRemoteWebDriver.class",
-                enhancer.canEnhance(instance1, ReusableRemoteWebDriver.class, Default.class));
+            enhancer.canEnhance(instance1, ReusableRemoteWebDriver.class, Default.class));
         assertTrue("AugmentingEnhancer should enhance when real instance is RemoteWebDriver",
-                enhancer.canEnhance(instance1, WebDriver.class, Default.class));
+            enhancer.canEnhance(instance1, WebDriver.class, Default.class));
         assertTrue("AugmentingEnhancer should enhance when real instance already augmented!",
-                enhancer.canEnhance(instance4, WebDriver.class, Default.class));
-        
+            enhancer.canEnhance(instance4, WebDriver.class, Default.class));
+
         assertFalse("AugmentingEnhancer should not enhance when real instance is not RemoteWebDriver || ReusableRemoteWebDriver",
-                enhancer.canEnhance(instance2, WebDriver.class, Default.class));
+            enhancer.canEnhance(instance2, WebDriver.class, Default.class));
         assertFalse("AugmentingEnhancer should not enhance extensions of supported classes!",
-                enhancer.canEnhance(instance3, WebDriver.class, Default.class));
+            enhancer.canEnhance(instance3, WebDriver.class, Default.class));
     }
 
     @Test
@@ -107,5 +114,43 @@ public class TestAugmentingEnhancer {
 
         // then
         assertEquals(driver, deenhanced);
+    }
+
+    /**
+     * We need to instantiate a class without calling a constructor.
+     *
+     * This is needed because we don't want to pollute test environment with webdrivers not related to the browser tested and by
+     * default
+     * RemoteWebDriver spawns Firefox driver. Yet, we can't mock it as Augementer asks for an exact class match *
+     *
+     * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+     *
+     */
+    @SuppressWarnings("restriction")
+    private static class Unsafe {
+
+        private sun.misc.Unsafe unsafe;
+
+        Unsafe() {
+            try {
+                Field f = sun.misc.Unsafe.class.getDeclaredField("theUnsafe"); // Internal reference
+                f.setAccessible(true);
+                this.unsafe = (sun.misc.Unsafe) f.get(null);
+            } catch (SecurityException e) {
+                throw new AssertionError("Unable to get sun.misc.Unsafe object for testing, " + e.getMessage());
+            } catch (NoSuchFieldException e) {
+                throw new AssertionError("Unable to get sun.misc.Unsafe object for testing, " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                throw new AssertionError("Unable to get sun.misc.Unsafe object for testing, " + e.getMessage());
+            } catch (IllegalAccessException e) {
+                throw new AssertionError("Unable to get sun.misc.Unsafe object for testing, " + e.getMessage());
+            }
+
+        }
+
+        <T> T createInstanceWithoutInvokingConstructor(Class<T> clazz) throws InstantiationException {
+            return clazz.cast(unsafe.allocateInstance(clazz));
+        }
+
     }
 }
