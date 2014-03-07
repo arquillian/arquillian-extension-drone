@@ -16,8 +16,16 @@
  */
 package org.jboss.arquillian.drone.spi;
 
+/**
+ * Deployment scoped drones needs to be described by the deployment name.
+ *
+ * @param <DRONE> Type of drone.
+ */
 public interface DeploymentLifecycleInjectionPoint<DRONE> extends InjectionPoint<DRONE> {
 
-    String getDeployment();
+    /**
+     * Returns name of the deployment the drone is bound to.
+     */
+    String getDeploymentName();
 
 }

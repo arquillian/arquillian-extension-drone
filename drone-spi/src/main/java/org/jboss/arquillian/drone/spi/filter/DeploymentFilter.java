@@ -23,14 +23,23 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Filter for finding deployment injection points.
+ */
 public class DeploymentFilter implements Filter {
 
     private final Pattern pattern;
 
+    /**
+     * Creates a deployment filter which will match all the deployment injection points.
+     */
     public DeploymentFilter() {
         this(".*");
     }
 
+    /**
+     * Creates a deployment filter which will match deployment injection points, whose name matches the regex.
+     */
     public DeploymentFilter(String regex) {
         this.pattern = Pattern.compile(regex);
     }
@@ -42,7 +51,7 @@ public class DeploymentFilter implements Filter {
         }
 
         DeploymentLifecycleInjectionPoint<?> castInjectionPoint = (DeploymentLifecycleInjectionPoint<?>)injectionPoint;
-        Matcher matcher = pattern.matcher(castInjectionPoint.getDeployment());
+        Matcher matcher = pattern.matcher(castInjectionPoint.getDeploymentName());
         return matcher.matches();
     }
 }

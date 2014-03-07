@@ -21,9 +21,7 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
- * This event is fired after Drone instance is deenhanced via {@link DroneInstanceEnhancer}. It is supposed it will
- * never contain a
- * {@link Callable} instance.
+ * This event is fired after Drone instance is deenhanced via {@link DroneInstanceEnhancer}.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

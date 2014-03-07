@@ -23,8 +23,6 @@ import java.util.concurrent.Callable;
 
 /**
  * This event is fired after Drone instance callable is created and stored in {@link DroneContext}.
- * <p/>
- * By modifying the {@link Callable} you can change way how Drone instance will be created.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

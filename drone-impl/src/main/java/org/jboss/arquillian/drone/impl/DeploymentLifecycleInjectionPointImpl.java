@@ -33,7 +33,7 @@ public class DeploymentLifecycleInjectionPointImpl<DRONE> extends InjectionPoint
     }
 
     @Override
-    public String getDeployment() {
+    public String getDeploymentName() {
         return deployment;
     }
 

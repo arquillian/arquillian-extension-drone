@@ -18,6 +18,12 @@ package org.jboss.arquillian.drone.spi.command;
 
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
+/**
+ * Command event that will trigger the preparation of a drone. After fired,
+ * {@link org.jboss.arquillian.drone.spi.DroneContext} should contain
+ * {@link org.jboss.arquillian.drone.spi.DroneConfiguration} and {@link org.jboss.arquillian.drone.spi.CachingCallable}
+ * for specified injection point.
+ */
 public class PrepareDrone extends InjectionPointCommand {
 
     public PrepareDrone(InjectionPoint<?> injectionPoint) {

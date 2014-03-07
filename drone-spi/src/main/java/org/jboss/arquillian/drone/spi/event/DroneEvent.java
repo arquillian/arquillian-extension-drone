@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 public interface DroneEvent {
 
     /**
-     * Unique identifier for each drone configuration and instance
+     * Unique identifier for each drone configuration and instance.
      *
      * @return Injection point for drone
      */

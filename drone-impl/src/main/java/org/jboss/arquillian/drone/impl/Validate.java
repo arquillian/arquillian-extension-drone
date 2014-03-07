@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.text.MessageFormat;
+
 /**
  * Simple validation utility
  *
@@ -24,9 +26,9 @@ package org.jboss.arquillian.drone.impl;
  */
 class Validate {
 
-    public static void stateNotNull(Object object, String message) throws IllegalStateException {
+    public static void stateNotNull(Object object, String message, Object... messageArguments) throws IllegalStateException {
         if (object == null) {
-            throw new IllegalStateException(message);
+            throw new IllegalStateException(MessageFormat.format(message, messageArguments));
         }
     }
 
@@ -37,9 +39,9 @@ class Validate {
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if obj is null
      */
-    public static void notNull(final Object obj, final String message) throws IllegalArgumentException {
+    public static void notNull(final Object obj, final String message, Object... messageArguments) throws IllegalArgumentException {
         if (obj == null) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(MessageFormat.format(message, messageArguments));
         }
     }
 }

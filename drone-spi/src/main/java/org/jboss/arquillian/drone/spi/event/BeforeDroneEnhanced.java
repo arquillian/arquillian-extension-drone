@@ -20,9 +20,7 @@ import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
- * This event is fired before Drone instance is enhanced by {@link DroneInstanceEnhancer}. It is expected that it
- * will never contain a
- * {@link Callable} Drone, but rather a real instance.
+ * This event is fired before Drone instance is enhanced by {@link DroneInstanceEnhancer}.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

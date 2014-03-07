@@ -21,10 +21,16 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * Filter for finding injection points by the qualifier.
+ */
 public class QualifierFilter implements Filter {
 
     private final Class<? extends Annotation> qualifier;
 
+    /**
+     * Creates qualifier filter which will match injection points with specified qualifier.
+     */
     public QualifierFilter(Class<? extends Annotation> qualifier) {
         this.qualifier = qualifier;
     }

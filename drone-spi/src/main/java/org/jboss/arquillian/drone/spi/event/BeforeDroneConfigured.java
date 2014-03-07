@@ -23,8 +23,7 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
  * This event is fired before Drone configuration is created. You'd need to modify {@link ArquillianDescriptor} in
- * order to
- * change configuration before it is created.
+ * order to change configuration before it is created.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

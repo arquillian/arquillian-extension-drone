@@ -23,6 +23,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Declaration of class lifecycle, which means the drone will be prepared in {@link BeforeClass} and destroyed in
+ * {@link AfterClass}, resulting in one instance for all tests.
+ * <p/>
+ * NOTE: It's recommended to not use parameter, but field drone if you need one with class lifecycle.
+ */
 @DroneLifecycle
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

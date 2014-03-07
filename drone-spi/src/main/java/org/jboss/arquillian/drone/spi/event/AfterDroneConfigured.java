@@ -16,18 +16,14 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 
 /**
- * This event is called after Drone configuration is created. By observing this event, you can modify Drone configuration after
- * it's creation. It is expected that configuration object is never represented by a {@link Callable}.
+ * This event is called after Drone configuration is created. By observing this event,
+ * you can modify Drone configuration after it's creation.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 

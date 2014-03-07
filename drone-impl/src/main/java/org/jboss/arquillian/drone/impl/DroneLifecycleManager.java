@@ -27,17 +27,15 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
-import org.jboss.arquillian.drone.spi.Configurator;
-import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
-import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.command.DestroyDrone;
+import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
+import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
@@ -49,7 +47,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class DroneCore {
+public class DroneLifecycleManager {
 
     @Inject
     private Instance<Injector> injector;
@@ -122,16 +120,13 @@ public class DroneCore {
     }
 
     public void after(@Observes After event) {
-        InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(event.getTestMethod());
+        DroneContext context = droneContext.get();
+        LifecycleFilter lifecycleFilter = new LifecycleFilter(InjectionPoint.Lifecycle.METHOD);
+        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, lifecycleFilter);
 
-        for(InjectionPoint<?> injectionPoint : injectionPoints) {
-            if(injectionPoint == null || injectionPoint.getLifecycle() != InjectionPoint.Lifecycle.METHOD) {
-                continue;
-            }
-
+        for (InjectionPoint<?> injectionPoint : injectionPoints) {
             destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
         }
-
     }
 
     public void beforeUndeploy(@Observes BeforeUnDeploy event) {
@@ -139,21 +134,19 @@ public class DroneCore {
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
         List<InjectionPoint<?>> injectionPoints = context.find(Object.class, deploymentFilter);
 
-        for(InjectionPoint<?> injectionPoint : injectionPoints) {
+        for (InjectionPoint<?> injectionPoint : injectionPoints) {
             destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
         }
     }
 
     public void afterClass(@Observes AfterClass event) {
-        Class<?> testClass = event.getTestClass().getJavaClass();
+        DroneContext context = droneContext.get();
 
-        Set<InjectionPoint<?>> injectionPoints = InjectionPoints.allInClass(testClass);
+        LifecycleFilter lifecycleFilter = new LifecycleFilter(InjectionPoint.Lifecycle.CLASS,
+                InjectionPoint.Lifecycle.METHOD);
+        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, lifecycleFilter);
 
-        for(InjectionPoint<?> injectionPoint : injectionPoints) {
-            if(injectionPoint.getLifecycle() == InjectionPoint.Lifecycle.METHOD) {
-                continue;
-            }
-
+        for (InjectionPoint<?> injectionPoint : injectionPoints) {
             destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
         }
     }

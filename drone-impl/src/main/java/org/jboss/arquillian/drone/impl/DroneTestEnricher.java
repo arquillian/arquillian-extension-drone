@@ -22,12 +22,14 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,11 +51,15 @@ public class DroneTestEnricher implements TestEnricher {
     private Instance<DroneContext> droneContext;
 
     @Inject
+    private Event<PrepareDrone> prepareDroneCommand;
+
+    @Inject
     private Event<DroneLifecycleEvent> droneLifecycleEvent;
 
     @Override
     public void enrich(Object testCase) {
         DroneContext context = droneContext.get();
+
         Map<Field, InjectionPoint<?>> injectionPoints = InjectionPoints.fieldsInClass(testCase.getClass());
 
         for (Field field : injectionPoints.keySet()) {
@@ -65,12 +71,17 @@ public class DroneTestEnricher implements TestEnricher {
 
             InjectionPoint<?> injectionPoint = injectionPoints.get(field);
 
-            log.log(Level.FINE, "Injecting @Drone for field {0} @{1} {2}",
-                    new Object[] { injectionPoint.getDroneType().getSimpleName(),
-                            injectionPoint.getQualifier().getSimpleName(), field.getName() });
+            ensureInjectionPointPrepared(injectionPoint);
+
+            log.log(Level.FINE, "Injecting @Drone for field {0}, injection point {1}",
+                    new Object[] { injectionPoint.getDroneType().getSimpleName(), injectionPoint }
+            );
 
             Object drone = context.getDrone(injectionPoint);
-            Validate.notNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
+            Validate.stateNotNull(drone, "Retrieved a null from Drone Context, " +
+                            "which is not a valid Drone browser object. \nClass: {0}, field: {1}, injection point: {2}",
+                    testCase.getClass().getName(), field.getName(), injectionPoint
+            );
             SecurityActions.setFieldValue(testCase, field, drone);
         }
     }
@@ -88,16 +99,31 @@ public class DroneTestEnricher implements TestEnricher {
             }
 
 
-            log.log(Level.FINE, "Injecting @Drone for method {0}, argument {1} @{2} ",
-                    new Object[] { method.getName(),
-                            injectionPoint.getDroneType().getSimpleName(),
-                            injectionPoint.getQualifier().getSimpleName() });
+            log.log(Level.FINE, "Injecting @Drone for method {0}, injection point {1}",
+                    new Object[] { method.getName(), injectionPoint }
+            );
 
             Object drone = context.getDrone(injectionPoint);
-            Validate.notNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object");
+            Validate.stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object" +
+                    ".\nMethod: {0}, injection point: {1},", method.getName(), injectionPoint);
             resolution[i] = drone;
         }
 
         return resolution;
+    }
+
+    private void ensureInjectionPointPrepared(InjectionPoint<?> injectionPoint) {
+        if (!droneContext.get().isFutureDroneStored(injectionPoint)) {
+            if (injectionPoint.getLifecycle() != InjectionPoint.Lifecycle.DEPLOYMENT) {
+                log.log(Level.WARNING, "Injection point {0} was not prepared yet. It will be prepared now, " +
+                        "but it''s recommended that all drones with class lifecycle are prepared in " +
+                        "@BeforeClass!", injectionPoint);
+
+                prepareDroneCommand.fire(new PrepareDrone(injectionPoint));
+            } else {
+                throw new IllegalStateException(MessageFormat.format("Injection point {0} has deployment lifecycle " +
+                        "and has to be prepared in @BeforeClass.", injectionPoint));
+            }
+        }
     }
 }

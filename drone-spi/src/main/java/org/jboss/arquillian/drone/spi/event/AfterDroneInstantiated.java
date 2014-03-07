@@ -19,9 +19,7 @@ package org.jboss.arquillian.drone.spi.event;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
- * This event is fired after Drone callable is transformed into real Drone instance. This event is never expected to
- * recieve
- * {@link Callable} but it always contains real browser instance
+ * This event is fired after Drone callable is transformed into real Drone instance.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */

@@ -18,6 +18,12 @@ package org.jboss.arquillian.drone.spi.command;
 
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 
+/**
+ * Command event that will trigger the destruction of a drone. After fired,
+ * {@link org.jboss.arquillian.drone.spi.DroneContext} should no longer contain
+ * {@link org.jboss.arquillian.drone.spi.DroneConfiguration} and {@link org.jboss.arquillian.drone.spi.CachingCallable}
+ * for specified injection point.
+ */
 public class DestroyDrone extends InjectionPointCommand {
 
     public DestroyDrone(InjectionPoint<?> injectionPoint) {

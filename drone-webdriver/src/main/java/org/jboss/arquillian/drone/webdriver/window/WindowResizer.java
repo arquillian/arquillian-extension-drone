@@ -77,7 +77,7 @@ public class WindowResizer {
         Validate.stateNotNull(context, "DroneContext must not be null");
         WebDriverConfiguration configuration = context.getDroneConfiguration(injectionPoint, WebDriverConfiguration
                 .class);
-        Validate.stateNotNull(configuration, "WebDriver configuration mus null");
+        Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
         String dimensions = configuration.getDimensions();
 

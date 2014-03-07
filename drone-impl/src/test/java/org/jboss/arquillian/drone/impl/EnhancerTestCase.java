@@ -93,7 +93,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
-        extensions.add(DroneCore.class);
+        extensions.add(DroneLifecycleManager.class);
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
         extensions.add(DroneEnhancer.class);

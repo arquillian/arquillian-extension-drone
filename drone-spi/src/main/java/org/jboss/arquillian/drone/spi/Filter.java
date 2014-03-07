@@ -16,8 +16,17 @@
  */
 package org.jboss.arquillian.drone.spi;
 
+/**
+ * Utility class used for filtering injection points.
+ */
 public interface Filter {
 
+    /**
+     * Returns true if the injection point is accepted, false otherwise.
+     *
+     * @param injectionPoint injection point of the drone.
+     * @return
+     */
     boolean accept(InjectionPoint<?> injectionPoint);
 
 }

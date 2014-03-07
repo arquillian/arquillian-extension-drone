@@ -23,6 +23,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Declaration of method lifecycle, which means the drone will be prepared in {@link Before} and destroyed in
+ * {@link After}, resulting in fresh instance of drone for every test.
+ */
 @DroneLifecycle
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

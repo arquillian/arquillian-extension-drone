@@ -29,4 +29,5 @@ public class AfterDroneDestroyed extends BaseDroneEvent implements DroneLifecycl
     public AfterDroneDestroyed(InjectionPoint<?> injectionPoint) {
         super(injectionPoint);
     }
+
 }

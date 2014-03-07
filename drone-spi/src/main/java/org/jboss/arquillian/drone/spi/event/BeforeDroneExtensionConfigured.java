@@ -16,5 +16,8 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
+/**
+ * Event that is fired before the extension itself is configured.
+ */
 public class BeforeDroneExtensionConfigured {
 }

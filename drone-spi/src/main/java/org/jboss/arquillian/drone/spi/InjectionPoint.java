@@ -20,17 +20,42 @@ package org.jboss.arquillian.drone.spi;
 import java.lang.annotation.Annotation;
 
 /**
+ * Injection point is an unique description of a drone in code.
+ *
  * @author <a href="mailto:tkriz@redhat.com">Tadeas Kriz</a>
  */
 public interface InjectionPoint<DRONE> {
 
+    /**
+     * @return Type of drone to be injected.
+     */
     Class<DRONE> getDroneType();
 
+    /**
+     * @return Qualifier the drone is annotated with.
+     */
     Class<? extends Annotation> getQualifier();
 
+    /**
+     * @return Lifecycle of the drone.
+     */
     Lifecycle getLifecycle();
 
     public static enum Lifecycle {
-        METHOD, CLASS, DEPLOYMENT
+        /**
+         * Method lifecycle means the drone will be prepared in {@link Before} and destroyed in {@link After}.
+         */
+        METHOD,
+
+        /**
+         * Class lifecycle means the drone will be prepared in {@link BeforeClass} and destroyed in {@link AfterClass}.
+         */
+        CLASS,
+
+        /**
+         * Deployment lifecycle means the drone will be prepared in {@link BeforeClass} and destroyed in
+         * {@link BeforeUnDeploy}.
+         */
+        DEPLOYMENT
     }
 }

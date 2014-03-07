@@ -27,6 +27,7 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,17 +79,18 @@ public class DroneContextImpl implements DroneContext {
     public <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException {
         DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
         if (pair == null) {
-            throw new IllegalArgumentException("Injection point doesn't exist!");
+            throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}", injectionPoint));
         }
 
         CachingCallable<T> droneCallable = pair.getDroneCallable();
         if (droneCallable == null) {
-            throw new IllegalStateException("Drone callable not stored yet!");
+            throw new IllegalStateException(MessageFormat.format("Drone callable not stored yet for injection point " +
+                    "{0}!", injectionPoint));
         }
 
         boolean newInstance = !droneCallable.isValueCached();
         if (newInstance) {
-            beforeDroneInstantiatedEvent.fire(new BeforeDroneInstantiated(droneCallable, injectionPoint));
+            beforeDroneInstantiatedEvent.fire(new BeforeDroneInstantiated(injectionPoint));
         }
 
         T drone = instantiateDrone(droneCallable);
@@ -109,7 +111,7 @@ public class DroneContextImpl implements DroneContext {
     private <T> T instantiateDrone(CachingCallable<T> droneCallable) {
         // FIXME we need to make some kind of global drone configuration!
 
-        int timeout = getGlobalDroneConfiguration(DroneCore.GlobalDroneConfiguration.class)
+        int timeout = getGlobalDroneConfiguration(DroneLifecycleManager.GlobalDroneConfiguration.class)
                 .getInstantiationTimeoutInSeconds();
 
         try {
@@ -139,12 +141,14 @@ public class DroneContextImpl implements DroneContext {
             configurationClass) throws IllegalArgumentException {
         DronePair<?, C> pair = (DronePair<?, C>) dronePairMap.get(injectionPoint);
         if (pair == null) {
-            throw new IllegalArgumentException("Injection point doesn't exist!");
+            throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
+                    injectionPoint));
         }
 
         C configuration = pair.getConfiguration();
         if (configuration == null) {
-            throw new IllegalStateException("Drone configuration not stored yet!");
+            throw new IllegalStateException(MessageFormat.format("Drone configuration not stored yet! Injection " +
+                    "point: {0}", injectionPoint));
         }
 
         return configuration;
@@ -154,11 +158,12 @@ public class DroneContextImpl implements DroneContext {
     public <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone) {
         DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
         if (pair == null) {
-            throw new IllegalArgumentException("Injection point doesn't exist!");
+            throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
+                    injectionPoint));
         }
 
         if (pair.getDroneCallable() != null) {
-            LOGGER.log(Level.FINE, "Future drone replaced at point: " + injectionPoint.toString());
+            LOGGER.log(Level.FINE, "Future drone replaced at point {0}", injectionPoint);
         }
 
         pair.setDroneCallable(drone);
@@ -170,7 +175,8 @@ public class DroneContextImpl implements DroneContext {
         DronePair<T, C> pair = (DronePair<T, C>) dronePairMap.get(injectionPoint);
         if (pair != null) {
             // FIXME shouldn't we just handle this peacefully with warning?
-            throw new IllegalStateException("Injection point already exists!");
+            throw new IllegalStateException(MessageFormat.format("Injection point already exists: {0}",
+                    injectionPoint));
         }
 
         pair = new DronePair<T, C>();
@@ -212,11 +218,13 @@ public class DroneContextImpl implements DroneContext {
     public void removeDrone(InjectionPoint<?> injectionPoint) {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
-            LOGGER.warning("Injection point doesn't exist!");
+            LOGGER.log(Level.WARNING, "Couldn''t remove drone, because it wasn''t prepared! Injection point: {0}",
+                    injectionPoint);
             return;
         }
         if (pair.getDroneCallable() == null) {
-            LOGGER.warning("Couldn't remove drone, because it wasn't set!");
+            LOGGER.log(Level.WARNING, "Couldn''t remove drone, because it wasn''t set! Injection point: {0}",
+                    injectionPoint);
         }
 
         pair.setDroneCallable(null);
@@ -226,14 +234,17 @@ public class DroneContextImpl implements DroneContext {
     public void removeDroneConfiguration(InjectionPoint<?> injectionPoint) {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
-            LOGGER.warning("Injection point doesn't exist!");
+            LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because the injection point wasn''t prepared. " +
+                    "Injection point: {0}", injectionPoint);
             return;
         }
         if (pair.getDroneCallable() != null) {
-            LOGGER.warning("Drone is still set, but you won't be able to access it anymore!");
+            LOGGER.log(Level.WARNING, "Drone is still set, but you won''t be able to access it anymore! Injection " +
+                    "point: {0}", injectionPoint);
         }
         if (pair.getConfiguration() == null) {
-            LOGGER.warning("Couldn't remove configuration, because it wasn't set!");
+            LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because it wasn''t set! Injection point: {0}",
+                    injectionPoint);
         }
 
         pair.setConfiguration(null);

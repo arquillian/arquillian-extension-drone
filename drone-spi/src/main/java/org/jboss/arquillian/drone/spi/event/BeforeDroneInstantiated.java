@@ -16,29 +16,18 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
- * This event is fired before Drone {@link Callable} is transformed into real instance via {@link Instantiator}. It
- * is supposed
- * that it will always contain a {@link Callable} instance.
+ * This event is fired before Drone {@link CachingCallable} is transformed into real instance via {@link Instantiator}.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class BeforeDroneInstantiated extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    private final CachingCallable<?> droneCallable;
-
-    public <T> BeforeDroneInstantiated(CachingCallable<T> droneCallable, InjectionPoint<T> injectionPoint) {
+    public <T> BeforeDroneInstantiated(InjectionPoint<T> injectionPoint) {
         super(injectionPoint);
-        this.droneCallable = droneCallable;
-    }
-
-    public CachingCallable<?> getDroneCallable() {
-        return droneCallable;
     }
 
 }

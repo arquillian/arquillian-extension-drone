@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.impl;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
-import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -37,6 +36,7 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,8 +97,9 @@ public class DroneConfigurator {
         Validate.stateNotNull(descriptor, "ArquillianDescriptor should not be null");
         Validate.stateNotNull(context, "DroneContext should be available while working with method scoped instances");
 
-        if(context.isDroneConfigurationStored(injectionPoint)) {
-            logger.warning("Couldn't configure drone, because it was already configured!");
+        if (!context.isDroneConfigurationStored(injectionPoint)) {
+            logger.log(Level.WARNING, "Couldn''t configure drone for injection point {0}, " +
+                    "because it was already configured!", injectionPoint);
             return;
         }
 
@@ -122,8 +123,8 @@ public class DroneConfigurator {
     private <DRONE> void createDroneCallable(DroneRegistry registry, final InjectionPoint<DRONE> injectionPoint) {
         final DroneContext context = droneContext.get();
 
-        if(context.isFutureDroneStored(injectionPoint)) {
-            logger.warning("Couldn't create drone callable, because it was already created!");
+        if (context.isFutureDroneStored(injectionPoint)) {
+            logger.log(Level.WARNING, "Couldn''t create drone callable for injection point {0}, because it was already created!", injectionPoint);
             return;
         }
 
