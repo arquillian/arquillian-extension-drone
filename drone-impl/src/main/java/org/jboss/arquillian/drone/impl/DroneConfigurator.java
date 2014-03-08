@@ -97,7 +97,7 @@ public class DroneConfigurator {
         Validate.stateNotNull(descriptor, "ArquillianDescriptor should not be null");
         Validate.stateNotNull(context, "DroneContext should be available while working with method scoped instances");
 
-        if (!context.isDroneConfigurationStored(injectionPoint)) {
+        if (context.isDroneConfigurationStored(injectionPoint)) {
             logger.log(Level.WARNING, "Couldn''t configure drone for injection point {0}, " +
                     "because it was already configured!", injectionPoint);
             return;
