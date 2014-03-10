@@ -98,6 +98,7 @@ public class DroneTestEnricher implements TestEnricher {
                 continue;
             }
 
+            ensureInjectionPointPrepared(injectionPoint);
 
             log.log(Level.FINE, "Injecting @Drone for method {0}, injection point {1}",
                     new Object[] { method.getName(), injectionPoint }

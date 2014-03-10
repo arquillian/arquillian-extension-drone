@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.impl;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
@@ -43,7 +44,9 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -67,6 +70,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
     @Mock
     private ServiceLoader serviceLoader;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -217,6 +223,45 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertFalse("Drone destroyed", context.isDroneInstantiated(injectionPoint));
     }
 
+    @Test
+    public void testClassWithoutArquillianLifecycle() throws Exception {
+        Object instance = new NonArquillianClass();
+        Method testMethod = NonArquillianClass.class.getMethod("someMethod", MockDrone.class);
+
+        fire(new BeforeSuite());
+
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
+
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        testEnricher.enrich(instance);
+        Object[] parameters = testEnricher.resolve(testMethod);
+
+        InjectionPoint<MockDrone> classInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Default.class, InjectionPoint.Lifecycle.CLASS);
+        Assert.assertTrue("Class drone created", context.isDroneInstantiated(classInjectionPoint));
+
+        InjectionPoint<MockDrone> methodInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Default.class, InjectionPoint.Lifecycle.METHOD);
+        Assert.assertTrue("Method drone created", context.isDroneInstantiated(methodInjectionPoint));
+
+        testMethod.invoke(instance, parameters);
+    }
+
+    @Test()
+    public void testClassWithoutArquillianLifecycleWithDeploymentDrone() throws Exception {
+        Object instance = new NonArquillianClassWithDeploymentDrone();
+
+        fire(new BeforeSuite());
+
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+
+        exception.expect(IllegalStateException.class);
+        exception.expectMessage("has deployment lifecycle");
+        testEnricher.enrich(instance);
+    }
+
     static class EnrichedClass {
         @Drone
         @Different
@@ -235,6 +280,21 @@ public class EnricherTestCase extends AbstractTestTestBase {
     static class MethodEnrichedClassUnregistered {
         public void testMethodEnrichment(@Drone Object unused) {
         }
+    }
+
+    static class NonArquillianClass {
+        @Drone
+        MockDrone classDrone;
+
+        public void someMethod(@Drone MockDrone methodDrone) {
+
+        }
+    }
+
+    static class NonArquillianClassWithDeploymentDrone {
+        @Drone
+        @OperateOnDeployment("deployment")
+        MockDrone deploymentDrone;
     }
 
 }

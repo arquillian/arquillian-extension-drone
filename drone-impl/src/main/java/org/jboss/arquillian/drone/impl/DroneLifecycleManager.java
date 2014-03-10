@@ -25,6 +25,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -72,14 +73,17 @@ public class DroneLifecycleManager {
     private Event<DestroyDrone> destroyDroneCommand;
 
     @SuppressWarnings("unused")
-    public void beforeSuite(@Observes BeforeSuite event) {
-        if (droneContext.get() != null) {
-            // Drone extension is already configured
-            return;
-        }
-
+    public void managerStarted(@Observes ManagerStarted event) {
         DroneContext context = injector.get().inject(new DroneContextImpl());
         droneContext.set(context);
+    }
+
+    public void configureDroneExtension(@Observes BeforeSuite event) {
+        DroneContext context = droneContext.get();
+
+        if (context.getGlobalDroneConfiguration(DroneConfiguration.class) != null) {
+            return;
+        }
 
         beforeDroneExtensionConfiguredEvent.fire(new BeforeDroneExtensionConfigured());
 
@@ -91,6 +95,7 @@ public class DroneLifecycleManager {
 
         afterDroneExtensionConfiguredEvent.fire(new AfterDroneExtensionConfigured());
     }
+
 
     @SuppressWarnings("unused")
     public void beforeClass(@Observes BeforeClass event) {
