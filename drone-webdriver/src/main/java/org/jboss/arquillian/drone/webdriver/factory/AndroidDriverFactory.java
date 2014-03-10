@@ -16,25 +16,26 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for AndroidDriver.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
+ * AndroidDriver.
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
- *
  */
 public class AndroidDriverFactory extends AbstractWebDriverFactory<AndroidDriver> implements
         Configurator<AndroidDriver, WebDriverConfiguration>, Instantiator<AndroidDriver, WebDriverConfiguration>,
@@ -67,7 +68,8 @@ public class AndroidDriverFactory extends AbstractWebDriverFactory<AndroidDriver
     /*
      * (non-Javadoc)
      *
-     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
+     * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi
+     * .DroneConfiguration)
      */
     @Override
     public AndroidDriver createInstance(WebDriverConfiguration configuration) {
@@ -85,24 +87,27 @@ public class AndroidDriverFactory extends AbstractWebDriverFactory<AndroidDriver
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { URL.class,
                 DesiredCapabilities.class },
-                new Object[] { remoteAddress, new DesiredCapabilities(configuration.getCapabilities()) }, AndroidDriver.class);
+                new Object[] { remoteAddress, new DesiredCapabilities(configuration.getCapabilities()) },
+                AndroidDriver.class);
 
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl.configuration.api.
+     * @see org.jboss.arquillian.core.spi.LoadableExtension#createConfiguration(org.jboss.arquillian.impl
+     * .configuration.api.
      * ArquillianDescriptor, java.lang.Class)
      */
+
     @Override
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        WebDriverConfiguration configuration = super.createConfiguration(descriptor, qualifier);
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<AndroidDriver>
+            injectionPoint) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, injectionPoint);
         if (!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing AndroidDriver configuration to be remote-based.");
         }
-
         return configuration;
     }
 

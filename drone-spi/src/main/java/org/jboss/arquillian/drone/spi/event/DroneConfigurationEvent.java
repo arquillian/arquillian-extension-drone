@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.spi.event;
  * Representation of event related to Drone configuration.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface DroneConfigurationEvent extends DroneEvent {
 

@@ -21,9 +21,12 @@ import java.lang.annotation.Annotation;
 /**
  * Enhances Drone instance in order to give it additional capabilities.
  *
+ *
+ * @deprecated
  * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
  * @author Lukas Fryc
  */
+@Deprecated
 public interface DroneInstanceEnhancer<T> extends Sortable {
 
     /**

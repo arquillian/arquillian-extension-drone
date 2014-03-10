@@ -91,5 +91,6 @@ public interface DroneConfiguration<C extends DroneConfiguration<C>> {
      * @param qualifier Qualifier
      * @return Configured configuration instance
      */
+    @Deprecated
     C configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier);
 }

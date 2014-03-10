@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
  *
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  */
+@Deprecated
 public interface InstanceOrCallableInstance {
 
     /**

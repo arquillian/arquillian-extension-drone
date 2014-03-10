@@ -16,13 +16,11 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
@@ -32,25 +30,31 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
@@ -67,13 +71,17 @@ public class EnricherTestCase extends AbstractTestTestBase {
     @Mock
     private ServiceLoader serviceLoader;
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DroneLifecycleManager.class);
         extensions.add(DroneRegistrar.class);
         extensions.add(DroneConfigurator.class);
-        extensions.add(DroneCallableCreator.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
+        extensions.add(DroneExecutorService.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -84,17 +92,16 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
-        DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
-        getManager().inject(instanceCreator);
+        //DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
+        getManager().inject(testEnricher);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Configurator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator> asList(new MockDroneFactory(), new DroneConfigurator.GlobalDroneFactory()));
-        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor> asList(new MockDroneFactory(),
-                new DroneConfigurator.GlobalDroneFactory()));
+                Arrays.<Instantiator>asList(new MockDroneFactory()));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
 
     }
@@ -104,25 +111,32 @@ public class EnricherTestCase extends AbstractTestTestBase {
         getManager().getContext(ClassContext.class).activate(EnrichedClass.class);
         fire(new BeforeSuite());
 
+        DroneContext context = getManager()
+                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
+
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+        Assert.assertTrue("Instantiator is of mock type",
+                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(EnrichedClass.class));
 
-        DroneContext context = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("Drone object holder was created in the context", context);
+        InjectionPoint<MockDrone> invalidInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Default.class, InjectionPoint.Lifecycle.CLASS);
+        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Different.class, InjectionPoint.Lifecycle.CLASS);
 
-        InstanceOrCallableInstance configuration = context.get(MockDroneConfiguration.class, Default.class);
-        Assert.assertNull("There is no MockDroneConfiguration with @Default qualifier", configuration);
-
-        configuration = context.get(MockDroneConfiguration.class, Different.class);
-        Assert.assertNotNull("MockDroneConfiguration is stored with @DifferentMock qualifier", configuration);
-
-        Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD, configuration
-                .asInstance(MockDroneConfiguration.class).getField());
+        MockDroneConfiguration configuration = context.getDroneConfiguration(injectionPoint,
+                MockDroneConfiguration.class);
+        Assert.assertFalse("There is no MockDroneConfiguration with @Default qualifier",
+                context.isDroneConfigurationStored(invalidInjectionPoint));
+        Assert.assertNotNull("MockDroneConfiguration is stored with @Different qualifier", configuration);
+        Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD,
+                configuration.getField());
 
         getManager().getContext(ClassContext.class).deactivate();
         getManager().getContext(ClassContext.class).destroy(EnrichedClass.class);
@@ -138,28 +152,35 @@ public class EnricherTestCase extends AbstractTestTestBase {
         getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
 
+        DroneContext context = getManager()
+                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("DroneContext was created in the application context", context);
+
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+        Assert.assertTrue("Instantiator is of mock type",
+                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
-        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("DroneContext object holder was created in the class context for method", dc);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
 
-        InstanceOrCallableInstance droneInstance = dc.get(MockDrone.class, MethodArgumentOne.class);
-        Assert.assertNotNull("Enricher created the instance of mock browser", droneInstance);
+        testEnricher.enrich(instance);
+        Object[] parameters = testEnricher.resolve(testMethod);
 
-        droneInstance.set(new MockDrone(METHOD_ARGUMENT_ONE_FIELD));
-        fire(new AfterDroneInstantiated(droneInstance, MockDrone.class, MethodArgumentOne.class));
+        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                MethodArgumentOne.class, InjectionPoint.Lifecycle.METHOD);
+        Assert.assertTrue("Drone created", context.isDroneInstantiated(injectionPoint));
+
+        testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
-        droneInstance = dc.get(MockDrone.class, MethodArgumentOne.class);
-        Assert.assertNull("Enricher created the instance of mock browser was destroyed", droneInstance);
-
+        fire(new AfterClass(MethodEnrichedClass.class));
+        Assert.assertFalse("Drone destroyed", context.isDroneInstantiated(injectionPoint));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -172,22 +193,73 @@ public class EnricherTestCase extends AbstractTestTestBase {
         getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
 
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
+
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
                 registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+        Assert.assertTrue("Instantiator is of mock type",
+                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
         fire(new Before(instance, testMethod));
 
-        DroneContext dc = getManager().getContext(ClassContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("Drone context object holder was created in the context", dc);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        testEnricher.enrich(instance);
+        Object[] parameters = testEnricher.resolve(testMethod);
+
+        InjectionPoint<Object> injectionPoint = new InjectionPointImpl<Object>(Object.class, Default.class,
+                InjectionPoint.Lifecycle.METHOD);
+        Assert.assertTrue("Drone created", context.isDroneInstantiated(injectionPoint));
+
+        testMethod.invoke(instance, parameters);
+
+        fire(new After(instance, testMethod));
+        fire(new AfterClass(MethodEnrichedClassUnregistered.class));
+        Assert.assertFalse("Drone destroyed", context.isDroneInstantiated(injectionPoint));
+    }
+
+    @Test
+    public void testClassWithoutArquillianLifecycle() throws Exception {
+        Object instance = new NonArquillianClass();
+        Method testMethod = NonArquillianClass.class.getMethod("someMethod", MockDrone.class);
+
+        fire(new BeforeSuite());
+
+        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
+                .class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-        getManager().inject(testEnricher);
+        testEnricher.enrich(instance);
         Object[] parameters = testEnricher.resolve(testMethod);
+
+        InjectionPoint<MockDrone> classInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Default.class, InjectionPoint.Lifecycle.CLASS);
+        Assert.assertTrue("Class drone created", context.isDroneInstantiated(classInjectionPoint));
+
+        InjectionPoint<MockDrone> methodInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class,
+                Default.class, InjectionPoint.Lifecycle.METHOD);
+        Assert.assertTrue("Method drone created", context.isDroneInstantiated(methodInjectionPoint));
+
         testMethod.invoke(instance, parameters);
+    }
+
+    @Test()
+    public void testClassWithoutArquillianLifecycleWithDeploymentDrone() throws Exception {
+        Object instance = new NonArquillianClassWithDeploymentDrone();
+
+        fire(new BeforeSuite());
+
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+
+        exception.expect(IllegalStateException.class);
+        exception.expectMessage("has deployment lifecycle");
+        testEnricher.enrich(instance);
     }
 
     static class EnrichedClass {
@@ -208,6 +280,21 @@ public class EnricherTestCase extends AbstractTestTestBase {
     static class MethodEnrichedClassUnregistered {
         public void testMethodEnrichment(@Drone Object unused) {
         }
+    }
+
+    static class NonArquillianClass {
+        @Drone
+        MockDrone classDrone;
+
+        public void someMethod(@Drone MockDrone methodDrone) {
+
+        }
+    }
+
+    static class NonArquillianClassWithDeploymentDrone {
+        @Drone
+        @OperateOnDeployment("deployment")
+        MockDrone deploymentDrone;
     }
 
 }
