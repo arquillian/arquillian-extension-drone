@@ -63,11 +63,13 @@ public class ReusedSession implements Serializable {
             String key = capability.getKey();
             Object value = capability.getValue();
             if (value instanceof Serializable) {
+                // here we try to Serialize object. Serialization utils will apply a whitelist, so it might fail even if
+                // object was marked as Serializable. In such case we do not put the object into capabilities
                 try {
                     SerializationUtils.serializeToBytes((Serializable) value);
                     capabilitiesForReuse.setCapability(capability.getKey(), capability.getValue());
                 } catch (IOException e) {
-                    log.log(Level.WARNING,
+                    log.log(Level.FINE,
                         "Capability {0} has unserializable value of type {1} and value {2}. Caused by {3}.",
                         new Object[] {
                             key,

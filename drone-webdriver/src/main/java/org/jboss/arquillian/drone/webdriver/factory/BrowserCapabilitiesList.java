@@ -14,29 +14,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class BrowserCapabilitiesList {
 
-    public static class Android implements BrowserCapabilities {
-        @Override
-        public String getImplementationClassName() {
-            return "org.openqa.selenium.android.AndroidDriver";
-        }
-
-        @Override
-        public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.android().asMap();
-        }
-
-        @Override
-        public String getReadableName() {
-            return "android";
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-
-    };
-
     public static class Chrome implements BrowserCapabilities {
 
         @Override
@@ -127,30 +104,6 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
-
-    public static class IPhone implements BrowserCapabilities {
-
-        @Override
-        public String getImplementationClassName() {
-            return "org.openqa.selenium.iphone.IPhoneDriver";
-        }
-
-        @Override
-        public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.iphone().asMap();
-        }
-
-        @Override
-        public String getReadableName() {
-            return "iphone";
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-
     };
 
     public static class Opera implements BrowserCapabilities {

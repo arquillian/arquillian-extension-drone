@@ -34,9 +34,6 @@ class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
         if ("phantomjs".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
         }
-        else if ("android".equals(browser)) {
-            registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Android());
-        }
         else if ("chrome".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Chrome());
         }
@@ -48,9 +45,6 @@ class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
         }
         else if ("internetExplorer".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.InternetExplorer());
-        }
-        else if ("iphone".equals(browser)) {
-            registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.IPhone());
         }
         else if ("opera".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());

@@ -59,6 +59,8 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
             LinkedList<ByteArray> queue = null;
 
+            log.log(Level.FINER, "Pulling key {0} from Session Store", key);
+
             // find key
             for (Entry<ByteArray, LinkedList<ByteArray>> entry : rawStore.entrySet()) {
                 InitializationParameter candidate = entry.getKey().as(InitializationParameter.class);
@@ -119,7 +121,9 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             TimeStampedSession timeStampedSession = new TimeStampedSession(rawSession);
             rawList.add(ByteArray.fromObject(timeStampedSession));
 
-            log.log(Level.FINE, "Stored session {0}", timeStampedSession.getSession().getSessionId());
+            log.log(Level.FINE, "Stored session {0} within {1}", new Object[] {
+                timeStampedSession.getSession().getSessionId(),
+                key });
         }
     }
 

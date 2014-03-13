@@ -18,16 +18,13 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import org.openqa.selenium.Capabilities;
 
 /**
- * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 public class InitializationParameter implements Serializable {
-    private static final Logger log = Logger.getLogger(ReusedSessionStoreImpl.class.getName());
-
     private static final long serialVersionUID = 7249154351129725604L;
 
     private final URL url;
@@ -36,7 +33,7 @@ public class InitializationParameter implements Serializable {
 
     public InitializationParameter(URL url, Capabilities desiredCapabilities) {
         this.url = url;
-        // we need this hack in order to fix http://code.google.com/p/selenium/issues/detail?id=6657
+        // we need to identify what capabilities cannot be serialized/deserialized and reject those from Initialization key
         this.desiredCapabilities = ReusedSession.createReusableCapabilities(desiredCapabilities);
     }
 

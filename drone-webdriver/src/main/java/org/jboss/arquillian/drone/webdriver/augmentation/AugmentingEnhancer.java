@@ -18,12 +18,15 @@ package org.jboss.arquillian.drone.webdriver.augmentation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.AugmenterProvider;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -37,6 +40,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * @author Lukas Fryc
  */
 public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver> {
+    private static final Logger logger = Logger.getLogger(AugmentingEnhancer.class.getName());
 
     public static final String DRONE_AUGMENTED = "droneAugmented";
 
@@ -58,6 +62,23 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
                 }
             });
         }
+
+        // This changes Augmenter behavior to support ReusableRemoteWebDriver
+        // see http://code.google.com/p/selenium/issues/detail?id=7089
+        @Override
+        protected RemoteWebDriver extractRemoteWebDriver(WebDriver driver) {
+            if (driver.getClass() == RemoteWebDriver.class
+                // here we allow enhancing by both CGLib and Mockito
+                || driver.getClass().getName().startsWith("org.openqa.selenium.remote.RemoteWebDriver$$Enhancer")
+                || driver instanceof ReusableRemoteWebDriver) {
+
+                return (RemoteWebDriver) driver;
+            } else {
+                logger.log(Level.WARNING,
+                    "Augmenter should be applied to (Reusable)RemoteWebDriver instances or previously augmented instances only, but it was {0}", driver.getClass().getName());
+                return null;
+            }
+        }
     };
 
     @Override
@@ -75,7 +96,7 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
         Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
 
         if (RemoteWebDriver.class == realInstanceClass || ReusableRemoteWebDriver.class == realInstanceClass
-                || DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
+            || DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
             return true;
         }
 

@@ -22,12 +22,10 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
-import org.jboss.arquillian.drone.webdriver.factory.AndroidDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
-import org.jboss.arquillian.drone.webdriver.factory.IPhoneDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.PhantomJSDriverFactory;
@@ -50,10 +48,6 @@ import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
 public class DroneWebDriverExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
 
-        builder.service(Configurator.class, AndroidDriverFactory.class);
-        builder.service(Instantiator.class, AndroidDriverFactory.class);
-        builder.service(Destructor.class, AndroidDriverFactory.class);
-
         builder.service(Configurator.class, ChromeDriverFactory.class);
         builder.service(Instantiator.class, ChromeDriverFactory.class);
         builder.service(Destructor.class, ChromeDriverFactory.class);
@@ -69,10 +63,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(Configurator.class, InternetExplorerDriverFactory.class);
         builder.service(Instantiator.class, InternetExplorerDriverFactory.class);
         builder.service(Destructor.class, InternetExplorerDriverFactory.class);
-
-        builder.service(Configurator.class, IPhoneDriverFactory.class);
-        builder.service(Instantiator.class, IPhoneDriverFactory.class);
-        builder.service(Destructor.class, IPhoneDriverFactory.class);
 
         builder.service(Configurator.class, WebDriverFactory.class);
         builder.service(Instantiator.class, WebDriverFactory.class);
@@ -96,12 +86,10 @@ public class DroneWebDriverExtension implements LoadableExtension {
 
         builder.observer(BrowserCapabilitiesRegistrar.class);
 
-        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Android.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Chrome.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Firefox.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.HtmlUnit.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.InternetExplorer.class);
-        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.IPhone.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Opera.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Remote.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Safari.class);

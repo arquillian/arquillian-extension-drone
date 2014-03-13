@@ -79,11 +79,6 @@
         <!-- Drivers -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-android-driver</artifactId>
-            <version>${version.selenium}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
             <version>${version.selenium}</version>
         </dependency>
@@ -100,11 +95,6 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-ie-driver</artifactId>
-            <version>${version.selenium}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-iphone-driver</artifactId>
             <version>${version.selenium}</version>
         </dependency>
         <dependency>

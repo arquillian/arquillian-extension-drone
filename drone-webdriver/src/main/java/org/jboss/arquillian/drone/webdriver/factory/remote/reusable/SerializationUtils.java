@@ -43,9 +43,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -99,6 +101,14 @@ public class SerializationUtils {
      * @throws IOException Any exception thrown by the underlying OutputStream.
      */
     public static byte[] serializeToBytes(Serializable object) throws IOException {
+
+        // we need to check whether class is whitelisted. If not, do not attempt to serialize it at after deserialization
+        // we will not be able to adhere to equals(Object) contract
+        if (!whitelist.isEnabled(object.getClass().getName())) {
+            throw new InvalidClassException("Rejecting request to serialize " + object.getClass().getName()
+                + ", class is not whitelisted for serialization.");
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(object);
