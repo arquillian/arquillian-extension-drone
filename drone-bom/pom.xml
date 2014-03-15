@@ -71,11 +71,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-selenium</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-selenium-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -108,14 +103,7 @@
                 <version>${version.com.github.detro.ghostdriver}</version>
             </dependency>
 
-            <!-- Dependency Chains -->
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-selenium-depchain</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-            </dependency>
-
+            <!-- Dependency Chain -->
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-webdriver-depchain</artifactId>

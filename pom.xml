@@ -97,8 +97,7 @@
         <module>drone-build</module>
 
         <!-- Drone dependency chain -->
-        <module>depchain/selenium</module>
-        <module>depchain/webdriver</module>
+        <module>depchain</module>
 
         <!-- Drone modules -->
         <module>drone-api</module>
@@ -106,7 +105,6 @@
         <module>drone-configuration</module>
         <module>drone-impl</module>
         <module>drone-selenium-server</module>
-        <module>drone-selenium</module>
         <module>drone-webdriver</module>
     </modules>
 
