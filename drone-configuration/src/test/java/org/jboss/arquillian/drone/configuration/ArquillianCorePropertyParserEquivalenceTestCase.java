@@ -41,29 +41,6 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
     }
 
     @Test
-    @Deprecated
-    public void withoutQualifierDroneLegacy() {
-
-        try {
-            System.setProperty("arquillian.mockdrone.boolean.field", "true");
-            System.setProperty("arquillian.mockdrone.abcDef", "abcDef value");
-
-            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                    Default.class);
-
-            Assert.assertNotNull("Map was created", configuration.getMapMap());
-
-            Assert.assertEquals("Map has five entries", 1, configuration.getMapMap().size());
-
-            Assert.assertEquals("Boolean field was set", true, configuration.isBooleanField());
-            Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
-        } finally {
-            System.clearProperty("arquillian.mockdrone.boolean.field");
-            System.clearProperty("arquillian.mockdrone.abcDef");
-        }
-    }
-
-    @Test
     public void withoutQualifierArquillianCore() {
         try {
             System.setProperty("arq.extension.mockdrone.booleanField", "true");
@@ -72,12 +49,12 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
             fire(new ManagerStarted());
 
             ArquillianDescriptor descriptor = getManager().getContext(ApplicationContext.class).getObjectStore()
-                    .get(ArquillianDescriptor.class);
+                .get(ArquillianDescriptor.class);
 
             Assert.assertNotNull("ArquillianDescriptor was created", descriptor);
 
             MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                    new MockDroneConfiguration(), Default.class);
+                new MockDroneConfiguration(), Default.class);
 
             Assert.assertNotNull("Map was created", configuration.getMapMap());
 
@@ -92,28 +69,6 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
     }
 
     @Test
-    @Deprecated
-    public void withQualifierDroneLegacy() {
-        try {
-            System.setProperty("arquillian.mockdrone.different.boolean.field", "true");
-            System.setProperty("arquillian.mockdrone.different.abcDef", "abcDef value");
-
-            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                    Different.class);
-
-            Assert.assertNotNull("Map was created", configuration.getMapMap());
-
-            Assert.assertEquals("Map has five entries", 1, configuration.getMapMap().size());
-
-            Assert.assertEquals("Boolean field was set", true, configuration.isBooleanField());
-            Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
-        } finally {
-            System.clearProperty("arquillian.mockdrone.different.boolean.field");
-            System.clearProperty("arquillian.mockdrone.different.abcDef");
-        }
-    }
-
-    @Test
     public void withQualifierArquillianCore() {
         try {
             System.setProperty("arq.extension.mockdrone-different.booleanField", "true");
@@ -122,12 +77,12 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
             fire(new ManagerStarted());
 
             ArquillianDescriptor descriptor = getManager().getContext(ApplicationContext.class).getObjectStore()
-                    .get(ArquillianDescriptor.class);
+                .get(ArquillianDescriptor.class);
 
             Assert.assertNotNull("ArquillianDescriptor was created", descriptor);
 
             MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                    new MockDroneConfiguration(), Different.class);
+                new MockDroneConfiguration(), Different.class);
 
             Assert.assertNotNull("Map was created", configuration.getMapMap());
 

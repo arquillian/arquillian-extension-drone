@@ -16,12 +16,11 @@
  */
 package org.jboss.arquillian.drone.configuration;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
-
 import java.lang.annotation.Annotation;
 import java.util.Map;
+
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
  * Sample configuration
@@ -53,8 +52,7 @@ public class TypedMockDroneConfiguration implements DroneConfiguration<TypedMock
      */
     @Override
     public TypedMockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+        return ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
     }
 
     public Map<String, Object> getObjectMap() {

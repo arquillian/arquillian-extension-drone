@@ -70,7 +70,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  *
  * <ul>
  *    <li>qualifier = {@code DroneConfiguration#getConfigurationName() + - + @Qualifier, where all letters are lower case</li>
- *    <li>System property prefix = arq.extension. + {@code DroneConfiguration#getConfigurationName() + . + propertyName</li>
+ *    <li>System property prefix = arq.extension. + {@code DroneConfiguration#getConfigurationName() + . + qualifier</li>
  * </ul>
  *
  * @param <C> Configuration type

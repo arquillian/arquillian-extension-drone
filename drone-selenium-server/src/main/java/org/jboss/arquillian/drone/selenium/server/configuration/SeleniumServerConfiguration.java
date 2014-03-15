@@ -98,8 +98,7 @@ public class SeleniumServerConfiguration implements DroneConfiguration<SeleniumS
      * .arquillian.impl.configuration.api.ArquillianDescriptor, java.lang.Class)
      */
     public SeleniumServerConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
-        return ConfigurationMapper.fromSystemConfiguration(this, qualifier);
+        return ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
     }
 
     /*

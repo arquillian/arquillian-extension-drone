@@ -41,7 +41,7 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
 /**
- * Utility which maps Arquillian Descriptor and System Properties to a Drone configuration.
+ * Utility which maps Arquillian Descriptor to a Drone configuration.
  *
  * Configuration mapper does inspect a configuration for available fields and it tries to fill the values according to what is
  * provided in arquillian.xml or in system properties.
@@ -83,7 +83,7 @@ public class ConfigurationMapper {
      * @return Configured configuration
      */
     public static <T extends DroneConfiguration<T>> T fromArquillianDescriptor(ArquillianDescriptor descriptor,
-            T configuration, Class<? extends Annotation> qualifier) {
+        T configuration, Class<? extends Annotation> qualifier) {
         Validate.notNull(descriptor, "Descriptor must not be null");
         Validate.notNull(configuration, "Configuration object must not be null");
         Validate.notNull(qualifier, "Qualifier object must not be null");
@@ -92,30 +92,6 @@ public class ConfigurationMapper {
         String qualifierName = qualifier.getSimpleName().toLowerCase();
 
         Map<String, String> nameValuePairs = loadNameValuePairs(descriptor, descriptorQualifier, qualifierName);
-
-        return mapFromNameValuePairs(configuration, nameValuePairs);
-    }
-
-    /**
-     * Maps a configuration using System Properties.
-     *
-     * This method is <b>deprecated</b>. Use Arquillian Core property format instead.
-     *
-     * @param <T> Type of the configuration
-     * @param configuration Configuration object
-     * @param qualifier Qualifier annotation
-     * @return Configured configuration
-     */
-    @Deprecated
-    public static <T extends DroneConfiguration<T>> T fromSystemConfiguration(T configuration,
-            Class<? extends Annotation> qualifier) {
-        Validate.notNull(configuration, "Configuration object must not be null");
-        Validate.notNull(qualifier, "Qualifier object must not be null");
-
-        String descriptorQualifier = configuration.getConfigurationName();
-        String qualifierName = qualifier.getSimpleName().toLowerCase();
-
-        Map<String, String> nameValuePairs = loadNameValuePairs(descriptorQualifier, qualifierName);
 
         return mapFromNameValuePairs(configuration, nameValuePairs);
     }
@@ -144,14 +120,13 @@ public class ConfigurationMapper {
                 mapField.set(configuration, map);
             } catch (Exception e) {
                 throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName()
-                        + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
+                    + ") for " + configuration.getClass().getName() + " from Arquillian Descriptor", e);
             }
         }
 
         // map basic fields
         for (Map.Entry<String, String> nameValue : nameValuePairs.entrySet()) {
             String name = nameValue.getKey();
-
 
             String reversedName = keyTransformReverse(name);
             // map a field which has a field directly available in the configuration
@@ -164,8 +139,8 @@ public class ConfigurationMapper {
             else if (fields.containsKey(reversedName) && !LegacyConfigurationMapper.isLegacy(reversedName)) {
                 // we prefer new format arquillian.mockdriver.intField over arquillian.mockdriver.int.field
                 log.log(Level.WARNING,
-                        "The system property \"{0}\" used in Arquillian \"{1}\" configuration is deprecated, please rather use new format \"{2}\"",
-                        new Object[] { name, configuration.getConfigurationName(), keyTransformReverse(name) });
+                    "The system property \"{0}\" used in Arquillian \"{1}\" configuration is deprecated, please rather use new format \"{2}\"",
+                    new Object[] { name, configuration.getConfigurationName(), keyTransformReverse(name) });
                 injectField(configuration, maps, fields, keyTransformReverse(name), nameValue.getValue());
             }
             // map a field which does not have this luck into all available maps in configuration
@@ -186,7 +161,7 @@ public class ConfigurationMapper {
      * @param qualifierName Name of the qualifier passed
      */
     static Map<String, String> loadNameValuePairs(ArquillianDescriptor descriptor, String descriptorQualifier,
-            String qualifierName) {
+        String qualifierName) {
         String fullDescriptorQualifier = new StringBuilder(descriptorQualifier).append("-").append(qualifierName).toString();
 
         ExtensionDef match = null;
@@ -212,55 +187,6 @@ public class ConfigurationMapper {
         }
 
         return Collections.emptyMap();
-    }
-
-    /**
-     * Parses System properties into property name - value pairs.
-     *
-     * This method is now deprecated and should not be used anymore. Arquillian Core contains possibility to load configuration
-     * from System properties.
-     *
-     * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
-     * @param qualifierName Name of the qualifier passed
-     */
-    @Deprecated
-    static Map<String, String> loadNameValuePairs(String descriptorQualifier, String qualifierName) {
-        String fullQualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".")
-                .append(qualifierName).append(".").toString();
-
-        String qualifiedPrefix = new StringBuilder("arquillian.").append(descriptorQualifier).append(".").toString();
-
-        // try to get fully qualified prefix properties first
-        Map<String, String> candidates = SecurityActions.getProperties(fullQualifiedPrefix);
-        if (candidates.isEmpty()) {
-            candidates.putAll(SecurityActions.getProperties(qualifiedPrefix));
-        }
-
-        // properly rename
-        Map<String, String> nameValuePairs = new HashMap<String, String>(candidates.size());
-        for (Map.Entry<String, String> entry : candidates.entrySet()) {
-            String name = entry.getKey();
-
-            // make a nasty warning that this will be removed
-            if (log.isLoggable(Level.WARNING)) {
-                String propertyName = name.contains(fullQualifiedPrefix) ? name.substring(fullQualifiedPrefix.length()) : name
-                        .substring(qualifiedPrefix.length());
-
-                String newSysPropertyKey = new StringBuilder("arq.extension.")
-                        .append(name.contains(fullQualifiedPrefix) ? (descriptorQualifier + "-" + qualifierName)
-                                : descriptorQualifier).append(".").append(propertyName).toString();
-
-                log.log(Level.WARNING, "Old system property format \"{0}\" is deprecated. You should use \"{1}\" instead.",
-                        new Object[] { name, newSysPropertyKey });
-            }
-            // trim name
-            name = name.contains(fullQualifiedPrefix) ? name.substring(fullQualifiedPrefix.length()) : name
-                    .substring(qualifiedPrefix.length());
-            nameValuePairs.put(name, entry.getValue());
-        }
-
-        return nameValuePairs;
-
     }
 
     /**
@@ -291,12 +217,12 @@ public class ConfigurationMapper {
     }
 
     static <T extends DroneConfiguration<T>> Field injectField(T configuration, List<Field> maps, Map<String, Field> fields,
-            String fieldName, String value) {
+        String fieldName, String value) {
         try {
             Field f = fields.get(fieldName);
             if (f.getAnnotation(Deprecated.class) != null) {
                 log.log(Level.WARNING, "The property \"{0}\" used in Arquillian \"{1}\" configuration is deprecated.",
-                        new Object[] { f.getName(), configuration.getConfigurationName() });
+                    new Object[] { f.getName(), configuration.getConfigurationName() });
             }
 
             // remap the property into capability if this is a legacy one
@@ -317,13 +243,13 @@ public class ConfigurationMapper {
             return f;
         } catch (Exception e) {
             throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName() + ") for "
-                    + configuration.getClass().getName() + " from Arquillian Descriptor", e);
+                + configuration.getClass().getName() + " from Arquillian Descriptor", e);
         }
 
     }
 
     static <T extends DroneConfiguration<T>> void injectMapProperty(T configuration, List<Field> maps,
-            Map<String, Field> fields, String propertyName, String value) {
+        Map<String, Field> fields, String propertyName, String value) {
 
         try {
             for (Field mapField : maps) {
@@ -338,7 +264,7 @@ public class ConfigurationMapper {
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not map Drone configuration(" + configuration.getConfigurationName() + ") for "
-                    + configuration.getClass().getName() + " from Arquillian Descriptor", e);
+                + configuration.getClass().getName() + " from Arquillian Descriptor", e);
         }
 
     }

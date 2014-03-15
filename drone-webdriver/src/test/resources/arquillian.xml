@@ -69,11 +69,4 @@
         <!-- Settings for Internet Explorer -->
         <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
     </extension>
-
-
-
-    <!-- test with old configuration -->
-    <extension qualifier="webdriver-legacyconfiguration">
-        <property name="implementationClass">org.openqa.selenium.firefox.FirefoxDriver</property>
-    </extension>
 </arquillian>

@@ -16,17 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -36,10 +31,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
  *
  */
 public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriver> implements
-        Configurator<HtmlUnitDriver, WebDriverConfiguration>, Instantiator<HtmlUnitDriver, WebDriverConfiguration>,
-        Destructor<HtmlUnitDriver> {
-
-    private static final Logger log = Logger.getLogger(HtmlUnitDriverFactory.class.getName());
+    Configurator<HtmlUnitDriver, WebDriverConfiguration>, Instantiator<HtmlUnitDriver, WebDriverConfiguration>,
+    Destructor<HtmlUnitDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
 
@@ -70,32 +63,9 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
      */
     @Override
     public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
-
-        // this is support for legacy constructor
-        String applicationName = configuration.getApplicationName();
-        String applicationVersion = configuration.getApplicationVersion();
-        String userAgent = configuration.getUserAgent();
-        float browserVersionNumeric = configuration.getBrowserVersionNumeric();
-
         Capabilities capabilities = configuration.getCapabilities();
-
-        // use capability based constructor if possible
-        if (Validate.empty(applicationName) || Validate.empty(applicationVersion) || Validate.empty(userAgent)) {
-
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                    new Object[] { capabilities }, HtmlUnitDriver.class);
-        }
-        // plain old constructor
-        // this configuration is deprecated and should not be used anymore
-        else {
-            log.log(Level.WARNING,
-                    "Creating HtmlUnitDriver using legacy configuration. ApplicationName={0} ApplicationVersion={1} UserAgent={2} BrowserVersionNumeric={3}",
-                    new Object[] { applicationName, applicationVersion, userAgent, browserVersionNumeric });
-
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { BrowserVersion.class },
-                    new Object[] { new BrowserVersion(applicationName, applicationVersion, userAgent, browserVersionNumeric) },
-                    HtmlUnitDriver.class);
-        }
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+            new Object[] { capabilities }, HtmlUnitDriver.class);
     }
 
     @Override

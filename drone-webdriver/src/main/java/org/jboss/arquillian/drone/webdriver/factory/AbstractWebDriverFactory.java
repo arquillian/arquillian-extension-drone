@@ -25,41 +25,24 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
 
     @Override
     public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<T>
-            injectionPoint) {
+        injectionPoint) {
 
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
         // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
         BrowserCapabilities browser = registry.getEntryFor(getDriverReadableName());
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(descriptor,
-                injectionPoint.getQualifier());
+            injectionPoint.getQualifier());
 
-        // then, check if legacy implementationClass was set in the configuration and try to update accordingly
-        if (browser == null && Validate.nonEmpty(configuration.getImplementationClass())) {
-            browser = registry.getEntryByImplementationClassName(configuration.getImplementationClass());
-            if (browser == null) {
-                log.log(Level.FINE, "Available implementationClasses are {0}", getAvailableImplementationClasses());
-                throw new IllegalStateException(
-                        MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a browser property " +
-                                        "instead of implementationClass {1}. Available options are: {0}",
-                                        getAvailableBrowserCapabilities(), configuration.getImplementationClass()));
-            }
-            configuration.setBrowserInternal(browser);
-            log.log(Level.WARNING,
-                    "Please use \"browser\" to specify browser type instead of implementationClass. Available options" +
-                            " are: {0}",
-                    getAvailableBrowserCapabilities());
-        }
-        // otherwise, we hit a webdriver configuration and we want to use browser capabilities
+        // if not set, we hit a webdriver configuration and we want to use browser capabilities
         if (browser == null && Validate.nonEmpty(configuration.getBrowser())) {
             browser = registry.getEntryFor(configuration.getBrowser());
             if (browser == null) {
                 throw new IllegalStateException(
-                        MessageFormat
-                                .format("Unable to initialize WebDriver instance. Please specify a valid browser " +
-                                        "instead of {1}. Available options are: {0}",
-                                        getAvailableBrowserCapabilities(), configuration.getBrowser()));
+                    MessageFormat
+                        .format("Unable to initialize WebDriver instance. Please specify a valid browser " +
+                            "instead of {1}. Available options are: {0}",
+                            getAvailableBrowserCapabilities(), configuration.getBrowser()));
             }
             configuration.setBrowserInternal(browser);
         }
@@ -68,7 +51,7 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
         if (browser == null) {
             browser = registry.getEntryFor(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             log.log(Level.INFO, "Property \"browser\" was not specified, using default value of {0}",
-                    WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+                WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             configuration.setBrowserInternal(browser);
         }
 
@@ -84,22 +67,6 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
             if (Validate.nonEmpty(browser.getReadableName())) {
                 sb.append(browser.getReadableName()).append(", ");
             }
-        }
-        // trim
-        if (sb.lastIndexOf(", ") != -1) {
-            sb.delete(sb.length() - 2, sb.length());
-        }
-
-        return sb.toString();
-    }
-
-    private String getAvailableImplementationClasses() {
-
-        BrowserCapabilitiesRegistry registry = registryInstance.get();
-
-        StringBuilder sb = new StringBuilder();
-        for (BrowserCapabilities browser : registry.getAllBrowserCapabilities()) {
-            sb.append(browser.getImplementationClassName()).append(", ");
         }
         // trim
         if (sb.lastIndexOf(", ") != -1) {

@@ -40,6 +40,6 @@ public class LegacyMappingTestCase {
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
                 new MockDroneConfiguration(), Default.class);
 
-        Assert.assertEquals("Browser capabilities was remapped to browser", "mockdrone", configuration.getBrowser());
+        Assert.assertNotSame("Browser capabilities was not remapped to browser", "mockdrone", configuration.getBrowser());
     }
 }

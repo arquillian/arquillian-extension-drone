@@ -38,34 +38,7 @@ public class LegacyConfigurationMapper {
     static {
         LEGACY_MAP = new HashMap<String, LegacyMapping>();
 
-        // general changes
-        LEGACY_MAP.put("browserCapabilities", new FieldMapping("browser"));
-
-        // firefox
-        LEGACY_MAP.put("firefoxBinary", new DefaultCapabilityMapping("firefox_binary"));
-        LEGACY_MAP.put("firefoxProfile", new DefaultCapabilityMapping("firefox_profile"));
-        // chrome
-        LEGACY_MAP.put("chromeBinary", new DefaultCapabilityMapping("chrome.binary"));
-        LEGACY_MAP.put("chromeSwitches", new DefaultCapabilityMapping("chrome.switches"));
-        // htmlunit
-        LEGACY_MAP.put("useJavaScript", new DefaultCapabilityMapping("javascriptEnabled"));
-
-        // opera
-        LEGACY_MAP.put("operaArguments", new DefaultCapabilityMapping("opera.arguments"));
-        LEGACY_MAP.put("operaAutostart", new DefaultCapabilityMapping("opera.autostart"));
-        LEGACY_MAP.put("operaBinary", new DefaultCapabilityMapping("opera.binary"));
-        LEGACY_MAP.put("operaDisplay", new DefaultCapabilityMapping("opera.display"));
-        LEGACY_MAP.put("operaIdle", new DefaultCapabilityMapping("opera.idle"));
-        LEGACY_MAP.put("operaLauncher", new DefaultCapabilityMapping("opera.launcher"));
-        LEGACY_MAP.put("operaLoggingFile", new DefaultCapabilityMapping("opera.logging.file"));
-        LEGACY_MAP.put("operaLoggingLevel", new DefaultCapabilityMapping("opera.logging.level"));
-        LEGACY_MAP.put("operaQuit", new LoggingCapabilityMapping("opera.no_quit", NegatingBooleanValueMapper.INSTANCE,
-                "\"operaQuit\" value was negated and stored as \"opera.no_quit\" capability"));
-        LEGACY_MAP.put("operaRestart", new LoggingCapabilityMapping("opera.no_restart", NegatingBooleanValueMapper.INSTANCE,
-                "\"operaRestart\" value was negated and stored as \"opera.no_restart\" capability"));
-        LEGACY_MAP.put("operaPort", new DefaultCapabilityMapping("opera.port"));
-        LEGACY_MAP.put("operaProduct", new DefaultCapabilityMapping("opera.product"));
-        LEGACY_MAP.put("operaProfile", new DefaultCapabilityMapping("opera.profile"));
+        // all legacy mappings were removed in Drone 2.0.0.Alpha1
     }
 
     public static boolean isLegacy(String propertyName) {
@@ -103,6 +76,7 @@ public class LegacyConfigurationMapper {
         return propertyValue;
     }
 
+    @SuppressWarnings("unused")
     private static class FieldMapping implements LegacyMapping {
         private final String fieldName;
         private final ValueMapper<?> mapper;
@@ -130,8 +104,8 @@ public class LegacyConfigurationMapper {
         public String remapKey(String oldFieldName) {
 
             log.log(Level.WARNING,
-                    "Configuration property \"{0}\" is deprecated, please replace it with property \"{1}\" instead.",
-                    new Object[] { oldFieldName, fieldName });
+                "Configuration property \"{0}\" is deprecated, please replace it with property \"{1}\" instead.",
+                new Object[] { oldFieldName, fieldName });
             return fieldName;
         }
 
@@ -145,6 +119,7 @@ public class LegacyConfigurationMapper {
         private final String capabilityName;
         private final ValueMapper<?> mapper;
 
+        @SuppressWarnings("unused")
         public DefaultCapabilityMapping(String capabilityName) {
             this(capabilityName, StringValueMapper.INSTANCE);
         }
@@ -167,8 +142,8 @@ public class LegacyConfigurationMapper {
         public String remapKey(String fieldName) {
 
             log.log(Level.WARNING,
-                    "Configuration property \"{0}\" is deprecated, please replace it with capability based property \"{1}\" instead.",
-                    new Object[] { fieldName, capabilityName });
+                "Configuration property \"{0}\" is deprecated, please replace it with capability based property \"{1}\" instead.",
+                new Object[] { fieldName, capabilityName });
 
             return capabilityName;
         }
@@ -178,6 +153,7 @@ public class LegacyConfigurationMapper {
         }
     }
 
+    @SuppressWarnings("unused")
     private static class LoggingCapabilityMapping extends DefaultCapabilityMapping {
 
         private final String loggingMessage;

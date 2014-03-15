@@ -175,13 +175,11 @@ public class DroneLifecycleManager {
             return CONFIGURATION_NAME;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public GlobalDroneConfiguration configure(ArquillianDescriptor descriptor,
                                                   Class<? extends Annotation> qualifier) {
             // qualifier is ignored
             ConfigurationMapper.fromArquillianDescriptor(descriptor, this, Default.class);
-            ConfigurationMapper.fromSystemConfiguration(this, Default.class);
 
             // if debugging is enabled
             if (Boolean.parseBoolean(SecurityActions.getProperty("arquillian.debug"))) {

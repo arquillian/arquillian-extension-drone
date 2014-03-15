@@ -22,9 +22,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.drone.api.annotation.Qualifier;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 /**
  * Sample configuration
@@ -72,7 +70,6 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
      */
     @Override
     public MockDroneConfiguration configure(ArquillianDescriptor descriptor, Class<? extends Annotation> qualifier) {
-        ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
         return ConfigurationMapper.fromArquillianDescriptor(descriptor, this, qualifier);
     }
 

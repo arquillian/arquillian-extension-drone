@@ -34,12 +34,12 @@ public class MapPropertiesMappingTestCase {
     @Test
     public void mapFromDescriptorTest() {
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("intField", "12345").property("stringField", "The descriptor string")
-                .property("booleanField", "true").property("foo", "foo value").property("foo.bar", "foo.bar value")
-                .property("foo_bar", "foo_bar value").property("abcDef", "abcDef value").property("FOOO-bar", "FOOO-bar value");
+            .property("intField", "12345").property("stringField", "The descriptor string")
+            .property("booleanField", "true").property("foo", "foo value").property("foo.bar", "foo.bar value")
+            .property("foo_bar", "foo_bar value").property("abcDef", "abcDef value").property("FOOO-bar", "FOOO-bar value");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                new MockDroneConfiguration(), Default.class);
+            new MockDroneConfiguration(), Default.class);
 
         Assert.assertNotNull("Map was created", configuration.getMapMap());
         Assert.assertEquals("Map has five entries", 5, configuration.getMapMap().size());
@@ -50,55 +50,4 @@ public class MapPropertiesMappingTestCase {
         Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
         Assert.assertEquals("Map entry was mapped", "FOOO-bar value", configuration.getMapMap().get("FOOO-bar"));
     }
-
-    @Test
-    @Deprecated
-    public void mapFromSystemPropertiesTest() {
-        try {
-            System.setProperty("arquillian.mockdrone.boolean.field", "false");
-            System.setProperty("arquillian.mockdrone.foo", "foo value");
-            System.setProperty("arquillian.mockdrone.foo.bar", "foo.bar value");
-            System.setProperty("arquillian.mockdrone.foo_bar", "foo_bar value");
-            System.setProperty("arquillian.mockdrone.abcDef", "abcDef value");
-            System.setProperty("arquillian.mockdrone.FOOO-bar", "FOOO-bar value");
-
-            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                    Default.class);
-
-            Assert.assertNotNull("Map was created", configuration.getMapMap());
-
-            Assert.assertEquals("Map has five entries", 5, configuration.getMapMap().size());
-
-            Assert.assertEquals("Map entry was mapped", "foo value", configuration.getMapMap().get("foo"));
-            Assert.assertEquals("Map entry was mapped", "foo.bar value", configuration.getMapMap().get("foo.bar"));
-            Assert.assertEquals("Map entry was mapped", "foo_bar value", configuration.getMapMap().get("foo_bar"));
-            Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
-            Assert.assertEquals("Map entry was mapped", "FOOO-bar value", configuration.getMapMap().get("FOOO-bar"));
-        } finally {
-            System.clearProperty("arquillian.mockdrone.boolean.field");
-            System.clearProperty("arquillian.mockdrone.foo");
-            System.clearProperty("arquillian.mockdrone.foo.bar");
-            System.clearProperty("arquillian.mockdrone.foo_bar");
-            System.clearProperty("arquillian.mockdrone.abcDef");
-            System.clearProperty("arquillian.mockdrone.FOOO-bar");
-        }
-    }
-
-    @Test
-    @Deprecated
-    public void systemPropertyValueClash() {
-        try {
-            // System.setProperty("arquillian.mockdrone.boolean.field", "false");
-            System.setProperty("arquillian.mockdrone.booleanField", "true");
-
-            MockDroneConfiguration configuration = ConfigurationMapper.fromSystemConfiguration(new MockDroneConfiguration(),
-                    Default.class);
-
-            Assert.assertEquals("Boolean field was mapped to true", true, configuration.isBooleanField());
-
-        } finally {
-            System.clearProperty("arquillian.mockdrone.booleanField");
-        }
-    }
-
 }
