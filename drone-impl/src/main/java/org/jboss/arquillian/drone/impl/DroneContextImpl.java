@@ -16,17 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.core.api.Event;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.drone.spi.CachingCallable;
-import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
-import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +27,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.drone.spi.CachingCallable;
+import org.jboss.arquillian.drone.spi.DroneConfiguration;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.Filter;
+import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 
 /**
  * Default implementation of {@link DroneContext}
@@ -85,7 +85,7 @@ public class DroneContextImpl implements DroneContext {
         CachingCallable<T> droneCallable = pair.getDroneCallable();
         if (droneCallable == null) {
             throw new IllegalStateException(MessageFormat.format("Drone callable not stored yet for injection point " +
-                    "{0}!", injectionPoint));
+                "{0}!", injectionPoint));
         }
 
         boolean newInstance = !droneCallable.isValueCached();
@@ -112,7 +112,7 @@ public class DroneContextImpl implements DroneContext {
         // FIXME we need to make some kind of global drone configuration!
 
         int timeout = getGlobalDroneConfiguration(DroneLifecycleManager.GlobalDroneConfiguration.class)
-                .getInstantiationTimeoutInSeconds();
+            .getInstantiationTimeoutInSeconds();
 
         try {
             T drone;
@@ -128,27 +128,33 @@ public class DroneContextImpl implements DroneContext {
         } catch (InterruptedException e) {
             throw new RuntimeException("Unable to retrieve Drone Instance, thread interrupted", e);
         } catch (ExecutionException e) {
+            // make exception a bit nicer
             Throwable cause = e.getCause();
+            if (DroneTimeoutException.isCausedByTimeoutException(cause)) {
+                throw new DroneTimeoutException(timeout, cause);
+            }
+            if (e.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            }
             throw new RuntimeException(cause.getMessage(), cause);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Unable to retrieve Drone Instance within " + timeout + " "
-                    + TimeUnit.SECONDS.toString().toLowerCase(), e);
+            throw new DroneTimeoutException(timeout, e);
         }
     }
 
     @Override
     public <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint, Class<C>
-            configurationClass) throws IllegalArgumentException {
+        configurationClass) throws IllegalArgumentException {
         DronePair<?, C> pair = (DronePair<?, C>) dronePairMap.get(injectionPoint);
         if (pair == null) {
             throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
-                    injectionPoint));
+                injectionPoint));
         }
 
         C configuration = pair.getConfiguration();
         if (configuration == null) {
             throw new IllegalStateException(MessageFormat.format("Drone configuration not stored yet! Injection " +
-                    "point: {0}", injectionPoint));
+                "point: {0}", injectionPoint));
         }
 
         return configuration;
@@ -159,7 +165,7 @@ public class DroneContextImpl implements DroneContext {
         DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
         if (pair == null) {
             throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
-                    injectionPoint));
+                injectionPoint));
         }
 
         if (pair.getDroneCallable() != null) {
@@ -171,12 +177,12 @@ public class DroneContextImpl implements DroneContext {
 
     @Override
     public <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
-                                                                             C configuration) {
+        C configuration) {
         DronePair<T, C> pair = (DronePair<T, C>) dronePairMap.get(injectionPoint);
         if (pair != null) {
             // FIXME shouldn't we just handle this peacefully with warning?
             throw new IllegalStateException(MessageFormat.format("Injection point already exists: {0}",
-                    injectionPoint));
+                injectionPoint));
         }
 
         pair = new DronePair<T, C>();
@@ -218,13 +224,13 @@ public class DroneContextImpl implements DroneContext {
     public void removeDrone(InjectionPoint<?> injectionPoint) {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
-            LOGGER.log(Level.WARNING, "Couldn''t remove drone, because it wasn''t prepared! Injection point: {0}",
-                    injectionPoint);
+            LOGGER.log(Level.WARNING, "Couldn''t remove Drone, because it wasn''t prepared! Injection point: {0}",
+                injectionPoint);
             return;
         }
         if (pair.getDroneCallable() == null) {
-            LOGGER.log(Level.WARNING, "Couldn''t remove drone, because it wasn''t set! Injection point: {0}",
-                    injectionPoint);
+            LOGGER.log(Level.WARNING, "Couldn''t remove Drone, because it wasn''t set! Injection point: {0}",
+                injectionPoint);
         }
 
         pair.setDroneCallable(null);
@@ -235,16 +241,16 @@ public class DroneContextImpl implements DroneContext {
         DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
         if (pair == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because the injection point wasn''t prepared. " +
-                    "Injection point: {0}", injectionPoint);
+                "Injection point: {0}", injectionPoint);
             return;
         }
         if (pair.getDroneCallable() != null) {
             LOGGER.log(Level.WARNING, "Drone is still set, but you won''t be able to access it anymore! Injection " +
-                    "point: {0}", injectionPoint);
+                "point: {0}", injectionPoint);
         }
         if (pair.getConfiguration() == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because it wasn''t set! Injection point: {0}",
-                    injectionPoint);
+                injectionPoint);
         }
 
         pair.setConfiguration(null);
@@ -268,7 +274,7 @@ public class DroneContextImpl implements DroneContext {
 
     @Override
     public <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass,
-                                                      Filter... filters) throws IllegalStateException {
+        Filter... filters) throws IllegalStateException {
         List<InjectionPoint<? extends T>> injectionPoints = find(droneClass, filters);
         int count = injectionPoints.size();
         if (count != 1) {
@@ -301,7 +307,6 @@ public class DroneContextImpl implements DroneContext {
                 matchedInjectionPoints.add(castInjectionPoint);
             }
         }
-
 
         return matchedInjectionPoints;
     }
