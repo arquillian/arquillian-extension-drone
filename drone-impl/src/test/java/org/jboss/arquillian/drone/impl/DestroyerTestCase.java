@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -59,10 +63,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Tests Destroyer activation when no context was created (no @Drone) won't fail
  *
@@ -83,7 +83,6 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         extensions.add(DroneConfigurator.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
-        extensions.add(DroneExecutorService.class);
     }
 
     @SuppressWarnings("rawtypes")

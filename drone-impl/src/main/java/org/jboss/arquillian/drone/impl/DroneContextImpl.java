@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
@@ -53,7 +54,7 @@ public class DroneContextImpl implements DroneContext {
     private DroneConfiguration<?> globalDroneConfiguration;
 
     @Inject
-    private Instance<DroneExecutorService> executorService;
+    private Instance<ExecutorService> executorService;
 
     @Inject
     private Event<BeforeDroneInstantiated> beforeDroneInstantiatedEvent;

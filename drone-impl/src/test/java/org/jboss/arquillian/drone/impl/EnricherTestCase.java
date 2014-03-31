@@ -16,9 +16,14 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
@@ -52,10 +57,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
  * <p/>
@@ -81,7 +82,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
         extensions.add(DroneConfigurator.class);
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
-        extensions.add(DroneExecutorService.class);
     }
 
     @SuppressWarnings("rawtypes")
