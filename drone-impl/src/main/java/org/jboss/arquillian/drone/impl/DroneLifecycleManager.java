@@ -46,9 +46,12 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class DroneLifecycleManager {
+    private static final Logger log = Logger.getLogger(DroneLifecycleManager.class.getName());
 
     @Inject
     private Instance<Injector> injector;
@@ -72,10 +75,16 @@ public class DroneLifecycleManager {
     @Inject
     private Event<DestroyDrone> destroyDroneCommand;
 
-    @SuppressWarnings("unused")
     public void managerStarted(@Observes ManagerStarted event) {
-        DroneContext context = injector.get().inject(new DroneContextImpl());
-        droneContext.set(context);
+        try {
+            DroneContext context = injector.get().inject(new DroneContextImpl());
+            droneContext.set(context);
+        } catch (TypeNotPresentException e) {
+            log.log(Level.SEVERE,
+                "Unable to create Drone Context due to missing services on classpath. Please make sure to use Arquillian Core 1.1.4.Final or later.");
+            throw new IllegalStateException("Unable to create Drone Context due to missing services on classpath. Please make sure to use Arquillian Core 1.1.4.Final or later.",
+                e);
+        }
     }
 
     public void configureDroneExtension(@Observes BeforeSuite event) {
@@ -89,13 +98,12 @@ public class DroneLifecycleManager {
 
         if (context.getGlobalDroneConfiguration(DroneConfiguration.class) == null) {
             GlobalDroneConfiguration configuration =
-                    new GlobalDroneConfiguration().configure(arquillianDescriptor.get(), null);
+                new GlobalDroneConfiguration().configure(arquillianDescriptor.get(), null);
             context.setGlobalDroneConfiguration(configuration);
         }
 
         afterDroneExtensionConfiguredEvent.fire(new AfterDroneExtensionConfigured());
     }
-
 
     @SuppressWarnings("unused")
     public void beforeClass(@Observes BeforeClass event) {
@@ -148,7 +156,7 @@ public class DroneLifecycleManager {
         DroneContext context = droneContext.get();
 
         LifecycleFilter lifecycleFilter = new LifecycleFilter(InjectionPoint.Lifecycle.CLASS,
-                InjectionPoint.Lifecycle.METHOD);
+            InjectionPoint.Lifecycle.METHOD);
         List<InjectionPoint<?>> injectionPoints = context.find(Object.class, lifecycleFilter);
 
         for (InjectionPoint<?> injectionPoint : injectionPoints) {
@@ -177,7 +185,7 @@ public class DroneLifecycleManager {
 
         @Override
         public GlobalDroneConfiguration configure(ArquillianDescriptor descriptor,
-                                                  Class<? extends Annotation> qualifier) {
+            Class<? extends Annotation> qualifier) {
             // qualifier is ignored
             ConfigurationMapper.fromArquillianDescriptor(descriptor, this, Default.class);
 
@@ -197,6 +205,5 @@ public class DroneLifecycleManager {
             this.instantiationTimeoutInSeconds = instantiationTimeoutInSeconds;
         }
     }
-
 
 }
