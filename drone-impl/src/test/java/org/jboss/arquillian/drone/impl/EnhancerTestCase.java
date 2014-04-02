@@ -27,9 +27,8 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.drone.impl.mockdrone.CachingMockDroneFactory;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
-import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
-import org.jboss.arquillian.drone.impl.mockdrone.MockDroneFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
@@ -113,14 +112,17 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
+
+        CachingMockDroneFactory factory = new CachingMockDroneFactory();
+
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory()));
+                Arrays.<Configurator>asList(factory));
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory()));
+                Arrays.<Configurator>asList(factory));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDroneFactory()));
-        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
-        //Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
+                Arrays.<Instantiator>asList(factory));
+        Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(factory));
+
         Mockito.when(serviceLoader.all(DroneInstanceEnhancer.class)).thenReturn(
                 Arrays.<DroneInstanceEnhancer>asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
@@ -154,13 +156,6 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         assertEquals("both enhancerns were applied", enhanced2, drone);
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
 
-        //InstanceOrCallableInstance droneConfiguration = context.get(MockDroneConfiguration.class, Default.class);
-        //InstanceOrCallableInstance droneInstance = context.get(MockDrone.class, Default.class);
-
-        // as this is usually fired by enriched, we need to fire this on our own
-        //droneInstance.set(new MockDrone(droneConfiguration.asInstance(MockDroneConfiguration.class).getField()));
-
-
         fire(new AfterClass(EnrichedClass.class));
 
         assertFalse(context.isDroneInstantiated(injectionPoint));
@@ -187,9 +182,6 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
                 InjectionPoint.Lifecycle.METHOD);
 
-        MockDroneConfiguration droneConfiguration = context.getDroneConfiguration(injectionPoint,
-                MockDroneConfiguration.class);
-
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
 
         testEnricher.enrich(instance);
@@ -204,7 +196,6 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new After(instance, testMethod));
         assertFalse("Drone was destroyed", context.isDroneInstantiated(injectionPoint));
         assertEquals(deEnhanced, notEnhanced);
-
     }
 
     static class EnrichedClass {

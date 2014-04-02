@@ -80,9 +80,12 @@ public class DroneEnhancer {
         T drone = (T) event.getDrone();
         InjectionPoint<T> injectionPoint = (InjectionPoint<T>) event.getInjectionPoint();
 
-        InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
+
 
         for (DroneInstanceEnhancer<?> enhancer : enhancers) {
+
+            InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
+
             if (enhancer.canEnhance(instanceOrCallableInstance, injectionPoint.getDroneType(),
                     injectionPoint.getQualifier())) {
                 log.log(Level.FINE,
@@ -118,9 +121,10 @@ public class DroneEnhancer {
         T drone = (T) event.getDrone();
         InjectionPoint<T> injectionPoint = (InjectionPoint<T>) event.getInjectionPoint();
 
-        InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
-
         for (DroneInstanceEnhancer<?> enhancer : enhancers) {
+
+            InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
+
             if (enhancer.canEnhance(instanceOrCallableInstance, injectionPoint.getDroneType(),
                     injectionPoint.getQualifier())) {
                 log.log(Level.FINER,

@@ -82,6 +82,9 @@ public class DroneDestructor {
 
             droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, injectionPoint));
 
+            // we need to get drone once again, at it might get modified by observers on previous event
+            drone = context.getDrone(injectionPoint);
+
             destructor.destroyInstance(drone);
         }
 

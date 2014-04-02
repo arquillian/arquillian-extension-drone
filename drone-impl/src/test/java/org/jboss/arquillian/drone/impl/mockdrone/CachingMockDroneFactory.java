@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,13 +21,19 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.junit.Assert;
+
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
  *
  */
-public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
+public class CachingMockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
         Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+
+    private MockDrone instanceCache;
+
     /*
      * (non-Javadoc)
      *
@@ -48,6 +54,9 @@ public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfig
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     public void destroyInstance(MockDrone instance) {
+        // here we assert that instance we are going to destroy is the same as instance we created
+        // this check verifies that deenhancers were called and they deenhanced instance
+        Assert.assertThat("Instance we want to destroy must be deenhanced if previously enhanced", instance, is(instanceCache));
     }
 
     /*
@@ -55,9 +64,13 @@ public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfig
      *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
-    public MockDrone createInstance(MockDroneConfiguration configuration) {
-        MockDrone instance = new MockDrone(configuration.getField());
-        return instance;
+    public synchronized MockDrone createInstance(MockDroneConfiguration configuration) {
+        if(instanceCache==null) {
+            MockDrone instance = new MockDrone(configuration.getField());
+            instanceCache = instance;
+        }
+        return instanceCache;
+
     }
 
 }
