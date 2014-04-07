@@ -29,7 +29,7 @@ import org.jboss.arquillian.drone.impl.mockdrone.MockDronePriorityFactory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -100,10 +100,10 @@ public class RegistrarTestCase extends AbstractTestTestBase {
                 .class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
-        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
+                DronePoint.Lifecycle.CLASS);
 
-        MockDroneConfiguration configuration = context.getDroneConfiguration(injectionPoint,
+        MockDroneConfiguration configuration = context.getDroneConfiguration(dronePoint,
                 MockDroneConfiguration.class);
         Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",
                 MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());

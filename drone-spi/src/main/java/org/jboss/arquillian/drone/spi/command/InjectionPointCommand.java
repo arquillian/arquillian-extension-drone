@@ -16,17 +16,17 @@
  */
 package org.jboss.arquillian.drone.spi.command;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 public abstract class InjectionPointCommand {
 
-    private final InjectionPoint<?> injectionPoint;
+    private final DronePoint<?> dronePoint;
 
-    public InjectionPointCommand(InjectionPoint<?> injectionPoint) {
-        this.injectionPoint = injectionPoint;
+    public InjectionPointCommand(DronePoint<?> dronePoint) {
+        this.dronePoint = dronePoint;
     }
 
-    public InjectionPoint<?> getInjectionPoint() {
-        return injectionPoint;
+    public DronePoint<?> getDronePoint() {
+        return dronePoint;
     }
 }

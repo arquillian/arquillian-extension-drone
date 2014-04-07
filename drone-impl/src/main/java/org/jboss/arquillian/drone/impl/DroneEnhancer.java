@@ -24,7 +24,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
@@ -78,7 +78,7 @@ public class DroneEnhancer {
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
         T drone = (T) event.getDrone();
-        InjectionPoint<T> injectionPoint = (InjectionPoint<T>) event.getInjectionPoint();
+        DronePoint<T> dronePoint = (DronePoint<T>) event.getDronePoint();
 
 
 
@@ -86,25 +86,25 @@ public class DroneEnhancer {
 
             InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
 
-            if (enhancer.canEnhance(instanceOrCallableInstance, injectionPoint.getDroneType(),
-                    injectionPoint.getQualifier())) {
+            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(),
+                    dronePoint.getQualifier())) {
                 log.log(Level.FINE,
                         "Enhancing {0} @{1} using enhancer {2} with precedence {3}",
-                        new Object[] { injectionPoint.getDroneType().getSimpleName(),
-                                injectionPoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
+                        new Object[] { dronePoint.getDroneType().getSimpleName(),
+                                dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
                                 enhancer.getPrecedence() });
 
-                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, drone, injectionPoint));
+                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, drone, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
-                final T enhancedDrone = supportedEnhancer.enhance(drone, injectionPoint.getQualifier());
+                final T enhancedDrone = supportedEnhancer.enhance(drone, dronePoint.getQualifier());
                 if (enhancedDrone == null) {
                     throw new IllegalStateException("Enhanced drone cannot be null!");
                 }
                 if (enhancedDrone != drone) {
-                    context.storeFutureDrone(injectionPoint, new ConstantValueCachingCallable<T>(enhancedDrone));
+                    context.storeFutureDrone(dronePoint, new ConstantValueCachingCallable<T>(enhancedDrone));
                     drone = enhancedDrone;
                 }
-                droneEnhancementEvent.fire(new AfterDroneEnhanced(enhancedDrone, injectionPoint));
+                droneEnhancementEvent.fire(new AfterDroneEnhanced(enhancedDrone, dronePoint));
             }
         }
     }
@@ -119,31 +119,31 @@ public class DroneEnhancer {
         Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
 
         T drone = (T) event.getDrone();
-        InjectionPoint<T> injectionPoint = (InjectionPoint<T>) event.getInjectionPoint();
+        DronePoint<T> dronePoint = (DronePoint<T>) event.getDronePoint();
 
         for (DroneInstanceEnhancer<?> enhancer : enhancers) {
 
             InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
 
-            if (enhancer.canEnhance(instanceOrCallableInstance, injectionPoint.getDroneType(),
-                    injectionPoint.getQualifier())) {
+            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(),
+                    dronePoint.getQualifier())) {
                 log.log(Level.FINER,
                         "Deenhancing {0} @{1} using enhancer {2} with precedence {3}",
-                        new Object[] { injectionPoint.getDroneType().getSimpleName(),
-                                injectionPoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
+                        new Object[] { dronePoint.getDroneType().getSimpleName(),
+                                dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
                                 enhancer.getPrecedence() });
 
-                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, drone, injectionPoint));
+                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, drone, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
-                T deenhancedDrone = supportedEnhancer.deenhance(drone, injectionPoint.getQualifier());
+                T deenhancedDrone = supportedEnhancer.deenhance(drone, dronePoint.getQualifier());
                 if (deenhancedDrone == null) {
                     throw new IllegalStateException("Deenahnced drone cannot be null!");
                 }
                 if (deenhancedDrone != drone) {
-                    context.storeFutureDrone(injectionPoint, new ConstantValueCachingCallable<T>(deenhancedDrone));
+                    context.storeFutureDrone(dronePoint, new ConstantValueCachingCallable<T>(deenhancedDrone));
                     drone = deenhancedDrone;
                 }
-                droneEnhancementEvent.fire(new AfterDroneDeenhanced(deenhancedDrone, injectionPoint));
+                droneEnhancementEvent.fire(new AfterDroneDeenhanced(deenhancedDrone, dronePoint));
 
             }
         }

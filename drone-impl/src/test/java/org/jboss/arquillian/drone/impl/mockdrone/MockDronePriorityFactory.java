@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.impl.mockdrone;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
@@ -39,9 +39,9 @@ public class MockDronePriorityFactory implements Configurator<MockDrone, MockDro
     }
 
     @Override
-    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<MockDrone>
-            injectionPoint) {
-        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, injectionPoint.getQualifier());
+    public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<MockDrone>
+            dronePoint) {
+        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, dronePoint.getQualifier());
         configuration.setField(MOCK_DRONE_PRIORITY_FACTORY_FIELD);
         return configuration;
     }

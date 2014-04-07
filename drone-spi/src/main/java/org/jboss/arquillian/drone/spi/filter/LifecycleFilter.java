@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,21 +27,21 @@ import java.util.Set;
  */
 public class LifecycleFilter implements Filter {
 
-    private final Set<InjectionPoint.Lifecycle> lifecycles;
+    private final Set<DronePoint.Lifecycle> lifecycles;
 
     /**
      * Creates lifecycle filter which will match injection points with any of specified lifecycles. Usage of multiple
      * lifecycles behaves like disjunction.
      */
-    public LifecycleFilter(InjectionPoint.Lifecycle lifecycle, InjectionPoint.Lifecycle... additionalLifecycles) {
-        lifecycles = new HashSet<InjectionPoint.Lifecycle>();
+    public LifecycleFilter(DronePoint.Lifecycle lifecycle, DronePoint.Lifecycle... additionalLifecycles) {
+        lifecycles = new HashSet<DronePoint.Lifecycle>();
         if(lifecycle == null) {
             throw new IllegalArgumentException("Lifecycle cannot be null!");
         }
         lifecycles.add(lifecycle);
 
         if(additionalLifecycles != null) {
-            for (InjectionPoint.Lifecycle additionalLifecycle : additionalLifecycles) {
+            for (DronePoint.Lifecycle additionalLifecycle : additionalLifecycles) {
                 if (additionalLifecycle != null) {
                     lifecycles.add(additionalLifecycle);
                 }
@@ -51,7 +51,7 @@ public class LifecycleFilter implements Filter {
     }
 
     @Override
-    public boolean accept(InjectionPoint<?> injectionPoint) {
-        return lifecycles.contains(injectionPoint.getLifecycle());
+    public boolean accept(DronePoint<?> dronePoint) {
+        return lifecycles.contains(dronePoint.getLifecycle());
     }
 }

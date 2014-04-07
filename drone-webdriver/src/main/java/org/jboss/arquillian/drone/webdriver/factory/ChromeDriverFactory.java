@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
@@ -115,9 +115,9 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     }
 
     @Override
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<ChromeDriver>
-            injectionPoint) {
-        WebDriverConfiguration configuration = super.createConfiguration(descriptor, injectionPoint);
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<ChromeDriver>
+            dronePoint) {
+        WebDriverConfiguration configuration = super.createConfiguration(descriptor, dronePoint);
         if(!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing ChromeDriver configuration to be remote-based.");

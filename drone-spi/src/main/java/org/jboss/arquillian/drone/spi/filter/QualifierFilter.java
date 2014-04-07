@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
 
 import java.lang.annotation.Annotation;
 
@@ -36,8 +36,8 @@ public class QualifierFilter implements Filter {
     }
 
     @Override
-    public boolean accept(InjectionPoint<?> injectionPoint) {
-        return injectionPoint.getQualifier() == qualifier;
+    public boolean accept(DronePoint<?> dronePoint) {
+        return dronePoint.getQualifier() == qualifier;
     }
 
 }

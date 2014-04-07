@@ -17,7 +17,7 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * This event is called after Drone instance is destroyed and it is no longer available in the {@link DroneContext}
@@ -26,8 +26,8 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
  */
 public class AfterDroneDestroyed extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    public AfterDroneDestroyed(InjectionPoint<?> injectionPoint) {
-        super(injectionPoint);
+    public AfterDroneDestroyed(DronePoint<?> dronePoint) {
+        super(dronePoint);
     }
 
 }

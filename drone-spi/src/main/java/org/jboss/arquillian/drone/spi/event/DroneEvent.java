@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * Representation of event related to Arquillian Drone extension
@@ -30,6 +30,6 @@ public interface DroneEvent {
      *
      * @return Injection point for drone
      */
-    InjectionPoint<?> getInjectionPoint();
+    DronePoint<?> getDronePoint();
 
 }

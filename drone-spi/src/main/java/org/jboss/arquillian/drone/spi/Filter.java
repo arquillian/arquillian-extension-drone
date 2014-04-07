@@ -24,9 +24,9 @@ public interface Filter {
     /**
      * Returns true if the injection point is accepted, false otherwise.
      *
-     * @param injectionPoint injection point of the drone.
+     * @param dronePoint injection point of the drone.
      * @return
      */
-    boolean accept(InjectionPoint<?> injectionPoint);
+    boolean accept(DronePoint<?> dronePoint);
 
 }

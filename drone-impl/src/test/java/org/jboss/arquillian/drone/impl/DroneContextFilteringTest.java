@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.impl;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
 import org.jboss.arquillian.drone.spi.filter.QualifierFilter;
@@ -34,36 +34,36 @@ public class DroneContextFilteringTest {
 
     DroneContext context;
 
-    InjectionPoint<MockDrone> defaultClassInjectionPoint;
-    InjectionPoint<MockDrone> defaultMethodInjectionPoint;
-    InjectionPoint<MockDrone> defaultDeploymentInjectionPoint;
-    InjectionPoint<MockDrone> differentClassInjectionPoint;
-    InjectionPoint<MockDrone> differentMethodInjectionPoint;
-    InjectionPoint<MockDrone> differentDeploymentInjectionPoint;
+    DronePoint<MockDrone> defaultClassDronePoint;
+    DronePoint<MockDrone> defaultMethodDronePoint;
+    DronePoint<MockDrone> defaultDeploymentDronePoint;
+    DronePoint<MockDrone> differentClassDronePoint;
+    DronePoint<MockDrone> differentMethodDronePoint;
+    DronePoint<MockDrone> differentDeploymentDronePoint;
 
     @Before
     public void setup() {
         context = new DroneContextImpl();
 
-        defaultClassInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Lifecycle.CLASS);
-        context.storeDroneConfiguration(defaultClassInjectionPoint, null);
-        defaultMethodInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Lifecycle.METHOD);
-        context.storeDroneConfiguration(defaultMethodInjectionPoint, null);
-        defaultDeploymentInjectionPoint = new DeploymentLifecycleInjectionPointImpl<MockDrone>(MockDrone.class,
-                Default.class, InjectionPoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DEFAULT);
-        context.storeDroneConfiguration(defaultDeploymentInjectionPoint, null);
+        defaultClassDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
+                DronePoint.Lifecycle.CLASS);
+        context.storeDroneConfiguration(defaultClassDronePoint, null);
+        defaultMethodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
+                DronePoint.Lifecycle.METHOD);
+        context.storeDroneConfiguration(defaultMethodDronePoint, null);
+        defaultDeploymentDronePoint = new DeploymentLifecycleDronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DEFAULT);
+        context.storeDroneConfiguration(defaultDeploymentDronePoint, null);
 
-        differentClassInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Different.class,
-                InjectionPoint.Lifecycle.CLASS);
-        context.storeDroneConfiguration(differentClassInjectionPoint, null);
-        differentMethodInjectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Different.class,
-                InjectionPoint.Lifecycle.METHOD);
-        context.storeDroneConfiguration(differentMethodInjectionPoint, null);
-        differentDeploymentInjectionPoint = new DeploymentLifecycleInjectionPointImpl<MockDrone>(MockDrone.class,
-                Different.class, InjectionPoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DIFFERENT);
-        context.storeDroneConfiguration(differentDeploymentInjectionPoint, null);
+        differentClassDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Different.class,
+                DronePoint.Lifecycle.CLASS);
+        context.storeDroneConfiguration(differentClassDronePoint, null);
+        differentMethodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Different.class,
+                DronePoint.Lifecycle.METHOD);
+        context.storeDroneConfiguration(differentMethodDronePoint, null);
+        differentDeploymentDronePoint = new DeploymentLifecycleDronePointImpl<MockDrone>(MockDrone.class,
+                Different.class, DronePoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DIFFERENT);
+        context.storeDroneConfiguration(differentDeploymentDronePoint, null);
     }
 
     @Test
@@ -74,9 +74,9 @@ public class DroneContextFilteringTest {
 
     @Test
     public void testScopeFiltering() {
-        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(InjectionPoint.Lifecycle.CLASS)).size());
-        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(InjectionPoint.Lifecycle.METHOD)).size());
-        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(InjectionPoint.Lifecycle.DEPLOYMENT)).size());
+        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(DronePoint.Lifecycle.CLASS)).size());
+        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(DronePoint.Lifecycle.METHOD)).size());
+        Assert.assertEquals(2, context.find(MockDrone.class, new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT)).size());
     }
 
     @Test
@@ -85,30 +85,30 @@ public class DroneContextFilteringTest {
         Assert.assertEquals(2, context.find(MockDrone.class, new DeploymentFilter()).size());
         Assert.assertEquals(2, context.find(MockDrone.class, new DeploymentFilter("deployment_.*")).size());
         Assert.assertEquals(0, context.find(MockDrone.class, new DeploymentFilter("invalid_.*")).size());
-        Assert.assertEquals(defaultDeploymentInjectionPoint, context.findSingle(MockDrone.class, new DeploymentFilter(DEPLOYMENT_DEFAULT)));
-        Assert.assertEquals(differentDeploymentInjectionPoint, context.findSingle(MockDrone.class, new DeploymentFilter(DEPLOYMENT_DIFFERENT)));
+        Assert.assertEquals(defaultDeploymentDronePoint, context.findSingle(MockDrone.class, new DeploymentFilter(DEPLOYMENT_DEFAULT)));
+        Assert.assertEquals(differentDeploymentDronePoint, context.findSingle(MockDrone.class, new DeploymentFilter(DEPLOYMENT_DIFFERENT)));
     }
 
     @Test
     public void testCombinedFiltering() {
-        Assert.assertEquals(defaultClassInjectionPoint,
+        Assert.assertEquals(defaultClassDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Default.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.CLASS)));
-        Assert.assertEquals(defaultMethodInjectionPoint,
+                        new LifecycleFilter(DronePoint.Lifecycle.CLASS)));
+        Assert.assertEquals(defaultMethodDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Default.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.METHOD)));
-        Assert.assertEquals(defaultDeploymentInjectionPoint,
+                        new LifecycleFilter(DronePoint.Lifecycle.METHOD)));
+        Assert.assertEquals(defaultDeploymentDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Default.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.DEPLOYMENT)));
-        Assert.assertEquals(differentClassInjectionPoint,
+                        new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT)));
+        Assert.assertEquals(differentClassDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Different.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.CLASS)));
-        Assert.assertEquals(differentMethodInjectionPoint,
+                        new LifecycleFilter(DronePoint.Lifecycle.CLASS)));
+        Assert.assertEquals(differentMethodDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Different.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.METHOD)));
-        Assert.assertEquals(differentDeploymentInjectionPoint,
+                        new LifecycleFilter(DronePoint.Lifecycle.METHOD)));
+        Assert.assertEquals(differentDeploymentDronePoint,
                 context.findSingle(MockDrone.class, new QualifierFilter(Different.class),
-                        new LifecycleFilter(InjectionPoint.Lifecycle.DEPLOYMENT)));
+                        new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT)));
     }
 
 }

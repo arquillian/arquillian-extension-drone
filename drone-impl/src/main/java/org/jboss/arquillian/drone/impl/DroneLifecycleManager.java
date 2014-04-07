@@ -30,7 +30,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.command.DestroyDrone;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
@@ -109,58 +109,58 @@ public class DroneLifecycleManager {
     public void beforeClass(@Observes BeforeClass event) {
         Class<?> testClass = event.getTestClass().getJavaClass();
 
-        Set<InjectionPoint<?>> injectionPoints = InjectionPoints.allInClass(testClass);
+        Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(testClass);
 
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            if (injectionPoint.getLifecycle() == InjectionPoint.Lifecycle.METHOD) {
+        for (DronePoint<?> dronePoint : dronePoints) {
+            if (dronePoint.getLifecycle() == DronePoint.Lifecycle.METHOD) {
                 continue;
             }
 
-            createDroneConfigurationCommand.fire(new PrepareDrone(injectionPoint));
+            createDroneConfigurationCommand.fire(new PrepareDrone(dronePoint));
         }
     }
 
     public void before(@Observes Before event) {
-        InjectionPoint<?>[] injectionPoints = InjectionPoints.parametersInMethod(event.getTestMethod());
+        DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(event.getTestMethod());
 
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            if (injectionPoint == null || injectionPoint.getLifecycle() != InjectionPoint.Lifecycle.METHOD) {
+        for (DronePoint<?> dronePoint : dronePoints) {
+            if (dronePoint == null || dronePoint.getLifecycle() != DronePoint.Lifecycle.METHOD) {
                 continue;
             }
 
-            createDroneConfigurationCommand.fire(new PrepareDrone(injectionPoint));
+            createDroneConfigurationCommand.fire(new PrepareDrone(dronePoint));
         }
     }
 
     public void after(@Observes After event) {
         DroneContext context = droneContext.get();
-        LifecycleFilter lifecycleFilter = new LifecycleFilter(InjectionPoint.Lifecycle.METHOD);
-        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, lifecycleFilter);
+        LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.METHOD);
+        List<DronePoint<?>> dronePoints = context.find(Object.class, lifecycleFilter);
 
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
+        for (DronePoint<?> dronePoint : dronePoints) {
+            destroyDroneCommand.fire(new DestroyDrone(dronePoint));
         }
     }
 
     public void beforeUndeploy(@Observes BeforeUnDeploy event) {
         DroneContext context = droneContext.get();
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
-        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, deploymentFilter);
+        List<DronePoint<?>> dronePoints = context.find(Object.class, deploymentFilter);
 
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
+        for (DronePoint<?> dronePoint : dronePoints) {
+            destroyDroneCommand.fire(new DestroyDrone(dronePoint));
         }
     }
 
     public void afterClass(@Observes AfterClass event) {
         DroneContext context = droneContext.get();
 
-        LifecycleFilter lifecycleFilter = new LifecycleFilter(InjectionPoint.Lifecycle.CLASS,
-            InjectionPoint.Lifecycle.METHOD);
-        List<InjectionPoint<?>> injectionPoints = context.find(Object.class, lifecycleFilter);
+        LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.CLASS,
+            DronePoint.Lifecycle.METHOD);
+        List<DronePoint<?>> dronePoints = context.find(Object.class, lifecycleFilter);
 
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            destroyDroneCommand.fire(new DestroyDrone(injectionPoint));
+        for (DronePoint<?> dronePoint : dronePoints) {
+            destroyDroneCommand.fire(new DestroyDrone(dronePoint));
         }
     }
 

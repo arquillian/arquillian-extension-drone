@@ -20,7 +20,7 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.api.annotation.lifecycle.ClassLifecycle;
 import org.jboss.arquillian.drone.api.annotation.lifecycle.MethodLifecycle;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -37,57 +37,57 @@ public final class InjectionPoints {
     private InjectionPoints() {
     }
 
-    static Set<InjectionPoint<?>> allInClass(Class<?> cls) {
-        List<InjectionPoint<?>> injectionPoints = new ArrayList<InjectionPoint<?>>();
+    static Set<DronePoint<?>> allInClass(Class<?> cls) {
+        List<DronePoint<?>> dronePoints = new ArrayList<DronePoint<?>>();
 
-        injectionPoints.addAll(fieldsInClass(cls).values());
-        for (InjectionPoint<?>[] methodInjectionPoints : parametersInClass(cls).values()) {
-            for (InjectionPoint<?> injectionPoint : methodInjectionPoints) {
-                if (injectionPoint == null) {
+        dronePoints.addAll(fieldsInClass(cls).values());
+        for (DronePoint<?>[] methodDronePoints : parametersInClass(cls).values()) {
+            for (DronePoint<?> dronePoint : methodDronePoints) {
+                if (dronePoint == null) {
                     continue;
                 }
-                injectionPoints.add(injectionPoint);
+                dronePoints.add(dronePoint);
             }
         }
 
         // We want no duplicates
-        return new HashSet<InjectionPoint<?>>(injectionPoints);
+        return new HashSet<DronePoint<?>>(dronePoints);
     }
 
-    static Map<Field, InjectionPoint<?>> fieldsInClass(Class<?> cls) {
-        Map<Field, InjectionPoint<?>> injectionPoints = new HashMap<Field, InjectionPoint<?>>();
+    static Map<Field, DronePoint<?>> fieldsInClass(Class<?> cls) {
+        Map<Field, DronePoint<?>> injectionPoints = new HashMap<Field, DronePoint<?>>();
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(cls, Drone.class);
 
         for (Field field : fields) {
-            InjectionPoint<?> injectionPoint = resolveInjectionPoint(field);
+            DronePoint<?> dronePoint = resolveInjectionPoint(field);
 
-            injectionPoints.put(field, injectionPoint);
+            injectionPoints.put(field, dronePoint);
         }
 
         return injectionPoints;
     }
 
-    static Map<Method, InjectionPoint<?>[]> parametersInClass(Class<?> cls) {
-        Map<Method, InjectionPoint<?>[]> mergedInjectionPoints = new HashMap<Method, InjectionPoint<?>[]>();
+    static Map<Method, DronePoint<?>[]> parametersInClass(Class<?> cls) {
+        Map<Method, DronePoint<?>[]> mergedInjectionPoints = new HashMap<Method, DronePoint<?>[]>();
         Method[] methods = cls.getMethods();
         for (Method method : methods) {
-            InjectionPoint<?>[] injectionPoints = parametersInMethod(method);
+            DronePoint<?>[] dronePoints = parametersInMethod(method);
 
-            mergedInjectionPoints.put(method, injectionPoints);
+            mergedInjectionPoints.put(method, dronePoints);
         }
 
         return mergedInjectionPoints;
 
     }
 
-    static InjectionPoint<?>[] parametersInMethod(Method method) {
+    static DronePoint<?>[] parametersInMethod(Method method) {
         Class<?>[] parameters = method.getParameterTypes();
         Map<Integer, Annotation[]> droneParameters = SecurityActions.getParametersWithAnnotation(method, Drone.class);
-        InjectionPoint<?>[] injectionPoints = new InjectionPoint<?>[parameters.length];
+        DronePoint<?>[] dronePoints = new DronePoint<?>[parameters.length];
 
         for (int i = 0; i < parameters.length; i++) {
             if (!droneParameters.containsKey(i)) {
-                injectionPoints[i] = null;
+                dronePoints[i] = null;
                 continue;
             }
 
@@ -95,59 +95,59 @@ public final class InjectionPoints {
 
             Class<?> droneType = parameters[i];
 
-            InjectionPoint<?> injectionPoint = resolveInjectionPoint(droneType, parameterAnnotations);
+            DronePoint<?> dronePoint = resolveInjectionPoint(droneType, parameterAnnotations);
 
-            injectionPoints[i] = injectionPoint;
+            dronePoints[i] = dronePoint;
         }
 
-        return injectionPoints;
+        return dronePoints;
     }
 
-    static InjectionPoint<?> resolveInjectionPoint(Field field) {
+    static DronePoint<?> resolveInjectionPoint(Field field) {
         Class<?> droneType = field.getType();
         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(field);
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(field);
         OperateOnDeployment operateOnDeployment = SecurityActions.getAnnotation(field, OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Lifecycle.CLASS,
+        return createInjectionPoint(droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.CLASS,
                 operateOnDeployment);
     }
 
-    static <T> InjectionPoint<T> resolveInjectionPoint(Class<T> droneType, Annotation[] parameterAnnotations) {
+    static <T> DronePoint<T> resolveInjectionPoint(Class<T> droneType, Annotation[] parameterAnnotations) {
         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations);
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(parameterAnnotations);
         OperateOnDeployment operateOnDeployment = SecurityActions.findAnnotation(parameterAnnotations,
                 OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, InjectionPoint.Lifecycle.METHOD,
+        return createInjectionPoint(droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.METHOD,
                 operateOnDeployment);
     }
 
     // We can't instantiate class with wildcard generic parameter directly, so we delegate it through parameter <T>
     // FIXME it's ugly to have so many parameters
-    static <T> InjectionPoint<T> createInjectionPoint(Class<T> droneType,
+    static <T> DronePoint<T> createInjectionPoint(Class<T> droneType,
                                                       Class<? extends Annotation> qualifier,
                                                       Class<? extends Annotation> scopeAnnotation,
-                                                      InjectionPoint.Lifecycle defaultLifecycle,
+                                                      DronePoint.Lifecycle defaultLifecycle,
                                                       OperateOnDeployment operateOnDeployment) {
-        InjectionPoint.Lifecycle lifecycle = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultLifecycle);
-        if (lifecycle == InjectionPoint.Lifecycle.DEPLOYMENT) {
+        DronePoint.Lifecycle lifecycle = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultLifecycle);
+        if (lifecycle == DronePoint.Lifecycle.DEPLOYMENT) {
             String deployment = operateOnDeployment.value();
-            return new DeploymentLifecycleInjectionPointImpl<T>(droneType, qualifier, lifecycle, deployment);
+            return new DeploymentLifecycleDronePointImpl<T>(droneType, qualifier, lifecycle, deployment);
         } else {
-            return new InjectionPointImpl<T>(droneType, qualifier, lifecycle);
+            return new DronePointImpl<T>(droneType, qualifier, lifecycle);
         }
     }
 
-    static InjectionPoint.Lifecycle scopeForAnnotation(Class<? extends Annotation> annotation,
-                                                   OperateOnDeployment deployment, InjectionPoint.Lifecycle defaultLifecycle) {
+    static DronePoint.Lifecycle scopeForAnnotation(Class<? extends Annotation> annotation,
+                                                   OperateOnDeployment deployment, DronePoint.Lifecycle defaultLifecycle) {
         if (annotation == ClassLifecycle.class) {
-            return InjectionPoint.Lifecycle.CLASS;
+            return DronePoint.Lifecycle.CLASS;
         } else if (annotation == MethodLifecycle.class) {
-            return InjectionPoint.Lifecycle.METHOD;
+            return DronePoint.Lifecycle.METHOD;
         } else {
             if (deployment != null) {
-                return InjectionPoint.Lifecycle.DEPLOYMENT;
+                return DronePoint.Lifecycle.DEPLOYMENT;
             } else {
                 return defaultLifecycle;
             }

@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
-import org.jboss.arquillian.drone.spi.DeploymentLifecycleInjectionPoint;
+import org.jboss.arquillian.drone.spi.DeploymentLifecycleDronePoint;
 import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,12 +45,12 @@ public class DeploymentFilter implements Filter {
     }
 
     @Override
-    public boolean accept(InjectionPoint<?> injectionPoint) {
-        if(!DeploymentLifecycleInjectionPoint.class.isAssignableFrom(injectionPoint.getClass())) {
+    public boolean accept(DronePoint<?> dronePoint) {
+        if(!DeploymentLifecycleDronePoint.class.isAssignableFrom(dronePoint.getClass())) {
             return false;
         }
 
-        DeploymentLifecycleInjectionPoint<?> castInjectionPoint = (DeploymentLifecycleInjectionPoint<?>)injectionPoint;
+        DeploymentLifecycleDronePoint<?> castInjectionPoint = (DeploymentLifecycleDronePoint<?>) dronePoint;
         Matcher matcher = pattern.matcher(castInjectionPoint.getDeploymentName());
         return matcher.matches();
     }

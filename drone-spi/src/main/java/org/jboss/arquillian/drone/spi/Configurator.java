@@ -36,5 +36,5 @@ public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortab
      * @param qualifier  A qualifier for this configuration
      * @return Configuration holding values determined from Arquillian's descriptor
      */
-    C createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<T> injectionPoint);
+    C createConfiguration(ArquillianDescriptor descriptor, DronePoint<T> dronePoint);
 }

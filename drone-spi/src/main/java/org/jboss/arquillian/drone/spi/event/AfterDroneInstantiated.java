@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * This event is fired after Drone callable is transformed into real Drone instance.
@@ -27,8 +27,8 @@ public class AfterDroneInstantiated extends BaseDroneEvent implements DroneLifec
 
     private final Object drone;
 
-    public <T> AfterDroneInstantiated(T drone, InjectionPoint<T> injectionPoint) {
-        super(injectionPoint);
+    public <T> AfterDroneInstantiated(T drone, DronePoint<T> dronePoint) {
+        super(dronePoint);
         this.drone = drone;
     }
 

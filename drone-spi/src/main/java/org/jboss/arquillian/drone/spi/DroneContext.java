@@ -48,7 +48,7 @@ public interface DroneContext {
      * @param <T> type of the drone
      * @throws IllegalStateException
      */
-    <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException;
+    <T> T getDrone(DronePoint<T> dronePoint) throws IllegalStateException;
 
     /**
      * Returns an instance of {@link DroneConfiguration} stored for specified injection point.
@@ -57,7 +57,7 @@ public interface DroneContext {
      * @param <C>                type of configuration to be returned
      * @throws IllegalArgumentException if there's no configuration stored for specified injection point
      */
-    <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint,
+    <C extends DroneConfiguration<C>> C getDroneConfiguration(DronePoint<?> dronePoint,
                                                               Class<C> configurationClass) throws
             IllegalArgumentException;
 
@@ -69,7 +69,7 @@ public interface DroneContext {
      *
      * @throws java.lang.IllegalStateException
      */
-    <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone) throws IllegalStateException;
+    <T> void storeFutureDrone(DronePoint<T> dronePoint, CachingCallable<T> drone) throws IllegalStateException;
 
     /**
      * Stores the {@link DroneConfiguration} for specified injection point.
@@ -79,43 +79,43 @@ public interface DroneContext {
      *
      * @throws java.lang.IllegalStateException
      */
-    <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
+    <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(DronePoint<T> dronePoint,
                                                                       C configuration) throws IllegalStateException;
 
     /**
      * Returns true if {@link CachingCallable#isValueCached()} is true for specified injection point.
      */
-    <T> boolean isDroneInstantiated(InjectionPoint<T> injectionPoint);
+    <T> boolean isDroneInstantiated(DronePoint<T> dronePoint);
 
     /**
      * Returns true if {@link CachingCallable} is stored for specified injection point.
      */
-    <T> boolean isFutureDroneStored(InjectionPoint<T> injectionPoint);
+    <T> boolean isFutureDroneStored(DronePoint<T> dronePoint);
 
     /**
      * Returns true if {@link DroneConfiguration} for specified injection point is stored.
      */
-    <T> boolean isDroneConfigurationStored(InjectionPoint<T> injectionPoint);
+    <T> boolean isDroneConfigurationStored(DronePoint<T> dronePoint);
 
     /**
      * Removes future or instantiated drone, depending on the state, for specified injection point.
      */
-    void removeDrone(InjectionPoint<?> injectionPoint);
+    void removeDrone(DronePoint<?> dronePoint);
 
     /**
      * Removes configuration for specified injection point.
      */
-    void removeDroneConfiguration(InjectionPoint<?> injectionPoint);
+    void removeDroneConfiguration(DronePoint<?> dronePoint);
 
     /**
      * Removes both future and instantiated drones for specified injection points.
      */
-    void removeDrones(List<InjectionPoint<?>> injectionPoints);
+    void removeDrones(List<DronePoint<?>> dronePoints);
 
     /**
      * Removes configurations for specified injection points.
      */
-    void removeDroneConfigurations(List<InjectionPoint<?>> injectionPoints);
+    void removeDroneConfigurations(List<DronePoint<?>> dronePoints);
 
     /**
      * Returns a single injection point that get matched by all of specified filters and the backing drone type can
@@ -123,13 +123,13 @@ public interface DroneContext {
      *
      * @throws IllegalStateException if matched injection points count is not exactly one
      */
-    <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass, Filter... filters) throws IllegalStateException;
+    <T> DronePoint<? extends T> findSingle(Class<T> droneClass, Filter... filters) throws IllegalStateException;
 
     /**
      * Returns a list of injection points that get matched by all of specified filters and the backing drone type can
      * be cast to specified type. When no filters are passed in, it returns all injection points with drone type that
      * can be cast to specified type. Using the Object.class as the type, it returns all injection points stored.
      */
-    <T> List<InjectionPoint<? extends T>> find(Class<T> droneClass, Filter... filters);
+    <T> List<DronePoint<? extends T>> find(Class<T> droneClass, Filter... filters);
 }
 

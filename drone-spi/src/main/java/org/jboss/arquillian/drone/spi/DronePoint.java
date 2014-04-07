@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
  *
  * @author <a href="mailto:tkriz@redhat.com">Tadeas Kriz</a>
  */
-public interface InjectionPoint<DRONE> {
+public interface DronePoint<DRONE> {
 
     /**
      * @return Type of drone to be injected.

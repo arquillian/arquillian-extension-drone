@@ -17,7 +17,7 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * This event is called before Drone instance in deenhanced.
@@ -28,8 +28,8 @@ public class BeforeDroneDeenhanced extends BaseDroneEvent implements DroneEnhanc
     private final DroneInstanceEnhancer<?> enhancer;
     private final Object drone;
 
-    public BeforeDroneDeenhanced(DroneInstanceEnhancer<?> enhancer, Object drone, InjectionPoint<?> injectionPoint) {
-        super(injectionPoint);
+    public BeforeDroneDeenhanced(DroneInstanceEnhancer<?> enhancer, Object drone, DronePoint<?> dronePoint) {
+        super(dronePoint);
         this.enhancer = enhancer;
         this.drone = drone;
     }

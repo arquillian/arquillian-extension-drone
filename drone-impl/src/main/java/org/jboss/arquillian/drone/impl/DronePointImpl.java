@@ -16,17 +16,17 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 import java.lang.annotation.Annotation;
 
-public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
+public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
 
     private final Class<DRONE> droneClass;
     private final Class<? extends Annotation> qualifier;
     private final Lifecycle lifecycle;
 
-    public InjectionPointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Lifecycle lifecycle) {
+    public DronePointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Lifecycle lifecycle) {
         this.droneClass = droneClass;
         this.qualifier = qualifier;
         this.lifecycle = lifecycle;
@@ -56,7 +56,7 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
             return false;
         }
 
-        InjectionPointImpl that = (InjectionPointImpl) o;
+        DronePointImpl that = (DronePointImpl) o;
 
         if (droneClass != null ? !droneClass.equals(that.droneClass) : that.droneClass != null) {
             return false;
@@ -81,7 +81,7 @@ public class InjectionPointImpl<DRONE> implements InjectionPoint<DRONE> {
 
     @Override
     public String toString() {
-        return "InjectionPointImpl{" +
+        return "DronePointImpl{" +
                 "droneClass=" + droneClass +
                 ", qualifier=" + qualifier +
                 ", lifecycle=" + lifecycle +

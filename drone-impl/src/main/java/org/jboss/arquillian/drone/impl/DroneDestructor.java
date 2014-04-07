@@ -23,8 +23,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.command.DestroyDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
@@ -70,29 +70,29 @@ public class DroneDestructor {
 
     public void destroyDrone(@Observes DestroyDrone command) {
         DroneContext context = droneContext.get();
-        InjectionPoint<?> injectionPoint = command.getInjectionPoint();
-        if (injectionPoint == null || !context.isDroneConfigurationStored(injectionPoint)) {
+        DronePoint<?> dronePoint = command.getDronePoint();
+        if (dronePoint == null || !context.isDroneConfigurationStored(dronePoint)) {
             return;
         }
 
-        boolean wasInstantiated = context.isDroneInstantiated(injectionPoint);
+        boolean wasInstantiated = context.isDroneInstantiated(dronePoint);
         if (wasInstantiated) {
-            Destructor destructor = getDestructorFor(injectionPoint.getDroneType());
-            Object drone = context.getDrone(injectionPoint);
+            Destructor destructor = getDestructorFor(dronePoint.getDroneType());
+            Object drone = context.getDrone(dronePoint);
 
-            droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, injectionPoint));
+            droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, dronePoint));
 
             // we need to get drone once again, at it might get modified by observers on previous event
-            drone = context.getDrone(injectionPoint);
+            drone = context.getDrone(dronePoint);
 
             destructor.destroyInstance(drone);
         }
 
-        context.removeDrone(injectionPoint);
-        context.removeDroneConfiguration(injectionPoint);
+        context.removeDrone(dronePoint);
+        context.removeDroneConfiguration(dronePoint);
 
         if (wasInstantiated) {
-            droneLifecycleEvent.fire(new AfterDroneDestroyed(injectionPoint));
+            droneLifecycleEvent.fire(new AfterDroneDestroyed(dronePoint));
         }
 
     }

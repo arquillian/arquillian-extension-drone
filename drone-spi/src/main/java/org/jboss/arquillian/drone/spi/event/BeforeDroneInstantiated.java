@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
@@ -26,8 +26,8 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  */
 public class BeforeDroneInstantiated extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    public <T> BeforeDroneInstantiated(InjectionPoint<T> injectionPoint) {
-        super(injectionPoint);
+    public <T> BeforeDroneInstantiated(DronePoint<T> dronePoint) {
+        super(dronePoint);
     }
 
 }

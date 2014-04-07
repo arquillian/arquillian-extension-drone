@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * Basic Drone event implementation
@@ -25,14 +25,14 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
  */
 public abstract class BaseDroneEvent implements DroneEvent {
 
-    protected final InjectionPoint<?> injectionPoint;
+    protected final DronePoint<?> dronePoint;
 
-    public BaseDroneEvent(InjectionPoint<?> injectionPoint) {
-        this.injectionPoint = injectionPoint;
+    public BaseDroneEvent(DronePoint<?> dronePoint) {
+        this.dronePoint = dronePoint;
     }
 
     @Override
-    public InjectionPoint<?> getInjectionPoint() {
-        return injectionPoint;
+    public DronePoint<?> getDronePoint() {
+        return dronePoint;
     }
 }

@@ -4,7 +4,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
@@ -24,15 +24,15 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
     protected Instance<BrowserCapabilitiesRegistry> registryInstance;
 
     @Override
-    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, InjectionPoint<T>
-        injectionPoint) {
+    public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<T>
+            dronePoint) {
 
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
         // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
         BrowserCapabilities browser = registry.getEntryFor(getDriverReadableName());
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(descriptor,
-            injectionPoint.getQualifier());
+            dronePoint.getQualifier());
 
         // if not set, we hit a webdriver configuration and we want to use browser capabilities
         if (browser == null && Validate.nonEmpty(configuration.getBrowser())) {

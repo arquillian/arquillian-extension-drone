@@ -1,0 +1,98 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.arquillian.drone.impl;
+
+import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
+import org.jboss.arquillian.drone.spi.DronePoint;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DronePointImplTest {
+
+    @Test
+    public void testClassScopeEquality() {
+        // given
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.CLASS);
+        // then
+        Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
+    }
+
+    @Test
+    public void testMethodScopeEquality() {
+        // given
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.METHOD);
+        DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.METHOD);
+        // then
+        Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
+    }
+
+    @Test
+    public void testDeploymentScopeEquality() {
+        // given
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.DEPLOYMENT);
+        DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, DronePoint.Lifecycle.DEPLOYMENT);
+        // then
+        Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
+    }
+
+    @Test
+    public void testVariousDroneTypesInequality() {
+        // given
+        DronePoint<String> stringDronePoint = new DronePointImpl<String>(String.class, null, null);
+        DronePoint<MockDrone> mockDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, null, null);
+
+        // then
+        Assert.assertNotSame("Injection points aren't equal", stringDronePoint, mockDronePoint);
+    }
+
+    @Test
+    public void testVariousQualifiersInequality() {
+        // given
+        DronePoint<MockDrone> defaultDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                Default.class, null);
+        DronePoint<MockDrone> differentDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                Different.class, null);
+
+        // then
+        Assert.assertNotSame("Injection points aren't equal", defaultDronePoint, differentDronePoint);
+    }
+
+    @Test
+    public void testVariousScopeInequality() {
+        // given
+        DronePoint<MockDrone> classScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                null, DronePoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> methodScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                null, DronePoint.Lifecycle.METHOD);
+        DronePoint<MockDrone> deploymentScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
+                null, DronePoint.Lifecycle.DEPLOYMENT);
+
+        // then
+        Assert.assertNotSame("Injection points aren't equal", classScopePoint, methodScopePoint);
+        Assert.assertNotSame("Injection points aren't equal", classScopePoint, deploymentScopePoint);
+        Assert.assertNotSame("Injection points aren't equal", methodScopePoint, deploymentScopePoint);
+    }
+
+}

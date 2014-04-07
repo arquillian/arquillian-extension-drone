@@ -17,7 +17,7 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import org.jboss.arquillian.drone.spi.Destructor;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * This event is fired before Drone instance is destroyed by {@link Destructor}.
@@ -28,8 +28,8 @@ public class BeforeDroneDestroyed extends BaseDroneEvent implements DroneLifecyc
 
     private final Object drone;
 
-    public BeforeDroneDestroyed(Object drone, InjectionPoint<?> injectionPoint) {
-        super(injectionPoint);
+    public BeforeDroneDestroyed(Object drone, DronePoint<?> dronePoint) {
+        super(dronePoint);
         this.drone = drone;
     }
 

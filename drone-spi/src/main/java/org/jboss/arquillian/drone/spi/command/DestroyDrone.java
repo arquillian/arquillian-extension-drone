@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.command;
 
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * Command event that will trigger the destruction of a drone. After fired,
@@ -26,8 +26,8 @@ import org.jboss.arquillian.drone.spi.InjectionPoint;
  */
 public class DestroyDrone extends InjectionPointCommand {
 
-    public DestroyDrone(InjectionPoint<?> injectionPoint) {
-        super(injectionPoint);
+    public DestroyDrone(DronePoint<?> dronePoint) {
+        super(dronePoint);
     }
 
 }

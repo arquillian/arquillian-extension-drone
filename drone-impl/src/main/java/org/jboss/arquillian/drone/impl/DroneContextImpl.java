@@ -35,8 +35,8 @@ import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Filter;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 
@@ -48,7 +48,7 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 public class DroneContextImpl implements DroneContext {
     private static final Logger LOGGER = Logger.getLogger(DroneContextImpl.class.getName());
 
-    private final Map<InjectionPoint<?>, DronePair<?, ?>> dronePairMap;
+    private final Map<DronePoint<?>, DronePair<?, ?>> dronePairMap;
 
     @Deprecated
     private DroneConfiguration<?> globalDroneConfiguration;
@@ -63,7 +63,7 @@ public class DroneContextImpl implements DroneContext {
     private Event<AfterDroneInstantiated> afterDroneInstantiatedEvent;
 
     public DroneContextImpl() {
-        dronePairMap = new HashMap<InjectionPoint<?>, DronePair<?, ?>>();
+        dronePairMap = new HashMap<DronePoint<?>, DronePair<?, ?>>();
     }
 
     @Override
@@ -77,33 +77,33 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> T getDrone(InjectionPoint<T> injectionPoint) throws IllegalStateException {
-        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+    public <T> T getDrone(DronePoint<T> dronePoint) throws IllegalStateException {
+        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(dronePoint);
         if (pair == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}", injectionPoint));
+            throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}", dronePoint));
         }
 
         CachingCallable<T> droneCallable = pair.getDroneCallable();
         if (droneCallable == null) {
             throw new IllegalStateException(MessageFormat.format("Drone callable not stored yet for injection point " +
-                "{0}!", injectionPoint));
+                "{0}!", dronePoint));
         }
 
         boolean newInstance = !droneCallable.isValueCached();
         if (newInstance) {
-            beforeDroneInstantiatedEvent.fire(new BeforeDroneInstantiated(injectionPoint));
+            beforeDroneInstantiatedEvent.fire(new BeforeDroneInstantiated(dronePoint));
         }
 
         T drone = instantiateDrone(droneCallable);
 
         if (newInstance) {
-            afterDroneInstantiatedEvent.fire(new AfterDroneInstantiated(drone, injectionPoint));
+            afterDroneInstantiatedEvent.fire(new AfterDroneInstantiated(drone, dronePoint));
         }
 
         CachingCallable<T> newDroneCallable = pair.getDroneCallable();
 
         if (newDroneCallable != droneCallable) {
-            return getDrone(injectionPoint);
+            return getDrone(dronePoint);
         } else {
             return drone;
         }
@@ -144,56 +144,56 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <C extends DroneConfiguration<C>> C getDroneConfiguration(InjectionPoint<?> injectionPoint, Class<C>
+    public <C extends DroneConfiguration<C>> C getDroneConfiguration(DronePoint<?> dronePoint, Class<C>
         configurationClass) throws IllegalArgumentException {
-        DronePair<?, C> pair = (DronePair<?, C>) dronePairMap.get(injectionPoint);
+        DronePair<?, C> pair = (DronePair<?, C>) dronePairMap.get(dronePoint);
         if (pair == null) {
             throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
-                injectionPoint));
+                    dronePoint));
         }
 
         C configuration = pair.getConfiguration();
         if (configuration == null) {
             throw new IllegalStateException(MessageFormat.format("Drone configuration not stored yet! Injection " +
-                "point: {0}", injectionPoint));
+                "point: {0}", dronePoint));
         }
 
         return configuration;
     }
 
     @Override
-    public <T> void storeFutureDrone(InjectionPoint<T> injectionPoint, CachingCallable<T> drone) {
-        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+    public <T> void storeFutureDrone(DronePoint<T> dronePoint, CachingCallable<T> drone) {
+        DronePair<T, ?> pair = (DronePair<T, ?>) dronePairMap.get(dronePoint);
         if (pair == null) {
             throw new IllegalArgumentException(MessageFormat.format("Injection point doesn''t exist: {0}",
-                injectionPoint));
+                    dronePoint));
         }
 
         if (pair.getDroneCallable() != null) {
-            LOGGER.log(Level.FINE, "Future drone replaced at point {0}", injectionPoint);
+            LOGGER.log(Level.FINE, "Future drone replaced at point {0}", dronePoint);
         }
 
         pair.setDroneCallable(drone);
     }
 
     @Override
-    public <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(InjectionPoint<T> injectionPoint,
+    public <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(DronePoint<T> dronePoint,
         C configuration) {
-        DronePair<T, C> pair = (DronePair<T, C>) dronePairMap.get(injectionPoint);
+        DronePair<T, C> pair = (DronePair<T, C>) dronePairMap.get(dronePoint);
         if (pair != null) {
             // FIXME shouldn't we just handle this peacefully with warning?
             throw new IllegalStateException(MessageFormat.format("Injection point already exists: {0}",
-                injectionPoint));
+                    dronePoint));
         }
 
         pair = new DronePair<T, C>();
         pair.setConfiguration(configuration);
-        dronePairMap.put(injectionPoint, pair);
+        dronePairMap.put(dronePoint, pair);
     }
 
     @Override
-    public <T> boolean isDroneInstantiated(InjectionPoint<T> injectionPoint) {
-        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+    public <T> boolean isDroneInstantiated(DronePoint<T> dronePoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(dronePoint);
         if (dronePair == null) {
             return false;
         }
@@ -204,8 +204,8 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> boolean isFutureDroneStored(InjectionPoint<T> injectionPoint) {
-        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+    public <T> boolean isFutureDroneStored(DronePoint<T> dronePoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(dronePoint);
         if (dronePair == null) {
             return false;
         }
@@ -213,8 +213,8 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> boolean isDroneConfigurationStored(InjectionPoint<T> injectionPoint) {
-        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(injectionPoint);
+    public <T> boolean isDroneConfigurationStored(DronePoint<T> dronePoint) {
+        DronePair<T, ?> dronePair = (DronePair<T, ?>) dronePairMap.get(dronePoint);
         if (dronePair == null) {
             return false;
         }
@@ -222,94 +222,94 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public void removeDrone(InjectionPoint<?> injectionPoint) {
-        DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
+    public void removeDrone(DronePoint<?> dronePoint) {
+        DronePair<?, ?> pair = dronePairMap.get(dronePoint);
         if (pair == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove Drone, because it wasn''t prepared! Injection point: {0}",
-                injectionPoint);
+                    dronePoint);
             return;
         }
         if (pair.getDroneCallable() == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove Drone, because it wasn''t set! Injection point: {0}",
-                injectionPoint);
+                    dronePoint);
         }
 
         pair.setDroneCallable(null);
     }
 
     @Override
-    public void removeDroneConfiguration(InjectionPoint<?> injectionPoint) {
-        DronePair<?, ?> pair = dronePairMap.get(injectionPoint);
+    public void removeDroneConfiguration(DronePoint<?> dronePoint) {
+        DronePair<?, ?> pair = dronePairMap.get(dronePoint);
         if (pair == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because the injection point wasn''t prepared. " +
-                "Injection point: {0}", injectionPoint);
+                "Injection point: {0}", dronePoint);
             return;
         }
         if (pair.getDroneCallable() != null) {
             LOGGER.log(Level.WARNING, "Drone is still set, but you won''t be able to access it anymore! Injection " +
-                "point: {0}", injectionPoint);
+                "point: {0}", dronePoint);
         }
         if (pair.getConfiguration() == null) {
             LOGGER.log(Level.WARNING, "Couldn''t remove configuration, because it wasn''t set! Injection point: {0}",
-                injectionPoint);
+                    dronePoint);
         }
 
         pair.setConfiguration(null);
 
-        dronePairMap.remove(injectionPoint);
+        dronePairMap.remove(dronePoint);
     }
 
     @Override
-    public void removeDrones(List<InjectionPoint<?>> injectionPoints) {
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            removeDrone(injectionPoint);
+    public void removeDrones(List<DronePoint<?>> dronePoints) {
+        for (DronePoint<?> dronePoint : dronePoints) {
+            removeDrone(dronePoint);
         }
     }
 
     @Override
-    public void removeDroneConfigurations(List<InjectionPoint<?>> injectionPoints) {
-        for (InjectionPoint<?> injectionPoint : injectionPoints) {
-            removeDroneConfiguration(injectionPoint);
+    public void removeDroneConfigurations(List<DronePoint<?>> dronePoints) {
+        for (DronePoint<?> dronePoint : dronePoints) {
+            removeDroneConfiguration(dronePoint);
         }
     }
 
     @Override
-    public <T> InjectionPoint<? extends T> findSingle(Class<T> droneClass,
+    public <T> DronePoint<? extends T> findSingle(Class<T> droneClass,
         Filter... filters) throws IllegalStateException {
-        List<InjectionPoint<? extends T>> injectionPoints = find(droneClass, filters);
-        int count = injectionPoints.size();
+        List<DronePoint<? extends T>> dronePoints = find(droneClass, filters);
+        int count = dronePoints.size();
         if (count != 1) {
             throw new IllegalStateException("Total injection points matched not equal to 1! Actual: " + count);
         }
-        return injectionPoints.get(0);
+        return dronePoints.get(0);
     }
 
     @Override
-    public <T> List<InjectionPoint<? extends T>> find(Class<T> droneClass, Filter... filters) {
-        List<InjectionPoint<? extends T>> matchedInjectionPoints = new ArrayList<InjectionPoint<? extends T>>();
+    public <T> List<DronePoint<? extends T>> find(Class<T> droneClass, Filter... filters) {
+        List<DronePoint<? extends T>> matchedDronePoints = new ArrayList<DronePoint<? extends T>>();
 
-        for (InjectionPoint<?> injectionPoint : dronePairMap.keySet()) {
-            if (!droneClass.isAssignableFrom(injectionPoint.getDroneType())) {
+        for (DronePoint<?> dronePoint : dronePairMap.keySet()) {
+            if (!droneClass.isAssignableFrom(dronePoint.getDroneType())) {
                 continue;
             }
             @SuppressWarnings("unchecked")
-            InjectionPoint<? extends T> castInjectionPoint = (InjectionPoint<? extends T>) injectionPoint;
+            DronePoint<? extends T> castDronePoint = (DronePoint<? extends T>) dronePoint;
 
             boolean matches = true;
 
             for (Filter filter : filters) {
-                if (!filter.accept(castInjectionPoint)) {
+                if (!filter.accept(castDronePoint)) {
                     matches = false;
                     break;
                 }
             }
 
             if (matches) {
-                matchedInjectionPoints.add(castInjectionPoint);
+                matchedDronePoints.add(castDronePoint);
             }
         }
 
-        return matchedInjectionPoints;
+        return matchedDronePoints;
     }
 
     private class DronePair<T, C extends DroneConfiguration<C>> {

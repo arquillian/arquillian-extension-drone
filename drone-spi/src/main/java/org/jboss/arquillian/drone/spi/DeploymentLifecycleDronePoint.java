@@ -21,7 +21,7 @@ package org.jboss.arquillian.drone.spi;
  *
  * @param <DRONE> Type of drone.
  */
-public interface DeploymentLifecycleInjectionPoint<DRONE> extends InjectionPoint<DRONE> {
+public interface DeploymentLifecycleDronePoint<DRONE> extends DronePoint<DRONE> {
 
     /**
      * Returns name of the deployment the drone is bound to.

@@ -33,7 +33,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -148,17 +148,17 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(EnrichedClass.class));
 
-        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, Default.class,
-                InjectionPoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
+                DronePoint.Lifecycle.CLASS);
 
-        MockDrone drone = context.getDrone(injectionPoint);
+        MockDrone drone = context.getDrone(dronePoint);
 
         assertEquals("both enhancerns were applied", enhanced2, drone);
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
 
         fire(new AfterClass(EnrichedClass.class));
 
-        assertFalse(context.isDroneInstantiated(injectionPoint));
+        assertFalse(context.isDroneInstantiated(dronePoint));
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
 
@@ -179,22 +179,22 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
-        InjectionPoint<MockDrone> injectionPoint = new InjectionPointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
-                InjectionPoint.Lifecycle.METHOD);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
+                DronePoint.Lifecycle.METHOD);
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
 
         testEnricher.enrich(instance);
         Object[] parameters = testEnricher.resolve(testMethod);
 
-        assertTrue("Drone is created", context.isDroneInstantiated(injectionPoint));
-        assertEquals("Drone was enhanced with both enhancers", enhanced2, context.getDrone(injectionPoint));
+        assertTrue("Drone is created", context.isDroneInstantiated(dronePoint));
+        assertEquals("Drone was enhanced with both enhancers", enhanced2, context.getDrone(dronePoint));
         assertNotNull(notEnhanced);
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
-        assertFalse("Drone was destroyed", context.isDroneInstantiated(injectionPoint));
+        assertFalse("Drone was destroyed", context.isDroneInstantiated(dronePoint));
         assertEquals(deEnhanced, notEnhanced);
     }
 

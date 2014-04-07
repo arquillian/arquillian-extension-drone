@@ -17,7 +17,7 @@
 package org.jboss.arquillian.drone.spi.event;
 
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
-import org.jboss.arquillian.drone.spi.InjectionPoint;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
  * This event is called after Drone configuration is created. By observing this event,
@@ -29,8 +29,8 @@ public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigu
 
     private final DroneConfiguration<?> configuration;
 
-    public AfterDroneConfigured(DroneConfiguration<?> configuration, InjectionPoint<?> injectionPoint) {
-        super(injectionPoint);
+    public AfterDroneConfigured(DroneConfiguration<?> configuration, DronePoint<?> dronePoint) {
+        super(dronePoint);
         this.configuration = configuration;
     }
 
