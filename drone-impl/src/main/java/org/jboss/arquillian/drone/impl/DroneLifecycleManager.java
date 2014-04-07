@@ -109,7 +109,7 @@ public class DroneLifecycleManager {
     public void beforeClass(@Observes BeforeClass event) {
         Class<?> testClass = event.getTestClass().getJavaClass();
 
-        Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(testClass);
+        Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(droneContext.get(), testClass);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             if (dronePoint.getLifecycle() == DronePoint.Lifecycle.METHOD) {
@@ -121,7 +121,7 @@ public class DroneLifecycleManager {
     }
 
     public void before(@Observes Before event) {
-        DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(event.getTestMethod());
+        DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(droneContext.get(), event.getTestMethod());
 
         for (DronePoint<?> dronePoint : dronePoints) {
             if (dronePoint == null || dronePoint.getLifecycle() != DronePoint.Lifecycle.METHOD) {

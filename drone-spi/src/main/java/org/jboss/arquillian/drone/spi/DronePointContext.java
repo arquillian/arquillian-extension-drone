@@ -16,7 +16,15 @@
  */
 package org.jboss.arquillian.drone.spi;
 
+/**
+ * Context unique for each {@link DronePoint}. It stores configuration, future instance and metadata.
+ */
 public interface DronePointContext<DRONE> {
+
+    /**
+     * Returns an instance of {@link DronePoint}, which is this context bound to.
+     */
+    DronePoint<DRONE> getDronePoint();
 
     /**
      * Returns an instance of drone. If the drone was not yet instantiated, it will fire {@link BeforeDroneInstantiated}
@@ -50,6 +58,11 @@ public interface DronePointContext<DRONE> {
             ClassCastException, IllegalStateException;
 
     /**
+     * Returns saved metadata for the given key.
+     */
+    <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass);
+
+    /**
      * Returns true if {@link CachingCallable#isValueCached()} is true.
      */
     boolean isInstantiated();
@@ -65,6 +78,11 @@ public interface DronePointContext<DRONE> {
     boolean hasConfiguration();
 
     /**
+     * Returns true if there are metadata stored under given key and with given class.
+     */
+    <KEY extends MetadataKey<VALUE>, VALUE> boolean containsMetadata(Class<KEY> keyClass);
+
+    /**
      * Sets {@link CachingCallable} for future drone instantiation. Remember that the best practise is to instantiate
      * drones lazily, at the very last moment.
      */
@@ -76,6 +94,11 @@ public interface DronePointContext<DRONE> {
     <CONF extends DroneConfiguration<CONF>> void setConfiguration(CONF configuration);
 
     /**
+     * Stores given metadata under specified key. If there are metadata stored for the given key, it will replace them.
+     */
+    <KEY extends MetadataKey<VALUE>, VALUE> void storeMetadata(Class<KEY> keyClass, VALUE metadata);
+
+    /**
      * Removes future or instantiated drone instance, depending on the state.
      */
     void removeFutureInstance();
@@ -84,4 +107,18 @@ public interface DronePointContext<DRONE> {
      * Removes configuration.
      */
     void removeConfiguration();
+
+    <KEY extends MetadataKey<VALUE>, VALUE> void removeMetadata(Class<KEY> keyClass);
+
+    /**
+     * Utility interface used for unique identification of metadata in {@link DronePointContext}.
+     * <p/>
+     * Whenever you need
+     * to store data into the context, you need to extend this interface and set the {@code VALUE} parameter to a
+     * type of the metadata you want to store. Then use {@code .class} of your newly created interface as a key to
+     * store and retrieve data from the context.
+     *
+     * @param <VALUE> Type of the value to be stored in the {@link DronePointContext}.
+     */
+    public interface MetadataKey<VALUE> {}
 }

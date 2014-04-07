@@ -72,7 +72,7 @@ public class DroneDestructor {
         DroneContext context = droneContext.get();
         DronePoint<?> dronePoint = command.getDronePoint();
         // FIXME this condition might not be valid anymore!
-        if (dronePoint == null || !context.get(dronePoint).hasConfiguration()) {
+        if (dronePoint == null || !context.contains(dronePoint)) {
             return;
         }
 
@@ -89,12 +89,11 @@ public class DroneDestructor {
             destructor.destroyInstance(drone);
         }
 
-        context.remove(dronePoint);
-
         if (wasInstantiated) {
             droneLifecycleEvent.fire(new AfterDroneDestroyed(dronePoint));
         }
 
+        context.remove(dronePoint);
     }
 
     @SuppressWarnings("rawtypes")

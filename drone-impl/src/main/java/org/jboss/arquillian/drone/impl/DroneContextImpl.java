@@ -23,7 +23,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointContext;
-import org.jboss.arquillian.drone.spi.Filter;
+import org.jboss.arquillian.drone.spi.DronePointFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public class DroneContextImpl implements DroneContext {
 
     @Override
     public <T> DronePoint<? extends T> findSingle(Class<T> droneClass,
-                                                  Filter... filters) throws IllegalStateException {
+                                                  DronePointFilter... filters) throws IllegalStateException {
         List<DronePoint<? extends T>> dronePoints = find(droneClass, filters);
         int count = dronePoints.size();
         if (count != 1) {
@@ -94,7 +94,7 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> List<DronePoint<? extends T>> find(Class<T> droneClass, Filter... filters) {
+    public <T> List<DronePoint<? extends T>> find(Class<T> droneClass, DronePointFilter... filters) {
         List<DronePoint<? extends T>> matchedDronePoints = new ArrayList<DronePoint<? extends T>>();
 
         for (DronePoint<?> dronePoint : droneContextMap.keySet()) {
@@ -106,8 +106,8 @@ public class DroneContextImpl implements DroneContext {
 
             boolean matches = true;
 
-            for (Filter filter : filters) {
-                if (!filter.accept(castDronePoint)) {
+            for (DronePointFilter filter : filters) {
+                if (!filter.accept(this, castDronePoint)) {
                     matches = false;
                     break;
                 }

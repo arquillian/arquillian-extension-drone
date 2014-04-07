@@ -20,6 +20,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
 import org.jboss.arquillian.drone.spi.filter.QualifierFilter;
@@ -29,6 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.annotation.Annotation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DroneContextFilteringTest extends AbstractTestTestBase {
@@ -51,29 +54,28 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
         getManager().inject(context);
 
 
-        defaultClassDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
-                DronePoint.Lifecycle.CLASS);
+        defaultClassDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.CLASS);
         context.get(defaultClassDronePoint);
 
-        defaultMethodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
-                DronePoint.Lifecycle.METHOD);
+        defaultMethodDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.METHOD);
         context.get(defaultMethodDronePoint);
 
-        defaultDeploymentDronePoint = new DeploymentLifecycleDronePointImpl<MockDrone>(MockDrone.class,
-                Default.class, DronePoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DEFAULT);
-        context.get(defaultDeploymentDronePoint);
+        defaultDeploymentDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.DEPLOYMENT);
+        context.get(defaultDeploymentDronePoint).storeMetadata(DeploymentNameKey.class, DEPLOYMENT_DEFAULT);
 
-        differentClassDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Different.class,
-                DronePoint.Lifecycle.CLASS);
+        differentClassDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.CLASS);
         context.get(differentClassDronePoint);
 
-        differentMethodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Different.class,
-                DronePoint.Lifecycle.METHOD);
+        differentMethodDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.METHOD);
         context.get(differentMethodDronePoint);
 
-        differentDeploymentDronePoint = new DeploymentLifecycleDronePointImpl<MockDrone>(MockDrone.class,
-                Different.class, DronePoint.Lifecycle.DEPLOYMENT, DEPLOYMENT_DIFFERENT);
-        context.get(differentDeploymentDronePoint);
+        differentDeploymentDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.DEPLOYMENT);
+        context.get(differentDeploymentDronePoint).storeMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
+    }
+
+    private DronePoint<MockDrone> createDronePoint(Class<? extends Annotation> qualifier,
+                                                   DronePoint.Lifecycle lifecycle) {
+        return new DronePointImpl<MockDrone>(MockDrone.class, qualifier, lifecycle);
     }
 
     @Test

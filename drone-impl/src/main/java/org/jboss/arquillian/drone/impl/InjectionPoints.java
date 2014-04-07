@@ -20,7 +20,9 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.api.annotation.lifecycle.ClassLifecycle;
 import org.jboss.arquillian.drone.api.annotation.lifecycle.MethodLifecycle;
+import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -32,16 +34,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// FIXME make this class not static and do the API a better way
 public final class InjectionPoints {
 
     private InjectionPoints() {
     }
 
-    static Set<DronePoint<?>> allInClass(Class<?> cls) {
+    static Set<DronePoint<?>> allInClass(DroneContext context, Class<?> cls) {
         List<DronePoint<?>> dronePoints = new ArrayList<DronePoint<?>>();
 
-        dronePoints.addAll(fieldsInClass(cls).values());
-        for (DronePoint<?>[] methodDronePoints : parametersInClass(cls).values()) {
+        dronePoints.addAll(fieldsInClass(context, cls).values());
+        for (DronePoint<?>[] methodDronePoints : parametersInClass(context, cls).values()) {
             for (DronePoint<?> dronePoint : methodDronePoints) {
                 if (dronePoint == null) {
                     continue;
@@ -54,12 +57,12 @@ public final class InjectionPoints {
         return new HashSet<DronePoint<?>>(dronePoints);
     }
 
-    static Map<Field, DronePoint<?>> fieldsInClass(Class<?> cls) {
+    static Map<Field, DronePoint<?>> fieldsInClass(DroneContext context, Class<?> cls) {
         Map<Field, DronePoint<?>> injectionPoints = new HashMap<Field, DronePoint<?>>();
         List<Field> fields = SecurityActions.getFieldsWithAnnotation(cls, Drone.class);
 
         for (Field field : fields) {
-            DronePoint<?> dronePoint = resolveInjectionPoint(field);
+            DronePoint<?> dronePoint = resolveInjectionPoint(context, field);
 
             injectionPoints.put(field, dronePoint);
         }
@@ -67,11 +70,11 @@ public final class InjectionPoints {
         return injectionPoints;
     }
 
-    static Map<Method, DronePoint<?>[]> parametersInClass(Class<?> cls) {
+    static Map<Method, DronePoint<?>[]> parametersInClass(DroneContext context, Class<?> cls) {
         Map<Method, DronePoint<?>[]> mergedInjectionPoints = new HashMap<Method, DronePoint<?>[]>();
         Method[] methods = cls.getMethods();
         for (Method method : methods) {
-            DronePoint<?>[] dronePoints = parametersInMethod(method);
+            DronePoint<?>[] dronePoints = parametersInMethod(context, method);
 
             mergedInjectionPoints.put(method, dronePoints);
         }
@@ -80,7 +83,7 @@ public final class InjectionPoints {
 
     }
 
-    static DronePoint<?>[] parametersInMethod(Method method) {
+    static DronePoint<?>[] parametersInMethod(DroneContext context, Method method) {
         Class<?>[] parameters = method.getParameterTypes();
         Map<Integer, Annotation[]> droneParameters = SecurityActions.getParametersWithAnnotation(method, Drone.class);
         DronePoint<?>[] dronePoints = new DronePoint<?>[parameters.length];
@@ -95,7 +98,7 @@ public final class InjectionPoints {
 
             Class<?> droneType = parameters[i];
 
-            DronePoint<?> dronePoint = resolveInjectionPoint(droneType, parameterAnnotations);
+            DronePoint<?> dronePoint = resolveInjectionPoint(context, droneType, parameterAnnotations);
 
             dronePoints[i] = dronePoint;
         }
@@ -103,44 +106,48 @@ public final class InjectionPoints {
         return dronePoints;
     }
 
-    static DronePoint<?> resolveInjectionPoint(Field field) {
+    static DronePoint<?> resolveInjectionPoint(DroneContext context, Field field) {
         Class<?> droneType = field.getType();
         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(field);
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(field);
         OperateOnDeployment operateOnDeployment = SecurityActions.getAnnotation(field, OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.CLASS,
+        return createInjectionPoint(context, droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.CLASS,
                 operateOnDeployment);
     }
 
-    static <T> DronePoint<T> resolveInjectionPoint(Class<T> droneType, Annotation[] parameterAnnotations) {
+    static <T> DronePoint<T> resolveInjectionPoint(DroneContext context, Class<T> droneType,
+                                                   Annotation[] parameterAnnotations) {
         Class<? extends Annotation> qualifier = SecurityActions.getQualifier(parameterAnnotations);
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(parameterAnnotations);
         OperateOnDeployment operateOnDeployment = SecurityActions.findAnnotation(parameterAnnotations,
                 OperateOnDeployment.class);
 
-        return createInjectionPoint(droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.METHOD,
+        return createInjectionPoint(context, droneType, qualifier, scopeAnnotation, DronePoint.Lifecycle.METHOD,
                 operateOnDeployment);
     }
 
     // We can't instantiate class with wildcard generic parameter directly, so we delegate it through parameter <T>
     // FIXME it's ugly to have so many parameters
-    static <T> DronePoint<T> createInjectionPoint(Class<T> droneType,
-                                                      Class<? extends Annotation> qualifier,
-                                                      Class<? extends Annotation> scopeAnnotation,
-                                                      DronePoint.Lifecycle defaultLifecycle,
-                                                      OperateOnDeployment operateOnDeployment) {
+    static <T> DronePoint<T> createInjectionPoint(DroneContext context, Class<T> droneType,
+                                                  Class<? extends Annotation> qualifier,
+                                                  Class<? extends Annotation> scopeAnnotation,
+                                                  DronePoint.Lifecycle defaultLifecycle,
+                                                  OperateOnDeployment operateOnDeployment) {
         DronePoint.Lifecycle lifecycle = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultLifecycle);
+        DronePoint<T> dronePoint = new DronePointImpl<T>(droneType, qualifier, lifecycle);
+        // We register the drone point into context immediately
+        context.get(dronePoint);
         if (lifecycle == DronePoint.Lifecycle.DEPLOYMENT) {
             String deployment = operateOnDeployment.value();
-            return new DeploymentLifecycleDronePointImpl<T>(droneType, qualifier, lifecycle, deployment);
-        } else {
-            return new DronePointImpl<T>(droneType, qualifier, lifecycle);
+            context.get(dronePoint).storeMetadata(DeploymentNameKey.class, deployment);
         }
+        return dronePoint;
     }
 
     static DronePoint.Lifecycle scopeForAnnotation(Class<? extends Annotation> annotation,
-                                                   OperateOnDeployment deployment, DronePoint.Lifecycle defaultLifecycle) {
+                                                   OperateOnDeployment deployment,
+                                                   DronePoint.Lifecycle defaultLifecycle) {
         if (annotation == ClassLifecycle.class) {
             return DronePoint.Lifecycle.CLASS;
         } else if (annotation == MethodLifecycle.class) {

@@ -19,9 +19,8 @@ package org.jboss.arquillian.drone.spi;
 import java.util.List;
 
 /**
- * Context that stores drone configurations and cached drones.
- * <p/>
- * Context allows to store both class scoped Drones and method scoped Drones.
+ * Context that stores global configuration and {@link DronePointContext} for drone points. It also allows to find drone
+ * points based on given filters.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
@@ -52,7 +51,8 @@ public interface DroneContext {
     <DRONE> boolean contains(DronePoint<DRONE> dronePoint);
 
     /**
-     * Removes current instance of {@link DronePointContext} for specified drone point. If it was not created, does nothing.
+     * Removes current instance of {@link DronePointContext} for specified drone point. If it was not created,
+     * does nothing.
      */
     <DRONE> void remove(DronePoint<DRONE> dronePoint);
 
@@ -62,13 +62,13 @@ public interface DroneContext {
      *
      * @throws IllegalStateException if matched injection points count is not exactly one
      */
-    <T> DronePoint<? extends T> findSingle(Class<T> droneClass, Filter... filters) throws IllegalStateException;
+    <T> DronePoint<? extends T> findSingle(Class<T> droneClass, DronePointFilter... filters) throws IllegalStateException;
 
     /**
      * Returns a list of injection points that get matched by all of specified filters and the backing drone type can
      * be cast to specified type. When no filters are passed in, it returns all injection points with drone type that
      * can be cast to specified type. Using the Object.class as the type, it returns all injection points stored.
      */
-    <T> List<DronePoint<? extends T>> find(Class<T> droneClass, Filter... filters);
+    <T> List<DronePoint<? extends T>> find(Class<T> droneClass, DronePointFilter... filters);
 }
 

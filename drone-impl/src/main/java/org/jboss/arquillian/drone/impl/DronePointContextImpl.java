@@ -29,6 +29,8 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,8 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     private static final Logger LOGGER = Logger.getLogger(DronePointContextImpl.class.getName());
 
     private final DronePoint<DRONE> dronePoint;
+    private final Map<Class<? extends MetadataKey<?>>, Object> metadataMap;
+
     private CachingCallable<DRONE> futureInstance;
     private DroneConfiguration<?> configuration;
 
@@ -57,6 +61,12 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
 
     public DronePointContextImpl(DronePoint<DRONE> dronePoint) {
         this.dronePoint = dronePoint;
+        metadataMap = new HashMap<Class<? extends MetadataKey<?>>, Object>();
+    }
+
+    @Override
+    public DronePoint<DRONE> getDronePoint() {
+        return dronePoint;
     }
 
     @Override
@@ -116,6 +126,12 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) {
+        return (VALUE) metadataMap.get(keyClass);
+    }
+
+    @Override
     public boolean isInstantiated() {
         return hasFutureInstance() && futureInstance.isValueCached();
     }
@@ -128,6 +144,11 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     @Override
     public boolean hasConfiguration() {
         return configuration != null;
+    }
+
+    @Override
+    public <KEY extends MetadataKey<VALUE>, VALUE> boolean containsMetadata(Class<KEY> keyClass) {
+        return metadataMap.containsKey(keyClass);
     }
 
     @Override
@@ -148,6 +169,12 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public <KEY extends MetadataKey<VALUE>, VALUE> void storeMetadata(Class<KEY> keyClass, VALUE metadata) {
+        metadataMap.put(keyClass, metadata);
+    }
+
+    @Override
     public void removeFutureInstance() {
         if (!hasFutureInstance()) {
             LOGGER.log(Level.WARNING, "Could not remove future instance, because it was not set! Drone point: {0}.",
@@ -163,6 +190,11 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
                     dronePoint);
         }
         this.configuration = null;
+    }
+
+    @Override
+    public <KEY extends MetadataKey<VALUE>, VALUE> void removeMetadata(Class<KEY> keyClass) {
+        metadataMap.remove(keyClass);
     }
 
     private <T> T instantiateDrone(CachingCallable<T> droneCallable) {

@@ -14,18 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.spi;
+package org.jboss.arquillian.drone.spi.deployment;
 
-/**
- * Deployment scoped drones needs to be described by the deployment name.
- *
- * @param <DRONE> Type of drone.
- */
-public interface DeploymentLifecycleDronePoint<DRONE> extends DronePoint<DRONE> {
+import org.jboss.arquillian.drone.spi.DronePointContext;
 
-    /**
-     * Returns name of the deployment the drone is bound to.
-     */
-    String getDeploymentName();
-
-}
+public interface DeploymentNameKey extends DronePointContext.MetadataKey<String> {}

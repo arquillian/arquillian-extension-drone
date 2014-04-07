@@ -18,21 +18,15 @@ package org.jboss.arquillian.drone.spi.filter;
 
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
-import org.jboss.arquillian.drone.spi.Filter;
+import org.jboss.arquillian.drone.spi.DronePointFilter;
 
 /**
  * Filter that matches all injection points for which drone has been instantiated.
  */
-public class DroneInstantiatedFilter implements Filter {
-
-    private final DroneContext context;
-
-    public DroneInstantiatedFilter(DroneContext context) {
-        this.context = context;
-    }
+public class DroneInstantiatedFilter implements DronePointFilter {
 
     @Override
-    public boolean accept(DronePoint<?> dronePoint) {
+    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
         return context.get(dronePoint).isInstantiated();
     }
 }

@@ -60,7 +60,8 @@ public class DroneTestEnricher implements TestEnricher {
     public void enrich(Object testCase) {
         DroneContext context = droneContext.get();
 
-        Map<Field, DronePoint<?>> injectionPoints = InjectionPoints.fieldsInClass(testCase.getClass());
+        Map<Field, DronePoint<?>> injectionPoints = InjectionPoints.fieldsInClass(droneContext.get(),
+                testCase.getClass());
 
         for (Field field : injectionPoints.keySet()) {
             // omit setting if already set
@@ -89,7 +90,7 @@ public class DroneTestEnricher implements TestEnricher {
     @Override
     public Object[] resolve(Method method) {
         DroneContext context = droneContext.get();
-        DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(method);
+        DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(droneContext.get(), method);
         Object[] resolution = new Object[dronePoints.length];
         for (int i = 0; i < dronePoints.length; i++) {
             DronePoint<?> dronePoint = dronePoints[i];
@@ -105,7 +106,8 @@ public class DroneTestEnricher implements TestEnricher {
             );
 
             Object drone = context.get(dronePoint).getInstance();
-            Validate.stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object" +
+            Validate.stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser " +
+                    "object" +
                     ".\nMethod: {0}, injection point: {1},", method.getName(), dronePoint);
             resolution[i] = drone;
         }
