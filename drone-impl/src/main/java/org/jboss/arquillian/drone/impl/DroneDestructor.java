@@ -71,25 +71,25 @@ public class DroneDestructor {
     public void destroyDrone(@Observes DestroyDrone command) {
         DroneContext context = droneContext.get();
         DronePoint<?> dronePoint = command.getDronePoint();
-        if (dronePoint == null || !context.isDroneConfigurationStored(dronePoint)) {
+        // FIXME this condition might not be valid anymore!
+        if (dronePoint == null || !context.get(dronePoint).hasConfiguration()) {
             return;
         }
 
-        boolean wasInstantiated = context.isDroneInstantiated(dronePoint);
+        boolean wasInstantiated = context.get(dronePoint).isInstantiated();
         if (wasInstantiated) {
             Destructor destructor = getDestructorFor(dronePoint.getDroneType());
-            Object drone = context.getDrone(dronePoint);
+            Object drone = context.get(dronePoint).getInstance();
 
             droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, dronePoint));
 
             // we need to get drone once again, at it might get modified by observers on previous event
-            drone = context.getDrone(dronePoint);
+            drone = context.get(dronePoint).getInstance();
 
             destructor.destroyInstance(drone);
         }
 
-        context.removeDrone(dronePoint);
-        context.removeDroneConfiguration(dronePoint);
+        context.remove(dronePoint);
 
         if (wasInstantiated) {
             droneLifecycleEvent.fire(new AfterDroneDestroyed(dronePoint));

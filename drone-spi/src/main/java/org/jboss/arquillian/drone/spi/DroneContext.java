@@ -42,80 +42,19 @@ public interface DroneContext {
     void setGlobalDroneConfiguration(DroneConfiguration<?> configuration);
 
     /**
-     * Returns an instance of drone. If the drone was not yet instantiated, it will fire {@link BeforeDroneInstantiated}
-     * event, then instantiate the drone and fire {@link AfterDroneInstantiated} event.
-     *
-     * @param <T> type of the drone
-     * @throws IllegalStateException
+     * Returns an instance of {@link DronePointContext} for specified drone point, creating it if it does not exist.
      */
-    <T> T getDrone(DronePoint<T> dronePoint) throws IllegalStateException;
+    <DRONE> DronePointContext<DRONE> get(DronePoint<DRONE> dronePoint);
 
     /**
-     * Returns an instance of {@link DroneConfiguration} stored for specified injection point.
-     *
-     * @param configurationClass class to define the type of configuration to be returned
-     * @param <C>                type of configuration to be returned
-     * @throws IllegalArgumentException if there's no configuration stored for specified injection point
+     * Returns true if {@link DronePointContext} is already created for specified drone point.
      */
-    <C extends DroneConfiguration<C>> C getDroneConfiguration(DronePoint<?> dronePoint,
-                                                              Class<C> configurationClass) throws
-            IllegalArgumentException;
+    <DRONE> boolean contains(DronePoint<DRONE> dronePoint);
 
     /**
-     * Stores the {@link CachingCallable} for future drone instantiation.
-     * <p/>
-     * It throws {@link java.lang.IllegalStateException} if there is no configuration stored for specified injection
-     * point.
-     *
-     * @throws java.lang.IllegalStateException
+     * Removes current instance of {@link DronePointContext} for specified drone point. If it was not created, does nothing.
      */
-    <T> void storeFutureDrone(DronePoint<T> dronePoint, CachingCallable<T> drone) throws IllegalStateException;
-
-    /**
-     * Stores the {@link DroneConfiguration} for specified injection point.
-     * <p/>
-     * It throws {@link java.lang.IllegalStateException} if there is already a configuration stored for specified
-     * injection point.
-     *
-     * @throws java.lang.IllegalStateException
-     */
-    <T, C extends DroneConfiguration<C>> void storeDroneConfiguration(DronePoint<T> dronePoint,
-                                                                      C configuration) throws IllegalStateException;
-
-    /**
-     * Returns true if {@link CachingCallable#isValueCached()} is true for specified injection point.
-     */
-    <T> boolean isDroneInstantiated(DronePoint<T> dronePoint);
-
-    /**
-     * Returns true if {@link CachingCallable} is stored for specified injection point.
-     */
-    <T> boolean isFutureDroneStored(DronePoint<T> dronePoint);
-
-    /**
-     * Returns true if {@link DroneConfiguration} for specified injection point is stored.
-     */
-    <T> boolean isDroneConfigurationStored(DronePoint<T> dronePoint);
-
-    /**
-     * Removes future or instantiated drone, depending on the state, for specified injection point.
-     */
-    void removeDrone(DronePoint<?> dronePoint);
-
-    /**
-     * Removes configuration for specified injection point.
-     */
-    void removeDroneConfiguration(DronePoint<?> dronePoint);
-
-    /**
-     * Removes both future and instantiated drones for specified injection points.
-     */
-    void removeDrones(List<DronePoint<?>> dronePoints);
-
-    /**
-     * Removes configurations for specified injection points.
-     */
-    void removeDroneConfigurations(List<DronePoint<?>> dronePoints);
+    <DRONE> void remove(DronePoint<DRONE> dronePoint);
 
     /**
      * Returns a single injection point that get matched by all of specified filters and the backing drone type can

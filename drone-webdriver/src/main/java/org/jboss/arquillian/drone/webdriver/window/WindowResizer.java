@@ -75,8 +75,7 @@ public class WindowResizer {
 
         // let's get browser configuration
         Validate.stateNotNull(context, "DroneContext must not be null");
-        WebDriverConfiguration configuration = context.getDroneConfiguration(dronePoint, WebDriverConfiguration
-                .class);
+        WebDriverConfiguration configuration = context.get(dronePoint).getConfigurationAs(WebDriverConfiguration.class);
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
         String dimensions = configuration.getDimensions();
@@ -103,9 +102,10 @@ public class WindowResizer {
 
     private void logRequestIgnored(WebDriver driver, int width, int height, DronePoint<?> dronePoint) {
         log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, " +
-                "not supported for {2}",
+                        "not supported for {2}",
                 new Object[] { dronePoint.getDroneType().getSimpleName(),
                         dronePoint.getQualifier().getSimpleName(), driver.getClass().getName(), width,
-                        height });
+                        height }
+        );
     }
 }

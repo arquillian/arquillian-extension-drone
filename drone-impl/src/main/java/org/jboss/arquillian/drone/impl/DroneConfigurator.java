@@ -25,8 +25,8 @@ import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
@@ -96,8 +96,8 @@ public class DroneConfigurator {
         Validate.stateNotNull(descriptor, "ArquillianDescriptor should not be null");
         Validate.stateNotNull(context, "DroneContext should be available while working with method scoped instances");
 
-        if (context.isDroneConfigurationStored(dronePoint)) {
-            logger.log(Level.WARNING, "Couldn''t configure drone for injection point {0}, " +
+        if (context.get(dronePoint).hasConfiguration()) {
+            logger.log(Level.WARNING, "Could not configure drone for injection point {0}, " +
                     "because it was already configured!", dronePoint);
             return;
         }
@@ -108,12 +108,12 @@ public class DroneConfigurator {
 
         DroneConfiguration configuration;
         // If nobody else provided the configuration
-        if (!context.isDroneConfigurationStored(dronePoint)) {
+        if (!context.get(dronePoint).hasConfiguration()) {
             configuration = configurator.createConfiguration(descriptor, dronePoint);
 
-            context.storeDroneConfiguration(dronePoint, configuration);
+            context.get(dronePoint).setConfiguration(configuration);
         } else {
-            configuration = context.getDroneConfiguration(dronePoint, DroneConfiguration.class);
+            configuration = context.get(dronePoint).getConfigurationAs(DroneConfiguration.class);
         }
 
         afterDroneConfiguredEvent.fire(new AfterDroneConfigured(configuration, dronePoint));
@@ -122,8 +122,9 @@ public class DroneConfigurator {
     private <DRONE> void createDroneCallable(DroneRegistry registry, final DronePoint<DRONE> dronePoint) {
         final DroneContext context = droneContext.get();
 
-        if (context.isFutureDroneStored(dronePoint)) {
-            logger.log(Level.WARNING, "Couldn''t create drone callable for injection point {0}, because it was already created!", dronePoint);
+        if (context.get(dronePoint).hasFutureInstance()) {
+            logger.log(Level.WARNING, "Could not create drone callable for injection point {0}, " +
+                    "because it was already created!", dronePoint);
             return;
         }
 
@@ -136,16 +137,17 @@ public class DroneConfigurator {
         beforeDroneCallableCreatedEvent.fire(new BeforeDroneCallableCreated(instantiator, dronePoint));
 
         // create future instance
-        CachingCallable futureDrone = new CachingCallableImpl<DRONE>() {
+        CachingCallable<DRONE> futureDrone = new CachingCallableImpl<DRONE>() {
             @Override
             protected DRONE createInstance() throws Exception {
-                DroneConfiguration<?> configuration = context.getDroneConfiguration(dronePoint,
-                        DroneConfiguration.class);
+                DroneConfiguration<?> configuration = context
+                        .get(dronePoint)
+                        .getConfigurationAs(DroneConfiguration.class);
                 return (DRONE) instantiator.createInstance(configuration);
             }
         };
 
-        context.storeFutureDrone(dronePoint, futureDrone);
+        context.get(dronePoint).setFutureInstance(futureDrone);
 
         afterDroneCallableCreatedEvent.fire(new AfterDroneCallableCreated(dronePoint));
     }

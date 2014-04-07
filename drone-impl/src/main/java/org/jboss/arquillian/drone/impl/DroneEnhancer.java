@@ -101,7 +101,7 @@ public class DroneEnhancer {
                     throw new IllegalStateException("Enhanced drone cannot be null!");
                 }
                 if (enhancedDrone != drone) {
-                    context.storeFutureDrone(dronePoint, new ConstantValueCachingCallable<T>(enhancedDrone));
+                    context.get(dronePoint).setFutureInstance(new ConstantValueCachingCallable<T>(enhancedDrone));
                     drone = enhancedDrone;
                 }
                 droneEnhancementEvent.fire(new AfterDroneEnhanced(enhancedDrone, dronePoint));
@@ -140,7 +140,7 @@ public class DroneEnhancer {
                     throw new IllegalStateException("Deenahnced drone cannot be null!");
                 }
                 if (deenhancedDrone != drone) {
-                    context.storeFutureDrone(dronePoint, new ConstantValueCachingCallable<T>(deenhancedDrone));
+                    context.get(dronePoint).setFutureInstance(new ConstantValueCachingCallable<T>(deenhancedDrone));
                     drone = deenhancedDrone;
                 }
                 droneEnhancementEvent.fire(new AfterDroneDeenhanced(deenhancedDrone, dronePoint));

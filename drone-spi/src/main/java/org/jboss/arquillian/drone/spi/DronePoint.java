@@ -41,6 +41,11 @@ public interface DronePoint<DRONE> {
      */
     Lifecycle getLifecycle();
 
+    /**
+     * @return True of the underlying drone type can be cast to {@code droneClass} parameter.
+     */
+    boolean conformsTo(Class<?> droneClass);
+
     public static enum Lifecycle {
         /**
          * Method lifecycle means the drone will be prepared in {@link Before} and destroyed in {@link After}.

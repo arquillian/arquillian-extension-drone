@@ -33,6 +33,6 @@ public class DroneInstantiatedFilter implements Filter {
 
     @Override
     public boolean accept(DronePoint<?> dronePoint) {
-        return context.isDroneInstantiated(dronePoint);
+        return context.get(dronePoint).isInstantiated();
     }
 }

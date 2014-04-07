@@ -77,7 +77,7 @@ public class DroneTestEnricher implements TestEnricher {
                     new Object[] { dronePoint.getDroneType().getSimpleName(), dronePoint }
             );
 
-            Object drone = context.getDrone(dronePoint);
+            Object drone = context.get(dronePoint).getInstance();
             Validate.stateNotNull(drone, "Retrieved a null from Drone Context, " +
                             "which is not a valid Drone browser object. \nClass: {0}, field: {1}, injection point: {2}",
                     testCase.getClass().getName(), field.getName(), dronePoint
@@ -104,7 +104,7 @@ public class DroneTestEnricher implements TestEnricher {
                     new Object[] { method.getName(), dronePoint }
             );
 
-            Object drone = context.getDrone(dronePoint);
+            Object drone = context.get(dronePoint).getInstance();
             Validate.stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser object" +
                     ".\nMethod: {0}, injection point: {1},", method.getName(), dronePoint);
             resolution[i] = drone;
@@ -114,7 +114,7 @@ public class DroneTestEnricher implements TestEnricher {
     }
 
     private void ensureInjectionPointPrepared(DronePoint<?> dronePoint) {
-        if (!droneContext.get().isFutureDroneStored(dronePoint)) {
+        if (!droneContext.get().get(dronePoint).hasFutureInstance()) {
             if (dronePoint.getLifecycle() != DronePoint.Lifecycle.DEPLOYMENT) {
                 log.log(Level.WARNING, "Injection point {0} was not prepared yet. It will be prepared now, " +
                         "but it''s recommended that all drones with class lifecycle are prepared in " +

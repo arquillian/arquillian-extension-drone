@@ -48,6 +48,14 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
     }
 
     @Override
+    public boolean conformsTo(Class<?> droneClass) {
+        if (droneClass == null) {
+            return true; // FIXME return true or throw InvalidArgumentException
+        }
+        return droneClass.isAssignableFrom(this.droneClass);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -87,12 +95,4 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
                 ", lifecycle=" + lifecycle +
                 '}';
     }
-
-/*
-    @Override
-    public String toString() {
-        return "Drone type: " + (droneClass != null ? droneClass.getSimpleName() : " (null)") + ", " +
-                "Qualifier: " + (qualifier != null ? qualifier.getSimpleName() : " (null)") + ", " +
-                "Lifecycle: " + (lifecycle != null ? lifecycle.name() : "(null)");
-    }*/
 }

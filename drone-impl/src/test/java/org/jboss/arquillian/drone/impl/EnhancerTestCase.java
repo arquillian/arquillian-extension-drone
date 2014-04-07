@@ -151,14 +151,14 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
                 DronePoint.Lifecycle.CLASS);
 
-        MockDrone drone = context.getDrone(dronePoint);
+        MockDrone drone = context.get(dronePoint).getInstance();
 
         assertEquals("both enhancerns were applied", enhanced2, drone);
         assertThat("the initial instance provided by Drone was not enhanced", notEnhanced, is(not(nullValue())));
 
         fire(new AfterClass(EnrichedClass.class));
 
-        assertFalse(context.isDroneInstantiated(dronePoint));
+        assertFalse(context.get(dronePoint).isInstantiated());
         assertThat(notEnhanced, equalTo(deEnhanced));
     }
 
@@ -187,14 +187,14 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         testEnricher.enrich(instance);
         Object[] parameters = testEnricher.resolve(testMethod);
 
-        assertTrue("Drone is created", context.isDroneInstantiated(dronePoint));
-        assertEquals("Drone was enhanced with both enhancers", enhanced2, context.getDrone(dronePoint));
+        assertTrue("Drone is created", context.get(dronePoint).isInstantiated());
+        assertEquals("Drone was enhanced with both enhancers", enhanced2, context.get(dronePoint).getInstance());
         assertNotNull(notEnhanced);
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
-        assertFalse("Drone was destroyed", context.isDroneInstantiated(dronePoint));
+        assertFalse("Drone was destroyed", context.get(dronePoint).isInstantiated());
         assertEquals(deEnhanced, notEnhanced);
     }
 

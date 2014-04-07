@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -55,6 +51,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
@@ -129,10 +129,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
                 Different.class, DronePoint.Lifecycle.CLASS);
 
-        MockDroneConfiguration configuration = context.getDroneConfiguration(dronePoint,
-                MockDroneConfiguration.class);
+        MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertFalse("There is no MockDroneConfiguration with @Default qualifier",
-                context.isDroneConfigurationStored(invalidDronePoint));
+                context.get(invalidDronePoint).hasConfiguration());
         Assert.assertNotNull("MockDroneConfiguration is stored with @Different qualifier", configuration);
         Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD,
                 configuration.getField());
@@ -173,13 +172,13 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
                 MethodArgumentOne.class, DronePoint.Lifecycle.METHOD);
-        Assert.assertTrue("Drone created", context.isDroneInstantiated(dronePoint));
+        Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(MethodEnrichedClass.class));
-        Assert.assertFalse("Drone destroyed", context.isDroneInstantiated(dronePoint));
+        Assert.assertFalse("Drone destroyed", context.get(dronePoint).isInstantiated());
     }
 
     @Test(expected = IllegalStateException.class)
@@ -213,13 +212,13 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         DronePoint<Object> dronePoint = new DronePointImpl<Object>(Object.class, Default.class,
                 DronePoint.Lifecycle.METHOD);
-        Assert.assertTrue("Drone created", context.isDroneInstantiated(dronePoint));
+        Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(MethodEnrichedClassUnregistered.class));
-        Assert.assertFalse("Drone destroyed", context.isDroneInstantiated(dronePoint));
+        Assert.assertFalse("Drone destroyed", context.get(dronePoint).isInstantiated());
     }
 
     @Test
@@ -239,11 +238,11 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         DronePoint<MockDrone> classDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
                 Default.class, DronePoint.Lifecycle.CLASS);
-        Assert.assertTrue("Class drone created", context.isDroneInstantiated(classDronePoint));
+        Assert.assertTrue("Class drone created", context.get(classDronePoint).isInstantiated());
 
         DronePoint<MockDrone> methodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
                 Default.class, DronePoint.Lifecycle.METHOD);
-        Assert.assertTrue("Method drone created", context.isDroneInstantiated(methodDronePoint));
+        Assert.assertTrue("Method drone created", context.get(methodDronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
     }
