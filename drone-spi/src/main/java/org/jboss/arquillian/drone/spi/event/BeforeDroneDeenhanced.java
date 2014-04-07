@@ -26,19 +26,13 @@ import org.jboss.arquillian.drone.spi.DronePoint;
  */
 public class BeforeDroneDeenhanced extends BaseDroneEvent implements DroneEnhancementEvent {
     private final DroneInstanceEnhancer<?> enhancer;
-    private final Object drone;
 
-    public BeforeDroneDeenhanced(DroneInstanceEnhancer<?> enhancer, Object drone, DronePoint<?> dronePoint) {
+    public BeforeDroneDeenhanced(DroneInstanceEnhancer<?> enhancer, DronePoint<?> dronePoint) {
         super(dronePoint);
         this.enhancer = enhancer;
-        this.drone = drone;
     }
 
     public DroneInstanceEnhancer<?> getEnhancer() {
         return enhancer;
-    }
-
-    public Object getDrone() {
-        return drone;
     }
 }

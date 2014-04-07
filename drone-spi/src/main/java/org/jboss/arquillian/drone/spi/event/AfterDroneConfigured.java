@@ -27,15 +27,8 @@ import org.jboss.arquillian.drone.spi.DronePoint;
  */
 public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
 
-    private final DroneConfiguration<?> configuration;
-
-    public AfterDroneConfigured(DroneConfiguration<?> configuration, DronePoint<?> dronePoint) {
+    public AfterDroneConfigured(DronePoint<?> dronePoint) {
         super(dronePoint);
-        this.configuration = configuration;
-    }
-
-    public DroneConfiguration<?> getConfiguration() {
-        return configuration;
     }
 
 }

@@ -79,12 +79,11 @@ public class DroneDestructor {
         boolean wasInstantiated = context.get(dronePoint).isInstantiated();
         if (wasInstantiated) {
             Destructor destructor = getDestructorFor(dronePoint.getDroneType());
-            Object drone = context.get(dronePoint).getInstance();
 
-            droneLifecycleEvent.fire(new BeforeDroneDestroyed(drone, dronePoint));
+            droneLifecycleEvent.fire(new BeforeDroneDestroyed(dronePoint));
 
             // we need to get drone once again, at it might get modified by observers on previous event
-            drone = context.get(dronePoint).getInstance();
+            Object drone = context.get(dronePoint).getInstance();
 
             destructor.destroyInstance(drone);
         }

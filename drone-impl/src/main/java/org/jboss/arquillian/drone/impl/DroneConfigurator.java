@@ -106,17 +106,14 @@ public class DroneConfigurator {
 
         beforeDroneConfiguredEvent.fire(new BeforeDroneConfigured(configurator, dronePoint));
 
-        DroneConfiguration configuration;
-        // If nobody else provided the configuration
+        // If nobody else provided the configuration, we have to do it
         if (!context.get(dronePoint).hasConfiguration()) {
-            configuration = configurator.createConfiguration(descriptor, dronePoint);
+            DroneConfiguration configuration = configurator.createConfiguration(descriptor, dronePoint);
 
             context.get(dronePoint).setConfiguration(configuration);
-        } else {
-            configuration = context.get(dronePoint).getConfigurationAs(DroneConfiguration.class);
         }
 
-        afterDroneConfiguredEvent.fire(new AfterDroneConfigured(configuration, dronePoint));
+        afterDroneConfiguredEvent.fire(new AfterDroneConfigured(dronePoint));
     }
 
     private <DRONE> void createDroneCallable(DroneRegistry registry, final DronePoint<DRONE> dronePoint) {

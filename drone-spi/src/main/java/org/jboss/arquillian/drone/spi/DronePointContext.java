@@ -45,7 +45,7 @@ public interface DronePointContext<DRONE> {
      * @throws java.lang.IllegalStateException If there is no future instance set.
      */
     // FIXME is it ok to throw ClassCastException?
-    <CAST_DRONE extends DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
+    <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
             IllegalStateException;
 
     /**

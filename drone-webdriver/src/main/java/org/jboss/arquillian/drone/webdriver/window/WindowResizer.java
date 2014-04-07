@@ -23,6 +23,7 @@ import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.DroneEvent;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -48,30 +49,23 @@ public class WindowResizer {
     Instance<DroneContext> droneContext;
 
     public void resizeBrowserWindow(@Observes AfterDroneInstantiated event) {
-        // get content of event
-        Object drone = event.getDrone();
-        DronePoint<?> dronePoint = event.getDronePoint();
-
-        resizeWindow(drone, dronePoint);
+        resizeWindow(event);
     }
 
     public void resizeBrowserWindow(@Observes AfterDroneEnhanced event) {
-        // get content of event
-        Object drone = event.getDrone();
-        DronePoint<?> dronePoint = event.getDronePoint();
-
-        resizeWindow(drone, dronePoint);
+        resizeWindow(event);
     }
 
-    private void resizeWindow(Object drone, DronePoint<?> dronePoint) {
-        if (!WebDriver.class.isAssignableFrom(drone.getClass())) {
+    private void resizeWindow(DroneEvent event) {
+        DronePoint<?> dronePoint = event.getDronePoint();
+
+        if(!dronePoint.conformsTo(WebDriver.class)) {
+            // This Drone is not instance of WebDriver, we will not resize the window
             return;
         }
-
         DroneContext context = droneContext.get();
 
-        WebDriver driver = (WebDriver) drone;
-
+        WebDriver driver = context.get(dronePoint).getInstanceAs(WebDriver.class);
 
         // let's get browser configuration
         Validate.stateNotNull(context, "DroneContext must not be null");

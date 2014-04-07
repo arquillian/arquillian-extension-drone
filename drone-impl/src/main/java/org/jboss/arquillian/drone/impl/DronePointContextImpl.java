@@ -85,7 +85,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
         DRONE drone = instantiateDrone(futureInstance);
 
         if (newInstance) {
-            afterDroneInstantiatedEvent.fire(new AfterDroneInstantiated(drone, dronePoint));
+            afterDroneInstantiatedEvent.fire(new AfterDroneInstantiated(dronePoint));
         }
 
         // If someone sets new future instance, we need to do another round
@@ -98,7 +98,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <CAST_DRONE extends DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
+    public <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
             IllegalStateException {
         if (!dronePoint.conformsTo(droneClass)) {
             throw new ClassCastException(MessageFormat.format("Could not cast instance from {0} to {1}!",

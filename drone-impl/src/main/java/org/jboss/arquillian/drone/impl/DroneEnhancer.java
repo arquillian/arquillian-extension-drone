@@ -77,10 +77,8 @@ public class DroneEnhancer {
 
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
-        T drone = (T) event.getDrone();
         DronePoint<T> dronePoint = (DronePoint<T>) event.getDronePoint();
-
-
+        T drone = context.get(dronePoint).getInstance();
 
         for (DroneInstanceEnhancer<?> enhancer : enhancers) {
 
@@ -94,7 +92,7 @@ public class DroneEnhancer {
                                 dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
                                 enhancer.getPrecedence() });
 
-                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, drone, dronePoint));
+                droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
                 final T enhancedDrone = supportedEnhancer.enhance(drone, dronePoint.getQualifier());
                 if (enhancedDrone == null) {
@@ -104,7 +102,7 @@ public class DroneEnhancer {
                     context.get(dronePoint).setFutureInstance(new ConstantValueCachingCallable<T>(enhancedDrone));
                     drone = enhancedDrone;
                 }
-                droneEnhancementEvent.fire(new AfterDroneEnhanced(enhancedDrone, dronePoint));
+                droneEnhancementEvent.fire(new AfterDroneEnhanced(dronePoint));
             }
         }
     }
@@ -118,8 +116,8 @@ public class DroneEnhancer {
         // here we are deenhancing in reversed order
         Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
 
-        T drone = (T) event.getDrone();
         DronePoint<T> dronePoint = (DronePoint<T>) event.getDronePoint();
+        T drone = context.get(dronePoint).getInstance();
 
         for (DroneInstanceEnhancer<?> enhancer : enhancers) {
 
@@ -133,7 +131,7 @@ public class DroneEnhancer {
                                 dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
                                 enhancer.getPrecedence() });
 
-                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, drone, dronePoint));
+                droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
                 T deenhancedDrone = supportedEnhancer.deenhance(drone, dronePoint.getQualifier());
                 if (deenhancedDrone == null) {
@@ -143,7 +141,7 @@ public class DroneEnhancer {
                     context.get(dronePoint).setFutureInstance(new ConstantValueCachingCallable<T>(deenhancedDrone));
                     drone = deenhancedDrone;
                 }
-                droneEnhancementEvent.fire(new AfterDroneDeenhanced(deenhancedDrone, dronePoint));
+                droneEnhancementEvent.fire(new AfterDroneDeenhanced(dronePoint));
 
             }
         }

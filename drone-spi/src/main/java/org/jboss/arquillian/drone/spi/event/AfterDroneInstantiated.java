@@ -25,15 +25,8 @@ import org.jboss.arquillian.drone.spi.DronePoint;
  */
 public class AfterDroneInstantiated extends BaseDroneEvent implements DroneLifecycleEvent {
 
-    private final Object drone;
-
-    public <T> AfterDroneInstantiated(T drone, DronePoint<T> dronePoint) {
+    public AfterDroneInstantiated(DronePoint<?> dronePoint) {
         super(dronePoint);
-        this.drone = drone;
-    }
-
-    public Object getDrone() {
-        return drone;
     }
 
 }
