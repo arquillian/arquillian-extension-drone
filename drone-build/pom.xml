@@ -193,6 +193,11 @@
                 <artifactId>jetty-plus</artifactId>
                 <version>${version.org.eclipse.jetty}</version>
             </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
