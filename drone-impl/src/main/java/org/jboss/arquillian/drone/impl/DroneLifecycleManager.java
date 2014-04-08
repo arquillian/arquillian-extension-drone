@@ -145,6 +145,7 @@ public class DroneLifecycleManager {
     public void beforeUndeploy(@Observes BeforeUnDeploy event) {
         DroneContext context = droneContext.get();
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
+        LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT);
         List<DronePoint<Object>> dronePoints = context.find(Object.class, deploymentFilter, lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
