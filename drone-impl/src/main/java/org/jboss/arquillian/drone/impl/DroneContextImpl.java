@@ -88,7 +88,18 @@ public class DroneContextImpl implements DroneContext {
         List<DronePoint<T>> dronePoints = find(droneClass, filters);
         int count = dronePoints.size();
         if (count != 1) {
-            throw new IllegalStateException("Total injection points matched not equal to 1! Actual: " + count);
+            StringBuilder builder = new StringBuilder("Total injection points matched not equal to 1! Actual count: ");
+            builder.append(count).append(". Matched points: [ ");
+            int i = 0;
+            for (DronePoint<T> dronePoint : dronePoints) {
+                if(i > 0) {
+                    builder.append(", ");
+                }
+                builder.append(dronePoint);
+                i++;
+            }
+            builder.append(" ]");
+            throw new IllegalStateException(builder.toString());
         }
         return dronePoints.get(0);
     }
