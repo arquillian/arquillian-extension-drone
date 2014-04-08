@@ -83,9 +83,9 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> DronePoint<? extends T> findSingle(Class<T> droneClass,
-                                                  DronePointFilter... filters) throws IllegalStateException {
-        List<DronePoint<? extends T>> dronePoints = find(droneClass, filters);
+    public <T> DronePoint<T> findSingle(Class<T> droneClass,
+                                        DronePointFilter... filters) throws IllegalStateException {
+        List<DronePoint<T>> dronePoints = find(droneClass, filters);
         int count = dronePoints.size();
         if (count != 1) {
             throw new IllegalStateException("Total injection points matched not equal to 1! Actual: " + count);
@@ -94,15 +94,15 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> List<DronePoint<? extends T>> find(Class<T> droneClass, DronePointFilter... filters) {
-        List<DronePoint<? extends T>> matchedDronePoints = new ArrayList<DronePoint<? extends T>>();
+    public <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter... filters) {
+        List<DronePoint<T>> matchedDronePoints = new ArrayList<DronePoint<T>>();
 
         for (DronePoint<?> dronePoint : droneContextMap.keySet()) {
             if (!dronePoint.conformsTo(droneClass)) {
                 continue;
             }
             @SuppressWarnings("unchecked")
-            DronePoint<? extends T> castDronePoint = (DronePoint<? extends T>) dronePoint;
+            DronePoint<T> castDronePoint = (DronePoint<T>) dronePoint;
 
             boolean matches = true;
 

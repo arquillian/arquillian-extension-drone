@@ -135,7 +135,7 @@ public class DroneLifecycleManager {
     public void after(@Observes After event) {
         DroneContext context = droneContext.get();
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.METHOD);
-        List<DronePoint<?>> dronePoints = context.find(Object.class, lifecycleFilter);
+        List<DronePoint<Object>> dronePoints = context.find(Object.class, lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
@@ -145,7 +145,7 @@ public class DroneLifecycleManager {
     public void beforeUndeploy(@Observes BeforeUnDeploy event) {
         DroneContext context = droneContext.get();
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
-        List<DronePoint<?>> dronePoints = context.find(Object.class, deploymentFilter);
+        List<DronePoint<Object>> dronePoints = context.find(Object.class, deploymentFilter, lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
@@ -157,7 +157,7 @@ public class DroneLifecycleManager {
 
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.CLASS,
             DronePoint.Lifecycle.METHOD);
-        List<DronePoint<?>> dronePoints = context.find(Object.class, lifecycleFilter);
+        List<DronePoint<Object>> dronePoints = context.find(Object.class, lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
