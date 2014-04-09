@@ -64,16 +64,16 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
         context.get(defaultMethodDronePoint);
 
         defaultDeploymentDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.DEPLOYMENT);
-        context.get(defaultDeploymentDronePoint).storeMetadata(DeploymentNameKey.class, DEPLOYMENT_DEFAULT);
+        context.get(defaultDeploymentDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DEFAULT);
 
         differentClassDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.CLASS);
-        context.get(differentClassDronePoint).storeMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
+        context.get(differentClassDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
 
         differentMethodDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.METHOD);
         context.get(differentMethodDronePoint);
 
         differentDeploymentDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.DEPLOYMENT);
-        context.get(differentDeploymentDronePoint).storeMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
+        context.get(differentDeploymentDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
     }
 
     private DronePoint<MockDrone> createDronePoint(Class<? extends Annotation> qualifier,

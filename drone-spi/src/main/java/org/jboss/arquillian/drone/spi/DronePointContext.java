@@ -39,28 +39,30 @@ public interface DronePointContext<DRONE> {
      * {@link BeforeDroneInstantiated} event, then instantiate the drone and fire {@link AfterDroneInstantiated} event.
      *
      * @param droneClass Class to cast drone instance to.
-     * @throws java.lang.ClassCastException    If drone cannot be cast to desired type. Use
-     *                                         {@link org.jboss.arquillian.drone.spi.DronePoint#conformsTo(Class)} to
-     *                                         make sure the drone can be cast to it.
-     * @throws java.lang.IllegalStateException If there is no future instance set.
+     * @throws java.lang.IllegalArgumentException If the given class is null.
+     * @throws java.lang.IllegalStateException    If there is no future instance set or if the instance cannot be cast
+     *                                            to desired type. Use {@link DronePoint#conformsTo(Class)} to make sure
+     *                                            the drone can be cast to it.
      */
-    // FIXME is it ok to throw ClassCastException?
-    <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
+    <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws IllegalArgumentException,
             IllegalStateException;
 
     /**
      * Returns an instance of {@link DroneConfiguration} cast to desired type.
      *
-     * @throws java.lang.ClassCastException    If the configuration cannot be cast to desired type.
-     * @throws java.lang.IllegalStateException If there is no configuration set.
+     * @throws java.lang.IllegalStateException    If there is no configuration set or the configuration cannot be cast
+     *                                            to the desired type.
+     * @throws java.lang.IllegalArgumentException If the given configuration class is null.
      */
     <CONF extends DroneConfiguration<CONF>> CONF getConfigurationAs(Class<CONF> configurationClass) throws
-            ClassCastException, IllegalStateException;
+            IllegalArgumentException, IllegalStateException;
 
     /**
      * Returns saved metadata for the given key.
+     *
+     * @throws java.lang.IllegalArgumentException If the given key class is null.
      */
-    <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass);
+    <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) throws IllegalArgumentException;
 
     /**
      * Returns true if {@link CachingCallable#isValueCached()} is true.
@@ -78,9 +80,11 @@ public interface DronePointContext<DRONE> {
     boolean hasConfiguration();
 
     /**
-     * Returns true if there are metadata stored under given key and with given class.
+     * Returns true if there are metadata set for the given key.
+     *
+     * @throws java.lang.IllegalArgumentException If the given key class is null.
      */
-    <KEY extends MetadataKey<VALUE>, VALUE> boolean containsMetadata(Class<KEY> keyClass);
+    <KEY extends MetadataKey<VALUE>, VALUE> boolean hasMetadata(Class<KEY> keyClass) throws IllegalArgumentException;
 
     /**
      * Sets {@link CachingCallable} for future drone instantiation. Remember that the best practise is to instantiate
@@ -94,9 +98,12 @@ public interface DronePointContext<DRONE> {
     <CONF extends DroneConfiguration<CONF>> void setConfiguration(CONF configuration);
 
     /**
-     * Stores given metadata under specified key. If there are metadata stored for the given key, it will replace them.
+     * Sets given metadata under specified key. If there are metadata set for the given key, it will replace them.
+     *
+     * @throws java.lang.IllegalArgumentException If the given key class is null.
      */
-    <KEY extends MetadataKey<VALUE>, VALUE> void storeMetadata(Class<KEY> keyClass, VALUE metadata);
+    <KEY extends MetadataKey<VALUE>, VALUE> void setMetadata(Class<KEY> keyClass,
+                                                             VALUE metadata) throws IllegalArgumentException;
 
     /**
      * Removes future or instantiated drone instance, depending on the state.
@@ -108,6 +115,11 @@ public interface DronePointContext<DRONE> {
      */
     void removeConfiguration();
 
+    /**
+     * Removes metadata set for the given key.
+     *
+     * @throws java.lang.IllegalArgumentException If the given key class is null.
+     */
     <KEY extends MetadataKey<VALUE>, VALUE> void removeMetadata(Class<KEY> keyClass);
 
     /**

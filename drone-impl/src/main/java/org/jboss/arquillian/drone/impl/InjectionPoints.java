@@ -140,7 +140,7 @@ public final class InjectionPoints {
         context.get(dronePoint);
         if (lifecycle == DronePoint.Lifecycle.DEPLOYMENT) {
             String deployment = operateOnDeployment.value();
-            context.get(dronePoint).storeMetadata(DeploymentNameKey.class, deployment);
+            context.get(dronePoint).setMetadata(DeploymentNameKey.class, deployment);
         }
         return dronePoint;
     }

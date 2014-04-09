@@ -97,37 +97,42 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws ClassCastException,
+    public <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws IllegalArgumentException,
             IllegalStateException {
+        Validate.notNull(droneClass, "Given drone class cannot be null!");
+
         if (!dronePoint.conformsTo(droneClass)) {
-            throw new ClassCastException(MessageFormat.format("Could not cast instance from {0} to {1}!",
+            throw new IllegalStateException(MessageFormat.format("Could not cast instance from {0} to {1}!",
                     dronePoint.getDroneType().getName(), droneClass.getName()));
         }
 
-        return (CAST_DRONE) getInstance();
+        return droneClass.cast(getInstance());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <CONF extends DroneConfiguration<CONF>> CONF getConfigurationAs(Class<CONF> configurationClass) throws
-            ClassCastException, IllegalStateException {
+            IllegalArgumentException, IllegalStateException {
+        Validate.notNull(configurationClass, "Given configuration class cannot be null!");
+
         if (configuration == null) {
             throw new IllegalStateException(MessageFormat.format("Configuration is not set for drone point {0}!",
                     dronePoint));
         }
 
         if (!configurationClass.isAssignableFrom(configuration.getClass())) {
-            throw new ClassCastException(MessageFormat.format("Could not cast configuration from {0} to {1}!",
+            throw new IllegalStateException(MessageFormat.format("Could not cast configuration from {0} to {1}!",
                     configuration.getClass().getName(), configurationClass.getName()));
         }
 
-        return (CONF) configuration;
+        return configurationClass.cast(configuration);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) {
+    public <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) throws
+            IllegalArgumentException {
+        Validate.notNull(keyClass, "Given key class canoot be null!");
+
         return (VALUE) metadataMap.get(keyClass);
     }
 
@@ -147,7 +152,9 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     }
 
     @Override
-    public <KEY extends MetadataKey<VALUE>, VALUE> boolean containsMetadata(Class<KEY> keyClass) {
+    public <KEY extends MetadataKey<VALUE>, VALUE> boolean hasMetadata(Class<KEY> keyClass) {
+        Validate.notNull(keyClass, "Given key class canoot be null!");
+
         return metadataMap.containsKey(keyClass);
     }
 
@@ -169,8 +176,9 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <KEY extends MetadataKey<VALUE>, VALUE> void storeMetadata(Class<KEY> keyClass, VALUE metadata) {
+    public <KEY extends MetadataKey<VALUE>, VALUE> void setMetadata(Class<KEY> keyClass, VALUE metadata) {
+        Validate.notNull(keyClass, "Given key class canoot be null!");
+
         metadataMap.put(keyClass, metadata);
     }
 
@@ -194,6 +202,8 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
 
     @Override
     public <KEY extends MetadataKey<VALUE>, VALUE> void removeMetadata(Class<KEY> keyClass) {
+        Validate.notNull(keyClass, "Given key class canoot be null!");
+
         metadataMap.remove(keyClass);
     }
 
