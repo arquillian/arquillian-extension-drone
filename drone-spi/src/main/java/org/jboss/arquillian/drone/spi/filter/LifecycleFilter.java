@@ -33,8 +33,11 @@ public class LifecycleFilter implements DronePointFilter {
     /**
      * Creates lifecycle filter which will match injection points with any of specified lifecycles. Usage of multiple
      * lifecycles behaves like disjunction.
+     *
+     * @throws java.lang.IllegalArgumentException If any of the given lifecycles is null.
      */
-    public LifecycleFilter(DronePoint.Lifecycle lifecycle, DronePoint.Lifecycle... additionalLifecycles) {
+    public LifecycleFilter(DronePoint.Lifecycle lifecycle, DronePoint.Lifecycle... additionalLifecycles) throws
+            IllegalArgumentException {
         lifecycles = new HashSet<DronePoint.Lifecycle>();
         if (lifecycle == null) {
             throw new IllegalArgumentException("Lifecycle cannot be null!");
@@ -43,9 +46,11 @@ public class LifecycleFilter implements DronePointFilter {
 
         if (additionalLifecycles != null) {
             for (DronePoint.Lifecycle additionalLifecycle : additionalLifecycles) {
-                if (additionalLifecycle != null) {
-                    lifecycles.add(additionalLifecycle);
+                if (additionalLifecycle == null) {
+                    throw new IllegalArgumentException("Lifecycle cannot be null");
                 }
+
+                lifecycles.add(additionalLifecycle);
             }
         }
 
