@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
-import static junit.framework.Assert.fail;
-
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,6 +23,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import static org.junit.Assert.fail;
 
 import qualifier.Reusable;
 

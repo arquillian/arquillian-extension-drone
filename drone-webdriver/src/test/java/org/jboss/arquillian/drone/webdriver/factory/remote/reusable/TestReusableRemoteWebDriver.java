@@ -33,8 +33,9 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
+import static org.junit.Assert.*;
+
 import qualifier.Reusable;
-import static junit.framework.Assert.fail;
 
 /**
  * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>

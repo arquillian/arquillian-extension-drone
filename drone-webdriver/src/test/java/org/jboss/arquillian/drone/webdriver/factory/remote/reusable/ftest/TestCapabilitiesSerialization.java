@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
-import static junit.framework.Assert.assertTrue;
 
 import java.io.Serializable;
 
@@ -26,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import static org.junit.Assert.assertTrue;
 
 import qualifier.Reusable;
 
