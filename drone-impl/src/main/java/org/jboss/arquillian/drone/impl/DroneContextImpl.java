@@ -23,12 +23,12 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointContext;
-import org.jboss.arquillian.drone.spi.DronePointFilter;
+import org.jboss.arquillian.drone.spi.FilterableResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -83,30 +83,8 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> DronePoint<T> findSingle(Class<T> droneClass,
-                                        DronePointFilter<? super T>... filters) throws IllegalStateException {
-        List<DronePoint<T>> dronePoints = find(droneClass, filters);
-        int count = dronePoints.size();
-        if (count != 1) {
-            StringBuilder builder = new StringBuilder("Total injection points matched not equal to 1! Actual count: ");
-            builder.append(count).append(". Matched points: [ ");
-            int i = 0;
-            for (DronePoint<T> dronePoint : dronePoints) {
-                if(i > 0) {
-                    builder.append(", ");
-                }
-                builder.append(dronePoint);
-                i++;
-            }
-            builder.append(" ]");
-            throw new IllegalStateException(builder.toString());
-        }
-        return dronePoints.get(0);
-    }
-
-    @Override
-    public <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter<? super T>... filters) {
-        List<DronePoint<T>> matchedDronePoints = new ArrayList<DronePoint<T>>();
+    public <DRONE> FilterableResult<DRONE> find(final Class<DRONE> droneClass) {
+        Set<DronePoint<DRONE>> matchedDronePoints = new HashSet<DronePoint<DRONE>>();
 
         // We need to drop the generic type in order to be able to call 'accepts' on filters with <? super T>
         for (DronePoint<?> dronePoint : droneContextMap.keySet()) {
@@ -115,23 +93,12 @@ public class DroneContextImpl implements DroneContext {
             }
 
             @SuppressWarnings("unchecked")
-            DronePoint<T> castDronePoint = (DronePoint<T>) dronePoint;
+            DronePoint<DRONE> castDronePoint = (DronePoint<DRONE>) dronePoint;
 
-            boolean matches = true;
-
-            for (DronePointFilter<? super T> filter : filters) {
-                if (!filter.accepts(this, castDronePoint)) {
-                    matches = false;
-                    break;
-                }
-            }
-
-            if (matches) {
-                matchedDronePoints.add(castDronePoint);
-            }
+            matchedDronePoints.add(castDronePoint);
         }
 
-        return matchedDronePoints;
+        return new FilterableResultImpl<DRONE>(this, matchedDronePoints);
     }
 
 }

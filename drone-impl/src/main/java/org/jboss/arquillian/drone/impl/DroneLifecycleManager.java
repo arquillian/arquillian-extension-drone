@@ -31,6 +31,7 @@ import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.FilterableResult;
 import org.jboss.arquillian.drone.spi.command.DestroyDrone;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
@@ -135,7 +136,7 @@ public class DroneLifecycleManager {
     public void after(@Observes After event) {
         DroneContext context = droneContext.get();
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.METHOD);
-        List<DronePoint<Object>> dronePoints = context.find(Object.class, lifecycleFilter);
+        FilterableResult<Object> dronePoints = context.find(Object.class).filter(lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
@@ -146,7 +147,9 @@ public class DroneLifecycleManager {
         DroneContext context = droneContext.get();
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT);
-        List<DronePoint<Object>> dronePoints = context.find(Object.class, deploymentFilter, lifecycleFilter);
+        FilterableResult<Object> dronePoints = context.find(Object.class)
+                .filter(deploymentFilter)
+                .filter(lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
@@ -158,7 +161,7 @@ public class DroneLifecycleManager {
 
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.CLASS,
             DronePoint.Lifecycle.METHOD);
-        List<DronePoint<Object>> dronePoints = context.find(Object.class, lifecycleFilter);
+        FilterableResult<Object> dronePoints = context.find(Object.class).filter(lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
