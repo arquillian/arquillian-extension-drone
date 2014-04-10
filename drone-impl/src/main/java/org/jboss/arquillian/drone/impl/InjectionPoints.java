@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 // FIXME make this class not static and do the API a better way
-public final class InjectionPoints {
+final class InjectionPoints {
 
     private InjectionPoints() {
     }

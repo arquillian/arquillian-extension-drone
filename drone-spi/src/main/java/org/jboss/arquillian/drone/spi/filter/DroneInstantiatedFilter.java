@@ -23,10 +23,10 @@ import org.jboss.arquillian.drone.spi.DronePointFilter;
 /**
  * Filter that matches all injection points for which drone has been instantiated.
  */
-public class DroneInstantiatedFilter implements DronePointFilter {
+public class DroneInstantiatedFilter implements DronePointFilter<Object> {
 
     @Override
-    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
+    public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
         return context.get(dronePoint).isInstantiated();
     }
 }

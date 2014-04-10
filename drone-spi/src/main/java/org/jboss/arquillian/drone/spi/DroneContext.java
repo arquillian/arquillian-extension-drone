@@ -62,13 +62,13 @@ public interface DroneContext {
      *
      * @throws IllegalStateException if matched injection points count is not exactly one
      */
-    <T> DronePoint<T> findSingle(Class<T> droneClass, DronePointFilter... filters) throws IllegalStateException;
+    <T> DronePoint<T> findSingle(Class<T> droneClass, DronePointFilter<? super T>... filters) throws IllegalStateException;
 
     /**
      * Returns a list of injection points that get matched by all of specified filters and the backing drone type can
      * be cast to specified type. When no filters are passed in, it returns all injection points with drone type that
      * can be cast to specified type. Using the Object.class as the type, it returns all injection points stored.
      */
-    <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter... filters);
+    <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter<? super T>... filters);
 }
 

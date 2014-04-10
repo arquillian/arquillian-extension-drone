@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.spi;
 /**
  * Utility class used for filtering injection points.
  */
-public interface DronePointFilter {
+public interface DronePointFilter<DRONE> {
 
     /**
      * Returns true if the injection point is accepted, false otherwise.
@@ -27,6 +27,6 @@ public interface DronePointFilter {
      * @param context
      * @param dronePoint injection point of the drone.
      */
-    boolean accept(DroneContext context, DronePoint<?> dronePoint);
+    boolean accepts(DroneContext context, DronePoint<? extends DRONE> dronePoint);
 
 }

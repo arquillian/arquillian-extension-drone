@@ -23,16 +23,16 @@ import org.jboss.arquillian.drone.spi.DronePointFilter;
 /**
  * Filter that accepts everything that its underlying one do not.
  */
-public class InverseFilter implements DronePointFilter {
+public class InverseFilter<DRONE> implements DronePointFilter<DRONE> {
 
-    private final DronePointFilter wrappedFilter;
+    private final DronePointFilter<DRONE> wrappedFilter;
 
-    public InverseFilter(DronePointFilter wrappedFilter) {
+    public InverseFilter(DronePointFilter<DRONE> wrappedFilter) {
         this.wrappedFilter = wrappedFilter;
     }
 
     @Override
-    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
-        return !wrappedFilter.accept(context, dronePoint);
+    public boolean accepts(DroneContext context, DronePoint<? extends DRONE> dronePoint) {
+        return !wrappedFilter.accepts(context, dronePoint);
     }
 }

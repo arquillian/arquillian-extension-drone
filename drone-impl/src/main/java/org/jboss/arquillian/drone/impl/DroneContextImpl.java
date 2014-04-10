@@ -84,7 +84,7 @@ public class DroneContextImpl implements DroneContext {
 
     @Override
     public <T> DronePoint<T> findSingle(Class<T> droneClass,
-                                        DronePointFilter... filters) throws IllegalStateException {
+                                        DronePointFilter<? super T>... filters) throws IllegalStateException {
         List<DronePoint<T>> dronePoints = find(droneClass, filters);
         int count = dronePoints.size();
         if (count != 1) {
@@ -105,20 +105,22 @@ public class DroneContextImpl implements DroneContext {
     }
 
     @Override
-    public <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter... filters) {
+    public <T> List<DronePoint<T>> find(Class<T> droneClass, DronePointFilter<? super T>... filters) {
         List<DronePoint<T>> matchedDronePoints = new ArrayList<DronePoint<T>>();
 
+        // We need to drop the generic type in order to be able to call 'accepts' on filters with <? super T>
         for (DronePoint<?> dronePoint : droneContextMap.keySet()) {
             if (!dronePoint.conformsTo(droneClass)) {
                 continue;
             }
+
             @SuppressWarnings("unchecked")
             DronePoint<T> castDronePoint = (DronePoint<T>) dronePoint;
 
             boolean matches = true;
 
-            for (DronePointFilter filter : filters) {
-                if (!filter.accept(this, castDronePoint)) {
+            for (DronePointFilter<? super T> filter : filters) {
+                if (!filter.accepts(this, castDronePoint)) {
                     matches = false;
                     break;
                 }

@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Filter for finding injection points by the lifecycle.
  */
-public class LifecycleFilter implements DronePointFilter {
+public class LifecycleFilter implements DronePointFilter<Object> {
 
     private final Set<DronePoint.Lifecycle> lifecycles;
 
@@ -57,7 +57,7 @@ public class LifecycleFilter implements DronePointFilter {
     }
 
     @Override
-    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
+    public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
         return lifecycles.contains(dronePoint.getLifecycle());
     }
 }

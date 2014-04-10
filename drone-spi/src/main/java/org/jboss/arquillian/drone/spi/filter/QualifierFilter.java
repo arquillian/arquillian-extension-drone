@@ -25,7 +25,7 @@ import java.lang.annotation.Annotation;
 /**
  * Filter for finding injection points by the qualifier.
  */
-public class QualifierFilter implements DronePointFilter {
+public class QualifierFilter implements DronePointFilter<Object> {
 
     private final Class<? extends Annotation> qualifier;
 
@@ -37,7 +37,7 @@ public class QualifierFilter implements DronePointFilter {
     }
 
     @Override
-    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
+    public boolean accepts(DroneContext context, DronePoint<? extends Object> dronePoint) {
         return dronePoint.getQualifier() == qualifier;
     }
 

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 /**
  * Filter for finding deployment injection points.
  */
-public class DeploymentFilter implements DronePointFilter {
+public class DeploymentFilter implements DronePointFilter<Object> {
 
     private final Pattern pattern;
 
@@ -46,7 +46,7 @@ public class DeploymentFilter implements DronePointFilter {
     }
 
     @Override
-    public boolean accept(DroneContext context, DronePoint<?> dronePoint) {
+    public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
         String deploymentName = context.get(dronePoint).getMetadata(DeploymentNameKey.class);
         if(deploymentName == null) {
             return false;
