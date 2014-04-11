@@ -32,14 +32,20 @@ public interface DronePoint<DRONE> {
     Class<DRONE> getDroneType();
 
     /**
-     * @return Qualifier the drone is annotated with.
+     * @return An array of all annotations the drone is annotated with except {@link Drone} one.
      */
-    Class<? extends Annotation> getQualifier();
+    Annotation[] getAnnotations();
 
     /**
      * @return Lifecycle of the drone.
      */
     Lifecycle getLifecycle();
+
+    /**
+     * Searches {@link DronePoint#getAnnotations()} and returns class of qualifier annotation.
+     */
+    @Deprecated
+    Class<? extends Annotation> getQualifier();
 
     /**
      * @return True of the underlying drone type can be cast to {@code droneClass} parameter.

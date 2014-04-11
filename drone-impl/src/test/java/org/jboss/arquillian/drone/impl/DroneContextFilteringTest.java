@@ -39,9 +39,6 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class DroneContextFilteringTest extends AbstractTestTestBase {
 
-    private static final String DEPLOYMENT_DEFAULT = "deployment_default";
-    private static final String DEPLOYMENT_DIFFERENT = "deployment_different";
-
     DroneContext context;
 
     DronePoint<MockDrone> defaultClassDronePoint;
@@ -57,28 +54,35 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
         getManager().inject(context);
 
 
-        defaultClassDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.CLASS);
+        defaultClassDronePoint = createDefaultDronePoint(DronePoint.Lifecycle.CLASS);
         context.get(defaultClassDronePoint);
 
-        defaultMethodDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.METHOD);
+        defaultMethodDronePoint = createDefaultDronePoint(DronePoint.Lifecycle.METHOD);
         context.get(defaultMethodDronePoint);
 
-        defaultDeploymentDronePoint = createDronePoint(Default.class, DronePoint.Lifecycle.DEPLOYMENT);
-        context.get(defaultDeploymentDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DEFAULT);
+        defaultDeploymentDronePoint = createDefaultDronePoint(DronePoint.Lifecycle.DEPLOYMENT);
+        context.get(defaultDeploymentDronePoint).setMetadata(DeploymentNameKey.class, AnnotationMocks.DEPLOYMENT_1);
 
-        differentClassDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.CLASS);
-        context.get(differentClassDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
+        differentClassDronePoint = createDifferentDronePoint(DronePoint.Lifecycle.CLASS);
+        context.get(differentClassDronePoint).setMetadata(DeploymentNameKey.class, AnnotationMocks.DEPLOYMENT_2);
 
-        differentMethodDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.METHOD);
+        differentMethodDronePoint = createDifferentDronePoint(DronePoint.Lifecycle.METHOD);
         context.get(differentMethodDronePoint);
 
-        differentDeploymentDronePoint = createDronePoint(Different.class, DronePoint.Lifecycle.DEPLOYMENT);
-        context.get(differentDeploymentDronePoint).setMetadata(DeploymentNameKey.class, DEPLOYMENT_DIFFERENT);
+        differentDeploymentDronePoint = createDifferentDronePoint(DronePoint.Lifecycle.DEPLOYMENT);
+        context.get(differentDeploymentDronePoint).setMetadata(DeploymentNameKey.class, AnnotationMocks.DEPLOYMENT_2);
     }
 
-    private DronePoint<MockDrone> createDronePoint(Class<? extends Annotation> qualifier,
-                                                   DronePoint.Lifecycle lifecycle) {
-        return new DronePointImpl<MockDrone>(MockDrone.class, qualifier, lifecycle);
+    private DronePoint<MockDrone> createDefaultDronePoint(DronePoint.Lifecycle lifecycle) {
+        return createDronePoint(lifecycle, AnnotationMocks.defaultQualifier());
+    }
+
+    private DronePoint<MockDrone> createDifferentDronePoint(DronePoint.Lifecycle lifecycle) {
+        return createDronePoint(lifecycle, AnnotationMocks.differentQualifier());
+    }
+
+    private DronePoint<MockDrone> createDronePoint(DronePoint.Lifecycle lifecycle, Annotation... annotations) {
+        return new DronePointImpl<MockDrone>(MockDrone.class, lifecycle, annotations);
     }
 
     @Test
@@ -130,10 +134,10 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
                 .size(), is(0));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(DEPLOYMENT_DEFAULT))
+                .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_1))
                 .single(), is(defaultDeploymentDronePoint));
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(DEPLOYMENT_DIFFERENT))
+                .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_2))
                 .filter(lifecycleFilter)
                 .single(), is(differentDeploymentDronePoint));
     }

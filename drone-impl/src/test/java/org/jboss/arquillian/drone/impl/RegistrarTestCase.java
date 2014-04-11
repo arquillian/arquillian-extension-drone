@@ -100,8 +100,8 @@ public class RegistrarTestCase extends AbstractTestTestBase {
                 .class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
-                DronePoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,DronePoint.Lifecycle.CLASS,
+                AnnotationMocks.drone());
 
         MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",

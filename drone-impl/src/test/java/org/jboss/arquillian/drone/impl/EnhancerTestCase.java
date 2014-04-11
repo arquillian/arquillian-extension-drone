@@ -16,11 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -55,11 +50,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -148,8 +148,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         fire(new BeforeClass(EnrichedClass.class));
 
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, Default.class,
-                DronePoint.Lifecycle.CLASS);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
+                AnnotationMocks.drone());
 
         MockDrone drone = context.get(dronePoint).getInstance();
 
@@ -179,8 +179,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, MethodArgumentOne.class,
-                DronePoint.Lifecycle.METHOD);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
+                AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
 

@@ -21,25 +21,36 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointFilter;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Filter for finding injection points by the qualifier.
  */
-@Deprecated
-public class QualifierFilter implements DronePointFilter<Object> {
+public class AnnotationFilter implements DronePointFilter<Object> {
 
-    private final Class<? extends Annotation> qualifier;
+    private final Set<Annotation> annotations;
 
     /**
-     * Creates qualifier filter which will match injection points with specified qualifier.
+     * Creates an annotation filter, which will match drone points annotated with all annotation supplies.
      */
-    public QualifierFilter(Class<? extends Annotation> qualifier) {
-        this.qualifier = qualifier;
+    public AnnotationFilter(Annotation... annotations) {
+        this.annotations = new HashSet<Annotation>();
+        Collections.addAll(this.annotations, annotations);
     }
 
     @Override
-    public boolean accepts(DroneContext context, DronePoint<? extends Object> dronePoint) {
-        return dronePoint.getQualifier() == qualifier;
+    public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
+        List<Annotation> droneAnnotations = Arrays.asList(dronePoint.getAnnotations());
+        for(Annotation annotation : annotations) {
+            if(!droneAnnotations.contains(annotation)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

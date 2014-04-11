@@ -125,9 +125,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(EnrichedClass.class));
 
         DronePoint<MockDrone> invalidDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                Default.class, DronePoint.Lifecycle.CLASS);
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                Different.class, DronePoint.Lifecycle.CLASS);
+                DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
+                AnnotationMocks.drone(), AnnotationMocks.differentQualifier());
 
         MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertFalse("There is no MockDroneConfiguration with @Default qualifier",
@@ -170,8 +170,8 @@ public class EnricherTestCase extends AbstractTestTestBase {
         testEnricher.enrich(instance);
         Object[] parameters = testEnricher.resolve(testMethod);
 
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                MethodArgumentOne.class, DronePoint.Lifecycle.METHOD);
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
+                AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
         Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
@@ -210,8 +210,8 @@ public class EnricherTestCase extends AbstractTestTestBase {
         testEnricher.enrich(instance);
         Object[] parameters = testEnricher.resolve(testMethod);
 
-        DronePoint<Object> dronePoint = new DronePointImpl<Object>(Object.class, Default.class,
-                DronePoint.Lifecycle.METHOD);
+        DronePoint<Object> dronePoint = new DronePointImpl<Object>(Object.class, DronePoint.Lifecycle.METHOD,
+                AnnotationMocks.drone());
         Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
@@ -237,14 +237,16 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = testEnricher.resolve(testMethod);
 
         DronePoint<MockDrone> classDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                Default.class, DronePoint.Lifecycle.CLASS);
+                DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
         Assert.assertTrue("Class drone created", context.get(classDronePoint).isInstantiated());
 
         DronePoint<MockDrone> methodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                Default.class, DronePoint.Lifecycle.METHOD);
+                DronePoint.Lifecycle.METHOD, AnnotationMocks.drone());
         Assert.assertTrue("Method drone created", context.get(methodDronePoint).isInstantiated());
 
         testMethod.invoke(instance, parameters);
+
+
     }
 
     @Test()

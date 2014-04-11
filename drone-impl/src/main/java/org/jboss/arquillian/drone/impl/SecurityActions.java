@@ -221,6 +221,15 @@ final class SecurityActions {
         return null;
     }
 
+    static Annotation[] getAnnotations(final AnnotatedElement element) {
+        return AccessController.doPrivileged(new PrivilegedAction<Annotation[]>() {
+            @Override
+            public Annotation[] run() {
+                return element.getDeclaredAnnotations();
+            }
+        });
+    }
+
     static <T extends Annotation> T getAnnotation(final AnnotatedElement element, final Class<T> annotationClass) {
         return AccessController.doPrivileged(new PrivilegedAction<T>() {
             @Override

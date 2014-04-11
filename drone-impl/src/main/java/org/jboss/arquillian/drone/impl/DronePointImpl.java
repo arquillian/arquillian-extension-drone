@@ -16,20 +16,36 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.spi.DronePoint;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
 
     private final Class<DRONE> droneClass;
-    private final Class<? extends Annotation> qualifier;
+    private final Annotation[] annotations;
     private final Lifecycle lifecycle;
 
-    public DronePointImpl(Class<DRONE> droneClass, Class<? extends Annotation> qualifier, Lifecycle lifecycle) {
+    public DronePointImpl(Class<DRONE> droneClass, Lifecycle lifecycle, Annotation... annotations) {
+        for (Annotation annotation : annotations) {
+            if(annotation == null) {
+                throw new IllegalArgumentException("Annotation cannot be null!");
+            }
+        }
+
         this.droneClass = droneClass;
-        this.qualifier = qualifier;
+        this.annotations = annotations;
         this.lifecycle = lifecycle;
+
+        Arrays.sort(this.annotations, new Comparator<Annotation>() {
+            @Override
+            public int compare(Annotation o1, Annotation o2) {
+                return o1.getClass().getName().compareTo(o2.getClass().getName());
+            }
+        });
     }
 
     @Override
@@ -38,13 +54,20 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
     }
 
     @Override
-    public Class<? extends Annotation> getQualifier() {
-        return qualifier;
+    public Annotation[] getAnnotations() {
+        return annotations;
     }
 
     @Override
     public Lifecycle getLifecycle() {
         return lifecycle;
+    }
+
+    @Override
+    @Deprecated
+    public Class<? extends Annotation> getQualifier() {
+        Class<? extends Annotation> qualifier = SecurityActions.getQualifier(annotations);
+        return qualifier != null ? qualifier : Default.class;
     }
 
     @Override
@@ -57,24 +80,15 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        DronePointImpl that = (DronePointImpl) o;
+        @SuppressWarnings("unchecked")
+        DronePointImpl<DRONE> that = (DronePointImpl<DRONE>) o;
 
-        if (droneClass != null ? !droneClass.equals(that.droneClass) : that.droneClass != null) {
-            return false;
-        }
-        if (lifecycle != that.lifecycle) {
-            return false;
-        }
-        if (qualifier != null ? !qualifier.equals(that.qualifier) : that.qualifier != null) {
-            return false;
-        }
+        if (!Arrays.equals(annotations, that.annotations)) return false;
+        if (droneClass != null ? !droneClass.equals(that.droneClass) : that.droneClass != null) return false;
+        if (lifecycle != that.lifecycle) return false;
 
         return true;
     }
@@ -82,7 +96,7 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
     @Override
     public int hashCode() {
         int result = droneClass != null ? droneClass.hashCode() : 0;
-        result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
+        result = 31 * result + (annotations != null ? Arrays.hashCode(annotations) : 0);
         result = 31 * result + (lifecycle != null ? lifecycle.hashCode() : 0);
         return result;
     }
@@ -91,7 +105,7 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
     public String toString() {
         return "DronePointImpl{" +
                 "droneClass=" + droneClass +
-                ", qualifier=" + qualifier +
+                ", annotations=" + Arrays.toString(annotations) +
                 ", lifecycle=" + lifecycle +
                 '}';
     }
