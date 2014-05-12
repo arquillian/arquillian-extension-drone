@@ -161,7 +161,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     @Override
     public void setFutureInstance(CachingCallable<DRONE> futureInstance) {
         if (hasFutureInstance()) {
-            LOGGER.log(Level.INFO, "Future instance was previously set for drone point {0}, replacing.",
+            LOGGER.log(Level.FINE, "Future instance was previously set for drone point {0}, replacing.",
                     dronePoint);
         }
         this.futureInstance = futureInstance;
@@ -170,14 +170,14 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     @Override
     public <CONF extends DroneConfiguration<CONF>> void setConfiguration(CONF configuration) {
         if (hasConfiguration()) {
-            LOGGER.log(Level.INFO, "Configuration was previously set for drone point {0}, replacing.");
+            LOGGER.log(Level.FINE, "Configuration was previously set for drone point {0}, replacing.");
         }
         this.configuration = configuration;
     }
 
     @Override
     public <KEY extends MetadataKey<VALUE>, VALUE> void setMetadata(Class<KEY> keyClass, VALUE metadata) {
-        Validate.notNull(keyClass, "Given key class canoot be null!");
+        Validate.notNull(keyClass, "Given key class cannot be null!");
 
         metadataMap.put(keyClass, metadata);
     }
