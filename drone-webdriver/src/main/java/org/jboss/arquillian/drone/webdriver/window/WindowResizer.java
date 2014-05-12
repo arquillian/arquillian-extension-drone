@@ -59,7 +59,7 @@ public class WindowResizer {
     private void resizeWindow(DroneEvent event) {
         DronePoint<?> dronePoint = event.getDronePoint();
 
-        if(!dronePoint.conformsTo(WebDriver.class)) {
+        if (!dronePoint.conformsTo(WebDriver.class)) {
             // This Drone is not instance of WebDriver, we will not resize the window
             return;
         }
@@ -95,11 +95,7 @@ public class WindowResizer {
     }
 
     private void logRequestIgnored(WebDriver driver, int width, int height, DronePoint<?> dronePoint) {
-        log.log(Level.WARNING, "Ignoring request to resize browser window to {3}x{4} for {0} @{1}, " +
-                        "not supported for {2}",
-                new Object[] { dronePoint.getDroneType().getSimpleName(),
-                        dronePoint.getQualifier().getSimpleName(), driver.getClass().getName(), width,
-                        height }
-        );
+        log.log(Level.WARNING, "Ignoring request to resize browser window to {2}x{3} for {0}, not supported for {1}",
+            new Object[] { dronePoint, driver.getClass().getName(), width, height });
     }
 }

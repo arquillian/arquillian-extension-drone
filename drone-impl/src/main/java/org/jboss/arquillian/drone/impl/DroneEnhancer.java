@@ -73,7 +73,7 @@ public class DroneEnhancer {
     public <T> void enhanceDrone(@Observes AfterDroneInstantiated event, DroneContext context) {
 
         List<DroneInstanceEnhancer> enhancers = new ArrayList<DroneInstanceEnhancer>(serviceLoader.get().all(
-                DroneInstanceEnhancer.class));
+            DroneInstanceEnhancer.class));
 
         Collections.sort(enhancers, PrecedenceComparator.getInstance());
 
@@ -84,13 +84,10 @@ public class DroneEnhancer {
 
             InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
 
-            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(),
-                    dronePoint.getQualifier())) {
+            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(), dronePoint.getQualifier())) {
                 log.log(Level.FINE,
-                        "Enhancing {0} @{1} using enhancer {2} with precedence {3}",
-                        new Object[] { dronePoint.getDroneType().getSimpleName(),
-                                dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
-                                enhancer.getPrecedence() });
+                    "Enhancing Drone {0} using enhancer {2} with precedence {3}",
+                    new Object[] { dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence() });
 
                 droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
@@ -111,7 +108,7 @@ public class DroneEnhancer {
     public <T> void deenhanceDrone(@Observes BeforeDroneDestroyed event, DroneContext context) {
 
         List<DroneInstanceEnhancer> enhancers = new ArrayList<DroneInstanceEnhancer>(serviceLoader.get().all(
-                DroneInstanceEnhancer.class));
+            DroneInstanceEnhancer.class));
 
         // here we are deenhancing in reversed order
         Collections.sort(enhancers, PrecedenceComparator.getReversedOrder());
@@ -123,13 +120,10 @@ public class DroneEnhancer {
 
             InstanceOrCallableInstance instanceOrCallableInstance = new CompatibilityInstanceOrCallableInstance(drone);
 
-            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(),
-                    dronePoint.getQualifier())) {
+            if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(), dronePoint.getQualifier())) {
                 log.log(Level.FINER,
-                        "Deenhancing {0} @{1} using enhancer {2} with precedence {3}",
-                        new Object[] { dronePoint.getDroneType().getSimpleName(),
-                                dronePoint.getQualifier().getSimpleName(), enhancer.getClass().getName(),
-                                enhancer.getPrecedence() });
+                    "Deenhancing {0} using enhancer {1} with precedence {2}",
+                    new Object[] { dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence() });
 
                 droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;

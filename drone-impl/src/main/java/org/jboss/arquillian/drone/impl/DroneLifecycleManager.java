@@ -16,6 +16,12 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.annotation.Annotation;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.core.api.Event;
@@ -43,13 +49,6 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 public class DroneLifecycleManager {
     private static final Logger log = Logger.getLogger(DroneLifecycleManager.class.getName());
@@ -113,6 +112,7 @@ public class DroneLifecycleManager {
         Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(droneContext.get(), testClass);
 
         for (DronePoint<?> dronePoint : dronePoints) {
+
             if (dronePoint.getLifecycle() == DronePoint.Lifecycle.METHOD) {
                 continue;
             }
@@ -125,6 +125,7 @@ public class DroneLifecycleManager {
         DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(droneContext.get(), event.getTestMethod());
 
         for (DronePoint<?> dronePoint : dronePoints) {
+
             if (dronePoint == null || dronePoint.getLifecycle() != DronePoint.Lifecycle.METHOD) {
                 continue;
             }
