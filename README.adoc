@@ -1,4 +1,4 @@
-= Arquillian Drone
+= Arquillian Drone image:https://travis-ci.org/arquillian/arquillian-extension-drone.svg["Build Status", link="https://travis-ci.org/arquillian/arquillian-extension-drone"]
 
 The Arquillian Drone provides a simple way how to write functional tests for an application with a web-based user interface. 
 Arquillian Drone brings the power of https://code.google.com/p/selenium[WebDriver] into the Arquillian framework. WebDriver provides a language how to communicate with a browser, like filling the forms, navigating on the pages and validating their content.
