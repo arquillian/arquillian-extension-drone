@@ -1,0 +1,128 @@
+import org.arquillian.spacelift.gradle.*
+import org.arquillian.spacelift.gradle.maven.*
+import org.arquillian.spacelift.execution.Tasks
+import org.arquillian.spacelift.process.impl.CommandTool
+import org.arquillian.spacelift.process.CommandBuilder
+import java.io.File
+
+defaultTasks 'test'
+apply plugin: 'spacelift'
+
+ext {
+    defaultArquillianCoreVersions = ['1.1.4.Final', '1.1.5.Final']
+    seleniumVersion = '2.41.0'
+
+}
+
+spacelift {
+    workspace = new File(project.rootDir, 'ws')
+    installationsDir = new File(project.rootDir, 'ws')
+    tools {
+       java {
+            command = [
+                linux: "java", 
+                windows: "java.exe", 
+                mac: "java",
+                solaris: "java"
+            ]
+       }
+       mvn {
+            command = {
+                def m2 = System.getenv("M2")
+                def m2_home = System.getenv("M2_HOME")
+
+                if (m2 != null && !m2.isEmpty()) {
+                    return Tasks.prepare(CommandTool).command(new CommandBuilder("${m2}/mvn"))
+                } else if (m2_home != null && !m2_home.isEmpty()) {
+                    return Tasks.prepare(CommandTool).command(new CommandBuilder("${m2_home}/bin/mvn"))
+                } else {
+                    return Tasks.prepare(CommandTool).command(new CommandBuilder("mvn"))
+                }
+            }
+        }
+    }
+    profiles {
+        "default" {
+            enabledInstallations = ['*']
+            tests = ['*']            
+        }
+    }
+    installations {
+        selenium {
+            product = 'selenium'
+            version = seleniumVersion
+            remoteUrl = "http://selenium-release.storage.googleapis.com/${seleniumVersion.substring(0,4)}/selenium-server-standalone-${seleniumVersion}.jar"
+            fileName = "selenium-server-standalone-${seleniumVersion}.jar"
+            autoExtract = false           
+            tool {
+                name = 'seleniumserver'
+                command = {
+                    GradleSpacelift.tools('java')
+                        .parameters('-jar', "${project.spacelift.installations.selenium.fileName}")
+                }
+            }
+        }
+    }
+    tests {
+        arquillianCoreCompatibility {
+            dataProvider = {
+                arquillianCoreVersions
+            }
+            beforeSuite {
+                // start selenium server, we need it for tests
+                seleniumServer = GradleSpacelift.tools('seleniumserver')
+                    .workingDir("${project.spacelift.workspace}")
+                    .interaction(GradleSpacelift.ECHO_OUTPUT)
+                    .execute()
+            }
+            // replace property version.arquillian.core with compatibility version
+            beforeTest { arquillianCoreVersion ->
+                Tasks.chain([
+                    'version.arquillian.core': "${arquillianCoreVersion}"], PomXmlUpdater)
+                    .dir(project.rootDir).execute().await()
+            }
+            execute { arquillianCoreVersion ->
+                // execute all tests in the extension
+                Tasks.prepare(MavenExecutor).pom("pom.xml")
+                    .property('browser=firefox')
+                    .goals('clean', 'verify').execute().await()
+            }
+            afterSuite {
+                // terminate selenium server
+                seleniumServer.terminate()
+            }
+        }
+    }
+}
+
+// build dependencies
+buildscript {
+    repositories {
+        mavenCentral()
+        // you need this only if you plan to use SNAPSHOT version of this plugin
+        maven {
+            name 'jboss-staging-repository-group'
+            url 'https://repository.jboss.org/nexus/content/groups/staging'
+        }
+    }
+    dependencies {
+        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-1'
+    }
+}
+
+// these elements are needed only if you are willing to use _testreport_ task
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    junitreport
+}
+
+dependencies {
+    junitreport 'org.apache.ant:ant-junit:1.9.4'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}

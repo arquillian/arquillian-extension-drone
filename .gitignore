@@ -20,3 +20,8 @@ transaction.log
 
 # Chrome
 chromedriver.log
+
+# Spacelift
+**/*.xml.backup*
+.gradle
+ws
