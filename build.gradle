@@ -10,8 +10,7 @@ apply plugin: 'spacelift'
 
 ext {
     defaultArquillianCoreVersions = ['1.1.4.Final', '1.1.5.Final']
-    seleniumVersion = '2.41.0'
-
+    seleniumVersion = '2.43.1'
 }
 
 spacelift {
