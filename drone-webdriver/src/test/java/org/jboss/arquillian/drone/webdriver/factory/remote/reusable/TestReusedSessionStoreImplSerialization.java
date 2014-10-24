@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,12 +73,13 @@ public class TestReusedSessionStoreImplSerialization {
     public void when_store_file_does_not_exists_then_null_is_returned() {
 
         // given
-        File nonExistent = new File("this-file-really-does-not-exists");
+        File nonExistent = new File(UUID.randomUUID().toString());
         System.setProperty(ReusedSessionPermanentFileStorage.FILE_STORE_PROPERTY, nonExistent.getAbsolutePath());
         fileStore = new ReusedSessionPermanentFileStorage();
 
         // when
         ReusedSessionStore loadedStore = fileStore.loadStore();
+        System.clearProperty(ReusedSessionPermanentFileStorage.FILE_STORE_PROPERTY);
 
         // then
         assertNull(loadedStore);
