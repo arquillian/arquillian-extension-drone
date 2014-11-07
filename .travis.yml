@@ -4,6 +4,7 @@ jdk:
 branches:
     except:    
         - /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
+        - /^drone_1.3.x$/
 install:
     - true
 script:
