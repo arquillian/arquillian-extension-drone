@@ -91,9 +91,15 @@ spacelift {
         arquillianCoreCompatibility {
             dataProvider = {
                 // create a cartesian product of arq version and browser
-                arquillianCoreVersion.collectMany{arqVersion -> 
-                    browser.collect{ browser->
-                        [arqVersion, browser]
+                if(browser instanceof String) {
+                    browser = [ browser ];
+                }
+                arquillianCoreVersion.collectMany{arqVersion ->
+                    println browser.class
+ 
+                    browser.collect{ b->
+                        println b
+                        [arqVersion, b]
                     }
                 }
             }
