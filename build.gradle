@@ -9,7 +9,8 @@ defaultTasks 'test'
 apply plugin: 'spacelift'
 
 ext {
-    defaultArquillianCoreVersions = ['1.1.4.Final', '1.1.5.Final']
+    defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final']
+    defaultBrowser = 'phantomjs'
     seleniumVersion = '2.43.1'
     phantomjsVersion = '1.9.7'
 }
@@ -89,7 +90,12 @@ spacelift {
     tests {
         arquillianCoreCompatibility {
             dataProvider = {
-                arquillianCoreVersions
+                // create a cartesian product of arq version and browser
+                arquillianCoreVersion.collectMany{arqVersion -> 
+                    browser.collect{ browser->
+                        [arqVersion, browser]
+                    }
+                }
             }
             beforeSuite {
                 // start selenium server, we need it for tests
@@ -100,15 +106,15 @@ spacelift {
                     .execute()
             }
             // replace property version.arquillian.core with compatibility version
-            beforeTest { arquillianCoreVersion ->
+            beforeTest { arqVersion, browserType ->
                 Tasks.chain([
-                    'version.arquillian.core': "${arquillianCoreVersion}"], PomXmlUpdater)
+                    'version.arquillian.core': "${arqVersion}"], PomXmlUpdater)
                     .dir(project.rootDir).execute().await()
             }
-            execute { arquillianCoreVersion ->
+            execute { arqVersion, browserType ->
                 // execute all tests in the extension
                 Tasks.prepare(MavenExecutor).pom("pom.xml")
-                    .property('browser=phantomjs')
+                    .property("browser=${browserType}")
                     .goals('clean', 'verify').execute().await()
             }
             afterSuite {

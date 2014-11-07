@@ -112,6 +112,22 @@ Prerequisites:
 
 === Running test suite
 
+You can use Arquillian Spacelift to gather all the required binaries. Just run:
+
+[source]
+----
+./gradlew test
+----
+
+This will run tests using multiple Arquillian Core versions and _phantomjs_ browser. In case you want to modify 
+the behavior, you can specify +-ParquillianCoreVersions=1.1.4+ and +-Pbrowser=phantomjs,firefox+ for instance.
+This will run integration test using a cross product of Arquillian Core and browsers defined.
+
+WARNING: Running testsuite this way will modify all _pom.xml_ files in the project. Make sure you have committed all
+your changes there first.
+
+==== Manual way to run test suite
+
 Prerequisites:
 
 * running Selenium Server at port 4444, with paths to binaries required for remote browser execution
@@ -129,7 +145,7 @@ Once Selenium Server is running, you can run the tests by:
 [source,bash]
 mvn clean verify -Dbrowser=${browser}
 
-Where browser has the same value as browser property from arquillian.xml you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, etc.)
+Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, etc.)
 
 TIP: VNC server instance can be used to let all the browsers pop out in separate display. Just prepend both commands with +DISPLAY=:${display.number}+
 
