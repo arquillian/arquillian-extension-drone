@@ -50,4 +50,25 @@ public class MapPropertiesMappingTestCase {
         Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
         Assert.assertEquals("Map entry was mapped", "FOOO-bar value", configuration.getMapMap().get("FOOO-bar"));
     }
+    
+    @Test 
+    public void mapFromPropertiesWithoutName() {
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+            .property(null, "A NULL property")
+            .property("intField", "12345").property("stringField", "The descriptor string")
+            .property("booleanField", "true").property("foo", "foo value").property("foo.bar", "foo.bar value")
+            .property("foo_bar", "foo_bar value").property("abcDef", "abcDef value").property("FOOO-bar", "FOOO-bar value");
+
+        MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
+            new MockDroneConfiguration(), Default.class);
+
+        Assert.assertNotNull("Map was created", configuration.getMapMap());
+        Assert.assertEquals("Map has five entries", 5, configuration.getMapMap().size());
+
+        Assert.assertEquals("Map entry was mapped", "foo value", configuration.getMapMap().get("foo"));
+        Assert.assertEquals("Map entry was mapped", "foo.bar value", configuration.getMapMap().get("foo.bar"));
+        Assert.assertEquals("Map entry was mapped", "foo_bar value", configuration.getMapMap().get("foo_bar"));
+        Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
+        Assert.assertEquals("Map entry was mapped", "FOOO-bar value", configuration.getMapMap().get("FOOO-bar"));
+    }
 }

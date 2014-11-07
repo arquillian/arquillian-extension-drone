@@ -49,7 +49,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * All properties, which does not have an appropriate fields to be assigned, are stored in each available map, given that
  * configuration provides a {@code Map<String,String>} fields. Properties using their name as a key.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @see DroneConfiguration
  */
 public class ConfigurationMapper {
@@ -92,8 +92,15 @@ public class ConfigurationMapper {
         String qualifierName = qualifier.getSimpleName().toLowerCase();
 
         Map<String, String> nameValuePairs = loadNameValuePairs(descriptor, descriptorQualifier, qualifierName);
+        // ARQ-1882
+        Map<String, String> sanitizedNameValuePairs = new HashMap<String, String>(nameValuePairs.size());
+        for (Map.Entry<String, String> entry : nameValuePairs.entrySet()) {
+            if (entry.getKey() != null) {
+                sanitizedNameValuePairs.put(entry.getKey(), entry.getValue());
+            }
+        }
 
-        return mapFromNameValuePairs(configuration, nameValuePairs);
+        return mapFromNameValuePairs(configuration, sanitizedNameValuePairs);
     }
 
     /**
