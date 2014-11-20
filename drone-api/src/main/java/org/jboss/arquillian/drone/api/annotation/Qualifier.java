@@ -28,14 +28,12 @@ import java.lang.annotation.Target;
  * Usage:
  * </p>
  *
- * <pre>
- * <code>
- * @Drone AjaxSelenium instance1;
- * @Drone @RemoteMachine AjaxSelenium instance2;
- * </code>
- * </pre>
+ * <pre><code>
+ * &#64;Drone WebDriver instance1;
+ * &#64;Drone @RemoteMachine WebDriver instance2;
+ * </code></pre>
  * <p>
- * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different instances of AjaxSelenium object
+ * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different instances of WebDriver object
  * will be configured and instantiated before execution of the first test method.
  * </p>
  *

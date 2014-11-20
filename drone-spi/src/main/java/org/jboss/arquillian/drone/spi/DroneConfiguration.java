@@ -38,7 +38,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  *
  * <p>
  * If configuration is named {@code webdriver}, then
- * {@code &lt;extension qualifier="webdriver"&gt;} is looked in the descriptor
+ * {@code <extension qualifier="webdriver">} is looked in the descriptor
  * file and properties are mapped to configuration values. Then System
  * properties with prefix {@code arq.extension.webdriver.*} are mapped to the
  * configuration values, possibly overriding values provided within descriptor
@@ -69,8 +69,8 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  * </p>
  *
  * <ul>
- *    <li>qualifier = {@code DroneConfiguration#getConfigurationName() + - + @Qualifier, where all letters are lower case</li>
- *    <li>System property prefix = arq.extension. + {@code DroneConfiguration#getConfigurationName() + . + qualifier</li>
+ *    <li>qualifier = {@link DroneConfiguration#getConfigurationName()} + - + @Qualifier, where all letters are lower case</li>
+ *    <li>System property prefix = arq.extension. + {@link DroneConfiguration#getConfigurationName()} + . + qualifier</li>
  * </ul>
  *
  * @param <C> Configuration type
