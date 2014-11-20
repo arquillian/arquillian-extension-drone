@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.drone.configuration.mapping.BooleanValueMapper;
+import org.jboss.arquillian.drone.configuration.mapping.IntegerValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.MapValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 
@@ -40,10 +41,33 @@ public class CapabilityTypeMapper {
     static {
         TYPE_MAP = new HashMap<String, ValueMapper<?>>();
 
-        // firefox
+        // Common read-write capabilities (https://code.google.com/p/selenium/wiki/DesiredCapabilities#Read-write_capabilities)
         TYPE_MAP.put("acceptSslCerts", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("applicationCacheEnabled", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("browserConnectionEnabled", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("databaseEnabled", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("elementScrollBehavior", IntegerValueMapper.INSTANCE);
+        TYPE_MAP.put("javascriptEnabled", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("locationContextEnabled", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("nativeEvents", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("rotatable", BooleanValueMapper.INSTANCE);
         TYPE_MAP.put("webStorageEnabled", BooleanValueMapper.INSTANCE);
+
+        // Firefox
         TYPE_MAP.put("loggingPrefs", MapValueMapper.INSTANCE);
+
+        // Internet Explorer (https://code.google.com/p/selenium/wiki/DesiredCapabilities#IE_specific)
+        TYPE_MAP.put("browserAttachTimeout", IntegerValueMapper.INSTANCE);
+        TYPE_MAP.put("enableElementCacheCleanup", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("enablePersistentHover", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ignoreProtectedModeSettings", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ignoreZoomSetting", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ie.ensureCleanSession", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ie.forceCreateProcessApi", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ie.setProxyByServer", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("ie.usePerProcessProxy", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("requireWindowFocus", BooleanValueMapper.INSTANCE);
+        TYPE_MAP.put("silent", BooleanValueMapper.INSTANCE);
     }
 
     public static boolean isCastNeeded(String propertyName) {
