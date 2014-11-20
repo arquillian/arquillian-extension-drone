@@ -20,7 +20,7 @@ package org.jboss.arquillian.drone.spi;
  * Defines a contract for destroying instances of the Drone Driver
  *
  * @param <T> Type of the driver that the destructor is able to destroy
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public interface Destructor<T> extends Sortable {

@@ -59,7 +59,7 @@ import java.util.logging.Logger;
  * </p>
  * {@link BeforeDroneConfigured} {@link AfterDroneConfigured}
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneConfigurator {
     private static Logger logger = Logger.getLogger(DroneConfigurator.class.getName());

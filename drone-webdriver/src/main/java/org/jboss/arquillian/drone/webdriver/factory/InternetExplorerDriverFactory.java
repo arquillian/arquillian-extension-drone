@@ -31,7 +31,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
  * InternetExplorerDriver.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<InternetExplorerDriver> implements

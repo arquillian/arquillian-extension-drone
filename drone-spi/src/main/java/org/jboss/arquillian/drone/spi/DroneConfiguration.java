@@ -74,7 +74,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  * </ul>
  *
  * @param <C> Configuration type
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public interface DroneConfiguration<C extends DroneConfiguration<C>> {
     /**

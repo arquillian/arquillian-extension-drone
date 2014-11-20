@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * Default implementation of {@link DroneContext}
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneContextImpl implements DroneContext {
     private static final Logger LOGGER = Logger.getLogger(DroneContextImpl.class.getName());

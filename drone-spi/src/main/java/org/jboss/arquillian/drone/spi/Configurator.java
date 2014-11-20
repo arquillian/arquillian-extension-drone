@@ -23,7 +23,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
  *
  * @param <T> Type of the driver
  * @param <C> Type of the configuration
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @see org.jboss.arquillian.drone.spi.Qualifier
  */
 public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortable {
