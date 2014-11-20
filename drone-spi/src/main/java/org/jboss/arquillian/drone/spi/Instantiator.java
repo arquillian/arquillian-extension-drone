@@ -21,7 +21,7 @@ package org.jboss.arquillian.drone.spi;
  *
  * @param <T> Type of drone instances
  * @param <C> Type of drone configurations
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public interface Instantiator<T, C extends DroneConfiguration<C>> extends Sortable {

@@ -21,7 +21,7 @@ import java.util.Collection;
 /**
  * A registry that holds all browser mappable types
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public interface BrowserCapabilitiesRegistry {

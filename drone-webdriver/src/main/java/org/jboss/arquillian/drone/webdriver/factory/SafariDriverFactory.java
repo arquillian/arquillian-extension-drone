@@ -28,7 +28,7 @@ import org.openqa.selenium.safari.SafariDriver;
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for SafariDriver.
  *
- * @author <a href="jlocker@redhat.com>Jiri Locker</a>
+ * @author <a href="jlocker@redhat.com">Jiri Locker</a>
  *
  */
 public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> implements

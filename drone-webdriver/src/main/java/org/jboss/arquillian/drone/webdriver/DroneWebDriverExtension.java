@@ -42,7 +42,7 @@ import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
 /**
  * Arquillian Drone support for WebDriver
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class DroneWebDriverExtension implements LoadableExtension {

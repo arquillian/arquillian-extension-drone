@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)

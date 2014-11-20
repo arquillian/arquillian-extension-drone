@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
 import qualifier.Reusable;
 
 /**
- * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 @RunWith(Arquillian.class)
 @Ignore

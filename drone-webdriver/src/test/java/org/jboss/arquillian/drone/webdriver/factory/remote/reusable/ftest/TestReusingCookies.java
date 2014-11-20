@@ -29,7 +29,7 @@ import qualifier.Reusable;
 import qualifier.ReuseCookies;
 
 /**
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(Arquillian.class)
 public class TestReusingCookies extends AbstractInBrowserTest {

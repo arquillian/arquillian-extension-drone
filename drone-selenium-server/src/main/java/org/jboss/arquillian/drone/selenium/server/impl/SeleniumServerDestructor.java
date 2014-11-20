@@ -49,7 +49,7 @@ import org.openqa.selenium.server.SeleniumServer;
  * <li>{@link org.jboss.arquillian.spi.event.suite.AfterSuite}</li>
  * </ol>
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class SeleniumServerDestructor {
     @Inject

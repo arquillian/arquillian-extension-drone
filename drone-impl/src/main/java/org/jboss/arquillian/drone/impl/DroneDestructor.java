@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * </p>
  * {@link BeforeDroneDestroyed} {@link AfterDroneDestroyed}
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneDestructor {
     private static final Logger log = Logger.getLogger(DroneDestructor.class.getName());

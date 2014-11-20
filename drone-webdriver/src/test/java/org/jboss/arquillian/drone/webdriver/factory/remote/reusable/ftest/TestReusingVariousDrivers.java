@@ -29,7 +29,7 @@ import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
 
 /**
- * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 @RunWith(Arquillian.class)
 public class TestReusingVariousDrivers extends AbstractInBrowserTest {

@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * will be configured and instantiated before execution of the first test method.
  * </p>
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

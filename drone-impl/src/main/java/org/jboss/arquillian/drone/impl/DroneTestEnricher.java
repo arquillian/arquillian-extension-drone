@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * This enricher is responsible for firing chain of events that transform a callable into real instance by firing
  * {@link BeforeDroneInstantiated} event.
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneTestEnricher implements TestEnricher {
     private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());
