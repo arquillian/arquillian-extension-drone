@@ -28,7 +28,7 @@ import org.jboss.arquillian.drone.spi.Sortable;
 /**
  * Default implementation of {@link DroneRegistry}
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class DroneRegistryImpl implements DroneRegistry {

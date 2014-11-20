@@ -23,7 +23,7 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,

@@ -24,7 +24,7 @@ package org.jboss.arquillian.drone.spi;
  * easily overridden by providing {@link org.jboss.arquillian.drone.spi.Configurator}, etc. with bigger precedence value.
  *
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @see org.jboss.arquillian.drone.spi.Configurator
  * @see org.jboss.arquillian.drone.spi.Instantiator
  * @see org.jboss.arquillian.drone.spi.Destructor

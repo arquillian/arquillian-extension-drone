@@ -20,7 +20,7 @@ package org.jboss.arquillian.drone.spi;
 /**
  * Register of available {@link Configurator}s, {@link Instantiator}s and {@link Destructor}s discovered via SPI.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public interface DroneRegistry {

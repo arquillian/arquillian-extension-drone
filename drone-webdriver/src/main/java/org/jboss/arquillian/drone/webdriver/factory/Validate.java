@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 /**
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 class Validate {

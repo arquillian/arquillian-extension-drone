@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * Configuration for Selenium Server. This configuration can be fetched from Arquillian Descriptor and overridden by System
  * properties.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @see ConfigurationMapper
  *
  */

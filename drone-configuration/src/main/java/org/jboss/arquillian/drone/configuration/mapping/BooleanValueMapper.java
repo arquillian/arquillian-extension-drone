@@ -33,10 +33,6 @@ public enum BooleanValueMapper implements ValueMapper<Boolean> {
 
     @Override
     public Boolean transform(String value) {
-        try {
-            return Boolean.valueOf(value);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Unable to convert value " + value + " to a boolean.", e);
-        }
+        return Boolean.valueOf(value);
     }
 }

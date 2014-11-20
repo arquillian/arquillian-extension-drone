@@ -23,7 +23,7 @@ import java.lang.annotation.Annotation;
  *
  *
  * @deprecated
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author Lukas Fryc
  */
 @Deprecated

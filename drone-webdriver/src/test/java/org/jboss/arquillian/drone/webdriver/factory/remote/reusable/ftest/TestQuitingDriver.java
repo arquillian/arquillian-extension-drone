@@ -27,7 +27,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import qualifier.Reusable;
 
 /**
- * @author <a href="mailto:lfryc@redhat.com>Lukas Fryc</a>
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 @RunWith(Arquillian.class)
 @Ignore

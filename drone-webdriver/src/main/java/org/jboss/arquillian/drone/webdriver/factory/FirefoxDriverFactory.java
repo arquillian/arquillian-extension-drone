@@ -35,7 +35,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for FirefoxDriver.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver> implements

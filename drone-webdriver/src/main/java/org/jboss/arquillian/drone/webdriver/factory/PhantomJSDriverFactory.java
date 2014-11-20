@@ -34,7 +34,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
  * PhantomJSDriver.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDriver> implements

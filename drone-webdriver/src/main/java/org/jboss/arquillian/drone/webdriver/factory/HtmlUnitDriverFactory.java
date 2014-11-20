@@ -27,7 +27,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for HtmlUnitDriver.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriver> implements

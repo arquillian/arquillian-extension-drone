@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Default qualifier for marking Drone object context. If no {@link Qualifier} is defined by user, this one is used.
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  * @see Qualifier
  */

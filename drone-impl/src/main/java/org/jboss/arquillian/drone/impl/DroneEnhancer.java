@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  * </p>
  * {@link BeforeDroneEnhanced} {@link AfterDroneEnhanced} {@link BeforeDroneDeenhanced} {@link AfterDroneDeenhanced}
  *
- * @author <a href="mailto:kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneEnhancer {
 

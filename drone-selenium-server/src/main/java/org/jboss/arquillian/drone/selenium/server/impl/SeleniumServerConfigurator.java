@@ -61,7 +61,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * <li>{@link org.jboss.arquillian.spi.event.suite.BeforeSuite}</li>
  * </ol>
  *
- * @author <a href="kpiwko@redhat.com>Karel Piwko</a>
+ * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
 public class SeleniumServerConfigurator {
