@@ -39,7 +39,7 @@
     </developers>
 
     <properties>
-        <version.com.github.detro.ghostdriver>1.1.0</version.com.github.detro.ghostdriver>
+        <version.com.github.detro.ghostdriver>1.2.0</version.com.github.detro.ghostdriver>
         <version.com.opera>1.5</version.com.opera>
         <version.org.jboss.arquillian.selenium>2.42.0</version.org.jboss.arquillian.selenium>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
@@ -103,7 +103,7 @@
 
             <!-- GhostDriver is kept externall from BOM -->
             <dependency>
-                <groupId>com.github.detro.ghostdriver</groupId>
+                <groupId>com.github.detro</groupId>
                 <artifactId>phantomjsdriver</artifactId>
                 <version>${version.com.github.detro.ghostdriver}</version>
             </dependency>
