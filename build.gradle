@@ -13,6 +13,9 @@ ext {
     defaultBrowser = 'phantomjs'
     seleniumVersion = '2.43.1'
     phantomjsVersion = '1.9.7'
+
+    // selenium server instance holder
+    seleniumServer = null
 }
 
 spacelift {
@@ -20,15 +23,15 @@ spacelift {
     installationsDir = new File(project.rootDir, 'ws')
     tools {
        java {
-            command = [
+            command ([
                 linux: "java", 
                 windows: "java.exe", 
                 mac: "java",
                 solaris: "java"
-            ]
+            ])
        }
        mvn {
-            command = {
+            command {
                 def m2 = System.getenv("M2")
                 def m2_home = System.getenv("M2_HOME")
 
@@ -44,43 +47,35 @@ spacelift {
     }
     profiles {
         "default" {
-            enabledInstallations = ['*']
-            tests = ['*']            
+            enabledInstallations '*'
+            tests '*'            
         }
     }
     installations {
         selenium {
-            product = 'selenium'
-            version = seleniumVersion
-            remoteUrl = "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/selenium-server-standalone-${version}.jar"
-            fileName = "selenium-server-standalone-${version}.jar"
-            autoExtract = false           
-            tool {
-                name = 'seleniumserver'
-                command = {
-                    GradleSpacelift.tools('java')
-                        .parameters('-jar', "${project.spacelift.installations.selenium.fileName}")
+            product 'selenium'
+            version project.seleniumVersion
+            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/selenium-server-standalone-${version}.jar"
+            autoExtract false           
+            tools {
+                seleniumserver {
+                    command {
+                        GradleSpacelift.tools('java')
+                            .parameters('-jar', "${project.spacelift.installations.selenium.home}/${project.spacelift.installations.selenium.fileName}")
+                    }
                 }
             }
         }
         phantomjs {
-            product = 'phantomjs'
-            version = phantomjsVersion
-            remoteUrl = [
+            product 'phantomjs'
+            version project.phantomjsVersion
+            remoteUrl ([
                 linux: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-linux-x86_64.tar.bz2",
                 mac: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-macosx.zip",
                 windows: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-windows.zip",
-            ]
-            fileName = [
-                linux: "phantomjs-${version}-linux-x86_64.tar.bz2",
-                mac: "phantomjs-${version}-macosx.zip",
-                windows: "phantomjs-${version}-windows.zip",
-            ]
-            home = [
-                linux: "phantomjs-${version}-linux-x86_64",
-                mac: "phantomjs-${version}-macosx",
-                windows: "phantomjs-${version}-windows",
-            ]
+            ])
+            home "phantomjs-${version}"
+            extractMapper { toDir(home).cutdirs() }
             postActions {
                 // fix executable flags
                 project.ant.chmod(dir: "${home}", perm:"a+x", includes:"**/*phantomjs*")
@@ -89,23 +84,21 @@ spacelift {
     }
     tests {
         arquillianCoreCompatibility {
-            dataProvider = {
+            dataProvider {
+                def browser = project.browser
                 // create a cartesian product of arq version and browser
                 if(browser instanceof String) {
                     browser = [ browser ];
                 }
-                arquillianCoreVersion.collectMany{arqVersion ->
-                    println browser.class
- 
+                project.arquillianCoreVersion.collectMany{arqVersion ->
                     browser.collect{ b->
-                        println b
                         [arqVersion, b]
                     }
                 }
             }
             beforeSuite {
                 // start selenium server, we need it for tests
-                seleniumServer = GradleSpacelift.tools('seleniumserver')
+                project.seleniumServer = GradleSpacelift.tools('seleniumserver')
                     .workingDir("${project.spacelift.workspace}")
                     .parameter("-Dphantomjs.binary.path=${project.spacelift.installations.phantomjs.home}/bin/phantomjs")
                     .interaction(GradleSpacelift.ECHO_OUTPUT)
@@ -125,7 +118,7 @@ spacelift {
             }
             afterSuite {
                 // terminate selenium server
-                seleniumServer.terminate()
+                project.seleniumServer.terminate()
             }
         }
     }
@@ -142,7 +135,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-2'
+        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-3'
     }
 }
 
@@ -160,5 +153,5 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.2'
 }
