@@ -40,7 +40,7 @@
         <version.com.opera>1.5</version.com.opera>
         <version.com.github.detro.ghostdriver>1.1.0</version.com.github.detro.ghostdriver>
         <version.phantom.driver>1.1.2.Final</version.phantom.driver>
-        <version.selenium>2.42.0</version.selenium>
+        <version.selenium>2.43.1</version.selenium>
 
         <!-- We are specifically using Jetty 7.6 to avoid collisions with Jetty packaged in Selenium Server -->
         <version.org.eclipse.jetty>7.6.14.v20131031</version.org.eclipse.jetty>
