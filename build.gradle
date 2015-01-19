@@ -12,7 +12,9 @@ ext {
     defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final']
     defaultBrowser = 'phantomjs'
     seleniumVersion = '2.43.1'
-    phantomjsVersion = '1.9.7'
+    phantomjsVersion = '1.9.8'
+    defaultArquillianPhantomDriverCommit = '1.1.3.Final'
+    defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
     seleniumServer = null
@@ -47,7 +49,7 @@ spacelift {
     }
     profiles {
         "default" {
-            enabledInstallations '*'
+            enabledInstallations 'selenium', 'phantomjs'
             tests '*'            
         }
     }
@@ -79,6 +81,21 @@ spacelift {
             postActions {
                 // fix executable flags
                 project.ant.chmod(dir: "${home}", perm:"a+x", includes:"**/*phantomjs*")
+            }
+        }
+
+        arquillianPhantomDriver {
+            product 'arquillianPhantomDriver'
+            version { project.arquillianPhantomDriverCommit }
+            remoteUrl { "https://github.com/${project.arquillianPhantomDriverOrganization}/arquillian-phantom-driver/archive/${version}.zip" }
+            home { "arquillian-phantom-driver-${version}" }
+
+            extractMapper { toDir(home).cutdirs() }
+
+            postActions {
+                Tasks.prepare(MavenExecutor).pom("${home.absolutePath}/pom.xml")
+                    .goals('clean', 'install')
+                    .execute().await()
             }
         }
     }
