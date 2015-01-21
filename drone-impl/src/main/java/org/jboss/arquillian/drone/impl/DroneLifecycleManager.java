@@ -44,6 +44,7 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
@@ -52,6 +53,8 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 public class DroneLifecycleManager {
     private static final Logger log = Logger.getLogger(DroneLifecycleManager.class.getName());
+
+    public static final int CLASS_SCAN_PRECEDENCE = 75;
 
     @Inject
     private Instance<Injector> injector;
@@ -106,13 +109,14 @@ public class DroneLifecycleManager {
     }
 
     @SuppressWarnings("unused")
-    public void beforeClass(@Observes BeforeClass event) {
+    public void beforeClass(@Observes(precedence = CLASS_SCAN_PRECEDENCE) BeforeClass event) {
         Class<?> testClass = event.getTestClass().getJavaClass();
 
         Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(droneContext.get(), testClass);
 
         for (DronePoint<?> dronePoint : dronePoints) {
 
+            // We are not interested in method-scoped drones
             if (dronePoint.getLifecycle() == DronePoint.Lifecycle.METHOD) {
                 continue;
             }
@@ -126,6 +130,7 @@ public class DroneLifecycleManager {
 
         for (DronePoint<?> dronePoint : dronePoints) {
 
+            // We only need to prepare method-scoped drones
             if (dronePoint == null || dronePoint.getLifecycle() != DronePoint.Lifecycle.METHOD) {
                 continue;
             }
