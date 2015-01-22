@@ -10,14 +10,14 @@ apply plugin: 'spacelift'
 
 ext {
     defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final']
-    defaultBrowser = 'phantomjs'
-    seleniumVersion = '2.43.1'
-    phantomjsVersion = '1.9.8'
+    defaultBrowser = ['phantomjs']
+
     defaultArquillianPhantomDriverCommit = '1.1.3.Final'
     defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumServer = null
+    seleniumVersion = '2.43.1'
+    phantomjsVersion = '1.9.8'
 }
 
 spacelift {
@@ -84,14 +84,13 @@ spacelift {
             }
         }
 
+        // this installation can be used if there is a need to test against not yet release version of arquillian-phantom-driver
         arquillianPhantomDriver {
             product 'arquillianPhantomDriver'
             version { project.arquillianPhantomDriverCommit }
             remoteUrl { "https://github.com/${project.arquillianPhantomDriverOrganization}/arquillian-phantom-driver/archive/${version}.zip" }
             home { "arquillian-phantom-driver-${version}" }
-
             extractMapper { toDir(home).cutdirs() }
-
             postActions {
                 Tasks.prepare(MavenExecutor).pom("${home.absolutePath}/pom.xml")
                     .goals('clean', 'install')
@@ -101,12 +100,11 @@ spacelift {
     }
     tests {
         arquillianCoreCompatibility {
+
+            def seleniumServer = null
+
             dataProvider {
                 def browser = project.browser
-                // create a cartesian product of arq version and browser
-                if(browser instanceof String) {
-                    browser = [ browser ];
-                }
                 project.arquillianCoreVersion.collectMany{arqVersion ->
                     browser.collect{ b->
                         [arqVersion, b]
@@ -115,7 +113,7 @@ spacelift {
             }
             beforeSuite {
                 // start selenium server, we need it for tests
-                project.seleniumServer = GradleSpacelift.tools('seleniumserver')
+                seleniumServer = GradleSpacelift.tools('seleniumserver')
                     .workingDir("${project.spacelift.workspace}")
                     .parameter("-Dphantomjs.binary.path=${phantomjs.home}/bin/phantomjs")
                     .interaction(GradleSpacelift.ECHO_OUTPUT)
@@ -135,7 +133,7 @@ spacelift {
             }
             afterSuite {
                 // terminate selenium server
-                project.seleniumServer.terminate()
+                seleniumServer.terminate()
             }
         }
     }
@@ -152,7 +150,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-4'
+        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-5'
     }
 }
 
