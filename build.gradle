@@ -1,5 +1,6 @@
 import org.arquillian.spacelift.gradle.*
 import org.arquillian.spacelift.gradle.maven.*
+import org.arquillian.spacelift.gradle.utils.*
 import org.arquillian.spacelift.execution.Tasks
 import org.arquillian.spacelift.process.impl.CommandTool
 import org.arquillian.spacelift.process.CommandBuilder
@@ -17,6 +18,7 @@ ext {
 
     // selenium server instance holder
     seleniumVersion = '2.43.1'
+    iedriverVersion = '2.43.0'
     phantomjsVersion = '1.9.8'
 }
 
@@ -37,19 +39,26 @@ spacelift {
                 def m2 = System.getenv("M2")
                 def m2_home = System.getenv("M2_HOME")
 
-                if (m2 != null && !m2.isEmpty()) {
-                    return Tasks.prepare(CommandTool).command(new CommandBuilder("${m2}/mvn"))
-                } else if (m2_home != null && !m2_home.isEmpty()) {
-                    return Tasks.prepare(CommandTool).command(new CommandBuilder("${m2_home}/bin/mvn"))
+                def mvnPath = null
+                if (m2 != null && !m2.isEmpty() && (new File(m2, 'mvn')).exists()) {
+                    mvnPath = new File(new File(m2), 'mvn').getCanonicalPath()
+                } else if (m2_home != null && !m2_home.isEmpty() && (new File(m2_home, 'mvn')).exists()) {
+                    mvnPath = new File(new File(m2_home), 'mvn').getCanonicalPath()
                 } else {
-                    return Tasks.prepare(CommandTool).command(new CommandBuilder("mvn"))
+                    mvnPath = "mvn"
                 }
+
+                if(EnvironmentUtils.runsOnWindows()) {
+                    mvnPath += '.bat'
+                }
+
+                return Tasks.prepare(CommandTool).command(new CommandBuilder(mvnPath))
             }
         }
     }
     profiles {
         "default" {
-            enabledInstallations 'selenium', 'phantomjs'
+            enabledInstallations 'selenium', 'phantomjs', 'iedriver'
             tests '*'            
         }
     }
@@ -83,6 +92,13 @@ spacelift {
                 project.ant.chmod(dir: "${home}", perm:"a+x", includes:"**/*phantomjs*")
             }
         }
+        iedriver {
+            product 'iedriver'
+            version project.iedriverVersion
+            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/IEDriverServer_x64_${version}.zip"
+            home "iedriver-${version}"
+            extractMapper { toDir(home).cutdirs() }
+        }
 
         // this installation can be used if there is a need to test against not yet release version of arquillian-phantom-driver
         arquillianPhantomDriver {
@@ -112,10 +128,18 @@ spacelift {
                 }
             }
             beforeSuite {
+
+                def phantomjsPath = "${phantomjs.home}/bin/phantomjs"
+                if(EnvironmentUtils.runsOnWindows()) {
+                    phantomjsPath += '.exe'
+                }
+                
+
                 // start selenium server, we need it for tests
                 seleniumServer = GradleSpacelift.tools('seleniumserver')
                     .workingDir("${project.spacelift.workspace}")
-                    .parameter("-Dphantomjs.binary.path=${phantomjs.home}/bin/phantomjs")
+                    .parameter("-Dphantomjs.binary.path=${phantomjsPath}")
+                    .parameter("-Dwebdriver.ie.driver=${iedriver.home}/IEDriverServer.exe")
                     .interaction(GradleSpacelift.ECHO_OUTPUT)
                     .execute()
             }
