@@ -25,6 +25,7 @@ ext {
 spacelift {
     workspace = new File(project.rootDir, 'ws')
     installationsDir = new File(project.rootDir, 'ws')
+    enableStaging = true
     tools {
        java {
             command ([
@@ -51,6 +52,8 @@ spacelift {
                 if(EnvironmentUtils.runsOnWindows()) {
                     mvnPath += '.bat'
                 }
+
+                
 
                 return Tasks.prepare(CommandTool).command(new CommandBuilder(mvnPath))
             }
