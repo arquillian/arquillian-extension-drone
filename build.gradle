@@ -146,15 +146,11 @@ spacelift {
                     .interaction(GradleSpacelift.ECHO_OUTPUT)
                     .execute()
             }
-            // replace property version.arquillian.core with compatibility version
-            beforeTest { arqVersion, browserType ->
-                Tasks.chain([
-                    'version.arquillian.core': "${arqVersion}"], PomXmlUpdater)
-                    .dir(project.rootDir).execute().await()
-            }
             execute { arqVersion, browserType ->
                 // execute all tests in the extension
                 Tasks.prepare(MavenExecutor).pom("pom.xml")
+                    // replace property version.arquillian.core with compatibility version
+                    .property("version.arquillian.core=${arqVersion}")
                     .property("browser=${browserType}")
                     .goals('clean', 'verify').execute().await()
             }
