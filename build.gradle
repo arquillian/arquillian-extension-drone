@@ -13,12 +13,12 @@ ext {
     defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final']
     defaultBrowser = ['phantomjs']
 
-    defaultArquillianPhantomDriverCommit = '1.1.3.Final'
+    defaultArquillianPhantomDriverCommit = '1.1.4.Final'
     defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '2.43.1'
-    iedriverVersion = '2.43.0'
+    seleniumVersion = '2.45.0'
+    iedriverVersion = '2.45.0'
     phantomjsVersion = '1.9.8'
 }
 
