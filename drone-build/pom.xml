@@ -180,7 +180,7 @@
             <!-- Testing dependencies -->
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-jetty-embedded-7</artifactId>
+                <artifactId>arquillian-jetty-embedded-9</artifactId>
                 <version>${version.arquillian.jetty}</version>
             </dependency>
             <dependency>

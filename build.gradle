@@ -17,8 +17,8 @@ ext {
     defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '2.45.0'
-    iedriverVersion = '2.45.0'
+    seleniumVersion = '2.46.0'
+    iedriverVersion = '2.46.0'
     phantomjsVersion = '1.9.8'
 }
 
