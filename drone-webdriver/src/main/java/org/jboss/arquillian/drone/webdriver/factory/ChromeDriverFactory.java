@@ -30,6 +30,7 @@ import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -98,6 +99,11 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
+
+            // ARQ-1823 - setting chrome binary path through ChromeOptions
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.setBinary(binary);
+            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
         }
 
         // convert chrome switches to an array of strings
