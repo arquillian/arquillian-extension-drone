@@ -27,8 +27,8 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  *
  * <p>
  * A matching extension in the descriptor with is searched by using
- * configuration name. If {@link org.jboss.arquillian.drone.spi.Qualifier} extension differs from {@link
- * Default}, it is used to get the configuration if it exists, otherwise the
+ * configuration name. If {@link org.jboss.arquillian.drone.spi.Qualifier} extension differs from
+ * {@link Default}, it is used to get the configuration if it exists, otherwise the
  * default one is used.
  * </p>
  *

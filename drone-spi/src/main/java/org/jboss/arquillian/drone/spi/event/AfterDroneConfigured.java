@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
-import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**

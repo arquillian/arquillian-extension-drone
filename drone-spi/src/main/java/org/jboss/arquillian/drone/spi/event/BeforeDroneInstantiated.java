@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
+import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 

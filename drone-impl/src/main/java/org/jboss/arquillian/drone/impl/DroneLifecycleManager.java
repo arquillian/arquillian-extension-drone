@@ -44,7 +44,6 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
-import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
