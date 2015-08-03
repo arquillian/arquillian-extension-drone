@@ -1,10 +1,9 @@
+import org.arquillian.spacelift.execution.Tasks
 import org.arquillian.spacelift.gradle.*
 import org.arquillian.spacelift.gradle.maven.*
 import org.arquillian.spacelift.gradle.utils.*
-import org.arquillian.spacelift.execution.Tasks
-import org.arquillian.spacelift.process.impl.CommandTool
 import org.arquillian.spacelift.process.CommandBuilder
-import java.io.File
+import org.arquillian.spacelift.process.impl.CommandTool
 
 defaultTasks 'test'
 apply plugin: 'spacelift'
@@ -17,8 +16,8 @@ ext {
     defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '2.46.0'
-    iedriverVersion = '2.46.0'
+    seleniumVersion = '2.47.1'
+    iedriverVersion = '2.47.0'
     phantomjsVersion = '1.9.8'
 }
 

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>12</version>
+        <version>16</version>
         <relativePath />
     </parent>
 
@@ -39,7 +39,7 @@
         <version.arquillian.core>1.1.8.Final</version.arquillian.core>
         <version.com.opera>1.5</version.com.opera>
         <version.phantom.driver>1.1.4.Final</version.phantom.driver>
-        <version.selenium>2.46.0</version.selenium>
+        <version.selenium>2.47.1</version.selenium>
         <version.junit>4.11</version.junit>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
