@@ -22,6 +22,7 @@ import org.jboss.arquillian.drone.impl.DroneDestructor;
 import org.jboss.arquillian.drone.impl.DroneEnhancer;
 import org.jboss.arquillian.drone.impl.DroneLifecycleManager;
 import org.jboss.arquillian.drone.impl.DroneRegistrar;
+import org.jboss.arquillian.drone.impl.DroneTestEnrichObserver;
 import org.jboss.arquillian.drone.impl.DroneTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
@@ -39,5 +40,6 @@ public class DroneExtension implements LoadableExtension {
         builder.observer(DroneConfigurator.class);
         builder.observer(DroneEnhancer.class);
         builder.observer(DroneDestructor.class);
+        builder.observer(DroneTestEnrichObserver.class);
     }
 }
