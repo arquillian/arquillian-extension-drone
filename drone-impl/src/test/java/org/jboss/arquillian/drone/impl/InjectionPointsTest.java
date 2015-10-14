@@ -82,6 +82,7 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
         extensions.add(DroneEnhancer.class);
+        extensions.add(DroneTestEnrichObserver.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -96,21 +97,37 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-            Arrays.<Configurator> asList(new MockDroneFactory()));
+            Arrays.<Configurator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-            Arrays.<Instantiator> asList(new MockDroneFactory()));
+            Arrays.<Instantiator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(
-            Arrays.<Destructor> asList(new MockDroneFactory()));
+            Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
     }
 
     @Test
-    public void customAnnotationHasEffect() throws Exception {
+    public void customAnnotationHasNoEffect() throws Exception {
+        runCustomAnnotationHasNoEffectTest(DummyClass.class, null, "testDummyMethod", false);
+    }
 
-        getManager().getContext(ClassContext.class).activate(DummyClass.class);
+    @Test
+    public void customAnnotationHasNoEffectWithBeforeClass() throws Exception {
+        runCustomAnnotationHasNoEffectTest(DummyClassWithBeforeClass.class, "beforeClassMethod", "testDummyMethod",
+            true);
+    }
 
-        Object instance = new DummyClass();
-        Method testDummyMethod = DummyClass.class.getMethod("testDummyMethod");
+    private void runCustomAnnotationHasNoEffectTest(Class<?> testClass, String beforeClassMethodName,
+        String testMethodName, boolean createdInBeforeClass)
+        throws Exception {
+
+        getManager().getContext(ClassContext.class).activate(testClass);
+
+        Object instance = testClass.newInstance();
+        Method testMethod = testClass.getMethod(testMethodName);
+        Method beforeClassMethod = null;
+        if (beforeClassMethodName != null) {
+            testClass.getMethod(beforeClassMethodName);
+        }
 
         getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
@@ -132,7 +149,7 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         assertEventFired(BeforeDroneCallableCreated.class, 0);
         assertEventFired(AfterDroneCallableCreated.class, 0);
 
-        fire(new BeforeClass(DummyClass.class));
+        fire(new BeforeClass(testClass));
 
         assertEventFired(PrepareDrone.class, 2);
         assertEventFired(BeforeDroneConfigured.class, 2);
@@ -140,7 +157,15 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         assertEventFired(BeforeDroneCallableCreated.class, 2);
         assertEventFired(AfterDroneCallableCreated.class, 2);
 
-        fire(new Before(instance, testDummyMethod));
+        if (createdInBeforeClass) {
+            assertEventFired(BeforeDroneInstantiated.class, 2);
+            assertEventFired(AfterDroneInstantiated.class, 2);
+        }
+        if (beforeClassMethod != null) {
+            beforeClassMethod.invoke(null);
+        }
+
+        fire(new Before(instance, testMethod));
 
         assertEventFired(PrepareDrone.class, 2);
         assertEventFired(BeforeDroneConfigured.class, 2);
@@ -148,9 +173,11 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         assertEventFired(BeforeDroneCallableCreated.class, 2);
         assertEventFired(AfterDroneCallableCreated.class, 2);
 
-        // was not instantiated yet
-        assertEventFired(BeforeDroneInstantiated.class, 0);
-        assertEventFired(AfterDroneInstantiated.class, 0);
+        if (!createdInBeforeClass) {
+            // was not instantiated yet
+            assertEventFired(BeforeDroneInstantiated.class, 0);
+            assertEventFired(AfterDroneInstantiated.class, 0);
+        }
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
         testEnricher.enrich(instance);
@@ -159,24 +186,30 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         assertEventFired(BeforeDroneInstantiated.class, 2);
         assertEventFired(AfterDroneInstantiated.class, 2);
 
-        Object[] dummyParameters = testEnricher.resolve(testDummyMethod);
+        Object[] dummyParameters = testEnricher.resolve(testMethod);
 
         assertEventFired(BeforeDroneInstantiated.class, 2);
         assertEventFired(AfterDroneInstantiated.class, 2);
 
-        testDummyMethod.invoke(instance, dummyParameters);
+        testMethod.invoke(instance, dummyParameters);
 
-        fire(new After(instance, testDummyMethod));
+        fire(new After(instance, testMethod));
 
         // will be destroyed in after class
         assertEventFired(BeforeDroneDestroyed.class, 0);
         assertEventFired(AfterDroneDestroyed.class, 0);
 
-        fire(new AfterClass(DummyClass.class));
+        fire(new AfterClass(testClass));
 
         assertEventFired(BeforeDroneDestroyed.class, 2);
         assertEventFired(AfterDroneDestroyed.class, 2);
 
+    }
+
+    private static void verifyInjections(MockDrone drone, MockDrone qualifiedDrone) {
+        Assert.assertNotNull(drone);
+        Assert.assertNotNull(qualifiedDrone);
+        Assert.assertNotSame(drone, qualifiedDrone);
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -194,11 +227,28 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         @CustomAnnotation
         MockDrone qualifiedDrone;
 
+        public void testDummyMethod() {
+            verifyInjections(drone, qualifiedDrone);
+        }
+    }
+
+    static class DummyClassWithBeforeClass {
+        @Drone
+        @CustomAnnotation
+        static MockDrone drone;
+
+        @Drone
+        @Different
+        @CustomAnnotation
+        static MockDrone qualifiedDrone;
+
+        @org.junit.BeforeClass
+        public static void beforeClassMethod() {
+            verifyInjections(drone, qualifiedDrone);
+        }
 
         public void testDummyMethod() {
-            Assert.assertNotNull(drone);
-            Assert.assertNotNull(qualifiedDrone);
-            Assert.assertNotSame(drone, qualifiedDrone);
+            verifyInjections(drone, qualifiedDrone);
         }
     }
 }
