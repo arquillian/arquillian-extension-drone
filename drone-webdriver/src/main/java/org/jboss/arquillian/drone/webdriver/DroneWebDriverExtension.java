@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.drone.webdriver;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -39,6 +42,17 @@ import org.jboss.arquillian.drone.webdriver.impl.BrowserCapabilitiesRegistrar;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
 
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.CHROME_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.FIREFOX_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.HTMLUNIT_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.IE_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.OPERA_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.PHANTOMJS_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.REMOTE_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.SAFARI_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.WEB_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.WEB_DRIVER_NOT_FOUND_ERROR_MESSAGE;
+
 /**
  * Arquillian Drone support for WebDriver
  *
@@ -46,43 +60,20 @@ import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
  *
  */
 public class DroneWebDriverExtension implements LoadableExtension {
+
+    private static final Logger log = Logger.getLogger(DroneWebDriverExtension.class.getName());
+
     public void register(ExtensionBuilder builder) {
 
-        builder.service(Configurator.class, ChromeDriverFactory.class);
-        builder.service(Instantiator.class, ChromeDriverFactory.class);
-        builder.service(Destructor.class, ChromeDriverFactory.class);
-
-        builder.service(Configurator.class, FirefoxDriverFactory.class);
-        builder.service(Instantiator.class, FirefoxDriverFactory.class);
-        builder.service(Destructor.class, FirefoxDriverFactory.class);
-
-        builder.service(Configurator.class, HtmlUnitDriverFactory.class);
-        builder.service(Instantiator.class, HtmlUnitDriverFactory.class);
-        builder.service(Destructor.class, HtmlUnitDriverFactory.class);
-
-        builder.service(Configurator.class, InternetExplorerDriverFactory.class);
-        builder.service(Instantiator.class, InternetExplorerDriverFactory.class);
-        builder.service(Destructor.class, InternetExplorerDriverFactory.class);
-
-        builder.service(Configurator.class, WebDriverFactory.class);
-        builder.service(Instantiator.class, WebDriverFactory.class);
-        builder.service(Destructor.class, WebDriverFactory.class);
-
-        builder.service(Configurator.class, OperaDriverFactory.class);
-        builder.service(Instantiator.class, OperaDriverFactory.class);
-        builder.service(Destructor.class, OperaDriverFactory.class);
-
-        builder.service(Configurator.class, RemoteWebDriverFactory.class);
-        builder.service(Instantiator.class, RemoteWebDriverFactory.class);
-        builder.service(Destructor.class, RemoteWebDriverFactory.class);
-
-        builder.service(Configurator.class, SafariDriverFactory.class);
-        builder.service(Instantiator.class, SafariDriverFactory.class);
-        builder.service(Destructor.class, SafariDriverFactory.class);
-
-        builder.service(Configurator.class, PhantomJSDriverFactory.class);
-        builder.service(Instantiator.class, PhantomJSDriverFactory.class);
-        builder.service(Destructor.class, PhantomJSDriverFactory.class);
+        registerFactoryService(builder, ChromeDriverFactory.class, CHROME_DRIVER);
+        registerFactoryService(builder, FirefoxDriverFactory.class, FIREFOX_DRIVER);
+        registerFactoryService(builder, HtmlUnitDriverFactory.class, HTMLUNIT_DRIVER);
+        registerFactoryService(builder, InternetExplorerDriverFactory.class, IE_DRIVER);
+        registerFactoryService(builder, WebDriverFactory.class, WEB_DRIVER);
+        registerFactoryService(builder, OperaDriverFactory.class, OPERA_DRIVER);
+        registerFactoryService(builder, RemoteWebDriverFactory.class, REMOTE_DRIVER);
+        registerFactoryService(builder, SafariDriverFactory.class, SAFARI_DRIVER);
+        registerFactoryService(builder, PhantomJSDriverFactory.class, PHANTOMJS_DRIVER);
 
         builder.observer(BrowserCapabilitiesRegistrar.class);
 
@@ -100,5 +91,21 @@ public class DroneWebDriverExtension implements LoadableExtension {
 
         builder.service(DroneInstanceEnhancer.class, AugmentingEnhancer.class);
         builder.observer(WindowResizer.class);
+    }
+
+    private <T extends Configurator & Instantiator & Destructor> void registerFactoryService(
+        ExtensionBuilder builder, Class<? extends T> factory, String expectedDriver) {
+
+        try {
+            Class.forName(expectedDriver, false, this.getClass().getClassLoader());
+
+            builder.service(Configurator.class, factory);
+            builder.service(Instantiator.class, factory);
+            builder.service(Destructor.class, factory);
+
+        } catch (ClassNotFoundException e) {
+            log.log(Level.WARNING, WEB_DRIVER_NOT_FOUND_ERROR_MESSAGE,
+                new Object[] { expectedDriver, factory.getCanonicalName() });
+        }
     }
 }
