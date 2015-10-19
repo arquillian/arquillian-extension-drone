@@ -41,7 +41,7 @@
     <properties>
         <version.com.opera>1.5</version.com.opera>
         <version.org.jboss.arquillian.phantom.driver>1.1.4.Final</version.org.jboss.arquillian.phantom.driver>
-        <version.org.jboss.arquillian.selenium>2.47.1</version.org.jboss.arquillian.selenium>
+        <version.org.jboss.arquillian.selenium>2.48.2</version.org.jboss.arquillian.selenium>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
