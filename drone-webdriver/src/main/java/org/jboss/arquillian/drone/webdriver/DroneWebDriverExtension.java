@@ -94,7 +94,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
     }
 
     private <T extends Configurator & Instantiator & Destructor> void registerFactoryService(
-        ExtensionBuilder builder, Class<? extends T> factory, String expectedDriver) {
+        ExtensionBuilder builder, Class<T> factory, String expectedDriver) {
 
         try {
             Class.forName(expectedDriver, false, this.getClass().getClassLoader());
