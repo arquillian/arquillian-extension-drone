@@ -189,6 +189,17 @@
                 </property>
             </activation>
 
+            <properties>
+                <selenium.chrome.driver>org.seleniumhq.selenium:selenium-chrome-driver:jar</selenium.chrome.driver>
+                <selenium.firefox.driver>org.seleniumhq.selenium:selenium-firefox-driver</selenium.firefox.driver>
+                <selenium.htmlunit.driver>org.seleniumhq.selenium:selenium-htmlunit-driver:jar
+                </selenium.htmlunit.driver>
+                <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
+                <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
+                <codeborne.phantomjs.driver>com.codeborne:phantomjsdriver:jar</codeborne.phantomjs.driver>
+                <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
+            </properties>
+
             <dependencies>
                 <!-- Container -->
                 <dependency>
@@ -249,6 +260,44 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>false</skipTests>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>register-webdriverfactory-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>
+                                            **/WebDriverFactoryRegisterTestCase.java
+                                        </include>
+                                    </includes>
+                                    <classpathDependencyExcludes>
+                                        <dependencyExclude>${selenium.chrome.driver}</dependencyExclude>
+                                        <dependencyExclude>${selenium.firefox.driver}</dependencyExclude>
+                                        <dependencyExclude>${selenium.htmlunit.driver}</dependencyExclude>
+                                        <dependencyExclude>${selenium.ie.driver}</dependencyExclude>
+                                        <dependencyExclude>${selenium.safari.driver}</dependencyExclude>
+                                        <dependencyExclude>${codeborne.phantomjs.driver}</dependencyExclude>
+                                        <dependencyExclude>${opera.opera.driver}</dependencyExclude>
+                                    </classpathDependencyExcludes>
+                                    <skipTests>false</skipTests>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -265,6 +314,7 @@
 
             <properties>
                 <browser>firefox</browser>
+                <selenium.firefox.driver>dummy</selenium.firefox.driver>
             </properties>
         </profile>
         <profile>
@@ -279,6 +329,52 @@
 
             <properties>
                 <browser>chrome</browser>
+                <selenium.chrome.driver>dummy</selenium.chrome.driver>
+            </properties>
+        </profile>
+        <profile>
+            <id>htmlunit</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>htmlunit</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>htmlunit</browser>
+                <selenium.htmlunit.driver>dummy</selenium.htmlunit.driver>
+            </properties>
+        </profile>
+        <profile>
+            <id>safari</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>safari</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>safari</browser>
+                <selenium.safari.driver>dummy</selenium.safari.driver>
+            </properties>
+        </profile>
+        <profile>
+            <id>ie</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>ie</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>ie</browser>
+                <selenium.ie.driver>dummy</selenium.ie.driver>
             </properties>
         </profile>
         <profile>
@@ -293,6 +389,22 @@
 
             <properties>
                 <browser>phantomjs</browser>
+                <codeborne.phantomjs.driver>dummy</codeborne.phantomjs.driver>
+            </properties>
+        </profile>
+        <profile>
+            <id>opera</id>
+
+            <activation>
+                <property>
+                    <name>browser</name>
+                    <value>opera</value>
+                </property>
+            </activation>
+
+            <properties>
+                <browser>opera</browser>
+                <opera.opera.driver>dummy</opera.opera.driver>
             </properties>
         </profile>
     </profiles>
