@@ -37,14 +37,12 @@ import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
-import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
-import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
 import org.jboss.arquillian.drone.spi.event.AfterDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
+import org.jboss.arquillian.drone.spi.event.AfterDronePrepared;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
+import org.jboss.arquillian.drone.spi.event.BeforeDronePrepared;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -127,27 +125,20 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         Assert.assertTrue(registry.getEntryFor(MockDrone.class, Destructor.class) instanceof MockDroneFactory);
 
         assertEventFired(PrepareDrone.class, 0);
-        assertEventFired(BeforeDroneConfigured.class, 0);
-        assertEventFired(AfterDroneConfigured.class, 0);
-        assertEventFired(BeforeDroneCallableCreated.class, 0);
-        assertEventFired(AfterDroneCallableCreated.class, 0);
+        assertEventFired(BeforeDronePrepared.class, 0);
+        assertEventFired(AfterDronePrepared.class, 0);
 
         fire(new BeforeClass(DummyClass.class));
 
         assertEventFired(PrepareDrone.class, 2);
-        assertEventFired(BeforeDroneConfigured.class, 2);
-        assertEventFired(AfterDroneConfigured.class, 2);
-        assertEventFired(BeforeDroneCallableCreated.class, 2);
-        assertEventFired(AfterDroneCallableCreated.class, 2);
+        assertEventFired(BeforeDronePrepared.class, 2);
+        assertEventFired(AfterDronePrepared.class, 2);
 
         fire(new Before(instance, testDummyMethod));
 
         assertEventFired(PrepareDrone.class, 2);
-        assertEventFired(BeforeDroneConfigured.class, 2);
-        assertEventFired(AfterDroneConfigured.class, 2);
-        assertEventFired(BeforeDroneCallableCreated.class, 2);
-        assertEventFired(AfterDroneCallableCreated.class, 2);
-
+        assertEventFired(BeforeDronePrepared.class, 2);
+        assertEventFired(AfterDronePrepared.class, 2);
         // was not instantiated yet
         assertEventFired(BeforeDroneInstantiated.class, 0);
         assertEventFired(AfterDroneInstantiated.class, 0);

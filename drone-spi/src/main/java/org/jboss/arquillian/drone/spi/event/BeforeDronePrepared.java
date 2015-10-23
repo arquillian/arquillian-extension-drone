@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2015, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,25 +20,42 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
- * This event is fired before Drone configuration is created. You'd need to modify {@link ArquillianDescriptor} in
+ * This event is fired before Drone preparation is started. You'd need to modify {@link ArquillianDescriptor} in
  * order to change configuration before it is created.
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-public class BeforeDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
+public class BeforeDronePrepared extends BaseDroneEvent implements DroneConfigurationEvent {
 
     private final Configurator<?, ? extends DroneConfiguration<?>> configurator;
+    private final Instantiator<?, ? extends DroneConfiguration<?>> instantiator;
 
-    public BeforeDroneConfigured(Configurator<?, ? extends DroneConfiguration<?>> configurator,
-                                 DronePoint<?> dronePoint) {
+    public BeforeDronePrepared(Configurator<?, ? extends DroneConfiguration<?>> configurator,
+        Instantiator<?, ? extends DroneConfiguration<?>> instantiator, DronePoint<?> dronePoint) {
         super(dronePoint);
         this.configurator = configurator;
+        this.instantiator = instantiator;
     }
 
+    /**
+     * When Drone is already configured so it is not configured after this event, then the returned configurator is null
+     *
+     * @return configurator
+     */
     public Configurator<?, ? extends DroneConfiguration<?>> getConfigurator() {
         return configurator;
     }
 
+    /**
+     * When Drone Callable is already crated so it is not created after this event, then the returned instantiator is null
+     *
+     * @return instantiator
+     */
+    public Instantiator<?, ? extends DroneConfiguration<?>> getInstantiator() {
+        return instantiator;
+    }
 }
