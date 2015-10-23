@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2015, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,17 +16,19 @@
  */
 package org.jboss.arquillian.drone.spi.event;
 
+import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 
 /**
- * This event is called after Drone configuration is created. By observing this event,
- * you can modify Drone configuration after it's creation.
+ * This event is called after Drone preparation is finished. By observing this event, you can modify Drone configuration
+ * after it's creation. Drone instance callable is created and stored in {@link DroneContext}
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-public class AfterDroneConfigured extends BaseDroneEvent implements DroneConfigurationEvent {
+public class AfterDronePrepared extends BaseDroneEvent implements DroneConfigurationEvent {
 
-    public AfterDroneConfigured(DronePoint<?> dronePoint) {
+    public AfterDronePrepared(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
 
