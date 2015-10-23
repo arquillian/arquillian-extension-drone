@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2015, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,12 +16,14 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.drone.spi.CachingCallable;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.spi.DroneContext;
@@ -29,15 +31,10 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.spi.command.PrepareDrone;
-import org.jboss.arquillian.drone.spi.event.AfterDroneCallableCreated;
-import org.jboss.arquillian.drone.spi.event.AfterDroneConfigured;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneCallableCreated;
-import org.jboss.arquillian.drone.spi.event.BeforeDroneConfigured;
+import org.jboss.arquillian.drone.spi.event.AfterDronePrepared;
+import org.jboss.arquillian.drone.spi.event.BeforeDronePrepared;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Creator of Drone configurations. Drone configuration is created either before class or before method,
@@ -57,9 +54,10 @@ import java.util.logging.Logger;
  * <p>
  * Fires:
  * </p>
- * {@link BeforeDroneConfigured} {@link AfterDroneConfigured}
+ * {@link BeforeDronePrepared} {@link AfterDronePrepared}
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class DroneConfigurator {
     private static Logger logger = Logger.getLogger(DroneConfigurator.class.getName());
@@ -71,82 +69,78 @@ public class DroneConfigurator {
     private Instance<ArquillianDescriptor> arquillianDescriptor;
 
     @Inject
-    private Event<BeforeDroneConfigured> beforeDroneConfiguredEvent;
+    private Event<BeforeDronePrepared> beforeDronePreparedEvent;
 
     @Inject
-    private Event<AfterDroneConfigured> afterDroneConfiguredEvent;
-
-    @Inject
-    private Event<BeforeDroneCallableCreated> beforeDroneCallableCreatedEvent;
-
-    @Inject
-    private Event<AfterDroneCallableCreated> afterDroneCallableCreatedEvent;
+    private Event<AfterDronePrepared> afterDronePreparedEvent;
 
     public void prepareDrone(@Observes PrepareDrone command, DroneRegistry registry) {
         DronePoint<?> dronePoint = command.getDronePoint();
-
-        configureDrone(registry, dronePoint);
-
-        createDroneCallable(registry, dronePoint);
+        prepare(dronePoint, registry);
     }
 
-    private <DRONE> void configureDrone(DroneRegistry registry, DronePoint<DRONE> dronePoint) {
-        ArquillianDescriptor descriptor = arquillianDescriptor.get();
-        DroneContext context = droneContext.get();
-        Validate.stateNotNull(descriptor, "ArquillianDescriptor should not be null");
-        Validate.stateNotNull(context, "DroneContext should be available while working with method scoped instances");
+    private <DRONE> void prepare(DronePoint<DRONE> dronePoint, DroneRegistry registry) {
+        Validate.stateNotNull(droneContext.get(),
+                              "DroneContext should be available while working with method scoped instances");
 
-        if (context.get(dronePoint).hasConfiguration()) {
-            logger.log(Level.WARNING, "Could not configure drone for injection point {0}, " +
-                    "because it was already configured!", dronePoint);
-            return;
+        Configurator<DRONE, ?> droneConfigurator = getDroneConfigurator(registry, dronePoint);
+        Instantiator callableInstantiator = getCallableInstantiator(registry, dronePoint);
+
+        if (droneConfigurator != null || callableInstantiator != null) {
+            beforeDronePreparedEvent.fire(new BeforeDronePrepared(droneConfigurator, callableInstantiator, dronePoint));
+            performDronePreparation(dronePoint, droneConfigurator, callableInstantiator);
+            afterDronePreparedEvent.fire(new AfterDronePrepared(dronePoint));
         }
+    }
 
-        Configurator<DRONE, ?> configurator = registry.getEntryFor(dronePoint.getDroneType(), Configurator.class);
+    private <DRONE> void performDronePreparation(final DronePoint<DRONE> dronePoint,
+        Configurator<DRONE, ?> droneConfigurator, final Instantiator instantiator) {
 
-        beforeDroneConfiguredEvent.fire(new BeforeDroneConfigured(configurator, dronePoint));
+        final DroneContext context = droneContext.get();
+        final ArquillianDescriptor descriptor = arquillianDescriptor.get();
+        Validate.stateNotNull(descriptor, "ArquillianDescriptor should not be null");
 
         // If nobody else provided the configuration, we have to do it
-        if (!context.get(dronePoint).hasConfiguration()) {
-            DroneConfiguration configuration = configurator.createConfiguration(descriptor, dronePoint);
-
-            context.get(dronePoint).setConfiguration(configuration);
-        }
-
-        afterDroneConfiguredEvent.fire(new AfterDroneConfigured(dronePoint));
-    }
-
-    private <DRONE> void createDroneCallable(DroneRegistry registry, final DronePoint<DRONE> dronePoint) {
-        final DroneContext context = droneContext.get();
-
-        if (context.get(dronePoint).hasFutureInstance()) {
-            logger.log(Level.WARNING, "Could not create drone callable for injection point {0}, " +
-                    "because it was already created!", dronePoint);
-            return;
-        }
-
-        final Instantiator instantiator = registry.getEntryFor(dronePoint.getDroneType(), Instantiator.class);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", " +
-                    "with precedence " + instantiator.getPrecedence());
-        }
-
-        beforeDroneCallableCreatedEvent.fire(new BeforeDroneCallableCreated(instantiator, dronePoint));
+        DroneConfiguration configuration = droneConfigurator.createConfiguration(descriptor, dronePoint);
+        context.get(dronePoint).setConfiguration(configuration);
 
         // create future instance
-        CachingCallable<DRONE> futureDrone = new CachingCallableImpl<DRONE>() {
+        CachingCallableImpl<DRONE> futureDrone = new CachingCallableImpl<DRONE>() {
             @Override
             protected DRONE createInstance() throws Exception {
                 DroneConfiguration<?> configuration = context
-                        .get(dronePoint)
-                        .getConfigurationAs(DroneConfiguration.class);
+                    .get(dronePoint)
+                    .getConfigurationAs(DroneConfiguration.class);
                 return (DRONE) instantiator.createInstance(configuration);
             }
         };
 
         context.get(dronePoint).setFutureInstance(futureDrone);
+    }
 
-        afterDroneCallableCreatedEvent.fire(new AfterDroneCallableCreated(dronePoint));
+    private <DRONE> Configurator<DRONE, ?> getDroneConfigurator(DroneRegistry registry, DronePoint<DRONE> dronePoint) {
+        if (droneContext.get().get(dronePoint).hasConfiguration()) {
+            logger.log(Level.WARNING, "Could not configure drone for injection point {0}, " +
+                "because it was already configured!", dronePoint);
+            return null;
+        }
+        return registry.getEntryFor(dronePoint.getDroneType(), Configurator.class);
+    }
+
+    private <DRONE> Instantiator getCallableInstantiator(DroneRegistry registry, final DronePoint<DRONE> dronePoint) {
+        if (droneContext.get().get(dronePoint).hasFutureInstance()) {
+            logger.log(Level.WARNING, "Could not create drone callable for injection point {0}, " +
+                    "because it was already created!", dronePoint);
+            return null;
+        }
+
+        final Instantiator instantiator = registry.getEntryFor(dronePoint.getDroneType(), Instantiator.class);
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", " +
+                            "with precedence " + instantiator.getPrecedence());
+
+        }
+        return instantiator;
     }
 
 }
