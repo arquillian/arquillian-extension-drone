@@ -16,13 +16,11 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.command.PrepareDrone;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
@@ -36,17 +34,13 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-public class DroneTestEnrichObserver {
+public class DroneTestEnrichBeforeClassObserver {
 
     @Inject
-    private Instance<DroneContext> droneContext;
-
-    @Inject
-    private Event<PrepareDrone> prepareDroneCommand;
+    private Instance<Injector> injector;
 
     public void enrich(@Observes BeforeClass event) {
-        DroneTestEnrichHelper
-            .enrichTestClass(event.getTestClass().getJavaClass(), event.getTestClass(), true, droneContext,
-                prepareDroneCommand);
+        DroneTestEnricher droneTestEnricher = injector.get().inject(new DroneTestEnricher());
+        droneTestEnricher.enrichTestClass(event.getTestClass().getJavaClass(), event.getTestClass(), true);
     }
 }

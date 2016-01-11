@@ -17,12 +17,14 @@
 package org.jboss.arquillian.drone.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
@@ -44,6 +46,7 @@ import org.jboss.arquillian.drone.spi.event.AfterDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneExtensionConfigured;
 import org.jboss.arquillian.drone.spi.filter.DeploymentFilter;
 import org.jboss.arquillian.drone.spi.filter.LifecycleFilter;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
@@ -66,6 +69,10 @@ public class DroneLifecycleManager {
     private InstanceProducer<DroneContext> droneContext;
 
     @Inject
+    @ApplicationScoped
+    private InstanceProducer<DeploymentDronePointsRegistry> deploymentDronePointsRegistry;
+
+    @Inject
     private Event<BeforeDroneExtensionConfigured> beforeDroneExtensionConfiguredEvent;
 
     @Inject
@@ -76,6 +83,9 @@ public class DroneLifecycleManager {
 
     @Inject
     private Event<DestroyDrone> destroyDroneCommand;
+
+    @Inject
+    private Instance<TestClass> testClassInstance;
 
     public void managerStarted(@Observes ManagerStarted event) {
         try {
@@ -110,11 +120,15 @@ public class DroneLifecycleManager {
     @SuppressWarnings("unused")
     public void beforeClass(@Observes(precedence = CLASS_SCAN_PRECEDENCE) BeforeClass event) {
         Class<?> testClass = event.getTestClass().getJavaClass();
-
         Set<DronePoint<?>> dronePoints = InjectionPoints.allInClass(droneContext.get(), testClass);
 
         for (DronePoint<?> dronePoint : dronePoints) {
 
+            // The deployment-scoped drones are only registered and not prepared - should be prepared in AfterDeploy
+            if (dronePoint.getLifecycle() == DronePoint.Lifecycle.DEPLOYMENT) {
+                registerDeploymentDronePoint(dronePoint);
+                continue;
+            }
             // We are not interested in method-scoped drones
             if (dronePoint.getLifecycle() == DronePoint.Lifecycle.METHOD) {
                 continue;
@@ -124,17 +138,46 @@ public class DroneLifecycleManager {
         }
     }
 
+    private void registerDeploymentDronePoint(DronePoint dronePoint) {
+        if (deploymentDronePointsRegistry.get() == null) {
+            deploymentDronePointsRegistry.set(injector.get().inject(new DeploymentDronePointsRegistry()));
+        }
+        deploymentDronePointsRegistry.get().addDronePoint(dronePoint, null);
+    }
+
     public void before(@Observes Before event) {
         DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(droneContext.get(), event.getTestMethod());
 
         for (DronePoint<?> dronePoint : dronePoints) {
 
-            // We only need to prepare method-scoped drones
+            // We only need to prepare method-scoped drones - deployment-scoped drones should have been already prepared in AfterDeploy
             if (dronePoint == null || dronePoint.getLifecycle() != DronePoint.Lifecycle.METHOD) {
                 continue;
             }
-
             createDroneConfigurationCommand.fire(new PrepareDrone(dronePoint));
+        }
+    }
+
+    public void afterDeploy(@Observes AfterDeploy afterDeploy) {
+        DeploymentDronePointsRegistry deplDronePoints = this.deploymentDronePointsRegistry.get();
+
+        if (deplDronePoints != null) {
+            String deplName = afterDeploy.getDeployment().getName();
+            Map<DronePoint<?>, Object> filteredDronePoints = deplDronePoints.filterDeploymentDronePoints(deplName);
+
+            for (DronePoint dronePoint : filteredDronePoints.keySet()) {
+                if (!droneContext.get().get(dronePoint).hasFutureInstance()) {
+                    createDroneConfigurationCommand.fire(new PrepareDrone(dronePoint));
+                }
+
+                // in case that deployment is done before the enrichment, then only prepare the DronePoint - Enrichment will be done later as a part of the standard process
+                Object testClass = filteredDronePoints.get(dronePoint);
+                if (testClass != null) {
+                    // in case that deployment is done after the standard enrichment, we have to enrich the class manually
+                    DroneTestEnricher droneTestEnricher = injector.get().inject(new DroneTestEnricher());
+                    droneTestEnricher.enrichTestClass(testClassInstance.get().getJavaClass(), testClass, false);
+                }
+            }
         }
     }
 

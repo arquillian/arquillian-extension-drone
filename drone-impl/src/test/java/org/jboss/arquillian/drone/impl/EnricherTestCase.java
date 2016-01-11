@@ -16,12 +16,16 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
@@ -52,10 +56,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
  * <p/>
@@ -67,9 +67,16 @@ import java.util.List;
 public class EnricherTestCase extends AbstractTestTestBase {
     private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
     private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
+    private static final String DEPLOYMENT_NAME = "deployment";
 
     @Mock
     private ServiceLoader serviceLoader;
+
+    @Mock
+    private DeploymentDescription deploymentDescription;
+
+    @Mock
+    private DeployableContainer deployableContainer;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -97,11 +104,13 @@ public class EnricherTestCase extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory()));
+            Arrays.<Configurator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDroneFactory()));
+            Arrays.<Instantiator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+
+        Mockito.when(deploymentDescription.getName()).thenReturn(DEPLOYMENT_NAME);
 
     }
 
@@ -118,9 +127,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+                          registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
         Assert.assertTrue("Instantiator is of mock type",
-                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+                          registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
 
         fire(new BeforeClass(EnrichedClass.class));
 
@@ -131,10 +140,10 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertFalse("There is no MockDroneConfiguration with @Default qualifier",
-                context.get(invalidDronePoint).hasConfiguration());
+                           context.get(invalidDronePoint).hasConfiguration());
         Assert.assertNotNull("MockDroneConfiguration is stored with @Different qualifier", configuration);
         Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD,
-                configuration.getField());
+                            configuration.getField());
 
         getManager().getContext(ClassContext.class).deactivate();
         getManager().getContext(ClassContext.class).destroy(EnrichedClass.class);
@@ -249,19 +258,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
     }
 
-    @Test()
-    public void testClassWithoutArquillianLifecycleWithDeploymentDrone() throws Exception {
-        Object instance = new NonArquillianClassWithDeploymentDrone();
-
-        fire(new BeforeSuite());
-
-        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-
-        exception.expect(IllegalStateException.class);
-        exception.expectMessage("has deployment lifecycle");
-        testEnricher.enrich(instance);
-    }
-
     static class EnrichedClass {
         @Drone
         @Different
@@ -290,11 +286,4 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         }
     }
-
-    static class NonArquillianClassWithDeploymentDrone {
-        @Drone
-        @OperateOnDeployment("deployment")
-        MockDrone deploymentDrone;
-    }
-
 }

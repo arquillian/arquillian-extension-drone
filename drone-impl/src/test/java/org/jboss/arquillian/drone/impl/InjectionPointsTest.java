@@ -80,7 +80,7 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         extensions.add(DroneTestEnricher.class);
         extensions.add(DroneDestructor.class);
         extensions.add(DroneEnhancer.class);
-        extensions.add(DroneTestEnrichObserver.class);
+        extensions.add(DroneTestEnrichBeforeClassObserver.class);
     }
 
     @SuppressWarnings("rawtypes")
