@@ -67,16 +67,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class EnricherTestCase extends AbstractTestTestBase {
     private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
     private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
-    private static final String DEPLOYMENT_NAME = "deployment";
 
     @Mock
     private ServiceLoader serviceLoader;
 
     @Mock
-    private DeploymentDescription deploymentDescription;
+    DeploymentDescription deploymentDescription1;
 
     @Mock
-    private DeployableContainer deployableContainer;
+    DeploymentDescription deploymentDescription2;
+
+    @Mock
+    DeployableContainer deployableContainer;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -110,26 +112,16 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
 
-        Mockito.when(deploymentDescription.getName()).thenReturn(DEPLOYMENT_NAME);
+        Mockito.when(deploymentDescription1.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_1);
+        Mockito.when(deploymentDescription2.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_2);
 
     }
 
     @Test
     public void testQualifer() throws Exception {
         getManager().getContext(ClassContext.class).activate(EnrichedClass.class);
-        fire(new BeforeSuite());
 
-        DroneContext context = getManager()
-                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("DroneContext was created in the context", context);
-
-        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-        Assert.assertNotNull("Drone registry was created in the context", registry);
-
-        Assert.assertTrue("Configurator is of mock type",
-                          registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
-        Assert.assertTrue("Instantiator is of mock type",
-                          registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+        DroneContext context = fireAndVerifyBeforeSuiteProcess();
 
         fire(new BeforeClass(EnrichedClass.class));
 
@@ -157,37 +149,20 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", MockDrone.class);
 
         getManager().getContext(TestContext.class).activate(instance);
-        fire(new BeforeSuite());
-
-        DroneContext context = getManager()
-                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
-        Assert.assertNotNull("DroneContext was created in the application context", context);
-
-        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-        Assert.assertNotNull("Drone registry was created in the context", registry);
-
-        Assert.assertTrue("Configurator is of mock type",
-                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
-        Assert.assertTrue("Instantiator is of mock type",
-                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+        DroneContext context = fireAndVerifyBeforeSuiteProcess();
 
         fire(new BeforeClass(MethodEnrichedClass.class));
-        fire(new Before(instance, testMethod));
-
-        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-
-        testEnricher.enrich(instance);
-        Object[] parameters = testEnricher.resolve(testMethod);
+        Object[] parameters = enrichClassAndResolveMethod(instance, testMethod);
 
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
                 AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
-        Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
+        verifyDronePointInstantiated(true, context, dronePoint);
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(MethodEnrichedClass.class));
-        Assert.assertFalse("Drone destroyed", context.get(dronePoint).isInstantiated());
+        verifyDronePointInstantiated(false, context, dronePoint, true);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -198,36 +173,20 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Method testMethod = MethodEnrichedClassUnregistered.class.getMethod("testMethodEnrichment", Object.class);
 
         getManager().getContext(TestContext.class).activate(instance);
-        fire(new BeforeSuite());
-
-        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
-                .class);
-        Assert.assertNotNull("DroneContext was created in the context", context);
-
-        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
-        Assert.assertNotNull("Drone registry was created in the context", registry);
-
-        Assert.assertTrue("Configurator is of mock type",
-                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
-        Assert.assertTrue("Instantiator is of mock type",
-                registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+        DroneContext context = fireAndVerifyBeforeSuiteProcess();
 
         fire(new BeforeClass(MethodEnrichedClassUnregistered.class));
-        fire(new Before(instance, testMethod));
-
-        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-        testEnricher.enrich(instance);
-        Object[] parameters = testEnricher.resolve(testMethod);
+        Object[] parameters = enrichClassAndResolveMethod(instance, testMethod);
 
         DronePoint<Object> dronePoint = new DronePointImpl<Object>(Object.class, DronePoint.Lifecycle.METHOD,
                 AnnotationMocks.drone());
-        Assert.assertTrue("Drone created", context.get(dronePoint).isInstantiated());
+        verifyDronePointInstantiated(true, context, dronePoint);
 
         testMethod.invoke(instance, parameters);
 
         fire(new After(instance, testMethod));
         fire(new AfterClass(MethodEnrichedClassUnregistered.class));
-        Assert.assertFalse("Drone destroyed", context.get(dronePoint).isInstantiated());
+        verifyDronePointInstantiated(false, context, dronePoint, true);
     }
 
     @Test
@@ -237,8 +196,8 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
         fire(new BeforeSuite());
 
-        DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
-                .class);
+        DroneContext context =
+            getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("DroneContext was created in the context", context);
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
@@ -246,16 +205,86 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = testEnricher.resolve(testMethod);
 
         DronePoint<MockDrone> classDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
-        Assert.assertTrue("Class drone created", context.get(classDronePoint).isInstantiated());
+                                                                              DronePoint.Lifecycle.CLASS,
+                                                                              AnnotationMocks.drone());
+        verifyDronePointInstantiated(true, context, classDronePoint);
 
         DronePoint<MockDrone> methodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.METHOD, AnnotationMocks.drone());
-        Assert.assertTrue("Method drone created", context.get(methodDronePoint).isInstantiated());
+                                                                               DronePoint.Lifecycle.METHOD,
+                                                                               AnnotationMocks.drone());
+        verifyDronePointInstantiated(true, context, methodDronePoint);
 
         testMethod.invoke(instance, parameters);
+    }
 
+    /**
+     * Verifies whether the given {@link DronePoint} is instantiated or not and throws an AssertException with an
+     * appropriate message if necessary. It is verified in the context of creation of the instance (not destruction)
+     *
+     * @param shouldInstantiated Whether the given {@link DronePoint} should be instantiated
+     * @param context            a Drone context the given {@link DronePoint} should belong to
+     * @param dronePoint         a drone point to be verified
+     */
+    void verifyDronePointInstantiated(boolean shouldInstantiated, DroneContext context, DronePoint<?> dronePoint) {
+        verifyDronePointInstantiated(shouldInstantiated, context, dronePoint, false);
+    }
 
+    /**
+     * Verifies whether the given {@link DronePoint} is instantiated or not and throws an AssertException with an
+     * appropriate message if necessary.
+     *
+     * @param shouldInstantiated Whether the given {@link DronePoint} should be instantiated
+     * @param context            a Drone context the given {@link DronePoint} should belong to
+     * @param dronePoint         a drone point to be verified
+     * @param shouldDestroyed    whether the given {@link DronePoint} should be destroyed - based on this parameter only
+     *                           the message is modified
+     */
+    void verifyDronePointInstantiated(boolean shouldInstantiated, DroneContext context, DronePoint<?> dronePoint,
+        boolean shouldDestroyed) {
+        if (shouldInstantiated) {
+            Assert.assertTrue("Drone should be created", context.get(dronePoint).isInstantiated());
+        } else {
+            String message = shouldDestroyed ? "Drone should be destroyed" : "Drone should NOT be created";
+            Assert.assertFalse(message, context.get(dronePoint).isInstantiated());
+
+        }
+    }
+
+    /**
+     * Fires the {@link BeforeSuite} event, retrieve a {@link DroneContext} and {@link DroneRegistry} instances and
+     * asserts that they are not null. Asserts that the {@link Configurator} and {@link Instantiator} are mock type.
+     *
+     * @return the drone context instance
+     */
+    DroneContext fireAndVerifyBeforeSuiteProcess() {
+        fire(new BeforeSuite());
+        DroneContext context = getManager()
+            .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+        Assert.assertNotNull("DroneContext was created in the context", context);
+
+        DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
+        Assert.assertNotNull("Drone registry was created in the context", registry);
+
+        Assert.assertTrue("Configurator is of mock type",
+                          registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+        Assert.assertTrue("Instantiator is of mock type",
+                          registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+        return context;
+    }
+
+    /**
+     * Enriches the given instance of a test class and resolves the given test method
+     *
+     * @param instance   a test class instance to be enriched
+     * @param testMethod a test method to be resolved
+     * @return resolved parameters of the given test method
+     */
+    Object[] enrichClassAndResolveMethod(Object instance, Method testMethod) {
+        fire(new Before(instance, testMethod));
+
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        testEnricher.enrich(instance);
+        return testEnricher.resolve(testMethod);
     }
 
     static class EnrichedClass {

@@ -53,7 +53,6 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Test;
@@ -239,8 +238,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         assertEventFired(BeforeDroneDestroyed.class, 1);
         assertEventFired(AfterDroneDestroyed.class, 1);
 
-        fire(new BeforeUnDeploy(Mockito.mock(DeployableContainer.class), new DeploymentDescription(DEPLOYMENT_NAME,
-                Mockito.mock(JavaArchive.class))));
+        fire(new BeforeUnDeploy(deployableContainer, deploymentDescription));
 
         assertEventFired(BeforeDroneDestroyed.class, 2);
         assertEventFired(AfterDroneDestroyed.class, 2);
