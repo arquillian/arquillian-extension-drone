@@ -25,10 +25,11 @@ import java.net.URL;
 public class AbstractInBrowserTest {
     protected final URL SERVER_URL;
     protected final URL HUB_URL;
+    protected final String DOMAIN = "127.0.0.1";
 
     {
         try {
-            SERVER_URL = new URL("http://127.0.0.1:4444/");
+            SERVER_URL = new URL("http://" + DOMAIN + ":4444/");
             HUB_URL = new URL(SERVER_URL, "wd/hub");
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);

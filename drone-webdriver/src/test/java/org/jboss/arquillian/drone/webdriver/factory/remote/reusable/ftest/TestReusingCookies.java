@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
+import java.util.Date;
+
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -24,7 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-
 import qualifier.Reusable;
 import qualifier.ReuseCookies;
 
@@ -45,7 +46,7 @@ public class TestReusingCookies extends AbstractInBrowserTest {
     @InSequence(2)
     public void testCookieWasStored(@Drone @Reusable WebDriver driver) {
         driver.get(HUB_URL.toString());
-        driver.manage().addCookie(new Cookie("foo", "bar"));
+        driver.manage().addCookie(new Cookie("foo", "bar", DOMAIN, "/", (Date) null));
         Assert.assertNotNull("Cookie was stored", driver.manage().getCookieNamed("foo"));
         Assert.assertEquals("Cookie was stored", "bar", driver.manage().getCookieNamed("foo").getValue());
     }
@@ -68,7 +69,7 @@ public class TestReusingCookies extends AbstractInBrowserTest {
     @InSequence(5)
     public void testCookieWasStoredAgain(@Drone @ReuseCookies WebDriver driver) {
         driver.get(HUB_URL.toString());
-        driver.manage().addCookie(new Cookie("foo", "bar"));
+        driver.manage().addCookie(new Cookie("foo", "bar", DOMAIN, "/", (Date) null));
         Assert.assertNotNull("Cookie was stored", driver.manage().getCookieNamed("foo"));
         Assert.assertEquals("Cookie was stored", "bar", driver.manage().getCookieNamed("foo").getValue());
     }
