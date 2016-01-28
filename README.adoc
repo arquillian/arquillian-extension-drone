@@ -138,7 +138,7 @@ Prerequisites:
 In order to start Selenium Server, execute:
 
 [source,bash]
-java -jar selenium-server-standalone-2.49.1.jar -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary
+java -jar selenium-server-standalone-2.50.0.jar -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary
 
 Once Selenium Server is running, you can run the tests by:
 

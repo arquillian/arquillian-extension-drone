@@ -9,15 +9,16 @@ defaultTasks 'test'
 apply plugin: 'spacelift'
 
 ext {
-    defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final', '1.1.6.Final', '1.1.7.Final', '1.1.8.Final', '1.1.9.Final', '1.1.10.Final']
+    defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final', '1.1.6.Final', '1.1.7.Final', '1.1.8.Final',
+                                    '1.1.9.Final', '1.1.10.Final', '1.1.11.Final']
     defaultBrowser = ['phantomjs']
 
     defaultArquillianPhantomDriverCommit = '1.2.0.Final'
     defaultArquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '2.49.1'
-    iedriverVersion = '2.49.0'
+    seleniumVersion = '2.50.0'
+    iedriverVersion = '2.50.0'
     phantomjsVersion = '2.1.1'
 }
 
