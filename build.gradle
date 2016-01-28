@@ -40,17 +40,18 @@ spacelift {
                 def m2 = System.getenv("M2")
                 def m2_home = System.getenv("M2_HOME")
 
-                def mvnPath = null
-                if (m2 != null && !m2.isEmpty() && (new File(m2, 'mvn')).exists()) {
-                    mvnPath = new File(new File(m2), 'mvn').getCanonicalPath()
-                } else if (m2_home != null && !m2_home.isEmpty() && (new File(m2_home, 'mvn')).exists()) {
-                    mvnPath = new File(new File(m2_home), 'mvn').getCanonicalPath()
-                } else {
-                    mvnPath = "mvn"
+                def mvnExpFile = 'mvn'
+                if(EnvironmentUtils.runsOnWindows()) {
+                    mvnExpFile += '.bat'
                 }
 
-                if(EnvironmentUtils.runsOnWindows()) {
-                    mvnPath += '.bat'
+                def mvnPath = null
+                if (m2 != null && !m2.isEmpty() && (new File(m2, mvnExpFile)).exists()) {
+                    mvnPath = new File(new File(m2), mvnExpFile).getCanonicalPath()
+                } else if (m2_home != null && !m2_home.isEmpty() && (new File(m2_home, mvnExpFile)).exists()) {
+                    mvnPath = new File(new File(m2_home), mvnExpFile).getCanonicalPath()
+                } else {
+                    mvnPath = mvnExpFile
                 }
 
                 
