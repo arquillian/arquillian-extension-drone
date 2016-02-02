@@ -165,9 +165,11 @@ public class DroneTestEnricher implements TestEnricher {
     private boolean ensureInjectionPointPrepared(DronePoint<?> dronePoint, boolean forMethod) {
         if (!droneContext.get().get(dronePoint).hasFutureInstance()) {
             if (dronePoint.getLifecycle() != DronePoint.Lifecycle.DEPLOYMENT) {
-                log.log(Level.WARNING, "Injection point {0} was not prepared yet. It will be prepared now, " +
-                    "but it''s recommended that all drones with class lifecycle are prepared in " +
-                    "@BeforeClass by the DroneLifecycleManager!", dronePoint);
+                if (dronePoint.getLifecycle() == DronePoint.Lifecycle.CLASS) {
+                    log.log(Level.WARNING, "Injection point {0} was not prepared yet. It will be prepared now, " +
+                        "but it''s recommended that all drones with class lifecycle are prepared in " +
+                        "@BeforeClass by the DroneLifecycleManager!", dronePoint);
+                }
 
                 prepareDroneCommand.fire(new PrepareDrone(dronePoint));
             } else {
