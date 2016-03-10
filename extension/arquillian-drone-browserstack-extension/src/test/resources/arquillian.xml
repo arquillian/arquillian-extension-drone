@@ -1,0 +1,29 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+
+    <extension qualifier="webdriver">
+        <property name="browser">browserstack</property>
+
+
+        <property name="username">*****</property>
+        <property name="automate.key">*****</property>
+
+       <!-- <property name="browserName">android</property>
+        <property name="platform">ANDROID</property>
+        <property name="device">Samsung Galaxy S5</property>
+        <property name="browserstack.debug">true</property>-->
+
+        <property name="browserName">firefox</property>
+        <property name="browser_version">7.0</property>
+        <property name="os">Windows</property>
+        <property name="os_version">XP</property>
+        <property name="browserstack.debug">true</property>
+        <property name="browserstack.local">true</property>
+        <property name="browserstack.local.managed">true</property>
+    </extension>
+
+</arquillian>

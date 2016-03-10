@@ -1,0 +1,55 @@
+= Arquillian Drone BrowserStack WebDriver
+This is an Arquillian extension that enables you to use the BrowserStack as a Drone WebDriver there in your functional tests.
+
+=== How to use it:
+
+1):: First of all, you need to have this extension on your project's classpath. Eg. as a maven dependency (it's not in the Maven Central repository - so firstly, you have to install it into your local repository `mvn clean install` and then you can use it as a standard maven dependency):
+[source,xml]
+----
+    <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-browserstack-webdriver</artifactId>
+        <version>1.0-alpha-1</version>
+    </dependency>
+----
+
+2):: To use the BrowserStackDriver you need to specify *browserstack* as a *browser* property:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">browserstack</property>
+        ...
+    </extension>
+----
+
+3):: You can choose if you want to specify your credentials to access your account or to provide the URL directly with the credentials included.
+
+::    a) To provide only the credentials you need to specify the *username* and *automate.key* (in this case, the URL is created by the pattern: _http:// + username + : + automateKey + @hub.browserstack.com/wd/hub_)
+[source,xml]
+----
+    <property name="username">*****</property>
+    <property name="automate.key">*****</property>
+----
+
+::    b) To provide the URL directly, please use the *url* parameter:
+[source,xml]
+----
+    <property name="url">http://xxxx:zzzzz@hub.browserstack.com/wd/hub</property>
+----
+
+4):: Specify any property that you need to test you application with the BrowserStack there in your arquillian.xml. All the properties are passed to the WebDriver as the Capabilities. For example:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">browserstack</property>
+
+        <property name="username">*****</property>
+        <property name="automate.key">*****</property>
+
+        <property name="browserName">android</property>
+        <property name="platform">ANDROID</property>
+        <property name="device">Samsung Galaxy S5</property>
+        <property name="browserstack.debug">true</property>
+        ...
+    </extension>
+----
