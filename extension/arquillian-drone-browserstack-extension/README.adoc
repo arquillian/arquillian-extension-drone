@@ -1,0 +1,139 @@
+= Arquillian Drone BrowserStack extension
+This is an Arquillian extension that enables you to use the BrowserStack as a Drone WebDriver there in your functional tests.
+
+=== How to use it:
+
+1):: First of all, you need to have this extension on your project's classpath. Eg. as a Maven dependency:
+[source,xml]
+----
+    <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-browserstack-extension</artifactId>
+        <version>${version.org.jboss.arquillian.drone}</version>
+    </dependency>
+----
+NOTE: Please keep in mind that this dependency doesn't serve as a dependency chain - you also need to add the dependencies mentioned in https://github.com/arquillian/arquillian-extension-drone#getting-started
+
+2):: To use the BrowserStack driver you need to specify *browserstack* as a *browser* property:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">browserstack</property>
+        ...
+    </extension>
+----
+
+3):: You can choose if you want to specify your credentials to access your account or to provide the URL directly with the credentials included.
+
+::    a) To provide only the credentials you need to specify the *username* and *access.key* (in this case, the URL is created by the pattern: _http:// + username + : + accessKey + @hub.browserstack.com/wd/hub_)
+[source,xml]
+----
+    <property name="username">*****</property>
+    <property name="access.key">*****</property>
+----
+
+::    b) To provide the URL directly, please use the *url* parameter:
+[source,xml]
+----
+    <property name="url">http://xxxx:zzzzz@hub.browserstack.com/wd/hub</property>
+----
+
+4):: Specify there in your arquillian.xml any BrowserStack capability that you need for testing . All the properties are passed to the WebDriver as the Capabilities. For example:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">browserstack</property>
+
+        <property name="username">*****</property>
+        <property name="access.key">*****</property>
+
+        <property name="browserName">android</property>
+        <property name="platform">ANDROID</property>
+        <property name="device">Samsung Galaxy S5</property>
+        <property name="browserstack.debug">true</property>
+        ...
+    </extension>
+----
+
+=== Local testing
+To test against localhost and other locations behind your firewall, you need to run a BrowserStackLocal binary. For more information see these web pages:
+{nbsp} +
+https://www.browserstack.com/local-testing
+{nbsp} +
+https://www.browserstack.com/automate/java#setting-local-tunnel.
+{nbsp} +
+As you can read there, there are two necessary things that have to be done to make local testing possible:
+
+1) Run BrowserStackLocal with your access key
+
+2) To have set the property *browserstack.local* to _true_ there in your arquillian.xml.
+
+You can ask Drone to do the first step for you. If you set another property *browserstack.local.managed* to _true_, Drone downloads and starts the appropriate binary before a webdriver is created. Command that is used for starting:
+
+`./target/browserstacklocal/BrowserStackLocal <access_key>`
+
+If you don't want to download the BrowserStackLocal binary every time when you run a test, then specify the path to your own binary in the property: *browserstack.local.binary* (this is highly recommended)
+
+===== BrowserStack Local command line arguments
+
+In order to use some additional BrowserStackLocal arguments, use the property *browserstack.local.args*. The content of this property will be appended to the default command mentioned above. For example the usage of this property:
+[source,xml]
+----
+<property name="browserstack.local.args">-v -force</property>
+----
+is resulting into this command:
+
+`./target/browserstacklocal/BrowserStackLocal <access_key> -v -force`
+
+For more information about the possible options see: https://www.browserstack.com/local-testing#modifiers
+
+=== Parameters summary of the Arquillian Drone BrowserStack extension
+
+|===
+|Configuration property |Description |Possible values
+
+|username
+|A username the test should use for connecting to BrowserStack
+|String
+
+|access.key
+|An access key (tied to the username) the test should use for connecting to BrowserStack
+|String
+
+|url
+|Represents the whole BrowserStack url the test should connect to (an alternative to username & access.key)
+|String
+
+|browserstack.local.managed
+|If true and if the *browserstack.local* is set to true as well, then a startup and termination of the BrowserStackLocal binary is managed by Drone. By default it also downloads the binary, however you can change it by the property *browserstack.local.binary*
+ {nbsp} +
+ This is optional.
+|true/false
+
+|browserstack.local.binary
+|Path to your BrowserStackLocal binary. If it is set then this will be used and no other binary will be downloaded. (This is highly recommended)
+ {nbsp} +
+ This is optional.
+|String(path)
+
+|browserstack.local.args
+|Additional arguments that will be appended to the basic command
+ {nbsp} +
+ This is optional.
+|String
+
+|===
+
+For more information about the rest of the possible parameters see: https://www.browserstack.com/automate/capabilities (NOTE: Be aware that the property *browser* is reserved by Drone. For specifying a browser type, please use the default property *browserName*)
+
+[CAUTION]
+====
+In some cases, your test can fail with a DroneTimeoutException because the Drone creation request timed out after some time. The default timeout is 60 seconds, however, some time takes connecting to the BrowserStack and the initialization of the required platform and browser. Especially, the mobile emulator can take very long time to be initialized.
+In these cases we recommend you to set some longer timeout, eg:
+[source,xml]
+----
+<extension qualifier="drone">
+   <property name="instantiationTimeoutInSeconds">240</property>
+</extension>
+----
+====
