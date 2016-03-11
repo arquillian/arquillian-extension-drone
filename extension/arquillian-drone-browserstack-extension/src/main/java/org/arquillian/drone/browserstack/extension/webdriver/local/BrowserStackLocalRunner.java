@@ -28,7 +28,7 @@ public class BrowserStackLocalRunner {
 
     private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
     private final File browserStackLocalFile =
-        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal");
+        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal" + (PlatformUtils.isWindows() ? ".exe" : ""));
     private final String basicUrl = "https://www.browserstack.com/browserstack-local/";
     private Process process = null;
 
