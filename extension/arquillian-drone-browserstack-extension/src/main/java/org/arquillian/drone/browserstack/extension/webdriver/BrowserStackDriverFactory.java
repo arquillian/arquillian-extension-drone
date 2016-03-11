@@ -94,7 +94,12 @@ public class BrowserStackDriverFactory implements
                 if (isEmpty(accessKey)) {
                     accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
                 }
-                BrowserStackLocalRunner.createBrowserStackLocalInstance().runBrowserStackLocal(accessKey);
+                String localIdentifier =
+                    (String) capabilities.getCapability(BrowserStackDriver.BROWSERSTACK_LOCAL_IDENTIFIER);
+                String localBinary = (String) capabilities.getCapability(BrowserStackDriver.BROWSERSTACK_LOCAL_BINARY);
+
+                BrowserStackLocalRunner.createBrowserStackLocalInstance()
+                    .runBrowserStackLocal(accessKey, localIdentifier, localBinary);
             }
 
             return new BrowserStackDriver(new URL(url), capabilities);

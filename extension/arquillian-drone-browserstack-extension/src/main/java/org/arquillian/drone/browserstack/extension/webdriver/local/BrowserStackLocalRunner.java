@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -49,20 +51,45 @@ public class BrowserStackLocalRunner {
     }
 
     /**
-     * Runs BrowserStackLocal binary. In case that the binary has been already ran, then does nothing.
+     * Indirectly runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
      *
-     * @param accessKey An accessKey the binary should be ran with
+     * @param accessKey       An accessKey the binary should be ran with
+     * @param localIdentifier A local identifier
+     * @param localBinary     Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
      */
-    public void runBrowserStackLocal(String accessKey) {
+    public void runBrowserStackLocal(String accessKey, String localIdentifier, String localBinary) {
         if (process != null) {
             return;
         }
-        if (!browserStackLocalFile.exists()) {
-            prepareBrowserStackLocal();
-        }
+        if (isEmpty(localBinary)) {
+            if (!browserStackLocalFile.exists()) {
+                prepareBrowserStackLocal();
+            }
+            runTheBinary(browserStackLocalFile, accessKey, localIdentifier);
 
-        ProcessBuilder processBuilder =
-            new ProcessBuilder().command(browserStackLocalFile.getAbsolutePath(), "-v", accessKey);
+        } else {
+            runTheBinary(new File(localBinary), accessKey, localIdentifier);
+        }
+    }
+
+    /**
+     * Runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
+     *
+     * @param binaryFile      A binary file to be run
+     * @param accessKey       An accessKey the binary should be ran with
+     * @param localIdentifier A local identifier
+     */
+    private void runTheBinary(File binaryFile, String accessKey, String localIdentifier) {
+        List<String> args = new ArrayList<String>();
+        args.add(binaryFile.getAbsolutePath());
+        args.add("-v");
+        if (!isEmpty(localIdentifier)) {
+            args.add("-localIdentifier");
+            args.add(localIdentifier);
+        }
+        args.add(accessKey);
+        ProcessBuilder processBuilder = new ProcessBuilder().command(args);
+
         try {
             process = processBuilder.start();
 
@@ -132,6 +159,10 @@ public class BrowserStackLocalRunner {
                                                     + "'.");
 
         }
+    }
+
+    private boolean isEmpty(String object) {
+        return object == null || object.isEmpty();
     }
 
     /**

@@ -24,7 +24,7 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
 
 3):: You can choose if you want to specify your credentials to access your account or to provide the URL directly with the credentials included.
 
-::    a) To provide only the credentials you need to specify the *username* and *access.key* (in this case, the URL is created by the pattern: _http:// + username + : + automateKey + @hub.browserstack.com/wd/hub_)
+::    a) To provide only the credentials you need to specify the *username* and *access.key* (in this case, the URL is created by the pattern: _http:// + username + : + accessKey + @hub.browserstack.com/wd/hub_)
 [source,xml]
 ----
     <property name="username">*****</property>
@@ -44,7 +44,7 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
         <property name="browser">browserstack</property>
 
         <property name="username">*****</property>
-        <property name="automate.key">*****</property>
+        <property name="access.key">*****</property>
 
         <property name="browserName">android</property>
         <property name="platform">ANDROID</property>
@@ -64,10 +64,42 @@ As you can read there, there are two necessary things that have to be done to ma
 
 2) To have set the property *browserstack.local* to _true_ there in your arquillian.xml.
 
-You can ask Drone for doing the first step instead of you. If you set another property *browserstack.local.managed* to _true_, Drone downloads and starts an appropriate binary before a webdriver is created. Command that is used for starting:
+You can ask Drone to do the first step for you. If you set another property *browserstack.local.managed* to _true_, Drone downloads and starts an appropriate binary before a webdriver is created. Command that is used for starting:
 
 `./target/browserstacklocal/BrowserStackLocal -v <access_key>`
 
 In case of using a named connection, then the starting command looks like this (where <connection> is taken from the property *browserstack.localIdentifier*):
 
 `./target/browserstacklocal/BrowserStackLocal -v -localIdentifier <connection> <access_key>`
+
+If you don't want to download the BrowserStackLocal binary every time when you run a test, then set a path to your own binary in the property: *browserstack.local.binary*
+
+
+=== Parameters summary of the Arquillian Drone BrowserStack extension
+
+|===
+|Configuration property |Description |Possible values
+
+|username
+|A username the test should use for connecting to BrowserStack
+|String
+
+|access.key
+|An access key (tied to the username) the test should use for connecting to BrowserStack
+|String
+
+|url
+|Represents the whole BrowserStack url the test should connect to (an alternative to username & access.key)
+|String
+
+|browserstack.local.managed
+|If true and if the *browserstack.local* is set to true as well, then a startup and termination of the BrowserStackLocal binary is managed by Drone. By default it also downloads the binary, however you can change it by the property *browserstack.local.binary*
+|true/false
+
+|browserstack.local.binary
+|Path to your BrowserStackLocal binary. If it is set then this will be used and no other binary will be downloaded.
+|String(path)
+
+|===
+
+For more information about the rest of the possible parameters see: https://www.browserstack.com/automate/capabilities (NOTE: Be aware that the property *browser* is reserved by Drone. For specifying a browser type, please use the default property *browserName*)

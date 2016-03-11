@@ -34,6 +34,8 @@ public class BrowserStackDriver extends RemoteWebDriver {
     public static final String READABLE_NAME = "browserstack";
     public static final String BROWSERSTACK_LOCAL_MANAGED = "browserstack.local.managed";
     public static final String BROWSERSTACK_LOCAL = "browserstack.local";
+    public static final String BROWSERSTACK_LOCAL_IDENTIFIER = "browserstack.localIdentifier";
+    public static final String BROWSERSTACK_LOCAL_BINARY = "browserstack.local.binary";
 
     private static final Logger log = Logger.getLogger(BrowserStackDriver.class.getName());
 
