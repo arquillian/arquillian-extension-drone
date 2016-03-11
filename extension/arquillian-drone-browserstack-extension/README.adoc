@@ -1,4 +1,4 @@
-= Arquillian Drone BrowserStack WebDriver
+= Arquillian Drone BrowserStack extension
 This is an Arquillian extension that enables you to use the BrowserStack as a Drone WebDriver there in your functional tests.
 
 === How to use it:
@@ -72,7 +72,7 @@ In case of using a named connection, then the starting command looks like this (
 
 `./target/browserstacklocal/BrowserStackLocal -v -localIdentifier <connection> <access_key>`
 
-If you don't want to download the BrowserStackLocal binary every time when you run a test, then set a path to your own binary in the property: *browserstack.local.binary*
+If you don't want to download the BrowserStackLocal binary every time when you run a test, then specify the path to your own binary in the property: *browserstack.local.binary* (this is highly recommended)
 
 
 === Parameters summary of the Arquillian Drone BrowserStack extension
@@ -97,7 +97,7 @@ If you don't want to download the BrowserStackLocal binary every time when you r
 |true/false
 
 |browserstack.local.binary
-|Path to your BrowserStackLocal binary. If it is set then this will be used and no other binary will be downloaded.
+|Path to your BrowserStackLocal binary. If it is set then this will be used and no other binary will be downloaded. (This is highly recommended)
 |String(path)
 
 |===
