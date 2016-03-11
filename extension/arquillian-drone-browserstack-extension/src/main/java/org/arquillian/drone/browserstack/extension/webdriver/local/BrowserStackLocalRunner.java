@@ -1,4 +1,4 @@
-package org.arquillian.drone.browserstack.extension.webdriver;
+package org.arquillian.drone.browserstack.extension.webdriver.local;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import org.arquillian.spacelift.Spacelift;
@@ -15,14 +14,17 @@ import org.arquillian.spacelift.task.archive.UnzipTool;
 import org.arquillian.spacelift.task.net.DownloadTool;
 
 /**
+ * Is responsible for starting a BrowserStackLocal binary
+ *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BrowserStackLocalRunner {
 
     private static Logger log = Logger.getLogger(BrowserStackLocalRunner.class.getName());
 
-    private static AtomicBoolean isStarted = new AtomicBoolean(false);
     private static BrowserStackLocalRunner browserStackLocalRunner = null;
+
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
     private final File browserStackLocalFile =
@@ -33,6 +35,12 @@ public class BrowserStackLocalRunner {
     private BrowserStackLocalRunner() {
     }
 
+    /**
+     * Returns an instance of BrowserStackLocalRunner. If there has been already created, returns this one, otherwise
+     * creates and returns a new one - behaves like singleton
+     *
+     * @return An instance of BrowserStackLocalRunner
+     */
     public static BrowserStackLocalRunner createBrowserStackLocalInstance() {
         if (browserStackLocalRunner == null) {
             browserStackLocalRunner = new BrowserStackLocalRunner();
@@ -40,14 +48,18 @@ public class BrowserStackLocalRunner {
         return browserStackLocalRunner;
     }
 
-    public void runBrowserstackLocal(String accessKey) {
+    /**
+     * Runs BrowserStackLocal binary. In case that the binary has been already ran, then does nothing.
+     *
+     * @param accessKey An accessKey the binary should be ran with
+     */
+    public void runBrowserStackLocal(String accessKey) {
         if (process != null) {
             return;
         }
         if (!browserStackLocalFile.exists()) {
             prepareBrowserStackLocal();
         }
-        browserStackLocalFile.setExecutable(true);
 
         ProcessBuilder processBuilder =
             new ProcessBuilder().command(browserStackLocalFile.getAbsolutePath(), "-v", accessKey);
@@ -56,25 +68,8 @@ public class BrowserStackLocalRunner {
 
             final Reader reader = new Reader();
             reader.start();
-            Runtime.getRuntime().addShutdownHook(new CloseChildThread());
-
-            final CountDownLatch countDownLatch = new CountDownLatch(1);
-            final Thread isStartedChecker = new Thread() {
-                public void run() {
-                    while (!isStarted.get()) {
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    countDownLatch.countDown();
-                }
-            };
-            isStartedChecker.start();
+            Runtime.getRuntime().addShutdownHook(new CloseChildProcess());
             countDownLatch.await(20, TimeUnit.SECONDS);
-
-
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -85,6 +80,10 @@ public class BrowserStackLocalRunner {
         }
     }
 
+    /**
+     * Prepares the BrowserStackLocal binary. Creates the directory target/browserstacklocal; downloads a zip file
+     * containing the binary; extracts it into the created directory and marks the binary as executable.
+     */
     private void prepareBrowserStackLocal() {
         String platformBinaryNameUrl = getPlatformBinaryNameUrl();
         File browserStackLocalZipFile =
@@ -100,8 +99,17 @@ public class BrowserStackLocalRunner {
         log.info("extracting zip file: " + browserStackLocalZipFile + " to " + browserStackLocalDirectory.getPath());
         Spacelift.task(browserStackLocalZipFile, UnzipTool.class).toDir(browserStackLocalDirectory.getPath()).execute()
             .await();
+
+        log.info("marking binary file: " + browserStackLocalFile.getPath() + " as executable");
+        browserStackLocalFile.setExecutable(true);
     }
 
+    /**
+     * Returns name of a zip file, that should contain the BrowserStackLocal binary. The name contains corresponding
+     * name of the platform the program is running on.
+     *
+     * @return Formatted name of the BrowserStackLocal zip file
+     */
     private String getPlatformBinaryNameUrl() {
         String binary = "BrowserStackLocal-%s.zip";
         switch (PlatformUtils.platform().os()) {
@@ -126,10 +134,11 @@ public class BrowserStackLocalRunner {
         }
     }
 
-    private boolean isEmpty(String object) {
-        return object == null || object.isEmpty();
-    }
-
+    /**
+     * This thread reads an output from the BrowserStackLocal binary and prints it on the standard output. At the same
+     * time it checks if the output contains one of the strings that indicate that the binary has been successfully
+     * started and the connection established or that another BrowserStackLocal binary is already running
+     */
     private class Reader extends Thread {
         public void run() {
 
@@ -143,18 +152,17 @@ public class BrowserStackLocalRunner {
                         if (!process.isAlive()) {
                             break;
                         }
-                        while (in.ready() && !isEmpty(line = in.readLine())) {
+                        while (in.ready() && (line = in.readLine()) != null) {
                             System.out.println("[BrowserStackLocal]$ " + line);
 
-                            if (!isStarted.get()) {
+                            if (countDownLatch.getCount() > 0) {
                                 if (line.contains(
                                     "You can now access your local server(s) in our remote browser.")) {
-                                    isStarted = new AtomicBoolean(true);
-
+                                    countDownLatch.countDown();
                                 } else if (line.contains(
                                     "Either another browserstack local client is running on your machine or some server is listening on port")) {
                                     isAlreadyRunning = true;
-                                    isStarted = new AtomicBoolean(true);
+                                    countDownLatch.countDown();
                                 }
                             }
                         }
@@ -170,7 +178,10 @@ public class BrowserStackLocalRunner {
         }
     }
 
-    private class CloseChildThread extends Thread {
+    /**
+     * Is responsible for destroying a running BrowserStackLocal binary process
+     */
+    private class CloseChildProcess extends Thread {
         public void run() {
             process.destroy();
             try {
@@ -180,6 +191,4 @@ public class BrowserStackLocalRunner {
             }
         }
     }
-
-    ;
 }

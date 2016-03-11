@@ -1,5 +1,5 @@
 
-package org.arquillian.drone.browserstack.extension.webdriver;
+package org.arquillian.drone.browserstack.extension.webdriver.local;
 
 public class PlatformUtils {
 

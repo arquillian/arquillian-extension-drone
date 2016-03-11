@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import org.arquillian.drone.browserstack.extension.webdriver.local.BrowserStackLocalRunner;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -91,7 +92,7 @@ public class BrowserStackDriverFactory implements
 
             if (capabilities.is(BrowserStackDriver.BROWSERSTACK_LOCAL) && capabilities.is(
                 BrowserStackDriver.BROWSERSTACK_LOCAL_MANAGED) && !isEmpty(accessKey)) {
-                BrowserStackLocalRunner.createBrowserStackLocalInstance().runBrowserstackLocal(accessKey);
+                BrowserStackLocalRunner.createBrowserStackLocalInstance().runBrowserStackLocal(accessKey);
             }
 
             return new BrowserStackDriver(new URL(url), capabilities);
