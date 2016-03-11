@@ -47,7 +47,6 @@ public class BrowserStackDriverFactory implements
 
     private static final Logger log = Logger.getLogger(BrowserStackDriverFactory.class.getName());
 
-
     @Inject
     protected Instance<BrowserCapabilitiesRegistry> registryInstance;
 
@@ -91,7 +90,10 @@ public class BrowserStackDriverFactory implements
             }
 
             if (capabilities.is(BrowserStackDriver.BROWSERSTACK_LOCAL) && capabilities.is(
-                BrowserStackDriver.BROWSERSTACK_LOCAL_MANAGED) && !isEmpty(accessKey)) {
+                BrowserStackDriver.BROWSERSTACK_LOCAL_MANAGED) && (!isEmpty(accessKey) || !isEmpty(url))) {
+                if (isEmpty(accessKey)) {
+                    accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
+                }
                 BrowserStackLocalRunner.createBrowserStackLocalInstance().runBrowserStackLocal(accessKey);
             }
 
@@ -101,8 +103,6 @@ public class BrowserStackDriverFactory implements
         }
         return null;
     }
-
-
 
     private boolean isEmpty(String object) {
         return object == null || object.isEmpty();

@@ -3,13 +3,13 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
 
 === How to use it:
 
-1):: First of all, you need to have this extension on your project's classpath. Eg. as a maven dependency (it's not in the Maven Central repository - so firstly, you have to install it into your local repository `mvn clean install` and then you can use it as a standard maven dependency):
+1):: First of all, you need to have this extension on your project's classpath. Eg. as a maven dependency:
 [source,xml]
 ----
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-drone-browserstack-webdriver</artifactId>
-        <version>1.0-alpha-1</version>
+        <version>${version.org.jboss.arquillian.drone}</version>
     </dependency>
 ----
 
@@ -24,11 +24,11 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
 
 3):: You can choose if you want to specify your credentials to access your account or to provide the URL directly with the credentials included.
 
-::    a) To provide only the credentials you need to specify the *username* and *automate.key* (in this case, the URL is created by the pattern: _http:// + username + : + automateKey + @hub.browserstack.com/wd/hub_)
+::    a) To provide only the credentials you need to specify the *username* and *access.key* (in this case, the URL is created by the pattern: _http:// + username + : + automateKey + @hub.browserstack.com/wd/hub_)
 [source,xml]
 ----
     <property name="username">*****</property>
-    <property name="automate.key">*****</property>
+    <property name="access.key">*****</property>
 ----
 
 ::    b) To provide the URL directly, please use the *url* parameter:
@@ -53,3 +53,21 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
         ...
     </extension>
 ----
+
+=== Local testing
+To test against localhost and other locations behind your firewall, you need to run a BrowserStackLocal binary. For more information see these web pages
+https://www.browserstack.com/local-testing
+https://www.browserstack.com/automate/java#setting-local-tunnel.
+As you can read there, there are two necessary things that have to be done to make local testing possible:
+
+1) Run BrowserStackLocal with your access key
+
+2) To have set the property *browserstack.local* to _true_ there in your arquillian.xml.
+
+You can ask Drone for doing the first step instead of you. If you set another property *browserstack.local.managed* to _true_, Drone downloads and starts an appropriate binary before a webdriver is created. Command that is used for starting:
+
+`./target/browserstacklocal/BrowserStackLocal -v <access_key>`
+
+In case of using a named connection, then the starting command looks like this (where <connection> is taken from the property *browserstack.localIdentifier*):
+
+`./target/browserstacklocal/BrowserStackLocal -v -localIdentifier <connection> <access_key>`
