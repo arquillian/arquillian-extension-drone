@@ -25,7 +25,7 @@
 
         <property name="browserstack.local">true</property>
         <property name="browserstack.local.managed">true</property>
-        <property name="browserstack.local.binary">/home/mjobanek/browserstack/BrowserStackLocal</property>
+        <!--<property name="browserstack.local.binary">/home/mjobanek/browserstack/BrowserStackLocal</property>-->
     </extension>
 
 </arquillian>
