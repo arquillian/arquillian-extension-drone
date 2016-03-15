@@ -81,6 +81,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Arquillian Drone extension -->
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-drone-saucelabs-extension</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
             <!-- Selenium BOM -->
             <dependency>
                 <groupId>org.jboss.arquillian.selenium</groupId>

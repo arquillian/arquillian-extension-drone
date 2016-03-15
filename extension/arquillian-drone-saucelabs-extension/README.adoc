@@ -1,0 +1,132 @@
+= Arquillian Drone Sauce Labs extension
+This is an Arquillian extension that enables you to use the Sauce Labs as a Drone WebDriver there in your functional tests.
+
+=== How to use it:
+
+1):: First of all, you need to have this extension on your project's classpath. Eg. as a Maven dependency:
+[source,xml]
+----
+    <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-saucelabs-webdriver</artifactId>
+        <version>${version.org.jboss.arquillian.drone}</version>
+    </dependency>
+----
+NOTE: Please keep in mind that this dependency doesn't serve as a dependency chain - you also need to add the dependencies mentioned in https://github.com/arquillian/arquillian-extension-drone#getting-started
+
+2):: To use the SauceLabsDriver you need to specify *saucelabs* as a *browser* property:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">saucelabs</property>
+        ...
+    </extension>
+----
+
+3):: You can choose if you want to specify your credentials to access your account or to provide the URL directly with the credentials included.
+
+::    a) To provide only the credentials you need to specify the *username* and *access.key* (in this case, the URL is created by the pattern: _http:// + username + : + accessKey + @ondemand.saucelabs.com:80/wd/hub_)
+[source,xml]
+----
+    <property name="username">*****</property>
+    <property name="access.key">*****</property>
+----
+
+::    b) To provide the URL directly, please use the *url* parameter:
+[source,xml]
+----
+    <property name="url">http://xxxxx:zzzzzz@ondemand.saucelabs.com:80/wd/hub</property>
+----
+
+4):: Specify there in your arquillian.xml any Sauce Labs capability that you need for testing. All the properties are passed to the WebDriver as the Capabilities. For example:
+[source,xml]
+----
+    <extension qualifier="webdriver">
+        <property name="browser">saucelabs</property>
+
+        <property name="username">*****</property>
+        <property name="access.key">*****</property>
+
+        <property name="browserName">firefox</property>
+        <property name="platform">OS X 10.9</property>
+        <property name="version">40</property>
+        ...
+    </extension>
+----
+
+=== Local testing
+To test against localhost and other locations behind your firewall, you need to run a SauceConnect binary. For more information see these web pages:
+{nbsp} +
+https://wiki.saucelabs.com/display/DOCS/Sauce+Connect
+{nbsp} +
+https://wiki.saucelabs.com/display/DOCS/Setting+Up+Sauce+Connect.
+
+As you can read there, there is only one necessary thing you need to make the local testing possible - to have SauceConnect binary running with your username and access key on your pc.
+You can ask Drone to do it for you. If you set property *sauce.connect.managed* to _true_, Drone downloads and starts an appropriate binary before a webdriver is created. Command that is used for starting:
+
+`./target/sauceconnect/sc/bin/sc -u <username> -k <access_key>`
+
+If you don't want to download the SauceConnect binary every time when you run a test, then specify the path to your own binary in the property *sauce.connect.binary* (this is highly recommended)
+
+===== Sauce Connect command line arguments
+In order to use some additional SauceConnect arguments, use the property *sauce.connect.args*. The content of this property will be appended to the default command mentioned above. For example the usage of this property:
+[source,xml]
+----
+<property name="sauce.connect.args">-v --logfile mylog --shared-tunnel</property>
+----
+is resulting into this command:
+
+`./target/sauceconnect/sc/bin/sc -u <username> -k <access_key> -v --logfile mylog --shared-tunnel`
+
+For more information about the possible options see: https://wiki.saucelabs.com/pages/viewpage.action?pageId=48365781
+
+=== Parameters summary of the Arquillian Drone Sauce Labs extension
+
+|===
+|Configuration property |Description |Possible values
+
+|username
+|A username the test should connect to Sauce Labs with
+|String
+
+|access.key
+|An access key (tied to the username) the test should connect to Sauce Labs with
+|String
+
+|url
+|Represents the whole Sauce Labs url the test should connect to (an alternative to the couple: username & access.key)
+|String
+
+|sauce.connect.managed
+|If true then a startup and termination of the SauceConnect binary is managed by Drone. By default it also downloads the binary, however you can change this with the property *sauce.connect.binary*
+ {nbsp} +
+ This is optional.
+|true/false
+
+|sauce.connect.binary
+|Path to your SauceConnect binary. If it is set then this will be used and no other binary will be downloaded. (This is highly recommended)
+ {nbsp} +
+ This is optional.
+|String(path)
+
+|sauce.connect.args
+|Additional arguments that will be appended to the basic command
+ {nbsp} +
+ This is optional.
+|String
+
+|===
+
+For more information about the rest of the possible parameters see: https://wiki.saucelabs.com/display/DOCS/Test+Configuration+Options
+
+[CAUTION]
+====
+In some cases, your test can fail with a DroneTimeoutException because the Drone creation request timed out after some time. The default timeout is 60 seconds, however, some time takes connecting to the Sauce Labs and the initialization of the required platform and browser. Especially, the mobile emulator can take very long time to be initialized.
+In these cases we recommend you to set some longer timeout, eg:
+[source,xml]
+----
+<extension qualifier="drone">
+   <property name="instantiationTimeoutInSeconds">270</property>
+</extension>
+----
+====
