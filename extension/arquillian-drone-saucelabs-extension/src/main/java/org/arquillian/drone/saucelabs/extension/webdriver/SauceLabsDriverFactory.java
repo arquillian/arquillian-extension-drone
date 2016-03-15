@@ -90,7 +90,8 @@ public class SauceLabsDriverFactory implements
                 }
             }
 
-            if (capabilities.is(SauceLabsDriver.SAUCE_CONNECT_MANAGED)
+            boolean isSetSauceConnectManaged = capabilities.is(SauceLabsDriver.SAUCE_CONNECT_MANAGED);
+            if (isSetSauceConnectManaged
                 && ((!Utils.isEmpty(accessKey) && !Utils.isEmpty(username)) || !Utils.isEmpty(url))) {
 
                 if (Utils.isEmpty(accessKey)) {
@@ -105,7 +106,7 @@ public class SauceLabsDriverFactory implements
                                                                                       additionalArgs, localBinary);
             }
 
-            return new SauceLabsDriver(new URL(url), capabilities);
+            return new SauceLabsDriver(new URL(url), capabilities, isSetSauceConnectManaged);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

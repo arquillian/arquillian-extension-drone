@@ -38,8 +38,11 @@ public class SauceLabsDriver extends RemoteWebDriver {
 
     private static final Logger log = Logger.getLogger(SauceLabsDriver.class.getName());
 
-    public SauceLabsDriver(URL url, Capabilities capabilities) {
+    private final boolean isSetSauceConnectManaged;
+
+    public SauceLabsDriver(URL url, Capabilities capabilities, boolean isSetSauceConnectManaged) {
         super(url, capabilities);
+        this.isSetSauceConnectManaged = isSetSauceConnectManaged;
     }
 
     @Override
@@ -52,9 +55,9 @@ public class SauceLabsDriver extends RemoteWebDriver {
         }
 
         if (host != null && ("localhost" .equals(host) || "127.0.0.1" .equals(host))) {
-            if (!getCapabilities().is(SAUCE_CONNECT_MANAGED)) {
+            if (!isSetSauceConnectManaged) {
                 log.info(
-                    "To test against localhost and other locations behind your firewall, you need use Sauce Connect. "
+                    "To test against localhost and other locations behind your firewall, you need to use Sauce Connect. "
                         + "You can ignore this if you have already started it, otherwise see saucelabs.com/connect");
             }
         }
