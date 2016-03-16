@@ -47,8 +47,8 @@ This is an Arquillian extension that enables you to use the Sauce Labs as a Dron
         <property name="access.key">*****</property>
 
         <property name="browserName">firefox</property>
-        <property name="os">Windows 2008</property>
-        <property name="version">4.</property>
+        <property name="platform">OS X 10.9</property>
+        <property name="version">40</property>
         ...
     </extension>
 ----
