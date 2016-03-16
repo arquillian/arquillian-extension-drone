@@ -19,6 +19,7 @@ package org.arquillian.drone.saucelabs.extension.webdriver;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -38,16 +39,18 @@ public class SauceLabsWebDriverTestCase {
     WebDriver driver;
 
     @Test
+    @Ignore("All the Sauce Labs tests are ignored, because of missing username and access key to some active account - see arquillian.xml.")
     public void browserTest() {
-        runTest();
+        runTest(driver);
     }
 
     @Test
+    @Ignore("All the Sauce Labs tests are ignored, because of missing username and access key to some active account - see arquillian.xml.")
     public void browserTest(@Drone final WebDriver driver) {
-        runTest();
+        runTest(driver);
     }
 
-    private void runTest() {
+    private void runTest(WebDriver driver) {
         driver.get("http://www.google.com/");
         WebDriverUtil.checkElementIsPresent(driver, QUERY_FIELD, "The query field should be present");
 
