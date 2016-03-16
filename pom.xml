@@ -48,10 +48,10 @@
 
         <!-- override from parent -->
         <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>        
+        <maven.compiler.source>1.6</maven.compiler.source>
 
-        <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
-        <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
+        <maven.compiler.argument.target>1.6</maven.compiler.argument.target>
+        <maven.compiler.argument.source>1.6</maven.compiler.argument.source>
 
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
@@ -70,7 +70,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.15</version>
                 <executions>
                     <execution>
                         <id>signature-check</id>
@@ -83,8 +83,8 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java15</artifactId>
-                        <version>1.0</version>
+                        <artifactId>java16</artifactId>
+                        <version>1.1</version>
                     </signature>
                 </configuration>
             </plugin>
