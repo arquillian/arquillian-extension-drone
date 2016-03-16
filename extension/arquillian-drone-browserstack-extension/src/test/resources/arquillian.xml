@@ -12,20 +12,20 @@
         <property name="username">****</property>
         <property name="automate.key">****</property>
 
-       <!-- <property name="browserName">android</property>
-        <property name="platform">ANDROID</property>
-        <property name="device">Samsung Galaxy S5</property>
-        <property name="browserstack.debug">true</property>-->
+        <!-- <property name="browserName">android</property>
+         <property name="platform">ANDROID</property>
+         <property name="device">Samsung Galaxy S5</property>
+         <property name="browserstack.debug">true</property>-->
 
         <property name="browserName">firefox</property>
-        <property name="browser_version">7.0</property>
+        <property name="browser_version">40.0</property>
         <property name="os">Windows</property>
-        <property name="os_version">XP</property>
+        <property name="os_version">7</property>
         <property name="browserstack.debug">true</property>
 
         <property name="browserstack.local">true</property>
         <property name="browserstack.local.managed">true</property>
-        <property name="browserstack.local.args">-v -force</property>
+        <!--<property name="browserstack.local.args">-v -force</property>-->
         <!--<property name="browserstack.local.binary">/home/mjobanek/browserstack/BrowserStackLocal</property>-->
     </extension>
 
