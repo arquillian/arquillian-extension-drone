@@ -1,18 +1,9 @@
-
-package org.arquillian.drone.browserstack.extension.webdriver.local;
+package org.arquillian.drone.browserstack.extension.local;
 
 public class PlatformUtils {
 
     public static String OS = System.getProperty("os.name").toLowerCase();
     public static String ARCH = System.getProperty("os.arch").toLowerCase();
-
-    public enum OperatingSystem {
-        WINDOWS, UNIX, MACOSX, SOLARIS, UNKNOWN;
-    }
-
-    public enum Architecture {
-        BIT64, BIT32;
-    }
 
     private PlatformUtils() {
     }
@@ -61,6 +52,14 @@ public class PlatformUtils {
                 return is64() ? Architecture.BIT64 : Architecture.BIT32;
             }
         };
+    }
+
+    public enum OperatingSystem {
+        WINDOWS, UNIX, MACOSX, SOLARIS, UNKNOWN;
+    }
+
+    public enum Architecture {
+        BIT64, BIT32;
     }
 
     public interface Platform {

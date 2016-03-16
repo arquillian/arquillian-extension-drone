@@ -1,4 +1,4 @@
-package org.arquillian.drone.browserstack.extension.webdriver.local;
+package org.arquillian.drone.browserstack.extension.local;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -26,12 +27,13 @@ public class BrowserStackLocalRunner {
 
     private static BrowserStackLocalRunner browserStackLocalRunner = null;
 
-    private final CountDownLatch countDownLatch = new CountDownLatch(1);
-
     private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
     private final File browserStackLocalFile =
-        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal" + (PlatformUtils.isWindows() ? ".exe" : ""));
+        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal" + (PlatformUtils
+            .isWindows() ? ".exe" : ""));
     private final String basicUrl = "https://www.browserstack.com/browserstack-local/";
+
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
     private Process process = null;
 
     private BrowserStackLocalRunner() {
@@ -53,11 +55,11 @@ public class BrowserStackLocalRunner {
     /**
      * Indirectly runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
      *
-     * @param accessKey       An accessKey the binary should be ran with
-     * @param localIdentifier A local identifier
-     * @param localBinary     Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
+     * @param accessKey      An accessKey the binary should be ran with
+     * @param additionalArgs additional arguments
+     * @param localBinary    Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
      */
-    public void runBrowserStackLocal(String accessKey, String localIdentifier, String localBinary) {
+    public void runBrowserStackLocal(String accessKey, String additionalArgs, String localBinary) {
         if (process != null) {
             return;
         }
@@ -65,29 +67,27 @@ public class BrowserStackLocalRunner {
             if (!browserStackLocalFile.exists()) {
                 prepareBrowserStackLocal();
             }
-            runTheBinary(browserStackLocalFile, accessKey, localIdentifier);
+            runTheBinary(browserStackLocalFile, accessKey, additionalArgs);
 
         } else {
-            runTheBinary(new File(localBinary), accessKey, localIdentifier);
+            runTheBinary(new File(localBinary), accessKey, additionalArgs);
         }
     }
 
     /**
      * Runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
      *
-     * @param binaryFile      A binary file to be run
-     * @param accessKey       An accessKey the binary should be ran with
-     * @param localIdentifier A local identifier
+     * @param binaryFile     A binary file to be run
+     * @param accessKey      An accessKey the binary should be ran with
+     * @param additionalArgs additional arguments
      */
-    private void runTheBinary(File binaryFile, String accessKey, String localIdentifier) {
+    private void runTheBinary(File binaryFile, String accessKey, String additionalArgs) {
         List<String> args = new ArrayList<String>();
         args.add(binaryFile.getAbsolutePath());
-        args.add("-v");
-        if (!isEmpty(localIdentifier)) {
-            args.add("-localIdentifier");
-            args.add(localIdentifier);
-        }
         args.add(accessKey);
+        if (!isEmpty(additionalArgs)) {
+            args.addAll(Arrays.asList(additionalArgs.split(" ")));
+        }
         ProcessBuilder processBuilder = new ProcessBuilder().command(args);
 
         try {

@@ -31,16 +31,16 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public class BrowserStackDriver extends RemoteWebDriver {
 
-    public static final String READABLE_NAME = "browserstack";
-    public static final String BROWSERSTACK_LOCAL_MANAGED = "browserstack.local.managed";
-    public static final String BROWSERSTACK_LOCAL = "browserstack.local";
-    public static final String BROWSERSTACK_LOCAL_IDENTIFIER = "browserstack.localIdentifier";
-    public static final String BROWSERSTACK_LOCAL_BINARY = "browserstack.local.binary";
-
     private static final Logger log = Logger.getLogger(BrowserStackDriver.class.getName());
 
-    public BrowserStackDriver(URL url, Capabilities capabilities) {
+    private boolean isSetBrowserStackLocal;
+    private boolean isSetBrowserStackLocalManaged;
+
+    public BrowserStackDriver(URL url, Capabilities capabilities, boolean isSetBrowserStackLocal,
+        boolean isSetBrowserStackLocalManaged) {
         super(url, capabilities);
+        this.isSetBrowserStackLocal = isSetBrowserStackLocal;
+        this.isSetBrowserStackLocalManaged = isSetBrowserStackLocalManaged;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BrowserStackDriver extends RemoteWebDriver {
         }
 
         if (host != null && ("localhost" .equals(host) || "127.0.0.1" .equals(host))) {
-            if (getCapabilities().is(BROWSERSTACK_LOCAL) && !getCapabilities().is(BROWSERSTACK_LOCAL_MANAGED)) {
+            if (isSetBrowserStackLocal && !isSetBrowserStackLocalManaged) {
                 log.info(
                     "To test against localhost and other locations behind your firewall, you need to run a BrowserStackLocal binary. "
                         + "You can ignore this if you have already started it, otherwise see browserstack.com/local-testing");

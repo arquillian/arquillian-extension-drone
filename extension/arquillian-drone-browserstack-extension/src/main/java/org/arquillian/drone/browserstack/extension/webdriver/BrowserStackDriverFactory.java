@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import org.arquillian.drone.browserstack.extension.webdriver.local.BrowserStackLocalRunner;
+import org.arquillian.drone.browserstack.extension.local.BrowserStackLocalRunner;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -32,6 +32,15 @@ import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
+
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.ACCESS_KEY;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.BROWSERSTACK_LOCAL;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.BROWSERSTACK_LOCAL_ARGS;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.BROWSERSTACK_LOCAL_BINARY;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.BROWSERSTACK_LOCAL_MANAGED;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.READABLE_NAME;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.URL;
+import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStackCapabilities.USERNAME;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -56,7 +65,7 @@ public class BrowserStackDriverFactory implements
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
         // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
-        BrowserCapabilities browser = registry.getEntryFor(BrowserStackDriver.READABLE_NAME);
+        BrowserCapabilities browser = registry.getEntryFor(READABLE_NAME);
 
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(arquillianDescriptor,
                                                                                              dronePoint.getQualifier());
@@ -72,37 +81,39 @@ public class BrowserStackDriverFactory implements
         try {
             Capabilities capabilities = configuration.getCapabilities();
 
-            String url = (String) capabilities.getCapability("url");
+            String url = (String) capabilities.getCapability(URL);
             String accessKey = null;
             if (isEmpty(url)) {
-                String username = (String) capabilities.getCapability("username");
-                accessKey = (String) capabilities.getCapability("access.key");
+                String username = (String) capabilities.getCapability(USERNAME);
+                accessKey = (String) capabilities.getCapability(ACCESS_KEY);
                 if (isEmpty(accessKey)) {
                     accessKey = (String) capabilities.getCapability("automate.key");
                 }
                 if (isEmpty(username) || isEmpty(accessKey)) {
                     log.severe(
-                        "You have to specify either the whole url or an username and an access.key in your arquillian descriptor");
+                        "You have to specify either an username and an access.key or the whole url in your arquillian descriptor");
                     return null;
                 } else {
                     url = "http://" + username + ":" + accessKey + "@hub.browserstack.com/wd/hub";
                 }
             }
 
-            if (capabilities.is(BrowserStackDriver.BROWSERSTACK_LOCAL) && capabilities.is(
-                BrowserStackDriver.BROWSERSTACK_LOCAL_MANAGED) && (!isEmpty(accessKey) || !isEmpty(url))) {
+            boolean isSetBrowserStackLocal = capabilities.is(BROWSERSTACK_LOCAL);
+            boolean isSetBrowserStackLocalManaged = capabilities.is(BROWSERSTACK_LOCAL_MANAGED);
+
+            if (isSetBrowserStackLocal && isSetBrowserStackLocalManaged && (!isEmpty(accessKey) || !isEmpty(url))) {
                 if (isEmpty(accessKey)) {
                     accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
                 }
-                String localIdentifier =
-                    (String) capabilities.getCapability(BrowserStackDriver.BROWSERSTACK_LOCAL_IDENTIFIER);
-                String localBinary = (String) capabilities.getCapability(BrowserStackDriver.BROWSERSTACK_LOCAL_BINARY);
+                String additionalArgs = (String) capabilities.getCapability(BROWSERSTACK_LOCAL_ARGS);
+                String localBinary = (String) capabilities.getCapability(BROWSERSTACK_LOCAL_BINARY);
 
                 BrowserStackLocalRunner.createBrowserStackLocalInstance()
-                    .runBrowserStackLocal(accessKey, localIdentifier, localBinary);
+                    .runBrowserStackLocal(accessKey, additionalArgs, localBinary);
             }
 
-            return new BrowserStackDriver(new URL(url), capabilities);
+            return new BrowserStackDriver(new URL(url), capabilities, isSetBrowserStackLocal,
+                                          isSetBrowserStackLocalManaged);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

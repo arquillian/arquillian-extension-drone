@@ -9,8 +9,8 @@
         <property name="browser">browserstack</property>
 
 
-        <property name="username">*****</property>
-        <property name="automate.key">*****</property>
+        <property name="username">****</property>
+        <property name="automate.key">****</property>
 
        <!-- <property name="browserName">android</property>
         <property name="platform">ANDROID</property>
@@ -25,6 +25,7 @@
 
         <property name="browserstack.local">true</property>
         <property name="browserstack.local.managed">true</property>
+        <property name="browserstack.local.args">-v -force</property>
         <!--<property name="browserstack.local.binary">/home/mjobanek/browserstack/BrowserStackLocal</property>-->
     </extension>
 

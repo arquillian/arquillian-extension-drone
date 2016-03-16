@@ -30,6 +30,16 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class BrowserStackCapabilities implements BrowserCapabilities {
 
+    public static final String READABLE_NAME = "browserstack";
+    public static final String USERNAME = "username";
+    public static final String ACCESS_KEY = "access.key";
+    public static final String URL = "url";
+    public static final String BROWSERSTACK_LOCAL_MANAGED = "browserstack.local.managed";
+    public static final String BROWSERSTACK_LOCAL_BINARY = "browserstack.local.binary";
+    public static final String BROWSERSTACK_LOCAL_ARGS = "browserstack.local.args";
+
+    public static final String BROWSERSTACK_LOCAL = "browserstack.local";
+
     public String getImplementationClassName() {
         return BrowserStackDriver.class.getName();
     }
@@ -39,7 +49,7 @@ public class BrowserStackCapabilities implements BrowserCapabilities {
     }
 
     public String getReadableName() {
-        return BrowserStackDriver.READABLE_NAME;
+        return READABLE_NAME;
     }
 
     public int getPrecedence() {
