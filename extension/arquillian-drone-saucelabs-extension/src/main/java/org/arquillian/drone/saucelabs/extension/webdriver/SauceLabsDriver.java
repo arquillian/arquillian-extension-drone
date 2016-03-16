@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2015, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2016, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,11 +30,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SauceLabsDriver extends RemoteWebDriver {
-
-    public static final String READABLE_NAME = "saucelabs";
-    public static final String SAUCE_CONNECT_MANAGED = "sauce.connect.managed";
-    public static final String SAUCE_CONNECT_ARGS = "sauce.connect.args";
-    public static final String SAUCE_CONNECT_BINARY = "sauce.connect.local.binary";
 
     private static final Logger log = Logger.getLogger(SauceLabsDriver.class.getName());
 

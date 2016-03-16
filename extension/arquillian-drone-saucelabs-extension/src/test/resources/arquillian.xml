@@ -8,14 +8,16 @@
 
     <extension qualifier="webdriver">
         <property name="browser">saucelabs</property>
+
         <property name="username">******</property>
         <property name="access.key">******</property>
+
         <property name="browserName">firefox</property>
         <property name="os">Windows 2008</property>
         <property name="version">4.</property>
         <property name="sauce.connect.managed">true</property>
         <!--<property name="sauce.connect.args">&#45;&#45;logfile mylog &#45;&#45;shared-tunnel</property>&ndash;&gt;-->
-        <!--<property name="sauce.connect.local.binary">/home/mjobanek/saucelabs/sc-4.3.13-linux/bin/sc</property>-->
+        <!--<property name="sauce.connect.binary">/path/to/my/saucelabs/sc-4.3.13-linux/bin/sc</property>-->
     </extension>
 
 </arquillian>

@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2015, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2016, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,8 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import org.arquillian.drone.saucelabs.extension.webdriver.connect.SauceConnectRunner;
-import org.arquillian.drone.saucelabs.extension.webdriver.connect.Utils;
+import org.arquillian.drone.saucelabs.extension.connect.SauceConnectRunner;
+import org.arquillian.drone.saucelabs.extension.connect.Utils;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -33,6 +33,14 @@ import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
+
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.ACCESS_KEY;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.READABLE_NAME;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.SAUCE_CONNECT_ARGS;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.SAUCE_CONNECT_BINARY;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.SAUCE_CONNECT_MANAGED;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.URL;
+import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabilities.USERNAME;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -57,7 +65,7 @@ public class SauceLabsDriverFactory implements
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
         // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
-        BrowserCapabilities browser = registry.getEntryFor(SauceLabsDriver.READABLE_NAME);
+        BrowserCapabilities browser = registry.getEntryFor(READABLE_NAME);
 
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(arquillianDescriptor,
                                                                                              dronePoint.getQualifier());
@@ -72,12 +80,12 @@ public class SauceLabsDriverFactory implements
     public SauceLabsDriver createInstance(WebDriverConfiguration configuration) {
         try {
             Capabilities capabilities = configuration.getCapabilities();
-            String url = (String) capabilities.getCapability("url");
+            String url = (String) capabilities.getCapability(URL);
             String username = null;
             String accessKey = null;
             if (Utils.isEmpty(url)) {
-                username = (String) capabilities.getCapability("username");
-                accessKey = (String) capabilities.getCapability("access.key");
+                username = (String) capabilities.getCapability(USERNAME);
+                accessKey = (String) capabilities.getCapability(ACCESS_KEY);
                 if (accessKey == null) {
                     accessKey = (String) capabilities.getCapability("automate.key");
                 }
@@ -90,7 +98,7 @@ public class SauceLabsDriverFactory implements
                 }
             }
 
-            boolean isSetSauceConnectManaged = capabilities.is(SauceLabsDriver.SAUCE_CONNECT_MANAGED);
+            boolean isSetSauceConnectManaged = capabilities.is(SAUCE_CONNECT_MANAGED);
             if (isSetSauceConnectManaged
                 && ((!Utils.isEmpty(accessKey) && !Utils.isEmpty(username)) || !Utils.isEmpty(url))) {
 
@@ -99,8 +107,8 @@ public class SauceLabsDriverFactory implements
                     accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
                 }
 
-                String additionalArgs = (String) capabilities.getCapability(SauceLabsDriver.SAUCE_CONNECT_ARGS);
-                String localBinary = (String) capabilities.getCapability(SauceLabsDriver.SAUCE_CONNECT_BINARY);
+                String additionalArgs = (String) capabilities.getCapability(SAUCE_CONNECT_ARGS);
+                String localBinary = (String) capabilities.getCapability(SAUCE_CONNECT_BINARY);
 
                 SauceConnectRunner.createSauceConnectRunnerInstance().runSauceConnect(username, accessKey,
                                                                                       additionalArgs, localBinary);

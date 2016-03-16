@@ -1,6 +1,6 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
- * Copyright 2015, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2016, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,6 +29,14 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class SauceLabsCapabilities implements BrowserCapabilities {
 
+    public static final String READABLE_NAME = "saucelabs";
+    public static final String USERNAME = "username";
+    public static final String ACCESS_KEY = "access.key";
+    public static final String URL = "url";
+    public static final String SAUCE_CONNECT_MANAGED = "sauce.connect.managed";
+    public static final String SAUCE_CONNECT_ARGS = "sauce.connect.args";
+    public static final String SAUCE_CONNECT_BINARY = "sauce.connect.binary";
+
     public String getImplementationClassName() {
         return SauceLabsDriver.class.getName();
     }
@@ -38,7 +46,7 @@ public class SauceLabsCapabilities implements BrowserCapabilities {
     }
 
     public String getReadableName() {
-        return SauceLabsDriver.READABLE_NAME;
+        return READABLE_NAME;
     }
 
     public int getPrecedence() {

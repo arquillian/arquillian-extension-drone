@@ -1,4 +1,20 @@
-package org.arquillian.drone.saucelabs.extension.webdriver.connect;
+/**
+ * JBoss, Home of Professional Open Source
+ * Copyright 2016, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.arquillian.drone.saucelabs.extension.connect;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +24,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -116,7 +135,7 @@ public class SauceConnectRunner {
      * containing the binary; extracts zip file into the created directory and marks the binary as executable.
      */
     private void prepareSauceConnect() {
-        String url = BinaryUtils.getPlatformBinaryNameUrl();
+        String url = BinaryUrlUtils.getPlatformBinaryNameUrl();
         String archiveName = url.substring(url.lastIndexOf("/") + 1);
         File sauceConnectArchiveFile = new File(sauceConnectDirectory.getPath() + File.separator + archiveName);
 
@@ -157,11 +176,12 @@ public class SauceConnectRunner {
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             boolean isAlreadyRunning = false;
-
+            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new WaitForProcess());
+            Executors.newSingleThreadExecutor().submit(futureTask);
             while (!isAlreadyRunning) {
                 try {
                     synchronized (process) {
-                        if (!process.isAlive()) {
+                        if (futureTask.isDone()) {
                             break;
                         }
                         while (in.ready() && (line = in.readLine()) != null) {
@@ -178,7 +198,7 @@ public class SauceConnectRunner {
                                 }
                             }
                         }
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                     }
 
                 } catch (InterruptedException e) {
@@ -187,6 +207,17 @@ public class SauceConnectRunner {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    /**
+     * Waits until the SauceConnect binary process ends
+     */
+    private class WaitForProcess implements Callable<Boolean> {
+        @Override
+        public Boolean call() throws Exception {
+            process.waitFor();
+            return true;
         }
     }
 
