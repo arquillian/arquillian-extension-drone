@@ -84,7 +84,7 @@
             <!-- Arquillian Drone extension -->
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-browserstack-webdriver</artifactId>
+                <artifactId>arquillian-drone-browserstack-extension</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -8,7 +8,7 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
 ----
     <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-browserstack-webdriver</artifactId>
+        <artifactId>arquillian-drone-browserstack-extension</artifactId>
         <version>${version.org.jboss.arquillian.drone}</version>
     </dependency>
 ----

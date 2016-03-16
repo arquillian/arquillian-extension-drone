@@ -11,7 +11,7 @@
         <relativePath>../../drone-build/pom.xml</relativePath>
     </parent>
 
-    <artifactId>arquillian-drone-browserstack-webdriver</artifactId>
+    <artifactId>arquillian-drone-browserstack-extension</artifactId>
 
     <dependencies>
         <!-- Drone dependencies -->
