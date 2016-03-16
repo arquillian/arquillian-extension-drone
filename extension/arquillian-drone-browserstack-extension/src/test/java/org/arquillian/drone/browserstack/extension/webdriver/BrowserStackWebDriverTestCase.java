@@ -42,16 +42,16 @@ public class BrowserStackWebDriverTestCase {
     @Test
     @Ignore("All the BrowserStack tests are ignored, because of missing username and access key to some active account - see arquillian.xml.")
     public void browserTest() {
-        runTest();
+        runTest(driver);
     }
 
     @Test
     @Ignore("All the BrowserStack tests are ignored, because of missing username and access key to some active account - see arquillian.xml.")
     public void browserTest(@Drone final WebDriver driver) {
-        runTest();
+        runTest(driver);
     }
 
-    private void runTest() {
+    private void runTest(WebDriver driver) {
         driver.get("http://www.google.com/");
         WebDriverUtil.checkElementIsPresent(driver, QUERY_FIELD, "The query field should be present");
 
