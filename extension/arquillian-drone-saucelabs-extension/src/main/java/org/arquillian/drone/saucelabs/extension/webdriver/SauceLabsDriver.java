@@ -34,7 +34,7 @@ public class SauceLabsDriver extends RemoteWebDriver {
     public static final String READABLE_NAME = "saucelabs";
     public static final String SAUCE_CONNECT_MANAGED = "sauce.connect.managed";
     public static final String SAUCE_CONNECT_ARGS = "sauce.connect.args";
-    public static final String SAUCE_CONNECT_BINARY = "sauce.connect.binary";
+    public static final String SAUCE_CONNECT_BINARY = "sauce.connect.local.binary";
 
     private static final Logger log = Logger.getLogger(SauceLabsDriver.class.getName());
 

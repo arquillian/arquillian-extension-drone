@@ -85,7 +85,6 @@ public class SauceConnectRunner {
     private void runTheBinary(File binaryFile, String username, String accessKey, String additionalArgs) {
         List<String> args = new ArrayList<String>();
         args.add(binaryFile.getAbsolutePath());
-        args.add("-v");
         args.add("-u");
         args.add(username);
         args.add("-k");
