@@ -3,7 +3,7 @@ This is an Arquillian extension that enables you to use the Sauce Labs as a Dron
 
 === How to use it:
 
-1):: First of all, you need to have this extension on your project's classpath. Eg. as a maven dependency:
+1):: First of all, you need to have this extension on your project's classpath. Eg. as a Maven dependency:
 [source,xml]
 ----
     <dependency>
