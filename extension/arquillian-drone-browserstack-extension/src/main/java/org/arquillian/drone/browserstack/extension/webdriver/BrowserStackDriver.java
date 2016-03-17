@@ -49,10 +49,12 @@ public class BrowserStackDriver extends RemoteWebDriver {
         try {
             host = new URL(url).getHost();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.warning(
+                "The url " + url + " has been detected as a malformed URL. The message of the exception: " + e
+                    .getMessage());
         }
 
-        if (host != null && ("localhost" .equals(host) || "127.0.0.1" .equals(host))) {
+        if (host != null && (host.equals("localhost") || host.equals("127.0.0.1"))) {
             if (isSetBrowserStackLocal && !isSetBrowserStackLocalManaged) {
                 log.info(
                     "To test against localhost and other locations behind your firewall, you need to run a BrowserStackLocal binary. "
@@ -61,5 +63,4 @@ public class BrowserStackDriver extends RemoteWebDriver {
         }
         super.get(url);
     }
-
 }

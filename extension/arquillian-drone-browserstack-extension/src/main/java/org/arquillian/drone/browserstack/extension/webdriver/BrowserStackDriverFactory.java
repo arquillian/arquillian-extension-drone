@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 import org.arquillian.drone.browserstack.extension.local.BrowserStackLocalRunner;
+import org.arquillian.drone.browserstack.extension.utils.Utils;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -57,71 +58,71 @@ public class BrowserStackDriverFactory implements
     private static final Logger log = Logger.getLogger(BrowserStackDriverFactory.class.getName());
 
     @Inject
-    protected Instance<BrowserCapabilitiesRegistry> registryInstance;
+    private Instance<BrowserCapabilitiesRegistry> registryInstance;
 
+    @Override
     public WebDriverConfiguration createConfiguration(ArquillianDescriptor arquillianDescriptor,
         DronePoint<BrowserStackDriver> dronePoint) {
 
         BrowserCapabilitiesRegistry registry = registryInstance.get();
-
-        // first, try to create a BrowserCapabilities object based on Field/Parameter type of @Drone annotated field
         BrowserCapabilities browser = registry.getEntryFor(READABLE_NAME);
 
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(arquillianDescriptor,
                                                                                              dronePoint.getQualifier());
-
         return configuration;
     }
 
+    @Override
     public void destroyInstance(BrowserStackDriver browserStackDriver) {
         browserStackDriver.quit();
     }
 
+    @Override
     public BrowserStackDriver createInstance(WebDriverConfiguration configuration) {
-        try {
-            Capabilities capabilities = configuration.getCapabilities();
+        Capabilities capabilities = configuration.getCapabilities();
+        String url = (String) capabilities.getCapability(URL);
+        String accessKey = null;
 
-            String url = (String) capabilities.getCapability(URL);
-            String accessKey = null;
-            if (isEmpty(url)) {
-                String username = (String) capabilities.getCapability(USERNAME);
-                accessKey = (String) capabilities.getCapability(ACCESS_KEY);
-                if (isEmpty(accessKey)) {
-                    accessKey = (String) capabilities.getCapability("automate.key");
-                }
-                if (isEmpty(username) || isEmpty(accessKey)) {
-                    log.severe(
-                        "You have to specify either an username and an access.key or the whole url in your arquillian descriptor");
-                    return null;
-                } else {
-                    url = "http://" + username + ":" + accessKey + "@hub.browserstack.com/wd/hub";
-                }
+        if (Utils.isNullOrEmpty(url)) {
+            String username = (String) capabilities.getCapability(USERNAME);
+            accessKey = (String) capabilities.getCapability(ACCESS_KEY);
+
+            if (Utils.isNullOrEmpty(accessKey)) {
+                accessKey = (String) capabilities.getCapability("automate.key");
             }
+            if (Utils.isNullOrEmpty(username) || Utils.isNullOrEmpty(accessKey)) {
+                throw new IllegalArgumentException(
+                    "You have to specify either an username and an access.key or the whole url in your arquillian descriptor");
+
+            } else {
+                url = "http://" + username + ":" + accessKey + "@hub.browserstack.com/wd/hub";
+            }
+        }
+
+        try {
+            URL browserStackUrl = new URL(url);
 
             boolean isSetBrowserStackLocal = capabilities.is(BROWSERSTACK_LOCAL);
             boolean isSetBrowserStackLocalManaged = capabilities.is(BROWSERSTACK_LOCAL_MANAGED);
 
-            if (isSetBrowserStackLocal && isSetBrowserStackLocalManaged && (!isEmpty(accessKey) || !isEmpty(url))) {
-                if (isEmpty(accessKey)) {
+            if (isSetBrowserStackLocal && isSetBrowserStackLocalManaged) {
+                if (Utils.isNullOrEmpty(accessKey)) {
                     accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
                 }
                 String additionalArgs = (String) capabilities.getCapability(BROWSERSTACK_LOCAL_ARGS);
                 String localBinary = (String) capabilities.getCapability(BROWSERSTACK_LOCAL_BINARY);
 
-                BrowserStackLocalRunner.createBrowserStackLocalInstance()
-                    .runBrowserStackLocal(accessKey, additionalArgs, localBinary);
+                BrowserStackLocalRunner.getBrowserStackLocalInstance().runBrowserStackLocal(accessKey,
+                                                                                            additionalArgs,
+                                                                                            localBinary);
             }
 
-            return new BrowserStackDriver(new URL(url), capabilities, isSetBrowserStackLocal,
+            return new BrowserStackDriver(browserStackUrl, capabilities, isSetBrowserStackLocal,
                                           isSetBrowserStackLocalManaged);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(
+                "The BrowserStack url: " + url + " has been detected as a malformed URL. ", e);
         }
-        return null;
-    }
-
-    private boolean isEmpty(String object) {
-        return object == null || object.isEmpty();
     }
 
     public int getPrecedence() {

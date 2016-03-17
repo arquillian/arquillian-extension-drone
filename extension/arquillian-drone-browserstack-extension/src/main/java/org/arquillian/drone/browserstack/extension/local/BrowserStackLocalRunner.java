@@ -18,9 +18,7 @@ package org.arquillian.drone.browserstack.extension.local;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +29,8 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.arquillian.drone.browserstack.extension.utils.Utils;
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.task.archive.UnzipTool;
 import org.arquillian.spacelift.task.net.DownloadTool;
@@ -48,12 +48,12 @@ public class BrowserStackLocalRunner {
 
     private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
     private final File browserStackLocalFile =
-        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal" + (PlatformUtils
-            .isWindows() ? ".exe" : ""));
+        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal"
+                     + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
     private final String basicUrl = "https://www.browserstack.com/browserstack-local/";
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
-    private Process process = null;
+    private Process browserStackLocalBinary = null;
 
     private BrowserStackLocalRunner() {
     }
@@ -64,7 +64,7 @@ public class BrowserStackLocalRunner {
      *
      * @return An instance of BrowserStackLocalRunner
      */
-    public static BrowserStackLocalRunner createBrowserStackLocalInstance() {
+    public static BrowserStackLocalRunner getBrowserStackLocalInstance() {
         if (browserStackLocalRunner == null) {
             browserStackLocalRunner = new BrowserStackLocalRunner();
         }
@@ -77,19 +77,22 @@ public class BrowserStackLocalRunner {
      * @param accessKey      An accessKey the binary should be ran with
      * @param additionalArgs additional arguments
      * @param localBinary    Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
+     * @throws BrowserStackLocalException when something bad happens during running BrowserStackLocal binary
      */
-    public void runBrowserStackLocal(String accessKey, String additionalArgs, String localBinary) {
-        if (process != null) {
+    public void runBrowserStackLocal(String accessKey, String additionalArgs, String localBinary)
+        throws BrowserStackLocalException {
+        if (browserStackLocalBinary != null) {
+            log.fine("One BrowserStackLocal binary has been already started.");
             return;
         }
-        if (isEmpty(localBinary)) {
+        if (Utils.isNullOrEmpty(localBinary)) {
             if (!browserStackLocalFile.exists()) {
                 prepareBrowserStackLocal();
             }
-            runTheBinary(browserStackLocalFile, accessKey, additionalArgs);
+            runBrowserStackLocal(browserStackLocalFile, accessKey, additionalArgs);
 
         } else {
-            runTheBinary(new File(localBinary), accessKey, additionalArgs);
+            runBrowserStackLocal(new File(localBinary), accessKey, additionalArgs);
         }
     }
 
@@ -99,30 +102,28 @@ public class BrowserStackLocalRunner {
      * @param binaryFile     A binary file to be run
      * @param accessKey      An accessKey the binary should be ran with
      * @param additionalArgs additional arguments
+     * @throws BrowserStackLocalException when something bad happens during running BrowserStackLocal binary
      */
-    private void runTheBinary(File binaryFile, String accessKey, String additionalArgs) {
+    private void runBrowserStackLocal(File binaryFile, String accessKey, String additionalArgs)
+        throws BrowserStackLocalException {
         List<String> args = new ArrayList<String>();
         args.add(binaryFile.getAbsolutePath());
         args.add(accessKey);
-        if (!isEmpty(additionalArgs)) {
+        if (!Utils.isNullOrEmpty(additionalArgs)) {
             args.addAll(Arrays.asList(additionalArgs.split(" ")));
         }
         ProcessBuilder processBuilder = new ProcessBuilder().command(args);
 
         try {
-            process = processBuilder.start();
+            browserStackLocalBinary = processBuilder.start();
 
             final Reader reader = new Reader();
             reader.start();
-            Runtime.getRuntime().addShutdownHook(new CloseChildProcess());
+            Runtime.getRuntime().addShutdownHook(new ChildProcessCloser());
             countDownLatch.await(20, TimeUnit.SECONDS);
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new BrowserStackLocalException("Running BrowserStackLocal binary unexpectedly failed: ", e);
         }
     }
 
@@ -140,14 +141,23 @@ public class BrowserStackLocalRunner {
         browserStackLocalDirectory.mkdir();
 
         log.info("downloading zip file from: " + url + " to " + browserStackLocalZipFile.getPath());
-        Spacelift.task(DownloadTool.class).from(url).to(browserStackLocalZipFile.getPath()).execute().await();
+        Spacelift.task(DownloadTool.class)
+            .from(url)
+            .to(browserStackLocalZipFile.getPath())
+            .execute().await();
 
         log.info("extracting zip file: " + browserStackLocalZipFile + " to " + browserStackLocalDirectory.getPath());
-        Spacelift.task(browserStackLocalZipFile, UnzipTool.class).toDir(browserStackLocalDirectory.getPath()).execute()
-            .await();
+        Spacelift.task(browserStackLocalZipFile, UnzipTool.class)
+            .toDir(browserStackLocalDirectory.getPath())
+            .execute().await();
 
         log.info("marking binary file: " + browserStackLocalFile.getPath() + " as executable");
-        browserStackLocalFile.setExecutable(true);
+        try {
+            browserStackLocalFile.setExecutable(true);
+        } catch (SecurityException se) {
+            log.severe("The downloaded BrowserStackLocal binary: " + browserStackLocalFile
+                           + " could not be set as executable. This may cause additional problems.");
+        }
     }
 
     /**
@@ -158,30 +168,24 @@ public class BrowserStackLocalRunner {
      */
     private String getPlatformBinaryNameUrl() {
         String binary = "BrowserStackLocal-%s.zip";
-        switch (PlatformUtils.platform().os()) {
-            case WINDOWS:
-                return String.format(binary, "win32");
-            case UNIX:
-                if (PlatformUtils.is64()) {
-                    return String.format(binary, "linux-x64");
-                } else {
-                    return String.format(binary, "linux-ia32");
-                }
-            case MACOSX:
-                return String.format(binary, "darwin-x64");
-            default:
-                throw new IllegalStateException("The current platform is not supported."
-                                                    + "Supported platforms are windows, linux and macosx."
-                                                    + "Your platform has been detected as "
-                                                    + PlatformUtils.platform().os().toString().toLowerCase() + ""
-                                                    + "from the the system property 'os.name' => '" + PlatformUtils.OS
-                                                    + "'.");
 
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return String.format(binary, "win32");
+
+        } else if (SystemUtils.IS_OS_UNIX) {
+            if (Utils.is64()) {
+                return String.format(binary, "linux-x64");
+            } else {
+                return String.format(binary, "linux-ia32");
+            }
+        } else if (SystemUtils.IS_OS_MAC) {
+            return String.format(binary, "darwin-x64");
+        } else {
+            throw new IllegalStateException("The current platform is not supported."
+                                                + "Supported platforms are windows, linux and macosx."
+                                                + "Your platform has been detected as "
+                                                + SystemUtils.OS_NAME);
         }
-    }
-
-    private boolean isEmpty(String object) {
-        return object == null || object.isEmpty();
     }
 
     /**
@@ -192,15 +196,15 @@ public class BrowserStackLocalRunner {
     private class Reader extends Thread {
         public void run() {
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(browserStackLocalBinary.getInputStream()));
             String line;
             boolean isAlreadyRunning = false;
-            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new WaitForProcess());
+            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new ProcessEndChecker());
             Executors.newSingleThreadExecutor().submit(futureTask);
 
             while (!isAlreadyRunning) {
                 try {
-                    synchronized (process) {
+                    synchronized (browserStackLocalBinary) {
                         if (futureTask.isDone()) {
                             break;
                         }
@@ -218,39 +222,38 @@ public class BrowserStackLocalRunner {
                                 }
                             }
                         }
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                     }
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    throw new BrowserStackLocalException(
+                        "Reading BrowserStackLocal binary output unexpectedly failed: ", e);
                 }
             }
         }
     }
 
     /**
-     * Waits until the SauceConnect binary process ends
+     * Waits until the BrowserStackLocal binary ends
      */
-    private class WaitForProcess implements Callable<Boolean> {
+    private class ProcessEndChecker implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
-            process.waitFor();
+            browserStackLocalBinary.waitFor();
             return true;
         }
     }
 
     /**
-     * Is responsible for destroying a running BrowserStackLocal binary process
+     * Is responsible for destroying a running BrowserStackLocal binary
      */
-    private class CloseChildProcess extends Thread {
+    private class ChildProcessCloser extends Thread {
         public void run() {
-            process.destroy();
+            browserStackLocalBinary.destroy();
             try {
-                process.waitFor();
+                browserStackLocalBinary.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new BrowserStackLocalException(
+                    "Stopping BrowserStackLocal binary unexpectedly failed: ", e);
             }
         }
     }
