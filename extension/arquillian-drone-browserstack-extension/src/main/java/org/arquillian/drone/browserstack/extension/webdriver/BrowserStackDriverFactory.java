@@ -125,6 +125,7 @@ public class BrowserStackDriverFactory implements
         }
     }
 
+    @Override
     public int getPrecedence() {
         return 0;
     }
