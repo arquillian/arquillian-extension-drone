@@ -3,7 +3,7 @@
  * Copyright 2016, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,10 +46,11 @@ public class SauceLabsDriver extends RemoteWebDriver {
         try {
             host = new URL(url).getHost();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.warning("The url " + url + " has been detected as a malformed URL. The message of the exception: " + e
+                .getMessage());
         }
 
-        if (host != null && ("localhost" .equals(host) || "127.0.0.1" .equals(host))) {
+        if (host != null && (host.equals("localhost") || host.equals("127.0.0.1"))) {
             if (!isSetSauceConnectManaged) {
                 log.info(
                     "To test against localhost and other locations behind your firewall, you need to use Sauce Connect. "

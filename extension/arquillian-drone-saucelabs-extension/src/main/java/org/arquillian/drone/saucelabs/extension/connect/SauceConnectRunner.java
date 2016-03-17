@@ -18,9 +18,7 @@ package org.arquillian.drone.saucelabs.extension.connect;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +29,9 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.arquillian.drone.saucelabs.extension.utils.BinaryUrlUtils;
+import org.arquillian.drone.saucelabs.extension.utils.Utils;
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.task.archive.UntarTool;
 import org.arquillian.spacelift.task.archive.UnzipTool;
@@ -51,8 +52,8 @@ public class SauceConnectRunner {
 
     private final File sauceConnectDirectory = new File("target" + File.separator + "sauceconnect");
     private final File sauceConnectFile = new File(
-        sauceConnectDirectory.getPath() + File.separator + "sc/bin/sc" + (PlatformUtils.isWindows() ? ".exe" : ""));
-    private Process process = null;
+        sauceConnectDirectory.getPath() + File.separator + "sc/bin/sc" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+    private Process sauceConnectBinary = null;
 
     private SauceConnectRunner() {
     }
@@ -63,7 +64,7 @@ public class SauceConnectRunner {
      *
      * @return An instance of SauceConnectRunner
      */
-    public static SauceConnectRunner createSauceConnectRunnerInstance() {
+    public static SauceConnectRunner getSauceConnectRunnerInstance() {
         if (sauceConnectRunner == null) {
             sauceConnectRunner = new SauceConnectRunner();
         }
@@ -77,19 +78,21 @@ public class SauceConnectRunner {
      * @param accessKey      An accessKey the binary should be ran with
      * @param additionalArgs additional arguments
      * @param localBinary    Path to a local binary of the SauceConnect. If none, then it will be downloaded.
+     * @throws SauceConnectException when something bad happens during running BrowserStackLocal binary
      */
-    public void runSauceConnect(String username, String accessKey, String additionalArgs, String localBinary) {
-        if (process != null) {
+    public void runSauceConnect(String username, String accessKey, String additionalArgs, String localBinary)
+        throws SauceConnectException {
+        if (sauceConnectBinary != null) {
             return;
         }
-        if (Utils.isEmpty(localBinary)) {
+        if (Utils.isNullOrEmpty(localBinary)) {
             if (!sauceConnectFile.exists()) {
                 prepareSauceConnect();
             }
-            runTheBinary(sauceConnectFile, username, accessKey, additionalArgs);
+            runSauceConnect(sauceConnectFile, username, accessKey, additionalArgs);
 
         } else {
-            runTheBinary(new File(localBinary), username, accessKey, additionalArgs);
+            runSauceConnect(new File(localBinary), username, accessKey, additionalArgs);
         }
     }
 
@@ -100,33 +103,31 @@ public class SauceConnectRunner {
      * @param binaryFile     A binary file to be run
      * @param accessKey      An accessKey the binary should be ran with
      * @param additionalArgs additional arguments
+     * @throws SauceConnectException when something bad happens during running BrowserStackLocal binary
      */
-    private void runTheBinary(File binaryFile, String username, String accessKey, String additionalArgs) {
+    private void runSauceConnect(File binaryFile, String username, String accessKey, String additionalArgs)
+        throws SauceConnectException {
         List<String> args = new ArrayList<String>();
         args.add(binaryFile.getAbsolutePath());
         args.add("-u");
         args.add(username);
         args.add("-k");
         args.add(accessKey);
-        if (!Utils.isEmpty(additionalArgs)) {
+        if (!Utils.isNullOrEmpty(additionalArgs)) {
             args.addAll(Arrays.asList(additionalArgs.split(" ")));
         }
         ProcessBuilder processBuilder = new ProcessBuilder().command(args);
 
         try {
-            process = processBuilder.start();
+            sauceConnectBinary = processBuilder.start();
 
             final Reader reader = new Reader();
             reader.start();
-            Runtime.getRuntime().addShutdownHook(new CloseChildProcess());
+            Runtime.getRuntime().addShutdownHook(new ChildProcessCloser());
             countDownLatch.await(30, TimeUnit.SECONDS);
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new SauceConnectException("Running SauceConnect binary unexpectedly failed: ", e);
         }
     }
 
@@ -143,26 +144,37 @@ public class SauceConnectRunner {
         sauceConnectDirectory.mkdir();
 
         log.info("downloading zip file from: " + url + " into " + sauceConnectArchiveFile.getPath());
-        Spacelift.task(DownloadTool.class).from(url).to(sauceConnectArchiveFile.getPath()).execute().await();
+        Spacelift.task(DownloadTool.class)
+            .from(url)
+            .to(sauceConnectArchiveFile.getPath())
+            .execute().await();
 
         if (archiveName.endsWith(".tar.gz")) {
             log.info("extracting tar file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory.getPath());
-            Spacelift.task(sauceConnectArchiveFile, UntarTool.class).toDir(sauceConnectDirectory.getPath()).execute()
-                .await();
+            Spacelift.task(sauceConnectArchiveFile, UntarTool.class)
+                .toDir(sauceConnectDirectory.getPath())
+                .execute().await();
         } else {
             log.info("extracting zip file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory.getPath());
-            Spacelift.task(sauceConnectArchiveFile, UnzipTool.class).toDir(sauceConnectDirectory.getPath()).execute()
-                .await();
+            Spacelift.task(sauceConnectArchiveFile, UnzipTool.class)
+                .toDir(sauceConnectDirectory.getPath())
+                .execute().await();
         }
 
         String fromDirectory =
             sauceConnectDirectory + File.separator + archiveName.replace(".zip", "").replace(".tar.gz", "");
         String toDirectory = sauceConnectDirectory + File.separator + "sc";
+
         log.info("renaming extracted directory: " + fromDirectory + " to: " + toDirectory);
         new File(fromDirectory).renameTo(new File(toDirectory));
 
         log.info("marking binary file: " + sauceConnectFile.getPath() + " as executable");
-        sauceConnectFile.setExecutable(true);
+        try {
+            sauceConnectFile.setExecutable(true);
+        } catch (SecurityException se) {
+            log.severe("The downloaded SauceConnect binary: " + sauceConnectFile
+                           + " could not be set as executable. This may cause additional problems.");
+        }
     }
 
     /**
@@ -173,14 +185,14 @@ public class SauceConnectRunner {
     private class Reader extends Thread {
         public void run() {
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(sauceConnectBinary.getInputStream()));
             String line;
             boolean isAlreadyRunning = false;
-            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new WaitForProcess());
+            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new ProcessEndChecker());
             Executors.newSingleThreadExecutor().submit(futureTask);
             while (!isAlreadyRunning) {
                 try {
-                    synchronized (process) {
+                    synchronized (sauceConnectBinary) {
                         if (futureTask.isDone()) {
                             break;
                         }
@@ -201,36 +213,34 @@ public class SauceConnectRunner {
                         Thread.sleep(100);
                     }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    throw new SauceConnectException("Reading SauceConnect binary output unexpectedly failed: ", e);
                 }
             }
         }
     }
 
     /**
-     * Waits until the SauceConnect binary process ends
+     * Waits until the SauceConnect binary ends
      */
-    private class WaitForProcess implements Callable<Boolean> {
+    private class ProcessEndChecker implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
-            process.waitFor();
+            sauceConnectBinary.waitFor();
             return true;
         }
     }
 
     /**
-     * Is responsible for destroying a running SauceConnect binary process
+     * Is responsible for destroying a running SauceConnect binary
      */
-    private class CloseChildProcess extends Thread {
+    private class ChildProcessCloser extends Thread {
         public void run() {
-            process.destroy();
+            sauceConnectBinary.destroy();
             try {
-                process.waitFor();
+                sauceConnectBinary.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new SauceConnectException("Stopping SauceConnect binary unexpectedly failed: ", e);
             }
         }
     }

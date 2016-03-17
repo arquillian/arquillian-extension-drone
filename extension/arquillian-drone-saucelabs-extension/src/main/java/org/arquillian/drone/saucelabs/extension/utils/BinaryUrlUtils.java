@@ -3,7 +3,7 @@
  * Copyright 2016, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.arquillian.drone.saucelabs.extension.connect;
+package org.arquillian.drone.saucelabs.extension.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,7 @@ import org.json.JSONObject;
  */
 public class BinaryUrlUtils {
 
+    private static final Logger log = Logger.getLogger(BinaryUrlUtils.class.getName());
 
     /**
      * Returns name of a zip file, that should contain the SauceConnect binary. The name contains corresponding
@@ -44,28 +47,26 @@ public class BinaryUrlUtils {
     public static String getPlatformBinaryNameUrl() {
         String basicStaticUrl = "https://saucelabs.com/downloads/sc-4.3.13-";
         String parsedUrl = null;
-        switch (PlatformUtils.platform().os()) {
-            case WINDOWS:
-                parsedUrl = getUrl("win32");
-                return Utils.isEmpty(parsedUrl) ? basicStaticUrl + "win32.zip" : parsedUrl;
-            case UNIX:
-                if (PlatformUtils.is64()) {
-                    parsedUrl = getUrl("linux");
-                    return Utils.isEmpty(parsedUrl) ? basicStaticUrl + "linux.tar.gz" : parsedUrl;
-                } else {
-                    parsedUrl = getUrl("linux32");
-                    return Utils.isEmpty(parsedUrl) ? basicStaticUrl + "linux32.tar.gz" : parsedUrl;
-                }
-            case MACOSX:
-                parsedUrl = getUrl("osx");
-                return Utils.isEmpty(parsedUrl) ? basicStaticUrl + "osx.zip" : parsedUrl;
-            default:
-                throw new IllegalStateException("The current platform is not supported."
-                                                    + "Supported platforms are windows, linux and macosx."
-                                                    + "Your platform has been detected as "
-                                                    + PlatformUtils.platform().os().toString().toLowerCase() + ""
-                                                    + "from the the system property 'os.name' => '" + PlatformUtils.OS
-                                                    + "'.");
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            parsedUrl = getUrl("win32");
+            return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "win32.zip" : parsedUrl;
+        } else if (SystemUtils.IS_OS_UNIX) {
+            if (Utils.is64()) {
+                parsedUrl = getUrl("linux");
+                return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "linux.tar.gz" : parsedUrl;
+            } else {
+                parsedUrl = getUrl("linux32");
+                return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "linux32.tar.gz" : parsedUrl;
+            }
+        } else if (SystemUtils.IS_OS_MAC) {
+            parsedUrl = getUrl("osx");
+            return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "osx.zip" : parsedUrl;
+        } else {
+            throw new IllegalStateException("The current platform is not supported."
+                                                + "Supported platforms are windows, linux and macosx."
+                                                + "Your platform has been detected as "
+                                                + SystemUtils.OS_NAME);
 
         }
     }
@@ -76,7 +77,9 @@ public class BinaryUrlUtils {
             json = readJsonFromUrl("https://saucelabs.com/versions.json");
             return json.getJSONObject("Sauce Connect").getJSONObject(platform).getString("download_url");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(
+                "The url for downloading SauceConnect library wasn't successfully parsed from the https://saucelabs.com/versions.json."
+                    + " There will be used a static url with the version 4.3.13");
         }
         return null;
     }
@@ -92,13 +95,23 @@ public class BinaryUrlUtils {
 
     public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
         InputStream is = new URL(url).openStream();
+        BufferedReader rd = null;
         try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
             return json;
         } finally {
-            is.close();
+            if (rd != null) {
+                try {
+                    rd.close();
+                } catch (Exception ex) {
+                    log.warning("There has been thrown an exception during closing a BufferedReader, "
+                                    + "that was reading from the Sauce Connect versions website: " + ex.getMessage());
+                } finally {
+                    rd = null;
+                }
+            }
         }
     }
 }
