@@ -10,7 +10,7 @@
 
 
         <property name="username">****</property>
-        <property name="automate.key">****</property>
+        <property name="access.key">****</property>
 
         <!-- <property name="browserName">android</property>
          <property name="platform">ANDROID</property>
