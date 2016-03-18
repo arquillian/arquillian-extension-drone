@@ -82,17 +82,17 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-htmlunit-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-ie-driver</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-remote-driver</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>htmlunit-driver</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -192,7 +192,7 @@
             <properties>
                 <selenium.chrome.driver>org.seleniumhq.selenium:selenium-chrome-driver:jar</selenium.chrome.driver>
                 <selenium.firefox.driver>org.seleniumhq.selenium:selenium-firefox-driver</selenium.firefox.driver>
-                <selenium.htmlunit.driver>org.seleniumhq.selenium:selenium-htmlunit-driver:jar
+                <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit-driver:jar
                 </selenium.htmlunit.driver>
                 <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
                 <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>

@@ -39,7 +39,8 @@
         <version.arquillian.core>1.1.11.Final</version.arquillian.core>
         <version.com.opera>1.5</version.com.opera>
         <version.phantom.driver>1.2.1.Final</version.phantom.driver>
-        <version.selenium>2.52.0</version.selenium>
+        <version.selenium>2.53.0</version.selenium>
+        <version.htmlunit.driver>2.20</version.htmlunit.driver>
         <version.junit>4.11</version.junit>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
