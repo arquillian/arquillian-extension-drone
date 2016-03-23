@@ -110,6 +110,9 @@
         <module>drone-impl</module>
         <module>drone-selenium-server</module>
         <module>drone-webdriver</module>
+
+        <!-- Drone extensions -->
+        <module>extension/arquillian-drone-browserstack-extension</module>
     </modules>
 
 </project>
