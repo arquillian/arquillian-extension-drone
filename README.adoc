@@ -101,6 +101,19 @@ You need to put following configuration to the pom.xml file of your project:
 NOTE: You can use +graphene-webdriver+ dependency chain even if you are willing to use plain WebDriver. 
     Graphene will just bring you more goodies but it does not force you to change a single line of your code
 
+Nevertheless, if you still don't want to add the Graphene dependencies and just use the plain WebDriver, use this Drone dependency chain:
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+        <version>${version.org.jboss.arquillian.drone}</version>
+        <type>pom</type>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+----
 Comprehensive Drone documentation can be found at https://docs.jboss.org/author/display/ARQ/Drone. 
 
 == Building the project
