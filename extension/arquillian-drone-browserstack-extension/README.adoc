@@ -12,6 +12,7 @@ This is an Arquillian extension that enables you to use the BrowserStack as a Dr
         <version>${version.org.jboss.arquillian.drone}</version>
     </dependency>
 ----
+NOTE: Please keep in mind that this dependency doesn't serve as a dependency chain - you also need to add the dependencies mentioned in https://github.com/arquillian/arquillian-extension-drone#getting-started
 
 2):: To use the BrowserStack driver you need to specify *browserstack* as a *browser* property:
 [source,xml]
