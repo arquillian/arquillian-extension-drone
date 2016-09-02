@@ -16,8 +16,7 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +26,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -38,17 +36,18 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for ChromeDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> implements
-        Configurator<ChromeDriver, WebDriverConfiguration>, Instantiator<ChromeDriver, WebDriverConfiguration>,
-        Destructor<ChromeDriver> {
+    Configurator<ChromeDriver, WebDriverConfiguration>, Instantiator<ChromeDriver, WebDriverConfiguration>,
+    Destructor<ChromeDriver> {
 
     private static final Logger log = Logger.getLogger(ChromeDriverFactory.class.getName());
 
     private static final String CHROME_DRIVER_BINARY_KEY = "webdriver.chrome.driver";
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
+
+    private static final String CHROME_PRINT_OPTIONS = "chromePrintOptions";
 
     /*
      * (non-Javadoc)
@@ -83,7 +82,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
         String driverBinary = configuration.getChromeDriverBinary();
         String binary = (String) capabilities.getCapability("chrome.binary");
-        String chromeSwitches = (String) capabilities.getCapability("chrome.switches");
 
         if (Validate.empty(driverBinary)) {
             driverBinary = SecurityActions.getProperty(CHROME_DRIVER_BINARY_KEY);
@@ -92,27 +90,41 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         // driver binary configuration
         // this is setting system property
         if (Validate.nonEmpty(driverBinary)) {
-            Validate.isExecutable(driverBinary, "Chrome driver binary must point to an executable file, " + driverBinary);
+            Validate
+                .isExecutable(driverBinary, "Chrome driver binary must point to an executable file, " + driverBinary);
             SecurityActions.setProperty(CHROME_DRIVER_BINARY_KEY, driverBinary);
         }
+
+        ChromeOptions chromeOptions = new ChromeOptions();
+        CapabilitiesMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
             Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
-
             // ARQ-1823 - setting chrome binary path through ChromeOptions
-            ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.setBinary(binary);
-            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
         }
 
-        // convert chrome switches to an array of strings
-        if (Validate.nonEmpty(chromeSwitches)) {
-            capabilities.setCapability("chrome.switches", getChromeSwitches(chromeSwitches));
+        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+
+        String printChromeOptions = (String) capabilities.getCapability(CHROME_PRINT_OPTIONS);
+        if (Validate.nonEmpty(printChromeOptions) && Boolean.valueOf(printChromeOptions.trim())) {
+            try {
+                StringBuffer chromeOptionsLog = new StringBuffer("\n");
+                chromeOptionsLog.append("======== Chrome options =========").append("\n");
+                chromeOptionsLog.append(chromeOptions.toJson().toString()).append("\n");
+                chromeOptionsLog.append("===== End of Chrome options =====");
+                log.info(chromeOptionsLog.toString());
+
+            } catch (IOException e) {
+                log.warning("Something bad happened during printing chrome options: ");
+                log.warning(e.getMessage());
+            }
         }
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, ChromeDriver.class);
+        return SecurityActions
+            .newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                         new Object[] { capabilities }, ChromeDriver.class);
     }
 
     @Override
@@ -122,23 +134,13 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     @Override
     public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<ChromeDriver>
-            dronePoint) {
+        dronePoint) {
         WebDriverConfiguration configuration = super.createConfiguration(descriptor, dronePoint);
-        if(!configuration.isRemote()) {
+        if (!configuration.isRemote()) {
             configuration.setRemote(true);
             log.log(Level.FINE, "Forcing ChromeDriver configuration to be remote-based.");
         }
         return configuration;
-    }
-
-    private List<String> getChromeSwitches(String valueString) {
-        List<String> chromeSwitches = new ArrayList<String>();
-        for (String property : StringUtils.tokenize(valueString)) {
-            if (property.startsWith("--")) {
-                chromeSwitches.add(property);
-            }
-        }
-        return chromeSwitches;
     }
 
 }
