@@ -63,9 +63,20 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
      */
     @Override
     public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
-        Capabilities capabilities = configuration.getCapabilities();
+        Capabilities capabilities = getCapabilities(configuration);
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
             new Object[] { capabilities }, HtmlUnitDriver.class);
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
+     * object itself - there is no necessary properties to be set
+     *
+     * @param configuration A configuration object for Drone extension
+     * @return A {@link Capabilities} instance
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+        return configuration.getCapabilities();
     }
 
     @Override

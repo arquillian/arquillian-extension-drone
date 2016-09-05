@@ -72,6 +72,22 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     @Override
     public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
 
+        Capabilities capabilities = getCapabilities(configuration);
+
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { capabilities }, FirefoxDriver.class);
+
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance with set all necessary properties.
+     * It also validates whether the defined firefox_binary is an executable binary and creates/sets a prospective
+     * firefox profile as well as a firefox extension.
+     *
+     * @param configuration A configuration object for Drone extension
+     * @return A {@link Capabilities} instance with set all necessary properties.
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration){
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
@@ -130,9 +146,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
             }
         }
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, FirefoxDriver.class);
-
+        return capabilities;
     }
 
     @Override

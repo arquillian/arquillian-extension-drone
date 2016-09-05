@@ -78,6 +78,20 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     @Override
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
 
+        Capabilities capabilities = getCapabilities(configuration);
+
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { capabilities }, ChromeDriver.class);
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance with set all necessary properties.
+     * It also validates if the defined chrome.binary is an executable binary
+     *
+     * @param configuration A configuration object for Drone extension
+     * @return A {@link Capabilities} instance with set all necessary properties.
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration){
         // set capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -111,8 +125,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
             capabilities.setCapability("chrome.switches", getChromeSwitches(chromeSwitches));
         }
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, ChromeDriver.class);
+        return capabilities;
     }
 
     @Override

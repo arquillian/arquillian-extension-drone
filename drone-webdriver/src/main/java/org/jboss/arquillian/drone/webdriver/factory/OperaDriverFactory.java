@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import com.opera.core.systems.OperaDriver;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -24,9 +25,6 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.opera.core.systems.OperaDriver;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -52,9 +50,20 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
     @Override
     public OperaDriver createInstance(WebDriverConfiguration configuration) {
 
-        DesiredCapabilities operaCapabilities = new DesiredCapabilities(configuration.getCapabilities());
+        Capabilities operaCapabilities = getCapabilities(configuration);
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { operaCapabilities }, OperaDriver.class);
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
+     * object itself - there is no necessary properties to be set.
+     *
+     * @param configuration A configuration object for Drone extension
+     * @return A {@link Capabilities} instance
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+        return configuration.getCapabilities();
     }
 
     @Override
