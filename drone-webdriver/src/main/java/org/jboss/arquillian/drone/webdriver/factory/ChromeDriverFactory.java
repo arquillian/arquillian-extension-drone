@@ -111,13 +111,17 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
         String printChromeOptions = (String) capabilities.getCapability(CHROME_PRINT_OPTIONS);
-        if (Validate.nonEmpty(printChromeOptions) && Boolean.valueOf(printChromeOptions.trim())){
+        if (Validate.nonEmpty(printChromeOptions) && Boolean.valueOf(printChromeOptions.trim())) {
             try {
-                System.out.println("======== Chrome options =========");
-                System.out.println(chromeOptions.toJson());
-                System.out.println("===== End of Chrome options =====");
+                StringBuffer chromeOptionsLog = new StringBuffer("\n");
+                chromeOptionsLog.append("======== Chrome options =========").append("\n");
+                chromeOptionsLog.append(chromeOptions.toJson().toString()).append("\n");
+                chromeOptionsLog.append("===== End of Chrome options =====");
+                log.info(chromeOptionsLog.toString());
+
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warning("Something bad happened during printing chrome options: ");
+                log.warning(e.getMessage());
             }
         }
 

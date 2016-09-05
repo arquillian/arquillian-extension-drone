@@ -56,17 +56,15 @@ public class StringUtils {
     }
 
     public static String trimMultiline(String toTrim) {
-        StringBuilder builder = new StringBuilder(toTrim.length());
-        String[] var2 = toTrim.split("\\s+");
-        int var3 = var2.length;
-
-        for(int var4 = 0; var4 < var3; ++var4) {
-            String token = var2[var4];
-            if(token != null && !"".equals(token.trim())) {
-                builder.append(token.trim()).append(' ');
+        final StringBuilder builder = new StringBuilder(toTrim.length());
+        for (String token : toTrim.split("\\s+")) {
+            if (token != null) {
+                String trimmed = token.trim();
+                if (!trimmed.isEmpty()) {
+                    builder.append(trimmed).append(' ');
+                }
             }
         }
-
         return builder.toString().trim();
     }
 

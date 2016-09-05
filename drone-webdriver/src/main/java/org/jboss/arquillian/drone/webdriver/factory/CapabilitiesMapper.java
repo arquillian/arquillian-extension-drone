@@ -46,8 +46,8 @@ public class CapabilitiesMapper {
      * file have a specific browserPrefix; after this prefix then there is the parameter name itself
      * (whole string has to be in camelcase)
      *
-     * @param object An instance of an object the values should be set into
-     * @param capabilities A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
+     * @param object        An instance of an object the values should be set into
+     * @param capabilities  A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
      * @param browserPrefix A prefix the should the mapped parameters should start with
      */
     public static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
@@ -122,7 +122,7 @@ public class CapabilitiesMapper {
         Class<?> parameterType = method.getParameterTypes()[0];
         Object converted = null;
 
-        if ((converted = booleanNumberStringOrFile(parameterType, capability)) != null) {
+        if ((converted = convertToBooleanNumberStringOrFile(parameterType, capability)) != null) {
             return converted;
 
         } else if (parameterType.isArray()) {
@@ -135,7 +135,7 @@ public class CapabilitiesMapper {
         return null;
     }
 
-    private static <T> T[] handleArray(Class<T> parameterType, String capability){
+    private static <T> T[] handleArray(Class<T> parameterType, String capability) {
         List<T> convertedList = getConvertedList(parameterType, capability);
         T[] array = (T[]) Array.newInstance(parameterType, convertedList.size());
         return convertedList.toArray(array);
@@ -163,26 +163,32 @@ public class CapabilitiesMapper {
         List<T> convertedList = new ArrayList<T>(values.size());
         for (String value : values) {
 
-            convertedList.add(booleanNumberStringOrFile(parameter, value));
+            convertedList.add(convertToBooleanNumberStringOrFile(parameter, value));
         }
 
         return convertedList;
     }
 
-    private static <T> T booleanNumberStringOrFile(Class<T> clazz, String value) {
-        return (T) (!String.class.equals(clazz) ?
-                    (!File.class.equals(clazz) ? (
-                        !Integer.class.equals(clazz) && !Integer.TYPE.equals(clazz) ? (
-                            !Double.class.equals(clazz) && !Double.TYPE.equals(clazz) ? (
-                                !Long.class.equals(clazz) && !Long.TYPE.equals(clazz) ? (
-                                    !Boolean.class.equals(clazz) && !Boolean.TYPE.equals(clazz) ?
-                                        null
-                                        : Boolean.valueOf(value))
-                                    : Long.valueOf(value))
-                                : Double.valueOf(value))
-                            : Integer.valueOf(value))
-                        : new File(value))
-                    : value);
+    private static <T> T convertToBooleanNumberStringOrFile(Class<T> clazz, String value) {
+        if (String.class.equals(clazz)) {
+            return (T) value;
+        }
+        if (File.class.equals(clazz)) {
+            return (T) new File(value);
+        }
+        if (Integer.class.equals(clazz) && int.class.equals(clazz)) {
+            return (T) Integer.valueOf(value);
+        }
+        if (Double.class.equals(clazz) && double.class.equals(clazz)) {
+            return (T) Double.valueOf(value);
+        }
+        if (Long.class.equals(clazz) && long.class.equals(clazz)) {
+            return (T) Long.valueOf(value);
+        }
+        if (Boolean.class.equals(clazz) && boolean.class.equals(clazz)) {
+            return (T) Boolean.valueOf(value);
+        }
+        return null;
     }
 
     private static boolean isSetter(Method candidate) {
