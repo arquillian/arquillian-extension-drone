@@ -91,7 +91,7 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
         // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                    new Object[] { configuration.getCapabilities() }, InternetExplorerDriver.class);
+                    new Object[] { getCapabilities(configuration) }, InternetExplorerDriver.class);
         }
         // port specified, we cannot use capabilities
         else {
@@ -103,7 +103,19 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
 
     }
 
-    @Override
+    /**
+     * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
+     * object itself - there is no necessary properties to be set.
+     *
+     * @param configuration A configuration object for Drone extension
+     * @return A {@link Capabilities} instance
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+        return configuration.getCapabilities();
+    }
+
+
+        @Override
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
