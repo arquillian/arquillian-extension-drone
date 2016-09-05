@@ -17,8 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +26,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -144,16 +141,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
             log.log(Level.FINE, "Forcing ChromeDriver configuration to be remote-based.");
         }
         return configuration;
-    }
-
-    private List<String> getChromeSwitches(String valueString) {
-        List<String> chromeSwitches = new ArrayList<String>();
-        for (String property : StringUtils.tokenize(valueString)) {
-            if (property.startsWith("--")) {
-                chromeSwitches.add(property);
-            }
-        }
-        return chromeSwitches;
     }
 
 }
