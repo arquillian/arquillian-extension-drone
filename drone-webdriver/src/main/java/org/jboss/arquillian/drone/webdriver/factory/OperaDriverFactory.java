@@ -50,7 +50,7 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
     @Override
     public OperaDriver createInstance(WebDriverConfiguration configuration) {
 
-        Capabilities operaCapabilities = getCapabilities(configuration);
+        Capabilities operaCapabilities = getCapabilities(configuration, true);
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { operaCapabilities }, OperaDriver.class);
     }
@@ -60,9 +60,11 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
      * object itself - there is no necessary properties to be set.
      *
      * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
         return configuration.getCapabilities();
     }
 
