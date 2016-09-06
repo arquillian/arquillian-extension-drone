@@ -72,20 +72,43 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     @Override
     public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
 
+        Capabilities capabilities = getCapabilities(configuration, true);
+
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
+                new Object[] { capabilities }, FirefoxDriver.class);
+
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance with set all necessary properties.
+     * It also validates whether the defined firefox_binary is an executable binary and creates/sets a prospective
+     * firefox profile as well as a firefox extension.
+     * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
+     * can be thrown in case when requirements are not met
+     *
+     * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @return A {@link Capabilities} instance with set all necessary properties; if set to true the IllegalArgumentException
+     * can be thrown in case when requirements are not met
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
         String profile = (String) configuration.getCapabilities().getCapability(FirefoxDriver.PROFILE);
 
         // verify firefox binary if set
-        if (Validate.nonEmpty(binary)) {
+        if (Validate.nonEmpty(binary) && performValidations) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
         }
 
         // set firefox profile from path if specified
         FirefoxProfile firefoxProfile;
         if (Validate.nonEmpty(profile)) {
-            Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
+            if (performValidations) {
+                Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
+            }
             firefoxProfile = new FirefoxProfile(new File(profile));
         }
         else {
@@ -130,9 +153,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
             }
         }
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, FirefoxDriver.class);
-
+        return capabilities;
     }
 
     @Override

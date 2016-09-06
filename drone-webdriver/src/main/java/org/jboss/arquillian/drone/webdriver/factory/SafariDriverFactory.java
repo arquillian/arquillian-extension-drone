@@ -21,7 +21,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
@@ -50,11 +49,24 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
     @Override
     public SafariDriver createInstance(WebDriverConfiguration configuration) {
 
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        Capabilities capabilities = getCapabilities(configuration, true);
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { capabilities }, SafariDriver.class);
 
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
+     * object itself - there is no necessary properties to be set.
+     *
+     * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @return A {@link Capabilities} instance
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+        return configuration.getCapabilities();
     }
 
     @Override

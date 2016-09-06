@@ -90,7 +90,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
 
         // construct capabilities
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(configuration.getCapabilities());
+        Capabilities desiredCapabilities = getCapabilities(configuration, true);
 
         RemoteWebDriver driver = null;
 
@@ -111,6 +111,19 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         }
 
         return driver;
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
+     * object itself - there is no necessary properties to be set.
+     *
+     * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @return A {@link Capabilities} instance
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+        return configuration.getCapabilities();
     }
 
     @Override

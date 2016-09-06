@@ -75,6 +75,25 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
     @Override
     public PhantomJSDriver createInstance(WebDriverConfiguration configuration) {
 
+        Capabilities capabilities = getCapabilities(configuration, true);
+
+        try {
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
+                new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
+        }
+    }
+
+    /**
+     * Returns a {@link Capabilities} instance with set all necessary properties (ie: phantomjs.binary.path).
+     *
+     * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @return A {@link Capabilities} instance with set all necessary properties.
+     */
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -88,12 +107,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
             capabilities.setCapability(PHANTOMJS_EXECUTABLE_PATH, new File("target/drone-phantomjs").getAbsolutePath());
         }
 
-        try {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
-                new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
-        }
+        return capabilities;
     }
 
     @Override
