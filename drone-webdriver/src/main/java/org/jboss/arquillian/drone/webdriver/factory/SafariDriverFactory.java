@@ -49,7 +49,7 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
     @Override
     public SafariDriver createInstance(WebDriverConfiguration configuration) {
 
-        Capabilities capabilities = getCapabilities(configuration);
+        Capabilities capabilities = getCapabilities(configuration, true);
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { capabilities }, SafariDriver.class);
@@ -61,9 +61,11 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
      * object itself - there is no necessary properties to be set.
      *
      * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
         return configuration.getCapabilities();
     }
 

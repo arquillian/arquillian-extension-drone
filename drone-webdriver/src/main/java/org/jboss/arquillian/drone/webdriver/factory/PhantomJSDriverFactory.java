@@ -75,7 +75,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
     @Override
     public PhantomJSDriver createInstance(WebDriverConfiguration configuration) {
 
-        Capabilities capabilities = getCapabilities(configuration);
+        Capabilities capabilities = getCapabilities(configuration, true);
 
         try {
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
@@ -89,9 +89,11 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
      * Returns a {@link Capabilities} instance with set all necessary properties (ie: phantomjs.binary.path).
      *
      * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration) {
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 

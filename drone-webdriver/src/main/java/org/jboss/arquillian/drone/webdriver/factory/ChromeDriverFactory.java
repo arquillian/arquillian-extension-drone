@@ -77,7 +77,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     @Override
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
 
-        Capabilities capabilities = getCapabilities(configuration);
+        Capabilities capabilities = getCapabilities(configuration, true);
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
                 new Object[] { capabilities }, ChromeDriver.class);
@@ -85,12 +85,16 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     /**
      * Returns a {@link Capabilities} instance with set all necessary properties.
-     * It also validates if the defined chrome.binary is an executable binary
+     * It also validates if the defined chrome.binary and chromeDriverBinary are executable binaries.
+     * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
+     * can be thrown in case when requirements are not met
      *
      * @param configuration A configuration object for Drone extension
+     * @param performValidations Whether a potential validation should be performed;
+     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
         // set capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -104,8 +108,10 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         // driver binary configuration
         // this is setting system property
         if (Validate.nonEmpty(driverBinary)) {
-            Validate
-                .isExecutable(driverBinary, "Chrome driver binary must point to an executable file, " + driverBinary);
+            if (performValidations) {
+                Validate.isExecutable(driverBinary,
+                                      "Chrome driver binary must point to an executable file, " + driverBinary);
+            }
             SecurityActions.setProperty(CHROME_DRIVER_BINARY_KEY, driverBinary);
         }
 
@@ -114,7 +120,10 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
-            Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
+            if (performValidations) {
+                Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
+            }
+
             // ARQ-1823 - setting chrome binary path through ChromeOptions
             chromeOptions.setBinary(binary);
         }
