@@ -61,6 +61,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private String chromeDriverBinary;
 
+    private String firefoxDriverBinary;
+
     private URL remoteAddress;
 
     private String browser;
@@ -134,6 +136,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return chromeDriverBinary;
     }
 
+    public String getFirefoxDriverBinary() {
+        return firefoxDriverBinary;
+    }
+
     @Override
     public String getConfigurationName() {
         return CONFIGURATION_NAME;
@@ -173,6 +179,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setChromeDriverBinary(final String chromeDriverBinary) {
         this.chromeDriverBinary = chromeDriverBinary;
+    }
+
+    public void setFirefoxDriverBinary(final String firefoxDriverBinary) {
+        this.firefoxDriverBinary = firefoxDriverBinary;
     }
 
     public void setIePort(final int iePort) {

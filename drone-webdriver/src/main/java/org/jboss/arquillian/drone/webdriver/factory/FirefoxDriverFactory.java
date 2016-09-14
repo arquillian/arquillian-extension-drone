@@ -43,6 +43,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         Destructor<FirefoxDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
+    private static final String FIREFOX_DRIVER_BINARY_KEY = "webdriver.gecko.driver";
 
     /*
      * (non-Javadoc)
@@ -81,8 +82,8 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
     /**
      * Returns a {@link Capabilities} instance with set all necessary properties.
-     * It also validates whether the defined firefox_binary is an executable binary and creates/sets a prospective
-     * firefox profile as well as a firefox extension.
+     * It also validates whether the defined firefox_binary or firefoxDriverBinary are executable binaries
+     * and creates/sets a prospective firefox profile as well as a firefox extension.
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
@@ -97,10 +98,22 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
         String profile = (String) configuration.getCapabilities().getCapability(FirefoxDriver.PROFILE);
+        String driverBinary = configuration.getFirefoxDriverBinary();
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
+        }
+
+        if (Validate.empty(driverBinary)) {
+            driverBinary = SecurityActions.getProperty(FIREFOX_DRIVER_BINARY_KEY);
+        }
+        if (Validate.nonEmpty(driverBinary)) {
+            if (performValidations) {
+                Validate.isExecutable(driverBinary,
+                                      "Firefox driver binary must point to an executable file, " + driverBinary);
+            }
+            SecurityActions.setProperty(FIREFOX_DRIVER_BINARY_KEY, driverBinary);
         }
 
         // set firefox profile from path if specified
