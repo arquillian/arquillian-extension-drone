@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,13 +31,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
+import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class CapabilitiesMapper {
+public class CapabilitiesOptionsMapper {
 
     /**
      * Parses capabilities set in {@link DesiredCapabilities} and according to set-method names it sets the values into
@@ -170,24 +171,12 @@ public class CapabilitiesMapper {
     }
 
     private static <T> T convertToBooleanNumberStringOrFile(Class<T> clazz, String value) {
-        if (String.class.equals(clazz)) {
-            return (T) value;
+        for (ValueMapper<?> mapper : ConfigurationMapper.VALUE_MAPPERS) {
+            if (mapper.handles(clazz)) {
+                return (T) mapper.transform(value);
+            }
         }
-        if (File.class.equals(clazz)) {
-            return (T) new File(value);
-        }
-        if (Integer.class.equals(clazz) && int.class.equals(clazz)) {
-            return (T) Integer.valueOf(value);
-        }
-        if (Double.class.equals(clazz) && double.class.equals(clazz)) {
-            return (T) Double.valueOf(value);
-        }
-        if (Long.class.equals(clazz) && long.class.equals(clazz)) {
-            return (T) Long.valueOf(value);
-        }
-        if (Boolean.class.equals(clazz) && boolean.class.equals(clazz)) {
-            return (T) Boolean.valueOf(value);
-        }
+
         return null;
     }
 

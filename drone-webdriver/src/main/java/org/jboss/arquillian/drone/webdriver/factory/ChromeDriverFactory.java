@@ -116,7 +116,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         }
 
         ChromeOptions chromeOptions = new ChromeOptions();
-        CapabilitiesMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
