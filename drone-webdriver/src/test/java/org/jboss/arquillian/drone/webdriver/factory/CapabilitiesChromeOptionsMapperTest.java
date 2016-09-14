@@ -37,7 +37,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class CapabilitiesOptionsMapperTest {
+public class CapabilitiesChromeOptionsMapperTest {
 
     @Test
     public void testParseChromeOptions() throws IOException {
@@ -76,6 +76,8 @@ public class CapabilitiesOptionsMapperTest {
         Assert.assertEquals(expectedChromeOptions, chromeOptions);
         Assert.assertEquals(expectedChromeOptions.toJson(), chromeOptions.toJson());
     }
+
+
 
     private static Map<String, Map<String, String>> handleJson(String capability) {
 
