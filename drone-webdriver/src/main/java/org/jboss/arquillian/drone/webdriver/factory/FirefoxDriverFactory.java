@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -76,8 +75,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         Capabilities capabilities = getCapabilities(configuration, true);
 
         return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, FirefoxDriver.class);
-
+                                        new Object[] { capabilities }, FirefoxDriver.class);
     }
 
     /**
@@ -139,11 +137,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
         // no check is needed here, it will return empty array if null
         for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
-            try {
-                firefoxProfile.addExtension(new File(extensionPath));
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Cannot read XPI extension file: " + extensionPath, e);
-            }
+            firefoxProfile.addExtension(new File(extensionPath));
         }
 
         // add user preferences from file

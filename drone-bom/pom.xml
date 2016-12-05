@@ -39,10 +39,9 @@
     </developers>
 
     <properties>
-        <version.com.opera>1.5</version.com.opera>
         <version.org.jboss.arquillian.phantom.driver>1.2.1.Final</version.org.jboss.arquillian.phantom.driver>
-        <version.org.jboss.arquillian.selenium>2.53.1</version.org.jboss.arquillian.selenium>
-        <version.htmlunit.driver>2.20</version.htmlunit.driver>
+        <version.org.jboss.arquillian.selenium>3.0.1</version.org.jboss.arquillian.selenium>
+        <version.htmlunit.driver>2.23</version.htmlunit.driver>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
@@ -107,13 +106,6 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>htmlunit-driver</artifactId>
                 <version>${version.htmlunit.driver}</version>
-            </dependency>
-
-            <!-- Opera is kept externally from Selenium BOM -->
-            <dependency>
-                <groupId>com.opera</groupId>
-                <artifactId>operadriver</artifactId>
-                <version>${version.com.opera}</version>
             </dependency>
 
             <!-- PhantomDriver is kept externally from Selenium BOM -->

@@ -22,8 +22,8 @@ ext {
     arquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '2.53.1'
-    iedriverVersion = '2.53.1'
+    seleniumVersion = '3.0.1'
+    iedriverVersion = '3.0.0'
     phantomjsVersion = '2.1.1'
 }
 
@@ -69,7 +69,7 @@ spacelift {
         selenium {
             product 'selenium'
             version project.seleniumVersion
-            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/selenium-server-standalone-${version}.jar"
+            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,3)}/selenium-server-standalone-${version}.jar"
             autoExtract false
         }
         phantomjs {
@@ -92,9 +92,9 @@ spacelift {
             version project.iedriverVersion
             remoteUrl {
                 if (System.getProperty("sun.arch.data.model") == "64") {
-                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 4)}/IEDriverServer_x64_${version}.zip"
+                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 3)}/IEDriverServer_x64_${version}.zip"
                 } else {
-                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 4)}/IEDriverServer_Win32_${version}.zip"
+                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 3)}/IEDriverServer_Win32_${version}.zip"
                 }
             }
             home "iedriver-${version}"

@@ -103,9 +103,9 @@
             <version>${version.htmlunit.driver}</version>
         </dependency>
         <dependency>
-            <groupId>com.opera</groupId>
-            <artifactId>operadriver</artifactId>
-            <version>${version.com.opera}</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-opera-driver</artifactId>
+            <version>${version.selenium}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>

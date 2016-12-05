@@ -170,11 +170,6 @@
                 <artifactId>htmlunit-driver</artifactId>
                 <version>${version.htmlunit.driver}</version>
             </dependency>
-            <dependency>
-                <groupId>com.opera</groupId>
-                <artifactId>operadriver</artifactId>
-                <version>${version.com.opera}</version>
-            </dependency>
 
             <!-- PhanthomJS dependencies not present in the Selenium BOM file -->
             <dependency>

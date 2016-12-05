@@ -37,22 +37,21 @@
     <properties>
         <!-- Versioning -->
         <version.arquillian.core>1.1.11.Final</version.arquillian.core>
-        <version.com.opera>1.5</version.com.opera>
         <version.phantom.driver>1.2.1.Final</version.phantom.driver>
-        <version.selenium>2.53.1</version.selenium>
-        <version.htmlunit.driver>2.20</version.htmlunit.driver>
+        <version.selenium>3.0.1</version.selenium>
+        <version.htmlunit.driver>2.23</version.htmlunit.driver>
         <version.junit>4.11</version.junit>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-        <version.org.eclipse.jetty>9.2.13.v20150730</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>9.2.15.v20160210</version.org.eclipse.jetty>
         <version.arquillian.jetty>1.0.0.CR2</version.arquillian.jetty>
 
         <!-- override from parent -->
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
-        <maven.compiler.argument.target>1.6</maven.compiler.argument.target>
-        <maven.compiler.argument.source>1.6</maven.compiler.argument.source>
+        <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
+        <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
 
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
@@ -108,7 +107,6 @@
         <module>drone-spi</module>
         <module>drone-configuration</module>
         <module>drone-impl</module>
-        <module>drone-selenium-server</module>
         <module>drone-webdriver</module>
 
         <!-- Drone extensions -->
