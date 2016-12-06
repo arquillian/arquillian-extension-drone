@@ -1,20 +1,25 @@
-import org.arquillian.spacelift.execution.Tasks
-import org.arquillian.spacelift.gradle.*
-import org.arquillian.spacelift.gradle.maven.*
-import org.arquillian.spacelift.gradle.utils.*
+import org.arquillian.spacelift.Spacelift
+import org.arquillian.spacelift.gradle.GradleSpaceliftDelegate
+import org.arquillian.spacelift.gradle.maven.MavenExecutor
+import org.arquillian.spacelift.gradle.utils.EnvironmentUtils
 import org.arquillian.spacelift.process.CommandBuilder
-import org.arquillian.spacelift.process.impl.CommandTool
+import org.arquillian.spacelift.task.os.CommandTool
 
 defaultTasks 'test'
-apply plugin: 'spacelift'
+apply plugin: 'org.arquillian.spacelift'
 
 ext {
-    defaultArquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final', '1.1.6.Final', '1.1.7.Final', '1.1.8.Final',
+    arquillianCoreVersion = ['1.1.4.Final', '1.1.5.Final', '1.1.6.Final', '1.1.7.Final', '1.1.8.Final',
                                     '1.1.9.Final', '1.1.10.Final', '1.1.11.Final']
-    defaultBrowser = ['phantomjs']
 
-    defaultArquillianPhantomDriverCommit = '1.2.1.Final'
-    defaultArquillianPhantomDriverOrganization = 'qa'
+    if (project.hasProperty("browser")) {
+        browser = ["${browser}"]
+    } else {
+        browser = ['phantomjs']
+    }
+
+    arquillianPhantomDriverCommit = '1.2.1.Final'
+    arquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
     seleniumVersion = '2.53.1'
@@ -23,9 +28,6 @@ ext {
 }
 
 spacelift {
-    workspace = new File(project.rootDir, 'ws')
-    installationsDir = new File(project.rootDir, 'ws')
-    enableStaging = true
     tools {
        java {
             command ([
@@ -53,10 +55,7 @@ spacelift {
                 } else {
                     mvnPath = mvnExpFile
                 }
-
-                
-
-                return Tasks.prepare(CommandTool).command(new CommandBuilder(mvnPath))
+                return new CommandBuilder(mvnPath)
             }
         }
     }
@@ -71,15 +70,7 @@ spacelift {
             product 'selenium'
             version project.seleniumVersion
             remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/selenium-server-standalone-${version}.jar"
-            autoExtract false           
-            tools {
-                seleniumserver {
-                    command {
-                        GradleSpacelift.tools('java')
-                            .parameters('-jar', "${selenium.home}/${selenium.fileName}")
-                    }
-                }
-            }
+            autoExtract false
         }
         phantomjs {
             product 'phantomjs'
@@ -99,7 +90,13 @@ spacelift {
         iedriver {
             product 'iedriver'
             version project.iedriverVersion
-            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,4)}/IEDriverServer_x64_${version}.zip"
+            remoteUrl {
+                if (System.getProperty("sun.arch.data.model") == "64") {
+                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 4)}/IEDriverServer_x64_${version}.zip"
+                } else {
+                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 4)}/IEDriverServer_Win32_${version}.zip"
+                }
+            }
             home "iedriver-${version}"
             extractMapper { toDir(home).cutdirs() }
         }
@@ -122,6 +119,10 @@ spacelift {
         arquillianCoreCompatibility {
 
             def seleniumServer = null
+            def phantomjsPath = "${phantomjs.home}/bin/phantomjs"
+            if(EnvironmentUtils.runsOnWindows()) {
+                phantomjsPath += '.exe'
+            }
 
             dataProvider {
                 def browser = project.browser
@@ -133,25 +134,26 @@ spacelift {
             }
             beforeSuite {
 
-                def phantomjsPath = "${phantomjs.home}/bin/phantomjs"
-                if(EnvironmentUtils.runsOnWindows()) {
-                    phantomjsPath += '.exe'
-                }
-                
-
                 // start selenium server, we need it for tests
-                seleniumServer = GradleSpacelift.tools('seleniumserver')
+                seleniumServer = Spacelift.task(CommandTool)
+                    .command(new CommandBuilder('java')
+                        .parameters(
+                            "-Dphantomjs.binary.path=${phantomjsPath}",
+                            "-Dwebdriver.ie.driver=${iedriver.home}/IEDriverServer.exe",
+                            '-jar',
+                            "${selenium.home}/${selenium.fileName}"))
                     .workingDir("${project.spacelift.workspace}")
-                    .parameter("-Dphantomjs.binary.path=${phantomjsPath}")
-                    .parameter("-Dwebdriver.ie.driver=${iedriver.home}/IEDriverServer.exe")
-                    .interaction(GradleSpacelift.ECHO_OUTPUT)
+                    .interaction(GradleSpaceliftDelegate.ECHO_OUTPUT)
                     .execute()
             }
             execute { arqVersion, browserType ->
                 // execute all tests in the extension
-                Tasks.prepare(MavenExecutor).pom("pom.xml")
+
+                Spacelift.task(MavenExecutor).pom("pom.xml")
                     // replace property version.arquillian.core with compatibility version
                     .property("version.arquillian.core=${arqVersion}")
+                    .property("phantomjs.binary.path=${phantomjsPath}")
+                    .property("webdriver.ie.driver=${iedriver.home}/IEDriverServer.exe")
                     .property("browser=${browserType}")
                     .goals('clean', 'verify').execute().await()
             }
@@ -169,12 +171,11 @@ buildscript {
         mavenCentral()
         // you need this only if you plan to use SNAPSHOT version of this plugin
         maven {
-            name 'jboss-staging-repository-group'
-            url 'https://repository.jboss.org/nexus/content/groups/staging'
+            url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath 'org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-5'
+        classpath 'gradle.plugin.org.arquillian.spacelift.gradle:arquillian-spacelift-gradle:1.0.0-alpha-17'
     }
 }
 
@@ -188,9 +189,9 @@ configurations {
 }
 
 dependencies {
-    junitreport 'org.apache.ant:ant-junit:1.9.4'
+    junitreport 'org.apache.ant:ant-junit:1.9.7'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2'
+    gradleVersion = '2.5'
 }
