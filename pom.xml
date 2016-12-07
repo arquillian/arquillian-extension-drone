@@ -40,7 +40,7 @@
         <version.phantom.driver>1.2.1.Final</version.phantom.driver>
         <version.selenium>3.0.1</version.selenium>
         <version.htmlunit.driver>2.23</version.htmlunit.driver>
-        <version.junit>4.11</version.junit>
+        <version.junit>4.12</version.junit>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
         <version.org.eclipse.jetty>9.2.15.v20160210</version.org.eclipse.jetty>
