@@ -142,7 +142,7 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
 
         private transient RemoteWebDriver original;
 
-        public DroneAugmentedImpl(RemoteWebDriver original) {
+        DroneAugmentedImpl(RemoteWebDriver original) {
             this.original = original;
         }
 

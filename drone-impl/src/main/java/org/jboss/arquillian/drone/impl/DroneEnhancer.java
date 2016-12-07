@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -33,13 +40,6 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneDeenhanced;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.DroneEnhancementEvent;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * DroneInstanceEnhancer/deenhancer of Drone instance with {@link DroneInstanceEnhancer} implementation available on the
@@ -145,7 +145,7 @@ public class DroneEnhancer {
 
         private final V value;
 
-        public ConstantValueCachingCallable(V value) {
+        ConstantValueCachingCallable(V value) {
             this.value = value;
         }
 
@@ -164,7 +164,7 @@ public class DroneEnhancer {
 
         private final Object value;
 
-        public CompatibilityInstanceOrCallableInstance(Object value) {
+        CompatibilityInstanceOrCallableInstance(Object value) {
             this.value = value;
         }
 

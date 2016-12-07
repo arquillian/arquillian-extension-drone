@@ -52,7 +52,7 @@ public interface DronePoint<DRONE> {
      */
     boolean conformsTo(Class<?> droneClass);
 
-    public static enum Lifecycle {
+    enum Lifecycle {
         /**
          * Method lifecycle means the drone will be prepared in {@link Before} and destroyed in {@link After}.
          */

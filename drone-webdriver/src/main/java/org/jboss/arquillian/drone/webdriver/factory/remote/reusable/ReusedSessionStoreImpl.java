@@ -228,7 +228,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
         private final ByteArray rawSession;
 
-        public TimeStampedSession(ByteArray rawSession) {
+        TimeStampedSession(ByteArray rawSession) {
             this.timestamp = new Date();
             this.rawSession = rawSession;
         }
@@ -302,7 +302,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
         private final ReusedSession session;
         private final LinkedList<ByteArray> parentList;
 
-        public RawDisposableReusedSession(ByteArray key, LinkedList<ByteArray> parentList, ReusedSession session) {
+        RawDisposableReusedSession(ByteArray key, LinkedList<ByteArray> parentList, ReusedSession session) {
             this.key = key;
             this.parentList = parentList;
             this.session = session;

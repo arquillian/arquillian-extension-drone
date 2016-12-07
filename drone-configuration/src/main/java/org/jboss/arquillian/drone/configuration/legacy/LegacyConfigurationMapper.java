@@ -81,11 +81,11 @@ public class LegacyConfigurationMapper {
         private final String fieldName;
         private final ValueMapper<?> mapper;
 
-        public FieldMapping(String fieldName) {
+        FieldMapping(String fieldName) {
             this(fieldName, StringValueMapper.INSTANCE);
         }
 
-        public FieldMapping(String fieldName, ValueMapper<?> mapper) {
+        FieldMapping(String fieldName, ValueMapper<?> mapper) {
             this.fieldName = fieldName;
             this.mapper = mapper;
         }
@@ -120,11 +120,11 @@ public class LegacyConfigurationMapper {
         private final ValueMapper<?> mapper;
 
         @SuppressWarnings("unused")
-        public DefaultCapabilityMapping(String capabilityName) {
+        DefaultCapabilityMapping(String capabilityName) {
             this(capabilityName, StringValueMapper.INSTANCE);
         }
 
-        public DefaultCapabilityMapping(String capabilityName, ValueMapper<?> mapper) {
+        DefaultCapabilityMapping(String capabilityName, ValueMapper<?> mapper) {
             this.capabilityName = capabilityName;
             this.mapper = mapper;
         }
@@ -158,7 +158,7 @@ public class LegacyConfigurationMapper {
 
         private final String loggingMessage;
 
-        public LoggingCapabilityMapping(String capabilityName, ValueMapper<?> mapper, String loggingMessage) {
+        LoggingCapabilityMapping(String capabilityName, ValueMapper<?> mapper, String loggingMessage) {
             super(capabilityName, mapper);
             this.loggingMessage = loggingMessage;
         }

@@ -150,7 +150,7 @@ public class DroneRegistryImpl implements DroneRegistry {
 
     }
 
-    private static enum RegisteredType {
+    private enum RegisteredType {
         CONFIGURATOR {
             @Override
             public boolean registeredIn(RegistryValue value) {
