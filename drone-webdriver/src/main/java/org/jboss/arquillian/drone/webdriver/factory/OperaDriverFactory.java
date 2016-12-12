@@ -16,15 +16,14 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.opera.OperaOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -32,6 +31,7 @@ import org.openqa.selenium.opera.OperaDriver;
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> implements
         Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,
@@ -39,8 +39,8 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Opera().getReadableName();
 
-    @Inject
-    Instance<BrowserCapabilitiesRegistry> registryInstance;
+    private static final String OPERA_DRIVER_BINARY_KEY = "webdriver.opera.driver";
+    private static final String OPERA_BINARY_KEY = "opera.binary";
 
     @Override
     public int getPrecedence() {
@@ -65,7 +65,41 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
-        return configuration.getCapabilities();
+
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+
+        String driverBinary = SecurityActions.getProperty(OPERA_DRIVER_BINARY_KEY);
+        String binary = SecurityActions.getProperty(OPERA_BINARY_KEY);
+
+        if (Validate.empty(driverBinary)) {
+            driverBinary = configuration.getOperaDriverBinary();
+        }
+
+        if (Validate.nonEmpty(driverBinary)) {
+            if (performValidations) {
+                Validate.isExecutable(driverBinary,
+                                      "Opera driver binary must point to an executable file, " + driverBinary);
+            }
+            SecurityActions.setProperty(OPERA_DRIVER_BINARY_KEY, driverBinary);
+        }
+
+        if (Validate.empty(binary)) {
+            binary = (String) capabilities.getCapability(OPERA_BINARY_KEY);
+        }
+
+        OperaOptions operaOptions = new OperaOptions();
+        CapabilitiesOptionsMapper.mapCapabilities(operaOptions, capabilities, BROWSER_CAPABILITIES);
+
+        if (Validate.nonEmpty(binary)) {
+            if (performValidations) {
+                Validate.isExecutable(binary, "Opera binary must point to an executable file, " + binary);
+            }
+            operaOptions.setBinary(binary);
+        }
+
+        capabilities.setCapability(OperaOptions.CAPABILITY, operaOptions);
+
+        return capabilities;
     }
 
     @Override
