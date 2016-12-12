@@ -110,7 +110,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public String getImplementationClassName() {
-            return "com.opera.core.systems.OperaDriver";
+            return "org.openqa.selenium.opera.OperaDriver";
         }
 
         @Override
