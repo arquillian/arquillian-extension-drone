@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.factory;
+package org.jboss.arquillian.drone.webdriver.utils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -27,35 +27,35 @@ import java.util.logging.Logger;
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  *
  */
-class Validate {
+public class Validate {
 
     private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
 
-    static boolean empty(Object object) {
+    public static boolean empty(Object object) {
         return object == null;
     }
 
-    static boolean empty(String object) {
+    public static boolean empty(String object) {
         return object == null || object.length() == 0;
     }
 
-    static boolean nonEmpty(String object) {
+    public static boolean nonEmpty(String object) {
         return !empty(object);
     }
 
-    static void isEmpty(Object object, String message) throws IllegalArgumentException {
+    public static void isEmpty(Object object, String message) throws IllegalArgumentException {
         if (empty(object)) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    static void isEmpty(String object, String message) throws IllegalArgumentException {
+    public static void isEmpty(String object, String message) throws IllegalArgumentException {
         if (empty(object)) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    static void isValidPath(String path, String message) throws IllegalArgumentException {
+    public static void isValidPath(String path, String message) throws IllegalArgumentException {
         isEmpty(path, message);
 
         File file = new File(path);
@@ -65,13 +65,13 @@ class Validate {
         }
     }
 
-    static void isValidUrl(URL url, String message) throws IllegalArgumentException {
+    public static void isValidUrl(URL url, String message) throws IllegalArgumentException {
         if (url == null) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    static void isValidUrl(String url, String message) throws IllegalArgumentException {
+    public static void isValidUrl(String url, String message) throws IllegalArgumentException {
         isEmpty(url, message);
 
         try {
@@ -81,12 +81,16 @@ class Validate {
         }
     }
 
-    static void isExecutable(String path, String message) throws IllegalArgumentException {
+    public static void isExecutable(String path, String message) throws IllegalArgumentException {
         isEmpty(path, message);
 
         File file = new File(path);
 
-        if (!file.exists() || !fileExecutableChecker.canExecute(file)) {
+        if (!file.exists()) {
+            throw new IllegalArgumentException(String.format("The file %s does not exist", path));
+        }
+
+        if (!fileExecutableChecker.canExecute(file)) {
             throw new IllegalArgumentException(message);
         }
     }

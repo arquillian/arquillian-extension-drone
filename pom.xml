@@ -40,7 +40,13 @@
         <version.phantom.driver>1.2.1.Final</version.phantom.driver>
         <version.selenium>3.0.1</version.selenium>
         <version.htmlunit.driver>2.23</version.htmlunit.driver>
+
+        <!-- Test bits versions -->
         <version.junit>4.12</version.junit>
+        <version.assertj>3.6.1</version.assertj>
+        <version.mockito.all>2.0.2-beta</version.mockito.all>
+        <version.mockito.core>2.3.11</version.mockito.core>
+        <version.powermock>1.6.6</version.powermock>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
         <version.org.eclipse.jetty>9.2.15.v20160210</version.org.eclipse.jetty>
@@ -83,8 +89,8 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java16</artifactId>
-                        <version>1.1</version>
+                        <artifactId>java18</artifactId>
+                        <version>1.0</version>
                     </signature>
                 </configuration>
             </plugin>

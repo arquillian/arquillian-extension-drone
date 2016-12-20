@@ -18,6 +18,7 @@ package org.jboss.arquillian.drone.webdriver.example;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
+import org.jboss.arquillian.drone.webdriver.utils.PortChecker;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
@@ -50,8 +51,8 @@ public class ReusableRemoteWebDriverTestCase {
     @BeforeClass
     public static void checkIfWebdriverHubIsRunning() {
         Assert.assertTrue(
-                "Remote Reusable tests require Selenium Server to be running on port 4444, please start it manually before running the tests.",
-                SeleniumHubChecker.isSeleniumHubRunning());
+            "Remote Reusable tests require Selenium Server to be running on port 4444, please start it manually before running the tests.",
+            PortChecker.isSeleniumHubRunning());
     }
 
     @Test

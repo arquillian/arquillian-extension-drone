@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.drone.webdriver.example;
+package org.jboss.arquillian.drone.webdriver.utils;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 
 /**
- * A simple utility class to check whether Selenium Hub is started to provide a nicer exception message
+ * A simple utility class to check whether some port is available or not
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class SeleniumHubChecker {
+public class PortChecker {
 
     /**
-     * Tries to open a service on default port used by Selenium Server (:4444)
+     * Tries to open a service on default port used by Selenium Server (:4444) to check whether
+     * Selenium Hub is started and provide a nice exception message
      */
     public static boolean isSeleniumHubRunning() {
         return !isPortAvailable(4444);

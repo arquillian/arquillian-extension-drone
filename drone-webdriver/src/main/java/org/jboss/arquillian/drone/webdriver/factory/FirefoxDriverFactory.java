@@ -22,9 +22,11 @@ import java.util.Map;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.FirefoxPrefsReader;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -42,7 +44,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         Destructor<FirefoxDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
-    private static final String FIREFOX_DRIVER_BINARY_KEY = "webdriver.gecko.driver";
 
     /*
      * (non-Javadoc)
@@ -94,25 +95,15 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String binary = (String) configuration.getCapabilities().getCapability(FirefoxDriver.BINARY);
-        String profile = (String) configuration.getCapabilities().getCapability(FirefoxDriver.PROFILE);
-        String driverBinary = configuration.getFirefoxDriverBinary();
+        String binary = (String) capabilities.getCapability(FirefoxDriver.BINARY);
+        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
         }
 
-        if (Validate.empty(driverBinary)) {
-            driverBinary = SecurityActions.getProperty(FIREFOX_DRIVER_BINARY_KEY);
-        }
-        if (Validate.nonEmpty(driverBinary)) {
-            if (performValidations) {
-                Validate.isExecutable(driverBinary,
-                                      "Firefox driver binary must point to an executable file, " + driverBinary);
-            }
-            SecurityActions.setProperty(FIREFOX_DRIVER_BINARY_KEY, driverBinary);
-        }
+        new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         // set firefox profile from path if specified
         FirefoxProfile firefoxProfile;
