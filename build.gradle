@@ -22,7 +22,6 @@ ext {
 
     // selenium server instance holder
     seleniumVersion = '3.0.1'
-    iedriverVersion = '3.0.0'
     phantomjsVersion = '2.1.1'
 }
 
@@ -60,17 +59,11 @@ spacelift {
     }
     profiles {
         "default" {
-            enabledInstallations 'selenium', 'phantomjs', 'iedriver'
+            enabledInstallations 'phantomjs'
             tests '*'            
         }
     }
     installations {
-        selenium {
-            product 'selenium'
-            version project.seleniumVersion
-            remoteUrl "http://selenium-release.storage.googleapis.com/${version.substring(0,3)}/selenium-server-standalone-${version}.jar"
-            autoExtract false
-        }
         phantomjs {
             product 'phantomjs'
             version project.phantomjsVersion
@@ -86,20 +79,6 @@ spacelift {
                 project.ant.chmod(dir: "${home}", perm:"a+x", includes:"**/*phantomjs*")
             }
         }
-        iedriver {
-            product 'iedriver'
-            version project.iedriverVersion
-            remoteUrl {
-                if (System.getProperty("sun.arch.data.model") == "64") {
-                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 3)}/IEDriverServer_x64_${version}.zip"
-                } else {
-                    "http://selenium-release.storage.googleapis.com/${version.substring(0, 3)}/IEDriverServer_Win32_${version}.zip"
-                }
-            }
-            home "iedriver-${version}"
-            extractMapper { toDir(home).cutdirs() }
-        }
-
         // this installation can be used if there is a need to test against not yet release version of arquillian-phantom-driver
         arquillianPhantomDriver {
             product 'arquillianPhantomDriver'
@@ -131,34 +110,14 @@ spacelift {
                     }
                 }
             }
-            beforeSuite {
-
-                // start selenium server, we need it for tests
-                seleniumServer = Spacelift.task(CommandTool)
-                    .command(new CommandBuilder('java')
-                        .parameters(
-                            "-Dphantomjs.binary.path=${phantomjsPath}",
-                            "-Dwebdriver.ie.driver=${iedriver.home}/IEDriverServer.exe",
-                            '-jar',
-                            "${selenium.home}/${selenium.fileName}"))
-                    .workingDir("${project.spacelift.workspace}")
-                    .interaction(GradleSpaceliftDelegate.ECHO_OUTPUT)
-                    .execute()
-            }
             execute { arqVersion, browserType ->
                 // execute all tests in the extension
 
                 Spacelift.task(MavenExecutor).pom("pom.xml")
                     // replace property version.arquillian.core with compatibility version
-                    .property("version.arquillian.core=${arqVersion}")
                     .property("phantomjs.binary.path=${phantomjsPath}")
-                    .property("webdriver.ie.driver=${iedriver.home}/IEDriverServer.exe")
                     .property("browser=${browserType}")
                     .goals('clean', 'verify').execute().await()
-            }
-            afterSuite {
-                // terminate selenium server
-                seleniumServer.terminate()
             }
         }
     }

@@ -22,9 +22,11 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.binary.handler.InternetExplorerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -41,8 +43,6 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
     private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
 
     public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
-
-    private static final String IE_DRIVER_BINARY_KEY = "webdriver.ie.driver";
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.InternetExplorer().getReadableName();
 
@@ -75,18 +75,6 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
     public InternetExplorerDriver createInstance(WebDriverConfiguration configuration) {
 
         int port = configuration.getIePort();
-        String driverBinary = configuration.getIeDriverBinary();
-
-        if (Validate.empty(driverBinary)) {
-            driverBinary = SecurityActions.getProperty(IE_DRIVER_BINARY_KEY);
-        }
-
-        // driver binary configuration
-        // this is setting system property
-        if (Validate.nonEmpty(driverBinary)) {
-            Validate.isExecutable(driverBinary, "Internet Explorer driver binary must point to an executable file, " + driverBinary);
-            SecurityActions.setProperty(IE_DRIVER_BINARY_KEY, driverBinary);
-        }
 
         // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
@@ -100,7 +88,6 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
             return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { int.class },
                     new Object[] { port }, InternetExplorerDriver.class);
         }
-
     }
 
     /**
@@ -113,13 +100,15 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
-        return configuration.getCapabilities();
+        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+
+        new InternetExplorerBinaryHandler(capabilities).checkAndSetBinary(performValidations);
+
+        return capabilities;
     }
 
-
-        @Override
+    @Override
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
-
 }

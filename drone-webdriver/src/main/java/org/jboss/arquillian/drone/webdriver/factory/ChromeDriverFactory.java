@@ -25,7 +25,9 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -43,10 +45,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     private static final Logger log = Logger.getLogger(ChromeDriverFactory.class.getName());
 
-    private static final String CHROME_DRIVER_BINARY_KEY = "webdriver.chrome.driver";
-
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
-
     private static final String CHROME_PRINT_OPTIONS = "chromePrintOptions";
 
     /*
@@ -98,22 +97,9 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         // set capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String driverBinary = configuration.getChromeDriverBinary();
         String binary = (String) capabilities.getCapability("chrome.binary");
 
-        if (Validate.empty(driverBinary)) {
-            driverBinary = SecurityActions.getProperty(CHROME_DRIVER_BINARY_KEY);
-        }
-
-        // driver binary configuration
-        // this is setting system property
-        if (Validate.nonEmpty(driverBinary)) {
-            if (performValidations) {
-                Validate.isExecutable(driverBinary,
-                                      "Chrome driver binary must point to an executable file, " + driverBinary);
-            }
-            SecurityActions.setProperty(CHROME_DRIVER_BINARY_KEY, driverBinary);
-        }
+        new ChromeDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         ChromeOptions chromeOptions = new ChromeOptions();
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);

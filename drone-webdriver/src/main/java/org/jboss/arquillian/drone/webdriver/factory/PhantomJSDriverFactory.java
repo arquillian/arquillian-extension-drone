@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.phantom.resolver.ResolvingPhantomJSDriverService;
 import org.openqa.selenium.Capabilities;
@@ -97,15 +97,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
         // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String executablePath = (String) capabilities.getCapability(PHANTOMJS_EXECUTABLE_PATH);
-
-        if (Validate.empty(executablePath)) {
-            executablePath = SecurityActions.getProperty(PHANTOMJS_EXECUTABLE_PATH);
-        }
-
-        if (Validate.empty(executablePath)) {
-            capabilities.setCapability(PHANTOMJS_EXECUTABLE_PATH, new File("target/drone-phantomjs").getAbsolutePath());
-        }
+        new PhantomJSDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         return capabilities;
     }

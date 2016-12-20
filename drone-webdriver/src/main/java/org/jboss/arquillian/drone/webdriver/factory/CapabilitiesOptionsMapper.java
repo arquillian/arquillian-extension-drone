@@ -34,6 +34,7 @@ import com.google.gson.reflect.TypeToken;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**

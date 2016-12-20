@@ -19,7 +19,10 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
+import org.jboss.arquillian.drone.webdriver.binary.handler.OperaDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
@@ -38,8 +41,6 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
         Destructor<OperaDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Opera().getReadableName();
-
-    private static final String OPERA_DRIVER_BINARY_KEY = "webdriver.opera.driver";
     private static final String OPERA_BINARY_KEY = "opera.binary";
 
     @Override
@@ -68,20 +69,9 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
 
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String driverBinary = SecurityActions.getProperty(OPERA_DRIVER_BINARY_KEY);
-        String binary = SecurityActions.getProperty(OPERA_BINARY_KEY);
+        new OperaDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
-        if (Validate.empty(driverBinary)) {
-            driverBinary = configuration.getOperaDriverBinary();
-        }
-
-        if (Validate.nonEmpty(driverBinary)) {
-            if (performValidations) {
-                Validate.isExecutable(driverBinary,
-                                      "Opera driver binary must point to an executable file, " + driverBinary);
-            }
-            SecurityActions.setProperty(OPERA_DRIVER_BINARY_KEY, driverBinary);
-        }
+        String binary = PropertySecurityAction.getProperty(OPERA_BINARY_KEY);
 
         if (Validate.empty(binary)) {
             binary = (String) capabilities.getCapability(OPERA_BINARY_KEY);

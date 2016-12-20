@@ -27,6 +27,7 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
+import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
@@ -35,6 +36,8 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSession;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
+import org.jboss.arquillian.drone.webdriver.utils.PortChecker;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -74,7 +77,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         // default remote address
         if (Validate.empty(remoteAddress)) {
             remoteAddress = WebDriverConfiguration.DEFAULT_REMOTE_URL;
-            log.log(Level.INFO, "Property \"remoteAdress\" was not specified, using default value of {0}",
+            log.log(Level.INFO, "Property \"remoteAddress\" was not specified, using default value of {0}",
                     WebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
 
@@ -90,7 +93,11 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
 
         // construct capabilities
-        Capabilities desiredCapabilities = getCapabilities(configuration, true);
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
+
+        if (!PortChecker.isSeleniumHubRunning()) {
+            new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndRun(browser);
+        }
 
         RemoteWebDriver driver = null;
 
@@ -112,7 +119,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         return driver;
     }
-
     /**
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.

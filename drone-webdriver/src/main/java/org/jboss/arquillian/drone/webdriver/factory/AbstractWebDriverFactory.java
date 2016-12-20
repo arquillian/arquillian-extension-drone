@@ -1,5 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -8,11 +12,8 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.WebDriver;
-
-import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configurator<T, WebDriverConfiguration> {
 
