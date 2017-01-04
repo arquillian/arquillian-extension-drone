@@ -61,7 +61,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
                 } catch (Exception e) {
                     throw new IllegalStateException(
                         "Something bad happened when Drone was trying to download and prepare a binary. "
-                            + "For more information see the stacktrace.", e);
+                            + "For more information see the cause.", e);
                 }
             }
         }

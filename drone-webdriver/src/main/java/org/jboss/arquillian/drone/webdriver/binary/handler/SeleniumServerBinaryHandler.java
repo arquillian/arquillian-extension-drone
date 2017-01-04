@@ -70,7 +70,8 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Something bad happened when Drone was trying to download and extract Selenium Server binary. "
-                    + "For more information see the stacktrace: \n" + e.getStackTrace());
+                    + "For more information see the cause.", e);
+
         }
         BinaryHandler browserBinaryHandler = getBrowserBinaryHandler(browser);
 
@@ -87,7 +88,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
                 throw new IllegalStateException(
                     "Something bad happened when Drone was trying to download and extract driver binary of a browser: "
                         + browser
-                        + "\nFor more information see the stacktrace: \n" + e.getStackTrace());
+                        + "\nFor more information see the cause.", e);
             }
         }
 
@@ -112,7 +113,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Something bad happened when Drone was trying to run Selenium Server binary: " + seleniumServer
-                    + " For more information see the stacktrace: \n" + e.getStackTrace());
+                    + " For more information see the cause.", e);
         }
     }
 

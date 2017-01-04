@@ -48,8 +48,7 @@ public class ReusableRemoteWebDriverTestCase {
     // sessionId is set to be static, so it can be shared between test methods
     private static SessionId sessionId;
 
-    @BeforeClass
-    public static void checkIfWebdriverHubIsRunning() {
+    private void checkIfWebdriverHubIsRunning() {
         Assert.assertTrue(
             "Remote Reusable tests require Selenium Server to be running on port 4444, please start it manually before running the tests.",
             PortChecker.isSeleniumHubRunning());
@@ -58,6 +57,7 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(1)
     public void testReusableSessionId1(@Drone @Reusable RemoteWebDriver d) {
+        checkIfWebdriverHubIsRunning();
         Assert.assertNotNull("Browser has sessionId set up", d.getSessionId());
         sessionId = d.getSessionId();
     }
@@ -65,6 +65,7 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(2)
     public void testReusableSessionId2(@Drone @Reusable RemoteWebDriver d) {
+        checkIfWebdriverHubIsRunning();
         Assert.assertTrue("Drone instance is reusable", d instanceof ReusableRemoteWebDriver);
         Assert.assertNotNull("Browser has sessionId set up", d.getSessionId());
         Assert.assertEquals("SessionId was reused", sessionId, d.getSessionId());
@@ -74,6 +75,7 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(3)
     public void testReusableSessionId3(@Drone @Reusable WebDriver d) {
+        checkIfWebdriverHubIsRunning();
         Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
         sessionId = ((RemoteWebDriver) d).getSessionId();
     }
@@ -81,6 +83,7 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(4)
     public void testReusableSessionId4(@Drone @Reusable WebDriver d) {
+        checkIfWebdriverHubIsRunning();
         Assert.assertTrue("Drone instance is reusable", d instanceof ReusableRemoteWebDriver);
         Assert.assertNotNull("Browser has sessionId set up", ((RemoteWebDriver) d).getSessionId());
         Assert.assertEquals("SessionId was reused", sessionId, ((RemoteWebDriver) d).getSessionId());
@@ -90,6 +93,7 @@ public class ReusableRemoteWebDriverTestCase {
     @Test
     @InSequence(5)
     public void testNonReusableSession1(@Drone WebDriver d) {
+        checkIfWebdriverHubIsRunning();
         Assert.assertFalse("Drone instance is not reusable", d instanceof ReusableRemoteWebDriver);
     }
 
