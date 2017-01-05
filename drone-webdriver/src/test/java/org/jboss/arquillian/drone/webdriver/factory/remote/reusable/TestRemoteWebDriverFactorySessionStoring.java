@@ -26,10 +26,15 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
+import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,7 +45,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,6 +73,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ReusableRemoteWebDriverExtension.class);
+        extensions.add(SeleniumServerExecutor.class);
 
     }
 
@@ -92,6 +97,19 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
+        try {
+            String browser = System.getProperty("browser");
+            String seleniumServerBinary =
+                new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
+            fire(new StartSeleniumServer(seleniumServerBinary, browser, new DesiredCapabilities()));
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @After
+    public void stopServer(){
+        fire(new AfterClass(this.getClass()));
     }
 
     @Test
@@ -116,6 +134,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // then
         ReusedSession reusedSession = sessionStore.get().pull(initializationParameter);
         assertNotNull("reusedSession must be stored", reusedSession);
+
     }
 
     @Test

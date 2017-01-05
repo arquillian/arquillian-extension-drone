@@ -189,7 +189,16 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
             throw new IllegalStateException(
                 "The number of extracted files in the directory " + extraction + " is 0. There is no file to use");
         }
-        File binaryFile = files[0];
+        return markAsExecutable(files[0]);
+    }
+
+    /**
+     * Sets the given binary to be executable
+     *
+     * @param binaryFile A binary file that should be set to be executable
+     * @return the given binary file set to be executable
+     */
+    protected File markAsExecutable(File binaryFile){
         log.info("marking binary file: " + binaryFile.getPath() + " as executable");
         try {
             binaryFile.setExecutable(true);

@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
@@ -63,6 +64,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     private Instance<InitializationParametersMap> initParams;
     @Inject
     private Event<PersistReusedSessionsEvent> persistEvent;
+    @Inject
+    private Event<StartSeleniumServer> startSeleniumServerEvent;
 
     @Override
     public int getPrecedence() {
@@ -96,7 +99,20 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
 
         if (!PortChecker.isSeleniumHubRunning()) {
-            new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndRun(browser);
+            try {
+                String seleniumServer =
+                    new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
+                if (!Validate.empty(seleniumServer)) {
+                    startSeleniumServerEvent
+                        .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities));
+                }
+            } catch (Exception e) {
+                throw new IllegalStateException(
+                    "Something bad happened when Drone was trying to download and extract Selenium Server binary. "
+                        + "For more information see the cause.", e);
+
+            }
+
         }
 
         RemoteWebDriver driver = null;

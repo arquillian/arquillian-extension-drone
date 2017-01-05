@@ -43,7 +43,7 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 
     public File downloadAndPrepare() throws Exception {
         String executablePath = checkAndSetBinary(true);
-        return executablePath == null ? null : new File(executablePath);
+        return executablePath == null ? null : markAsExecutable(new File(executablePath));
     }
 
     @Override

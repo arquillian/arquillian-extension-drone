@@ -18,8 +18,10 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinar
 import org.jboss.arquillian.drone.webdriver.binary.process.BinaryInteraction;
 import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +54,10 @@ public class BinaryHandlerTestCase {
     }
 
     private void cleanUp() throws IOException {
-        FileUtils.deleteDirectory(new File(TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY).getParentFile());
+        File targetDroneDir = new File(TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY).getParentFile();
+        if (targetDroneDir.exists()) {
+            FileUtils.deleteDirectory(targetDroneDir);
+        }
         System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY, "");
         System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY, "");
     }
@@ -196,7 +201,7 @@ public class BinaryHandlerTestCase {
         assertThat(binary).isEqualTo(first.getAbsolutePath());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void verifyWithPropertySetToZip() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         // set binary to zip - test should throw an exception
@@ -207,7 +212,17 @@ public class BinaryHandlerTestCase {
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
             LocalBinarySource.FIRST_VERSION);
-        new LocalBinaryHandler(capabilities).checkAndSetBinary(true);
+
+        try {
+            new LocalBinaryHandler(capabilities).checkAndSetBinary(true);
+            if (!PlatformUtils.isWindows()){
+                Assert.fail("This test should have failed on all platforms but Windows");
+            }
+        } catch (IllegalArgumentException iae){
+            if (PlatformUtils.isWindows()){
+                Assert.fail("This test should have not failed on Windows");
+            }
+        }
     }
 
     private void verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(DesiredCapabilities capabilities,
@@ -229,7 +244,9 @@ public class BinaryHandlerTestCase {
                               "The file has to be an executable file, " + resultingFile);
         assertThat(System.getProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY)).isEqualTo(extracted);
 
-        runScriptAndCheck(extracted, echo);
+        if (!PlatformUtils.isWindows()) {
+            runScriptAndCheck(extracted, echo);
+        }
     }
 
     private void runScriptAndCheck(String script, String expected) {

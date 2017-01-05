@@ -25,6 +25,7 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
+import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
@@ -91,6 +92,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
 
         builder.service(DroneInstanceEnhancer.class, AugmentingEnhancer.class);
         builder.observer(WindowResizer.class);
+        builder.observer(SeleniumServerExecutor.class);
     }
 
     private <T extends Configurator & Instantiator & Destructor> void registerFactoryService(
