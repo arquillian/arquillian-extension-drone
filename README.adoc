@@ -1,6 +1,6 @@
 = Arquillian Drone image:https://travis-ci.org/arquillian/arquillian-extension-drone.svg["Build Status", link="https://travis-ci.org/arquillian/arquillian-extension-drone"]
 
-The Arquillian Drone provides a simple way how to write functional tests for an application with a web-based user interface. 
+The Arquillian Drone provides a simple way to write functional tests for an application with a web-based user interface.
 Arquillian Drone brings the power of https://code.google.com/p/selenium[WebDriver] into the Arquillian framework. WebDriver provides a language how to communicate with a browser, like filling the forms, navigating on the pages and validating their content.
 
 == Why should I use Arquillian Drone instead of plain WebDriver?
@@ -13,7 +13,7 @@ There are many reasons why you want to do that, the most important being:
 * Fully compatible with the IDE
 * Integration with mobile based browsers testing (https://github.com/arquillian/arquillian-droidium[Arquillian Droidium])
 * Integration of JavaScript test suite execution (https://github.com/arquillian/arquillian-extension-qunit[Arquillian QUnit])
-* Compatible with WebDriver (Selenium 2), Selenium 1 and Selenium Grids
+* Compatible with WebDriver (Selenium 2) and Selenium Grids
 
 If you are still not convinced that Arquillian Drone matches your needs, you might have a look at https://github.com/arquillian/arquillian-graphene[Arquillian Graphene 2], which is a wrapper on top of WebDriver, goes one step further and provides you a convenient way how to write tests for rich AJAX UIs with an ease, injections for Page Objects and Page Fragments and much more.
 
@@ -116,11 +116,202 @@ Nevertheless, if you still don't want to add the Graphene dependencies and just 
 ----
 Comprehensive Drone documentation can be found at https://docs.jboss.org/author/display/ARQ/Drone. 
 
+== Automatic Download
+Drone provides a functionality of automatic download of some binaries such as browser webdriver and Selenium Server jar. Which binaries and which features are supported can be found in tables below.
+
+=== How it works?
+
+Let say that I want to use Chrome for my UI tests. First of all, Drone checks if the path to the webdriver binary isn't already set. In this case it would check a system property `webdriver.chrome.driver`; if this is empty then it checks arquillian.xml property: `chromeDriverBinary`. In case that both properties are empty, then the automatic download comes up.
+
+Now we have several options how to specify which binary should be downloaded and where it should be stored. For storage purposes cache directories `$HOME/.arquillian/drone/subdirectory_specific_to_binary` are used so the binaries are not downloaded over and over again.
+
+==== Version
+Using a property
+
+`<property name="chromeDriverVersion">2.10</property>`
+
+you can define which version of the Chrome webdriver should be downloaded. The binary is then cached in a directory `$HOME/.arquillian/drone/chrome/2.10/`.
+
+==== URL
+Using a property
+
+`<property name="chromeDriverUrl">http://url/to/chrome/webdriver </property>`
+
+you can define which url the Chrome webdriver should be downloaded from. The directory where it is stored depends if you also specify the version of this binary or not. In case you use also the before-mentioned property `chromeDriverVersion` then it is cached in corresponding directory `$HOME/.arquillian/drone/chrome/specified_version/`; otherwise it is downloaded into `$project.directory/target/drone/downloaded/` so no cache is used.
+
+==== Latest
+In case that you don't define any property then Drone finds the latest version of the given binary and downloads this one. The binary (in case of Chrome webdriver) is cached at `$HOME/.arquillian/drone/chrome/latest_version/`.
+
+
+==== Properties, directory names and support of latest versions
+
+===== Selenium Server
+|===
+
+|System property |selenium.server.binary.path
+
+|arquillian.xml property
+|seleniumServerBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|seleniumServerVersion
+
+|Url driver property
+|seleniumServerUrl
+
+|Cache subdirectory
+|selenium-server
+|===
+
+
+
+===== Gecko driver (Firefox)
+|===
+
+|System property |webdriver.gecko.driver
+
+|arquillian.xml property
+|firefoxDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|firefoxDriverVersion
+
+|Url driver property
+|firefoxDriverUrl
+
+|Cache subdirectory
+|firefox
+|===
+
+
+===== Chrome driver
+|===
+
+|System property |webdriver.chrome.driver
+
+|arquillian.xml property
+|chromeDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|chromeDriverVersion
+
+|Url driver property
+|chromeDriverUrl
+
+|Cache subdirectory
+|chrome
+|===
+
+
+===== IE driver
+|===
+
+|System property |webdriver.ie.driver
+
+|arquillian.xml property
+|ieDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|ieDriverVersion
+
+|Url driver property
+|ieDriverUrl
+
+|Cache subdirectory
+|internetExplorer
+|===
+
+
+===== PhantomJS
+|===
+
+|System property |phantomjs.binary.path
+
+|arquillian.xml property
+|-
+
+|Latest version supported
+|no
+
+|Version driver property
+|-
+
+|Url driver property
+|-
+
+|Cache subdirectory
+|-
+|===
+
+
+===== Opera driver
+|===
+
+|System property |webdriver.opera.driver
+
+|arquillian.xml property
+|operaDriverBinary
+
+|Latest version supported
+|no
+
+|Version driver property
+|operaDriverVersion (only in combination with url)
+
+|Url driver property
+|operaDriverUrl
+
+|Cache subdirectory
+|opera
+|===
+
+
+===== Safari driver
+|===
+
+|System property |-
+
+|arquillian.xml property
+|-
+
+|Latest version supported
+|no
+
+|Version driver property
+|-
+
+|Url driver property
+|-
+
+|Cache subdirectory
+|-
+|===
+
+=== Activate / Deactivate
+
+The automatic download functionality is activated by default; if you want to set it off use the property:
+
+`<property name="downloadBinaries">false</property>`
+
+and no binary will be downloaded.
+
 == Building the project
 
 Prerequisites:
 
-* JDK 6 and newer
+* JDK 8 and newer
 * Maven 3.0.3 and newer
 
 === Running test suite
@@ -133,7 +324,7 @@ You can use Arquillian Spacelift to gather all the required binaries. Just run:
 ----
 
 This will run tests using multiple Arquillian Core versions and _phantomjs_ browser. In case you want to modify 
-the behavior, you can specify +-ParquillianCoreVersions=1.1.4+ and +-Pbrowser=phantomjs,firefox+ for instance.
+the behavior, you can specify +-ParquillianCoreVersions=1.1.12+ and +-Pbrowser=phantomjs,firefox+ for instance.
 This will run integration test using a cross product of Arquillian Core and browsers defined.
 
 WARNING: Running testsuite this way will modify all _pom.xml_ files in the project. Make sure you have committed all
@@ -143,7 +334,7 @@ your changes there first.
 
 Prerequisites:
 
-* running Selenium Server at port 4444, with paths to binaries required for remote browser execution
+* running Selenium Server at port 4444, with paths to binaries required for remote browser execution. If you don't do it by yourself, Drone will run an instance of Selenium Server automatically. However in this case the server is started and stopped for each test class separately and only in a standalone mode. So, if you are fine with this automatic behavior you can skip this step, otherwise run your Selenium Server.
 * installed web browsers you want to test
 * you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in _drone-webdriver_ module. Alternatively, you can override properties with 
  +-Darq.extension.${extensionQualifier}.${propertyName}+
@@ -151,7 +342,7 @@ Prerequisites:
 In order to start Selenium Server, execute:
 
 [source,bash]
-java -jar selenium-server-standalone-2.53.1.jar -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary
+java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.0.1.jar
 
 Once Selenium Server is running, you can run the tests by:
 
