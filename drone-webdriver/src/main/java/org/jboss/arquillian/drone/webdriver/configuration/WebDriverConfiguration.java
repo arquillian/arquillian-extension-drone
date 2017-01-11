@@ -57,14 +57,6 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private int iePort;
 
-    private String ieDriverBinary;
-
-    private String chromeDriverBinary;
-
-    private String firefoxDriverBinary;
-
-    private String operaDriverBinary;
-
     private URL remoteAddress;
 
     private String browser;
@@ -134,18 +126,6 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
             new DesiredCapabilities(this.capabilityMap));
     }
 
-    public String getChromeDriverBinary() {
-        return chromeDriverBinary;
-    }
-
-    public String getFirefoxDriverBinary() {
-        return firefoxDriverBinary;
-    }
-
-    public String getOperaDriverBinary() {
-        return operaDriverBinary;
-    }
-
     @Override
     public String getConfigurationName() {
         return CONFIGURATION_NAME;
@@ -153,10 +133,6 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public int getIePort() {
         return iePort;
-    }
-
-    public String getIeDriverBinary() {
-        return ieDriverBinary;
     }
 
     public String getImplementationClass() {
@@ -183,24 +159,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         this.browser = browser;
     }
 
-    public void setChromeDriverBinary(final String chromeDriverBinary) {
-        this.chromeDriverBinary = chromeDriverBinary;
-    }
-
-    public void setFirefoxDriverBinary(final String firefoxDriverBinary) {
-        this.firefoxDriverBinary = firefoxDriverBinary;
-    }
-
-    public void setOperaDriverBinary(final String operaDriverBinary) {
-        this.operaDriverBinary = operaDriverBinary;
-    }
-
     public void setIePort(final int iePort) {
         this.iePort = iePort;
-    }
-
-    public void setIeDriverBinary(String ieDriverBinary) {
-        this.ieDriverBinary = ieDriverBinary;
     }
 
     public void setRemote(final boolean remote) {
