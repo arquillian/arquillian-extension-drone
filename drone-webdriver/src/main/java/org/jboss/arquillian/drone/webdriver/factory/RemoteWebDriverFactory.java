@@ -37,7 +37,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSession;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
-import org.jboss.arquillian.drone.webdriver.utils.PortChecker;
+import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
@@ -98,21 +98,27 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
 
-        if (!PortChecker.isSeleniumHubRunning()) {
-            try {
-                String seleniumServer =
-                    new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
-                if (!Validate.empty(seleniumServer)) {
-                    startSeleniumServerEvent
-                        .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities));
+        if (!UrlUtils.isReachable(remoteAddress)) {
+            if (UrlUtils.isLocalhost(remoteAddress)) {
+                log.info("The Selenium server is not running on: " + remoteAddress
+                             + " and as the address seems to be a localhost address, Drone will start the Selenium Server automatically.");
+                try {
+                    String seleniumServer =
+                        new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
+                    if (!Validate.empty(seleniumServer)) {
+                        startSeleniumServerEvent
+                            .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress));
+                    }
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                        "Something bad happened when Drone was trying to download and extract Selenium Server binary. "
+                            + "For more information see the cause.", e);
+
                 }
-            } catch (Exception e) {
-                throw new IllegalStateException(
-                    "Something bad happened when Drone was trying to download and extract Selenium Server binary. "
-                        + "For more information see the cause.", e);
-
+            } else {
+                log.warning("The URL: " + remoteAddress
+                                + " doesn't seem to be reachable. If there is no Selenium Server running, start it before the tests are run.");
             }
-
         }
 
         RemoteWebDriver driver = null;

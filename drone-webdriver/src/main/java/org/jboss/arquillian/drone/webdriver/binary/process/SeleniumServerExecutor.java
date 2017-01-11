@@ -21,7 +21,8 @@ import org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHa
 import org.jboss.arquillian.drone.webdriver.binary.handler.InternetExplorerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -43,17 +44,18 @@ public class SeleniumServerExecutor {
     public void startSeleniumServer(@Observes StartSeleniumServer startSeleniumServer) {
         String browser = startSeleniumServer.getBrowser();
         String seleniumServer = startSeleniumServer.getPathToSeleniumServerBinary();
+        int port = startSeleniumServer.getUrl().getPort();
 
         BinaryHandler browserBinaryHandler = getBrowserBinaryHandler(startSeleniumServer.getCapabilities(), browser);
 
         CommandBuilder javaCommand = new CommandBuilder("java");
         if (browserBinaryHandler != null) {
             try {
-                File driverBinary = browserBinaryHandler.downloadAndPrepare();
-                if (driverBinary != null) {
+                String driverBinary = browserBinaryHandler.checkAndSetBinary(true);
+                if (!Validate.empty(driverBinary)) {
                     javaCommand
                         .parameter(
-                            "-D" + browserBinaryHandler.getSystemBinaryProperty() + "=" + driverBinary
+                            "-D" + browserBinaryHandler.getSystemBinaryProperty() + "=" + new File(driverBinary)
                                 .getAbsolutePath());
                 }
             } catch (Exception e) {
@@ -65,7 +67,7 @@ public class SeleniumServerExecutor {
         }
 
         try {
-            Command build = javaCommand.parameters("-jar", seleniumServer).build();
+            Command build = javaCommand.parameters("-jar", seleniumServer, "-port", String.valueOf(port)).build();
             SeleniumServerExecution execution = new SeleniumServerExecution().execute(build);
             seleniumServerExecutionInstanceProducer.set(execution);
 
@@ -79,7 +81,7 @@ public class SeleniumServerExecutor {
     /**
      * Stops an instance of Selenium Server
      */
-    public void stopSeleniumServer(@Observes AfterClass afterClass, SeleniumServerExecution seleniumServerExecution) {
+    public void stopSeleniumServer(@Observes AfterSuite afterClass, SeleniumServerExecution seleniumServerExecution) {
         seleniumServerExecution.stop();
     }
 

@@ -47,7 +47,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     public static URL DEFAULT_REMOTE_URL;
     static {
         try {
-            DEFAULT_REMOTE_URL = new URL("http://localhost:14444/wd/hub");
+            DEFAULT_REMOTE_URL = new URL("http://localhost:4444/wd/hub");
         } catch (MalformedURLException e) {
             // ignore invalid url exception
         }
