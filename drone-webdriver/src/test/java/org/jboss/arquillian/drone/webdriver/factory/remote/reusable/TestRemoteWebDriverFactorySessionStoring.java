@@ -98,10 +98,13 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
         try {
+            System.setProperty("browser","chrome");
             String browser = System.getProperty("browser");
+            System.setProperty("seleniumServerArgs", "");
+            String seleniumServerArgs = System.getProperty("seleniumServerArgs");
             String seleniumServerBinary =
                 new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
-            fire(new StartSeleniumServer(seleniumServerBinary, browser, new DesiredCapabilities(), hubUrl));
+            fire(new StartSeleniumServer(seleniumServerBinary, browser, new DesiredCapabilities(), hubUrl, seleniumServerArgs));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

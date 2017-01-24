@@ -14,13 +14,15 @@ public class StartSeleniumServer implements Event {
     private String browser;
     private DesiredCapabilities capabilities;
     private URL url;
+    private String seleniumServerArgs;
 
     public StartSeleniumServer(String pathToSeleniumServerBinary, String browser,
-        DesiredCapabilities capabilities, URL url) {
+        DesiredCapabilities capabilities, URL url, String seleniumServerArgs) {
         this.pathToSeleniumServerBinary = pathToSeleniumServerBinary;
         this.browser = browser;
         this.capabilities = capabilities;
         this.url = url;
+        this.seleniumServerArgs = seleniumServerArgs;
     }
 
     public String getPathToSeleniumServerBinary() {
@@ -30,6 +32,10 @@ public class StartSeleniumServer implements Event {
     public void setPathToSeleniumServerBinary(String pathToSeleniumServerBinary) {
         this.pathToSeleniumServerBinary = pathToSeleniumServerBinary;
     }
+
+    public String getSeleniumServerArgs() { return seleniumServerArgs; }
+
+    public void setSeleniumServerArgs(String seleniumServerArgs) { this.seleniumServerArgs = seleniumServerArgs; }
 
     public String getBrowser() {
         return browser;

@@ -43,10 +43,12 @@ public class SeleniumServerExecutor {
      */
     public void startSeleniumServer(@Observes StartSeleniumServer startSeleniumServer) {
         String browser = startSeleniumServer.getBrowser();
+        String seleniumServerArgs = startSeleniumServer.getSeleniumServerArgs();
         String seleniumServer = startSeleniumServer.getPathToSeleniumServerBinary();
         int port = startSeleniumServer.getUrl().getPort();
 
         BinaryHandler browserBinaryHandler = getBrowserBinaryHandler(startSeleniumServer.getCapabilities(), browser);
+
 
         CommandBuilder javaCommand = new CommandBuilder("java");
         if (browserBinaryHandler != null) {
@@ -67,7 +69,8 @@ public class SeleniumServerExecutor {
         }
 
         try {
-            Command build = javaCommand.parameters("-jar", seleniumServer, "-port", String.valueOf(port)).build();
+            Command build = javaCommand.parameters("-jar", seleniumServer, "-port", String.valueOf(port), seleniumServerArgs).build();
+
             SeleniumServerExecution execution = new SeleniumServerExecution().execute(build);
             seleniumServerExecutionInstanceProducer.set(execution);
 
