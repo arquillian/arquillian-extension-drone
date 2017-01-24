@@ -16,14 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
-import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -31,6 +23,14 @@ import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
@@ -55,6 +55,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public static final String DEFAULT_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
 
+    public static final String DEFAULT_SELENIUM_SERVER_ARGS = "";
+
     private int iePort;
 
     private URL remoteAddress;
@@ -64,6 +66,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     private boolean remoteReusable;
 
     private boolean remote;
+
+    private String seleniumServerArgs;
 
     // ARQ-1206, ability to delete all cookies in reused browsers
     private boolean reuseCookies;
@@ -126,6 +130,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
             new DesiredCapabilities(this.capabilityMap));
     }
 
+    public String getSeleniumServerArgs() {
+        return seleniumServerArgs;
+    }
+
     @Override
     public String getConfigurationName() {
         return CONFIGURATION_NAME;
@@ -185,5 +193,9 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setDimensions(String dimensions) {
         this.dimensions = dimensions;
+    }
+
+    public void setSeleniumServerArgs(String seleniumServerArgs) {
+        this.seleniumServerArgs = seleniumServerArgs;
     }
 }

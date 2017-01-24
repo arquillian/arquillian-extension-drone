@@ -95,6 +95,13 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
 
+        String seleniumServerArgs = configuration.getSeleniumServerArgs();
+        if (Validate.empty(seleniumServerArgs)) {
+            configuration.setSeleniumServerArgs(WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
+            log.log(Level.INFO, "Property \"seleniumServerArgs\" was not specified, using default value of {0}",
+                    WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
+        }
+
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
 
@@ -107,7 +114,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
                         new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
                     if (!Validate.empty(seleniumServer)) {
                         startSeleniumServerEvent
-                            .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress));
+                            .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress, seleniumServerArgs));
                     }
                 } catch (Exception e) {
                     throw new IllegalStateException(
