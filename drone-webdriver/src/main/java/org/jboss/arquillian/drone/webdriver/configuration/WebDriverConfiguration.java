@@ -55,7 +55,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public static final String DEFAULT_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
 
-    public static final String DEFAULT_SELENIUM_SERVER_ARGS = null;
+    public static final String DEFAULT_SELENIUM_SERVER_ARGS = "";
 
     private int iePort;
 

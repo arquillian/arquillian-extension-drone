@@ -102,8 +102,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
                     WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
         }
 
-        Validate.isEmpty(configuration.getSeleniumServerArgs(), " Property SeleniumServerArgs is not set.");
-
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
 

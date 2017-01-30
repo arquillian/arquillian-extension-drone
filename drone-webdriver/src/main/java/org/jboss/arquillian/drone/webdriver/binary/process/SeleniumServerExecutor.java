@@ -1,6 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -49,7 +52,6 @@ public class SeleniumServerExecutor {
 
         BinaryHandler browserBinaryHandler = getBrowserBinaryHandler(startSeleniumServer.getCapabilities(), browser);
 
-
         CommandBuilder javaCommand = new CommandBuilder("java");
         if (browserBinaryHandler != null) {
             try {
@@ -69,7 +71,12 @@ public class SeleniumServerExecutor {
         }
 
         try {
-            Command build = javaCommand.parameters("-jar", seleniumServer, "-port", String.valueOf(port), seleniumServerArgs).build();
+            List<String> parameterList = new ArrayList<>(Arrays.asList("-jar", seleniumServer, "-port", String.valueOf(port)));
+
+            if (seleniumServerArgs != null && !seleniumServerArgs.isEmpty()){
+                parameterList.add(seleniumServerArgs);
+            }
+            Command build = javaCommand.parameters(parameterList).build();
 
             SeleniumServerExecution execution = new SeleniumServerExecution().execute(build);
             seleniumServerExecutionInstanceProducer.set(execution);

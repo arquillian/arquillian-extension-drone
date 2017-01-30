@@ -98,9 +98,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
         try {
-            System.setProperty("browser","chrome");
             String browser = System.getProperty("browser");
-            System.setProperty("seleniumServerArgs", "");
             String seleniumServerArgs = System.getProperty("seleniumServerArgs");
             String seleniumServerBinary =
                 new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
@@ -126,6 +124,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
+        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
 
         // when
         fire(new BeforeSuite());
@@ -154,6 +153,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
+        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
 
         // when
         fire(new BeforeSuite());

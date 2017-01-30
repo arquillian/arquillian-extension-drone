@@ -52,6 +52,8 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
 
     private String browserCapabilities;
 
+    private String seleniumServerArgs;
+
     /*
      * (non-Javadoc)
      *
@@ -152,5 +154,9 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     public void setBrowserCapabilities(String browserCapabilities) {
         this.browserCapabilities = browserCapabilities;
     }
+
+    public String getSeleniumServerArgs() { return seleniumServerArgs; }
+
+    public void setSeleniumServerArgs(String seleniumServerArgs) { this.seleniumServerArgs = seleniumServerArgs; }
 
 }
