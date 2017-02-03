@@ -112,6 +112,11 @@
             <artifactId>arquillian-phantom-driver</artifactId>
             <version>${version.phantom.driver}</version>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-edge-driver</artifactId>
+            <version>${version.selenium}</version>
+        </dependency>
     </dependencies>
 
 </project>

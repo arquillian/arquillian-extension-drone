@@ -212,6 +212,28 @@ In case that you don't define any property then Drone finds the latest version o
 |===
 
 
+===== Edge driver
+|===
+
+|System property |webdriver.edge.driver
+
+|arquillian.xml property
+|edgeDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|edgeDriverVersion
+
+|Url driver property
+|edgeDriverUrl
+
+|Cache subdirectory
+|edge
+|===
+
+
 ===== IE driver
 |===
 
@@ -339,6 +361,10 @@ Prerequisites:
 * you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in _drone-webdriver_ module. Alternatively, you can override properties with 
  +-Darq.extension.${extensionQualifier}.${propertyName}+
 
+Limitations:
+
+* reusable sessions are not supported by Edge browser therefore related tests are skipped
+
 In order to start Selenium Server, execute:
 
 [source,bash]
@@ -349,7 +375,7 @@ Once Selenium Server is running, you can run the tests by:
 [source,bash]
 mvn clean verify -Dbrowser=${browser}
 
-Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, etc.)
+Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, edge, etc.)
 
 TIP: VNC server instance can be used to let all the browsers pop out in separate display. Just prepend both commands with +DISPLAY=:${display.number}+
 

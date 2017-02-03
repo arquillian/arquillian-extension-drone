@@ -27,6 +27,7 @@ public class Constants {
         "The required web driver class {0} is not on your class path so the factory {1} will not be available.";
 
     public static final String FIREFOX_DRIVER = "org.openqa.selenium.firefox.FirefoxDriver";
+    public static final String EDGE_DRIVER = "org.openqa.selenium.edge.EdgeDriver";
     public static final String CHROME_DRIVER = "org.openqa.selenium.chrome.ChromeDriver";
     public static final String HTMLUNIT_DRIVER = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
     public static final String IE_DRIVER = "org.openqa.selenium.ie.InternetExplorerDriver";

@@ -37,6 +37,29 @@ public class BrowserCapabilitiesList {
         }
     };
 
+    public static class Edge implements BrowserCapabilities {
+
+        @Override
+        public String getImplementationClassName() {
+            return "org.openqa.selenium.edge.EdgeDriver";
+        }
+
+        @Override
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.edge().asMap();
+        }
+
+        @Override
+        public String getReadableName() {
+            return "edge";
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+    };
+
     public static class Firefox implements BrowserCapabilities {
 
         @Override

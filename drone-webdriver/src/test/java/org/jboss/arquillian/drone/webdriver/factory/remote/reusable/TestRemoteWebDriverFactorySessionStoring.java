@@ -35,6 +35,8 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,6 +54,11 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBase {
+
+    @BeforeClass
+    public static void skipIfEdgeBrowser() {
+        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+    }
 
     @Mock
     private ServiceLoader serviceLoader;
