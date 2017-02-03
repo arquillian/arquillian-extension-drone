@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.EdgeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
@@ -44,6 +45,7 @@ import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.window.WindowResizer;
 
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.CHROME_DRIVER;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.EDGE_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.FIREFOX_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.HTMLUNIT_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.IE_DRIVER;
@@ -67,6 +69,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
 
         registerFactoryService(builder, ChromeDriverFactory.class, CHROME_DRIVER);
+        registerFactoryService(builder, EdgeDriverFactory.class, EDGE_DRIVER);
         registerFactoryService(builder, FirefoxDriverFactory.class, FIREFOX_DRIVER);
         registerFactoryService(builder, HtmlUnitDriverFactory.class, HTMLUNIT_DRIVER);
         registerFactoryService(builder, InternetExplorerDriverFactory.class, IE_DRIVER);
@@ -79,6 +82,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.observer(BrowserCapabilitiesRegistrar.class);
 
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Chrome.class);
+        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Edge.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Firefox.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.HtmlUnit.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.InternetExplorer.class);

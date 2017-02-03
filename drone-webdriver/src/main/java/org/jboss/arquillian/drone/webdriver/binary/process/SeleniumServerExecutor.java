@@ -20,6 +20,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.webdriver.binary.handler.BinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.binary.handler.EdgeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.InternetExplorerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
@@ -106,13 +107,12 @@ public class SeleniumServerExecutor {
     private BinaryHandler getBrowserBinaryHandler(DesiredCapabilities capabilities, String browser) {
         if (new BrowserCapabilitiesList.Firefox().getReadableName().equals(browser)) {
             return new FirefoxDriverBinaryHandler(capabilities);
-
+        } else if (new BrowserCapabilitiesList.Edge().getReadableName().equals(browser)) {
+            return new EdgeDriverBinaryHandler(capabilities);
         } else if (new BrowserCapabilitiesList.Chrome().getReadableName().equals(browser)) {
             return new ChromeDriverBinaryHandler(capabilities);
-
         } else if (new BrowserCapabilitiesList.InternetExplorer().getReadableName().equals(browser)) {
             return new InternetExplorerBinaryHandler(capabilities);
-
         } else if (new BrowserCapabilitiesList.PhantomJS().getReadableName().equals(browser)) {
             return new PhantomJSDriverBinaryHandler(capabilities);
         }

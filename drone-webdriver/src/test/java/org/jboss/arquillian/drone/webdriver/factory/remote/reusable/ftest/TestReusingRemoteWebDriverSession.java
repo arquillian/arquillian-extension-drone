@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -35,6 +37,11 @@ import qualifier.Reusable;
 public class TestReusingRemoteWebDriverSession extends AbstractInBrowserTest {
 
     private static SessionId sessionId;
+
+    @BeforeClass
+    public static void skipIfEdgeBrowser() {
+        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+    }
 
     @Test
     public void testReusableSessionId1(@Drone @Reusable RemoteWebDriver driver) {

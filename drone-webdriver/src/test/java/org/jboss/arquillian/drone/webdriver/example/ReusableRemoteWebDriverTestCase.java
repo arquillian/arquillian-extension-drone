@@ -22,6 +22,8 @@ import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -46,6 +48,11 @@ public class ReusableRemoteWebDriverTestCase {
 
     // sessionId is set to be static, so it can be shared between test methods
     private static SessionId sessionId;
+
+    @BeforeClass
+    public static void skipIfEdgeBrowser() {
+        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+    }
 
     private void checkIfWebdriverHubIsRunning() {
         Assert.assertTrue(

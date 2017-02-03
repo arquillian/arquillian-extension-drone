@@ -19,6 +19,9 @@
 
         <!-- Settings for Internet Explorer -->
         <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
+
+        <!-- Settings for Edge -->
+        <property name="edgeDriverBinary">C:\Selenium\MicrosoftWebDriver.exe</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
@@ -43,6 +46,9 @@
 
         <!-- Settings for Internet Explorer -->
         <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
+
+        <!-- Settings for Edge -->
+        <property name="edgeDriverBinary">C:\Selenium\MicrosoftWebDriver.exe</property>
     </extension>
 
     <!-- Set a different remote address then default for RemoteReusableTesting -->
@@ -68,5 +74,8 @@
 
         <!-- Settings for Internet Explorer -->
         <property name="ieDriverBinary">C:\Selenium\IEDriverServer.exe</property>
+
+        <!-- Settings for Edge -->
+        <property name="edgeDriverBinary">C:\Selenium\MicrosoftWebDriver.exe</property>
     </extension>
 </arquillian>
