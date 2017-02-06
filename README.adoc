@@ -334,7 +334,14 @@ your changes there first.
 
 Prerequisites:
 
-* running Selenium Server at port 4444, with paths to binaries required for remote browser execution. If you don't do it by yourself, Drone will run an instance of Selenium Server automatically. However in this case the server is started and stopped for each test class separately and only in a standalone mode. So, if you are fine with this automatic behavior you can skip this step, otherwise run your Selenium Server.
+* running Selenium Server at port 4444, with paths to binaries required for remote browser execution. If you don't do it by yourself, Drone will run an instance of Selenium Server automatically. However in this case the server is started and stopped for each test class separately and only in a standalone mode with only one parameter `-port` that is taken from defined remoteAddress.
++
+In case you want to specify other arguments to the selenium server, you can do so using the property,
++
+`<property name="seleniumServerArgs">-debug -role hub -browserTimeout 1000</property>`
++
+So, if you are fine with this automatic behavior you can skip this step, otherwise run your Selenium Server.
+
 * installed web browsers you want to test
 * you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in _drone-webdriver_ module. Alternatively, you can override properties with 
  +-Darq.extension.${extensionQualifier}.${propertyName}+

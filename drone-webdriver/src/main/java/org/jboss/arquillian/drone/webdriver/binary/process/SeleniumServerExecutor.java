@@ -74,11 +74,13 @@ public class SeleniumServerExecutor {
             List<String> parameterList = new ArrayList<>(Arrays.asList("-jar", seleniumServer, "-port", String.valueOf(port)));
 
             if (seleniumServerArgs != null && !seleniumServerArgs.isEmpty()){
-                parameterList.add(seleniumServerArgs);
+                parameterList.addAll(Arrays.asList(seleniumServerArgs.split(" ")));
             }
+
             Command build = javaCommand.parameters(parameterList).build();
 
             SeleniumServerExecution execution = new SeleniumServerExecution().execute(build);
+
             seleniumServerExecutionInstanceProducer.set(execution);
 
         } catch (Exception e) {
