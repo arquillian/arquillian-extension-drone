@@ -31,7 +31,7 @@ import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecuto
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
@@ -110,7 +110,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     @After
     public void stopServer(){
-        fire(new AfterClass(this.getClass()));
+        fire(new AfterSuite());
     }
 
     @Test
