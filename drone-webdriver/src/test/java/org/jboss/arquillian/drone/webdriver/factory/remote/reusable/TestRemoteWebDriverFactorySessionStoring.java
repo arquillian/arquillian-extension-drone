@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
-import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
@@ -101,7 +100,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
             String browser = System.getProperty("browser");
             String seleniumServerBinary =
                 new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
-            fire(new StartSeleniumServer(seleniumServerBinary, browser, new DesiredCapabilities(), hubUrl));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
