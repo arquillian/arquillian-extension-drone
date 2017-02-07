@@ -23,7 +23,7 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Before;
@@ -66,6 +66,6 @@ public class TestReusedSessionStore extends AbstractTestTestBase {
     public void test_store_is_created_on_before_suite_event() {
         getManager().fire(new BeforeSuite());
         assertNotNull(store.get());
-        getManager().fire(new AfterClass(this.getClass()));
+        getManager().fire(new AfterSuite());
     }
 }
