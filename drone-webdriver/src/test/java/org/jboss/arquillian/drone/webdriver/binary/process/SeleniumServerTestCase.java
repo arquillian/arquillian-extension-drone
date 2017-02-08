@@ -1,7 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
-import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
@@ -30,7 +29,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     private StreamHandler customLogHandler;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
     private String seleniumServerBinary;
     private DesiredCapabilities capabilities;
@@ -46,7 +44,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         seleniumServerBinary =
                 new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
         capabilities = new DesiredCapabilities();
-        url = new URL("http://localhost:4444/wd/hub/");
+        url = new URL("http://localhost:5555/wd/hub/");
 
         attachLogCapture();
         setUpStreams();
@@ -130,11 +128,9 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
     private void setUpStreams() {
         System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
     }
 
     private void cleanUpStreams() {
         System.setOut(null);
-        System.setErr(null);
     }
 }
