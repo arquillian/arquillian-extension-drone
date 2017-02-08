@@ -53,7 +53,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @InSequence(1)
     public void should_start_selenium_server_with_serverArgs_debug() throws Exception {
 
         final String browser = "chrome";
@@ -68,7 +67,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @InSequence(2)
     public void should_start_selenium_server_with_no_serverArgs() throws Exception {
 
         final String browser = "chrome";
@@ -82,12 +80,10 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @InSequence(3)
-    public void should_start_selenium_server_with_hub_and_node() throws Exception {
+    public void should_start_selenium_server_as_hub() throws Exception {
 
         final String browser = "chrome";
 
-        // start selenium Grid Hub at port 4444
         String seleniumServerArgs = "-role hub -browserTimeout 1000";
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
@@ -96,17 +92,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         assertThat(hubCommand).contains(seleniumServerArgs);
         assertThat(outContent.toString()).contains("Selenium Grid hub is up and running");
-
-        // start selenium grid node at port 5555 and register it with the Hub.
-        String seleniumServerArgs2 = "-role node";
-        URL nodeUrl = new URL("http://localhost:5555");
-
-        fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, nodeUrl, seleniumServerArgs2));
-
-        String nodeCommand = parseLogger();
-
-        assertThat(nodeCommand).contains(seleniumServerArgs2);
-        assertThat(outContent.toString()).contains("The node is registered to the hub and ready to use");
     }
 
     @After
