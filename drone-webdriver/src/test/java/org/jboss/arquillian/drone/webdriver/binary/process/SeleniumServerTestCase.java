@@ -131,6 +131,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     }
 
     private void cleanUpStreams() {
-        System.setOut(null);
+        System.setOut(System.out);
     }
 }
