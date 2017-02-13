@@ -293,11 +293,25 @@ In case that you don't define any property then Drone finds the latest version o
 |-
 
 |Url driver property
-|-
+|no
 
 |Cache subdirectory
 |-
 |===
+
+=== Note:
+
+==== We are not supporting `Automatic downloading for safari` & `Download webdriver from a specific URL` due to following reasons:
+===== Automatic downloading for safari:
+Starting with Safari 10 on OS X El Capitan and macOS Sierra, Safari comes bundled with a new driver
+implementation that’s maintained by the Web Developer Experience team at Apple.
+Safari’s driver is launchable via the /usr/bin/safaridriver executable, and most client libraries
+provided by Selenium will automatically launch the driver this way without further configuration.
+https://webkit.org/blog/6900/webdriver-support-in-safari-10/[Safari-10]
+
+===== Download webdriver from a specific URL:
+Starting with Selenium 2.48.0, you must manually install the SafariDriver browser extension.
+Refer getting started section from https://github.com/SeleniumHQ/selenium/wiki/SafariDriver[SafariDiver]
 
 === Activate / Deactivate
 
