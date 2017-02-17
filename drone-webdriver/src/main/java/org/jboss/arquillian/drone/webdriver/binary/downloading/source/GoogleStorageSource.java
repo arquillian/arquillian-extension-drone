@@ -1,5 +1,15 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,18 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import static org.jboss.arquillian.drone.webdriver.utils.HttpUtils.sentGetRequest;
 
 /**
  * GoogleStorageSource source is an abstract class that helps you to retrieve either latest release
@@ -33,8 +31,10 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
 
     private Logger log = Logger.getLogger(GoogleStorageSource.class.toString());
 
+    private HttpClient httpClient;
     private String storageUrl;
     private String urlToLatestRelease;
+
     private ArrayList<Content> contents;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private String latestVersion;
@@ -42,23 +42,24 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
     /**
      * @param storageUrl An url to a google storage from which information about releases should be retrieved from
      */
-    public GoogleStorageSource(String storageUrl) {
+    public GoogleStorageSource(String storageUrl, HttpClient httpClient) {
         this.storageUrl = storageUrl;
+        this.httpClient = httpClient;
     }
 
     /**
      * @param storageUrl An url to a google storage from which information about releases should be retrieved from
      * @param urlToLatestRelease An url where a version of the latest release could be retrieved from
      */
-    public GoogleStorageSource(String storageUrl, String urlToLatestRelease) {
+    public GoogleStorageSource(String storageUrl, String urlToLatestRelease, HttpClient httpClient) {
+        this(storageUrl, httpClient);
         this.urlToLatestRelease = urlToLatestRelease;
-        this.storageUrl = storageUrl;
     }
 
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
         if (urlToLatestRelease != null) {
-            latestVersion = StringUtils.trimMultiline(sentGetRequest(urlToLatestRelease));
+            latestVersion = StringUtils.trimMultiline(httpClient.sentGetRequest(urlToLatestRelease));
         } else {
             retrieveContents();
         }
@@ -70,7 +71,7 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
             contents = new ArrayList<>();
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(sentGetRequest(storageUrl)));
+            is.setCharacterStream(new StringReader(httpClient.sentGetRequest(storageUrl)));
             Document doc = db.parse(is);
             NodeList contentNodes = ((Element) doc.getFirstChild()).getElementsByTagName("Contents");
             for (int i = 0; i < contentNodes.getLength(); i++) {

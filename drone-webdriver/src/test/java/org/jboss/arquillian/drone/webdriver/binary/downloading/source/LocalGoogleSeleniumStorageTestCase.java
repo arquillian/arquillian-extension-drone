@@ -1,19 +1,18 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.handler.GoogleSeleniumStorageProvider;
-import org.jboss.arquillian.drone.webdriver.utils.HttpUtils;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource.SELENIUM_BASE_STORAGE_URL;
@@ -21,17 +20,18 @@ import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.Sel
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpUtils.class)
+@RunWith(MockitoJUnitRunner.class)
 public class LocalGoogleSeleniumStorageTestCase {
 
     public static final String FILE_PATH =
         "src/test/resources/files/downloading/local-selenium-storage-2016-12-21".replace("/", File.separator);
 
+    @Mock
+    private HttpClient httpClient;
+
     @Before
     public void setMock() throws IOException {
-        PowerMockito.mockStatic(HttpUtils.class);
-        BDDMockito.when(HttpUtils.sentGetRequest(SELENIUM_BASE_STORAGE_URL)).thenReturn(
+        BDDMockito.when(httpClient.sentGetRequest(SELENIUM_BASE_STORAGE_URL)).thenReturn(
             FileUtils.readFileToString(new File(FILE_PATH), "utf-8"));
     }
 

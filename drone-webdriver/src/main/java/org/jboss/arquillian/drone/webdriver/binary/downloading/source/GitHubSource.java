@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.http.client.utils.URIBuilder;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.HttpUtils;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 
 import java.net.URI;
 import java.util.Iterator;
@@ -37,12 +37,28 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private ExternalBinary binaryRelease;
 
+    private final HttpClient httpClient;
+
     /**
      * @param organization GitHub organization/user name the project belongs to
      * @param project GitHub project name
      */
-    public GitHubSource(String organization, String project) {
+    public GitHubSource(String organization, String project, HttpClient httpClient) {
+        this.httpClient = httpClient;
         projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
+    }
+
+    /**
+     * It is expected that this abstract method should return a regex that represents an expected file name
+     * of the release asset. These names are visible on pages of some specific release or accessible
+     * via api.github request.
+     *
+     * @return A regex that represents an expected file name of an asset associated with the required release.
+     */
+    protected abstract String getExpectedFileNameRegex();
+
+    public ExternalBinary getBinaryRelease() {
+        return binaryRelease;
     }
 
     @Override
@@ -52,15 +68,17 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
         JsonObject latestRelease = sentGetRequest(projectUrl + latestUrl, false).getAsJsonObject();
 
-        if (latestRelease != null){
+        if (latestRelease != null){ // TODO not decided based on null
             tagName = latestRelease.get(tagNameKey).getAsString();
             id = latestRelease.get(idKey).getAsString();
 
-            HttpUtils.storeConfig("tagName", tagName);
-            HttpUtils.storeConfig("id", id);
+            // TODO move to storage component
+            httpClient.storeConfig("tagName", tagName);
+            httpClient.storeConfig("id", id);
         } else {
-            tagName = HttpUtils.loadConfig("tagName");
-            id = HttpUtils.loadConfig("id");
+            // TODO move to storage component
+            tagName = httpClient.loadConfig("tagName");
+            id = httpClient.loadConfig("id");
         }
 
         binaryRelease = new ExternalBinary(tagName);
@@ -90,15 +108,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
         }
         return null;
     }
-
-    /**
-     * It is expected that this abstract method should return a regex that represents an expected file name
-     * of the release asset. These names are visible on pages of some specific release or accessible
-     * via api.github request.
-     *
-     * @return A regex that represents an expected file name of an asset associated with the required release.
-     */
-    protected abstract String getExpectedFileNameRegex();
 
     private void setAssets(JsonObject releaseObject, String releaseId) throws Exception {
         JsonArray assets = releaseObject.get(assetsKey).getAsJsonArray();
@@ -140,15 +149,11 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private <T> T sentGetRequestWithPagination(String url, int pageNumber, Class<T> expectedType) throws Exception {
         URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
-        String json = HttpUtils.sentGetRequest(uri.toString());
+        String json = httpClient.sentGetRequest(uri.toString());
         if (json != null) {
             Gson gson = new Gson();
             return gson.fromJson(json, expectedType);
         }
         return null;
-    }
-
-    public ExternalBinary getBinaryRelease() {
-        return binaryRelease;
     }
 }

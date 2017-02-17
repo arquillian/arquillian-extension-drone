@@ -20,12 +20,12 @@ import static org.apache.http.HttpStatus.SC_NOT_MODIFIED;
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class HttpUtils {
+public class HttpClient {
 
-    private static String LastModified = null;
-    private static Properties properties = new Properties();
+    private String LastModified = null;
+    private Properties properties = new Properties();
 
-    public static String sentGetRequest(String url) throws IOException {
+    public String sentGetRequest(String url) throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
 
@@ -51,7 +51,7 @@ public class HttpUtils {
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
-    public static String loadConfig(String key) throws IOException {
+    public String loadConfig(String key) throws IOException {
         String value = null;
         File configFile = new File("config.properties");
 
@@ -62,7 +62,7 @@ public class HttpUtils {
         return value;
     }
 
-    public static void storeConfig(String key, String value) throws IOException {
+    public void storeConfig(String key, String value) throws IOException {
         properties.setProperty(key, value);
         properties.store(new FileOutputStream("config.properties"), null);
     }
