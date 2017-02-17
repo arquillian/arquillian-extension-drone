@@ -35,8 +35,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
     private String browserDownloadUrlKey = "browser_download_url";
     private String assetsKey = "assets";
 
-    private ExternalBinary binaryRelease;
-
     private final HttpClient httpClient;
 
     /**
@@ -55,34 +53,26 @@ public abstract class GitHubSource implements ExternalBinarySource {
      *
      * @return A regex that represents an expected file name of an asset associated with the required release.
      */
-    protected abstract String getExpectedFileNameRegex();
-
-    public ExternalBinary getBinaryRelease() {
-        return binaryRelease;
-    }
+    protected abstract String getExpectedFileNameRegex(String version);
 
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
 
-        String tagName, id;
+        String tagName;
 
         JsonObject latestRelease = sentGetRequest(projectUrl + latestUrl, false).getAsJsonObject();
 
         if (latestRelease != null){ // TODO not decided based on null
             tagName = latestRelease.get(tagNameKey).getAsString();
-            id = latestRelease.get(idKey).getAsString();
-
             // TODO move to storage component
             httpClient.storeConfig("tagName", tagName);
-            httpClient.storeConfig("id", id);
         } else {
             // TODO move to storage component
             tagName = httpClient.loadConfig("tagName");
-            id = httpClient.loadConfig("id");
         }
 
-        binaryRelease = new ExternalBinary(tagName);
-        setAssets(latestRelease, id);
+        final ExternalBinary binaryRelease = new ExternalBinary(tagName);
+        setAssets(latestRelease, binaryRelease);
         return binaryRelease;
     }
 
@@ -98,9 +88,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
                 String releaseTagName = releaseObject.get(tagNameKey).getAsString();
 
                 if (version.equals(releaseTagName)) {
-                    binaryRelease = new ExternalBinary(releaseTagName);
-                    String id = releaseObject.get(idKey).getAsString();
-                    setAssets(releaseObject, id);
+                    final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
+                    setAssets(releaseObject, binaryRelease);
                     return binaryRelease;
                 }
             }
@@ -109,14 +98,14 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return null;
     }
 
-    private void setAssets(JsonObject releaseObject, String releaseId) throws Exception {
+    private void setAssets(JsonObject releaseObject, ExternalBinary binaryRelease) throws Exception {
         JsonArray assets = releaseObject.get(assetsKey).getAsJsonArray();
         Iterator<JsonElement> iterator = assets.iterator();
         while (iterator.hasNext()) {
             JsonObject asset = iterator.next().getAsJsonObject();
             String name = asset.get(assetNameKey).getAsString();
 
-            if (name.matches(getExpectedFileNameRegex())) {
+            if (name.matches(getExpectedFileNameRegex(binaryRelease.getVersion()))) {
                 String browserDownloadUrl = asset.get(browserDownloadUrlKey).getAsString();
                 binaryRelease.setUrl(browserDownloadUrl);
                 break;

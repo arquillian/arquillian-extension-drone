@@ -24,7 +24,8 @@ public class DummyRepositoryGitHubSource extends GitHubSource {
         super("MatousJobanek", "my-test-repository", httpClient);
     }
 
-    @Override protected String getExpectedFileNameRegex() {
+    @Override
+    protected String getExpectedFileNameRegex(String version) {
         return "release.zip";
     }
 

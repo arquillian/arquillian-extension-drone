@@ -66,9 +66,9 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
         }
 
         @Override
-        protected String getExpectedFileNameRegex() {
+        protected String getExpectedFileNameRegex(String version) {
             StringBuilder fileNameRegex = new StringBuilder("geckodriver-");
-            fileNameRegex.append(getBinaryRelease().getVersion()).append("-");
+            fileNameRegex.append(version).append("-");
             if (PlatformUtils.isMac()) {
                 fileNameRegex.append("macos").toString();
             } else {
