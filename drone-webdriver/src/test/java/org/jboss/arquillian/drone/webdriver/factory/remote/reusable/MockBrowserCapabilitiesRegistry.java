@@ -14,23 +14,25 @@ import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 
-class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
+public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
 
     private final Map<String, BrowserCapabilities> cache;
 
-    public static MockBrowserCapabilitiesRegistry createSingletonRegistry() {
-        // set desired capabilities
-        ArquillianDescriptor arqXml = Descriptors.importAs(ArquillianDescriptor.class).fromStream(
-                URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
+    public static ArquillianDescriptor getArquillianDescriptor(){
+        return  Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+            URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
+    }
 
-        MockBrowserCapabilitiesRegistry registry = new MockBrowserCapabilitiesRegistry(arqXml);
+    public static MockBrowserCapabilitiesRegistry createSingletonRegistry() {
+
+        MockBrowserCapabilitiesRegistry registry = new MockBrowserCapabilitiesRegistry();
         return registry;
     }
 
-    public MockBrowserCapabilitiesRegistry(ArquillianDescriptor descriptor) {
+    public MockBrowserCapabilitiesRegistry() {
         this.cache = new HashMap<String, BrowserCapabilities>();
 
-        String browser = getBrowser(descriptor);
+        String browser = getBrowser(getArquillianDescriptor());
         if ("phantomjs".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
         }

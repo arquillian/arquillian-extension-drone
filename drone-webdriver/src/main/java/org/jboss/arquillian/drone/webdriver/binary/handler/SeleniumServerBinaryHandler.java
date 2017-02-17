@@ -16,7 +16,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
     private static final String SELENIUM_SERVER_SYSTEM_DRIVER_BINARY_PROPERTY = "selenium.server.binary.path";
     private static final String SELENIUM_SERVER_DRIVER_BINARY_PROPERTY = "seleniumServerBinary";
-    private static final String SELENIUM_SERVER_VERSION_PROPERTY = "seleniumServerVersion";
+    public static final String SELENIUM_SERVER_VERSION_PROPERTY = "seleniumServerVersion";
     private static final String SELENIUM_SERVER_URL_PROPERTY = "seleniumServerUrl";
 
     private Logger log = Logger.getLogger(SeleniumServerBinaryHandler.class.toString());

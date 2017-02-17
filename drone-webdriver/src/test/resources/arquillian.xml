@@ -5,6 +5,8 @@
         <!-- browser is set externally -->
         <property name="browser">${browser}</property>
 
+        <property name="seleniumServerVersion">${version.selenium}</property>
+
         <property name="dimensions">1300x500</property>
 
         <!-- These settings are related to Chrome -->
@@ -29,6 +31,7 @@
         <!-- browser is set externally -->
         <property name="browser">${browser}</property>
 
+        <property name="seleniumServerVersion">${version.selenium}</property>
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remoteReusable">true</property>
 
@@ -56,6 +59,7 @@
         <!-- browser is set externally -->
         <property name="browser">${browser}</property>
 
+        <property name="seleniumServerVersion">${version.selenium}</property>
         <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
         <property name="remoteReusable">true</property>
 
