@@ -25,3 +25,7 @@ chromedriver.log
 **/*.xml.backup*
 .gradle
 ws
+
+# Floobits configuration
+.floo
+
