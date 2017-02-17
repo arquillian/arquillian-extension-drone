@@ -184,9 +184,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             ReusedSession session = ReusedSession.createInstance(sessionId, driverCapabilities);
             sessionStore.get().store(param, session);
             persistEvent.fire(new PersistReusedSessionsEvent());
-        } else {
-            driver.quit();
         }
+        driver.quit();
     }
 
     @Override
