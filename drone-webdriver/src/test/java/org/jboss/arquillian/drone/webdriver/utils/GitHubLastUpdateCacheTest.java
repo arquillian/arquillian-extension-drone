@@ -8,7 +8,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ public class GitHubLastUpdateCacheTest {
         final String releasesId = "4968399";
 
         // when
-        gitHubLastUpdateCache.store(externalBinary, releasesId, LocalDateTime.now());
+        gitHubLastUpdateCache.store(externalBinary, releasesId, ZonedDateTime.now());
 
         // then
         assertThat(tmpFolder.listFiles()).containsOnly(new File(tmpFolder.getAbsolutePath() + "/gh.cache.4968399.json"));
@@ -44,7 +45,7 @@ public class GitHubLastUpdateCacheTest {
         // given
         final ExternalBinary storedExternalBinary = new ExternalBinary("1.0.0.Final", "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/assets/2857399");
         final String releasesId = "4968399";
-        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, LocalDateTime.now());
+        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, ZonedDateTime.now());
 
         // when
         final ExternalBinary loadedExternalLibrary = gitHubLastUpdateCache.load(releasesId, ExternalBinary.class);
@@ -58,14 +59,25 @@ public class GitHubLastUpdateCacheTest {
         // given
         final ExternalBinary storedExternalBinary = new ExternalBinary("1.0.0.Final", "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/assets/2857399");
         final String releasesId = "4968399";
-        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, LocalDateTime.now().minusDays(2));
+        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, ZonedDateTime.now(ZoneId.systemDefault()).minusDays(2));
 
         // when
-        LocalDateTime modificationDate = gitHubLastUpdateCache.lastModificationOf(releasesId);
+        ZonedDateTime modificationDate = gitHubLastUpdateCache.lastModificationOf(releasesId);
 
         // then
-        assertThat(modificationDate).isBefore(LocalDateTime.now());
+        assertThat(modificationDate).isBefore(ZonedDateTime.now());
     }
 
+    @Test
+    public void should_return_github_launch_date_when_no_entry_in_cache() throws Exception {
+        // given
+        final String releasesId = "4968399";
+
+        // when
+        ZonedDateTime modificationDate = gitHubLastUpdateCache.lastModificationOf(releasesId);
+
+        // then
+        assertThat(modificationDate).isEqualToIgnoringHours(ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.systemDefault()));
+    }
 
 }

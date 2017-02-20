@@ -59,7 +59,7 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
         if (urlToLatestRelease != null) {
-            latestVersion = StringUtils.trimMultiline(httpClient.sentGetRequest(urlToLatestRelease));
+            latestVersion = StringUtils.trimMultiline(httpClient.get(urlToLatestRelease).getPayload());
         } else {
             retrieveContents();
         }
@@ -71,7 +71,7 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
             contents = new ArrayList<>();
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(httpClient.sentGetRequest(storageUrl)));
+            is.setCharacterStream(new StringReader(httpClient.get(storageUrl).getPayload()));
             Document doc = db.parse(is);
             NodeList contentNodes = ((Element) doc.getFirstChild()).getElementsByTagName("Contents");
             for (int i = 0; i < contentNodes.getLength(); i++) {

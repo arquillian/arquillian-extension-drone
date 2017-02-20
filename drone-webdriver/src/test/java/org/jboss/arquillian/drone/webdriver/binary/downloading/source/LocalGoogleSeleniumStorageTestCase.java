@@ -13,9 +13,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource.SELENIUM_BASE_STORAGE_URL;
+import static org.mockito.ArgumentMatchers.startsWith;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -31,13 +33,13 @@ public class LocalGoogleSeleniumStorageTestCase {
 
     @Before
     public void setMock() throws IOException {
-        BDDMockito.when(httpClient.sentGetRequest(SELENIUM_BASE_STORAGE_URL)).thenReturn(
-            FileUtils.readFileToString(new File(FILE_PATH), "utf-8"));
+        BDDMockito.when(httpClient.get(startsWith(SELENIUM_BASE_STORAGE_URL))).thenReturn(new HttpClient.Response(
+            FileUtils.readFileToString(new File(FILE_PATH), "utf-8"), Collections.emptyMap()));
     }
 
     @Test
     public void testGetLatestIERelease() throws Exception {
-        ExternalBinary latestRelease = GoogleSeleniumStorageProvider.getIeStorageSource(null).getLatestRelease();
+        ExternalBinary latestRelease = GoogleSeleniumStorageProvider.getIeStorageSource(null, httpClient).getLatestRelease();
         assertThat(latestRelease.getVersion()).isEqualTo("3.0");
         assertThat(latestRelease.getUrl())
             .startsWith("http://selenium-release.storage.googleapis.com/3.0/IEDriverServer_")
@@ -47,7 +49,7 @@ public class LocalGoogleSeleniumStorageTestCase {
     @Test
     public void testGetLatestSeleniumServerRelease() throws Exception {
         ExternalBinary latestRelease =
-            GoogleSeleniumStorageProvider.getSeleniumServerStorageSource(null).getLatestRelease();
+            GoogleSeleniumStorageProvider.getSeleniumServerStorageSource(null, httpClient).getLatestRelease();
         assertThat(latestRelease.getVersion()).isEqualTo("3.0");
         assertThat(latestRelease.getUrl())
             .startsWith("http://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar");
@@ -68,8 +70,13 @@ public class LocalGoogleSeleniumStorageTestCase {
         testSeleniumServerVersion("3.0", "3.0.0");
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testGetNonExistingIERelease() throws Exception {
+        GoogleSeleniumStorageProvider.getIeStorageSource("1.2.3", httpClient).getLatestRelease();
+    }
+
     private void testIEVersion(String dir, String version) throws Exception {
-        ExternalBinary release = GoogleSeleniumStorageProvider.getIeStorageSource(version).getLatestRelease();
+        ExternalBinary release = GoogleSeleniumStorageProvider.getIeStorageSource(version, httpClient).getLatestRelease();
         assertThat(release.getVersion()).isEqualTo(dir);
         assertThat(release.getUrl())
             .startsWith("http://selenium-release.storage.googleapis.com/" + dir + "/IEDriverServer_")
@@ -78,15 +85,10 @@ public class LocalGoogleSeleniumStorageTestCase {
 
     private void testSeleniumServerVersion(String dir, String version) throws Exception {
         ExternalBinary release =
-            GoogleSeleniumStorageProvider.getSeleniumServerStorageSource(version).getLatestRelease();
+            GoogleSeleniumStorageProvider.getSeleniumServerStorageSource(version, httpClient).getLatestRelease();
         assertThat(release.getVersion()).isEqualTo(dir);
         assertThat(release.getUrl()).startsWith(
             "http://selenium-release.storage.googleapis.com/" + dir + "/selenium-server-standalone-" + version
                 + ".jar");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testGetNonExistingIERelease() throws Exception {
-        GoogleSeleniumStorageProvider.getIeStorageSource("1.2.3").getLatestRelease();
     }
 }

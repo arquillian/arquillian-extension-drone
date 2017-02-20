@@ -1,14 +1,29 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
 public class GitHubLastUpdateCache {
 
@@ -19,13 +34,23 @@ public class GitHubLastUpdateCache {
     private final Gson gson;
 
     public GitHubLastUpdateCache(final File cacheDirectory) {
-        this.gson = new Gson();
+        this.gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>(){}.getType(), new ZonedDateTimeConverter()).create();
         this.cacheDirectory = cacheDirectory;
     }
 
-    public LocalDateTime lastModificationOf(String uniqueKey) {
-        final JsonObject lastModificationDate = deserializeCachedFile(uniqueKey).getAsJsonObject(LAST_MODIFIED_PROPERTY);
-        return gson.fromJson(lastModificationDate, LocalDateTime.class);
+    public GitHubLastUpdateCache() {
+        this(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
+    }
+
+    public ZonedDateTime lastModificationOf(String uniqueKey) {
+        final ZonedDateTime lastModification;
+        if (Files.exists(Paths.get(createCachedFilePath(uniqueKey)))) {
+            final JsonElement lastModificationDate = deserializeCachedFile(uniqueKey).get(LAST_MODIFIED_PROPERTY);
+            lastModification = gson.fromJson(lastModificationDate, ZonedDateTime.class);
+        } else {
+            lastModification = ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.systemDefault());
+        }
+        return lastModification;
     }
 
     public <T> T load(String uniqueKey, Class<T> type) {
@@ -33,13 +58,13 @@ public class GitHubLastUpdateCache {
         return gson.fromJson(asset, type);
     }
 
-    public <T> void store(T asset, String uniqueKey, LocalDateTime dateTime) {
+    public <T> void store(T asset, String uniqueKey, ZonedDateTime dateTime) {
         final String cachedFilePath = createCachedFilePath(uniqueKey);
         final JsonObject jsonObject = combineAsJson(asset, dateTime);
         try (final FileOutputStream fileOutputStream = new FileOutputStream(cachedFilePath, false)) {
             fileOutputStream.write(jsonObject.toString().getBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Unable to store " + jsonObject + "%n as [" + cachedFilePath + "]",e);
+            throw new RuntimeException("Unable to store " + jsonObject + "%n as [" + cachedFilePath + "]", e);
         }
     }
 
@@ -56,11 +81,27 @@ public class GitHubLastUpdateCache {
         }
     }
 
-    private <T> JsonObject combineAsJson(T asset, LocalDateTime dateTime) {
+    private <T> JsonObject combineAsJson(T asset, ZonedDateTime dateTime) {
         final JsonElement assetAsJson = gson.toJsonTree(asset);
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.add(LAST_MODIFIED_PROPERTY, gson.toJsonTree(dateTime)); // TODO change to GMT, as this is required for HTTP header
+        jsonObject.add(LAST_MODIFIED_PROPERTY, gson.toJsonTree(dateTime));
         jsonObject.add(ASSET_PROPERTY, assetAsJson);
+        System.out.println(jsonObject);
         return jsonObject;
+    }
+
+    private static class ZonedDateTimeConverter implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.RFC_1123_DATE_TIME;
+
+        @Override
+        public JsonElement serialize(ZonedDateTime src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(FORMATTER.format(src));
+        }
+
+        @Override
+        public ZonedDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            return ZonedDateTime.parse(json.getAsString(), FORMATTER);
+        }
     }
 }
