@@ -53,12 +53,12 @@ public class HttpClient {
     }
 
     public Response get(String url, Map<String, String> headers) throws IOException {
-        final CloseableHttpClient client = HttpClientBuilder.create().build(); // TODO close http client
-        final HttpGet request = new HttpGet(url);
-        addHeaders(headers, request);
-
-        final HttpResponse response = client.execute(request);
-        return Response.from(response);
+        try (final CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            final HttpGet request = new HttpGet(url);
+            addHeaders(headers, request);
+            final HttpResponse response = client.execute(request);
+            return Response.from(response);
+        }
     }
 
     private void addHeaders(Map<String, String> headers, HttpGet request) {
