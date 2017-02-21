@@ -1,29 +1,44 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
 
-import org.junit.Before;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.http.ssl.*", "javax.net.ssl.*"})
-@PrepareForTest(HttpUtils.class)
+
+//@RunWith(PowerMockRunner.class)
+//@PowerMockIgnore({"org.apache.http.ssl.*", "javax.net.ssl.*"})
+//@PrepareForTest(HttpUtils.class)
 public class HttpUtilsTest {
 
-    private final String url = "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/latest";
+    private final String url = "http://localhost:8089/MatousJobanek/my-test-repository/releases/latest";
 
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8089);
+
+    @Test
+    public void exampleTest() throws IOException {
+        stubFor(get(urlEqualTo("/MatousJobanek/my-test-repository/releases/latest")).willReturn(
+                aResponse()
+                        .withStatus(200)
+                        .withHeader("Last_Modified", "Tue, 20 Dec 2016 13:27:15 GMT")
+                        .withBody("Hello")));
+
+        HttpClient httpClient = new HttpClient();
+        String response = httpClient.get(url).getPayload();
+        System.out.println(httpClient.get(url).getHeader("Last_Modified"));
+        System.out.println(response);
+
+    }
+
+/*
     @Before
     public void setPartialMock() throws IOException {
         PowerMockito.spy(HttpUtils.class);
@@ -55,5 +70,6 @@ public class HttpUtilsTest {
         String json = HttpUtils.sentGetRequest(url);
         assertThat(json).isNull();
     }
+*/
 
 }

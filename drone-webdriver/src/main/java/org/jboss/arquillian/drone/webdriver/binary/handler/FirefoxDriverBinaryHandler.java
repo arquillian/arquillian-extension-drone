@@ -1,10 +1,10 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GeckoDriverGitHubSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -43,7 +43,7 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new GeckoDriverGitHubSource(new HttpClient()); // TODO improve design for testability
+        return new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache()); // TODO improve design for testability
     }
 
     @Override protected DesiredCapabilities getCapabilities() {
@@ -59,35 +59,4 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
         return FIREFOX_SYSTEM_DRIVER_BINARY_PROPERTY;
     }
 
-    private class GeckoDriverGitHubSource extends GitHubSource {
-
-        GeckoDriverGitHubSource(HttpClient httpClient) {
-            super("mozilla", "geckodriver", httpClient);
-        }
-
-        @Override
-        protected String getExpectedFileNameRegex(String version) {
-            StringBuilder fileNameRegex = new StringBuilder("geckodriver-");
-            fileNameRegex.append(version).append("-");
-            if (PlatformUtils.isMac()) {
-                fileNameRegex.append("macos").toString();
-            } else {
-                if (PlatformUtils.isWindows() || PlatformUtils.isUnix()) {
-                    if (PlatformUtils.isWindows()) {
-                        fileNameRegex.append("win");
-                    } else {
-                        fileNameRegex.append("linux");
-                    }
-                    if (PlatformUtils.is32()) {
-                        fileNameRegex.append("32").toString();
-                    } else {
-                        fileNameRegex.append("64").toString();
-                    }
-                } else {
-                    fileNameRegex.append("arm7hf").toString();
-                }
-            }
-            return fileNameRegex.append(".*").toString();
-        }
-    }
 }

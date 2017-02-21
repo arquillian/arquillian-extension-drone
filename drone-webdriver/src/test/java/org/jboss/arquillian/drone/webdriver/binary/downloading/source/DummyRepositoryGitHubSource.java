@@ -1,6 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 
 import java.io.File;
@@ -20,8 +21,8 @@ public class DummyRepositoryGitHubSource extends GitHubSource {
         "https://github.com/MatousJobanek/my-test-repository/releases/download/%s/release.zip";
     public static final String URL_TO_LATEST_RELEASE = String.format(BASE_URL_TO_RELEASE, LATEST_RELEASE);
 
-    public DummyRepositoryGitHubSource(HttpClient httpClient) {
-        super("MatousJobanek", "my-test-repository", httpClient);
+    public DummyRepositoryGitHubSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
+        super("MatousJobanek", "my-test-repository", httpClient, gitHubLastUpdateCache);
     }
 
     @Override

@@ -19,10 +19,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
-
-import java.net.URI;
-import java.util.Iterator;
-import java.util.logging.Logger;
+import static org.apache.http.HttpHeaders.LAST_MODIFIED;
 
 /**
  * GitHub source is an abstract class that helps you to retrieve either latest release or a release with some version
@@ -53,12 +50,12 @@ public abstract class GitHubSource implements ExternalBinarySource {
      * @param organization GitHub organization/user name the project belongs to
      * @param project      GitHub project name
      */
-    public GitHubSource(String organization, String project, HttpClient httpClient) {
+    public GitHubSource(String organization, String project, HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
         this.httpClient = httpClient;
         this.projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
         this.uniqueKey = organization + "@" + project;
         this.gson = new Gson(); // TODO think if that should be really a field
-        this.cache = new GitHubLastUpdateCache(); // TODO pass through constructor?
+        this.cache = gitHubLastUpdateCache; // TODO pass through constructor?
     }
 
     /**
@@ -88,15 +85,15 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return binaryRelease;
     }
 
-    private Map<String, String> lastModificationHeader() {
+    public Map<String, String> lastModificationHeader() {
         final Map<String, String> headers = new HashMap<>();
         headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(this.uniqueKey).format(DateTimeFormatter.RFC_1123_DATE_TIME));
         return headers;
     }
 
     private ZonedDateTime extractModificationDate(HttpClient.Response response) {
-        final String modificationDate = response.getHeader(IF_MODIFIED_SINCE);
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        final String modificationDate = response.getHeader(LAST_MODIFIED);
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.RFC_1123_DATE_TIME;
         return ZonedDateTime.parse(modificationDate, dateTimeFormatter);
     }
 
@@ -160,7 +157,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return result;
     }
 
-    private HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers) throws Exception {
+    public HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers) throws Exception {
         final URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
         return httpClient.get(uri.toString(), headers);
     }
