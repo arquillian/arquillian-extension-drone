@@ -19,15 +19,20 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
+import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
@@ -35,6 +40,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +50,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import static org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PhantomJSUrl.getPhantomJs211Url;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
@@ -83,38 +90,72 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     }
 
-    @org.junit.Before
+    @Before
     public void setupMocks() {
 
         // set browser capabilities to be the same as defined in arquillian.xml - webdriver-reusable configuration
         MockBrowserCapabilitiesRegistry registry = MockBrowserCapabilitiesRegistry.createSingletonRegistry();
         desiredCapabilities = new DesiredCapabilities(registry.getAllBrowserCapabilities().iterator().next()
-                .getRawCapabilities());
+                                                          .getRawCapabilities());
 
         permanentStorage = new MockReusedSessionPermanentStorage();
         when(serviceLoader.onlyOne(ReusedSessionPermanentStorage.class)).thenReturn(permanentStorage);
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
 
         try {
-            hubUrl = new URL("http://localhost:4444/wd/hub/");
+            hubUrl = new URL("http://localhost:5555/wd/hub/");
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
 
+        runSeleniumServer();
+
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
+        when(configuration.getBrowser()).thenReturn("xyz");
+        when(configuration.isRemoteReusable()).thenReturn(true);
+        when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
+        when(configuration.getRemoteAddress()).thenReturn(hubUrl);
+        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
+    }
+
+    private void runSeleniumServer() {
         try {
-            String browser = System.getProperty("browser");
+            String browser = (String) desiredCapabilities.getCapability("browserName");
+            DesiredCapabilities selServerCaps = new DesiredCapabilities(desiredCapabilities);
             String seleniumServerArgs = System.getProperty("seleniumServerArgs");
+
+            // hack to download also phantomjs binaries until it is fully supported
+            selServerCaps
+                .setCapability(PhantomJSDriverBinaryHandler.PHANTOMJS_BINARY_URL_PROPERTY, getPhantomJs211Url());
+            selServerCaps.setCapability(PhantomJSDriverBinaryHandler.PHANTOMJS_BINARY_VERSION_PROPERTY, "2.1.1");
+
+            // use selenium server version defined in arquillian.xml
+            String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
+            if (!Validate.empty(selSerVersion)) {
+                selServerCaps
+                    .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
+            }
             String seleniumServerBinary =
-                new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
+                new SeleniumServerBinaryHandler(selServerCaps).downloadAndPrepare().toString();
+
+            fire(new StartSeleniumServer(seleniumServerBinary, browser, selServerCaps, hubUrl, seleniumServerArgs));
+
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
+    private String getSeleniumServerVersion(ArquillianDescriptor arquillian) {
+        ExtensionDef webdriver = arquillian.extension("webdriver-reusable");
+        Map<String, String> props = webdriver.getExtensionProperties();
+        return props.get("seleniumServerVersion");
+    }
+
+
+
     @After
-    public void stopServer(){
+    public void stopServer() {
         fire(new AfterSuite());
     }
 
@@ -124,12 +165,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // having
         RemoteWebDriverFactory factory1 = new MockRemoteWebDriverFactory();
         injector.get().inject(factory1);
-
-        when(configuration.getBrowser()).thenReturn("xyz");
-        when(configuration.isRemoteReusable()).thenReturn(true);
-        when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
-        when(configuration.getRemoteAddress()).thenReturn(hubUrl);
-        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
 
         // when
         fire(new BeforeSuite());
@@ -146,19 +181,13 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     @Test
     public void when_session_is_created_and_persisted_but_nonreusable_then_next_creation_should_remove_it_from_list_of_reusable_sessions()
-            throws Exception {
+        throws Exception {
 
         // having
         RemoteWebDriverFactory factory1 = new MockRemoteWebDriverFactory();
         RemoteWebDriverFactory factory2 = new MockRemoteWebDriverFactory();
         injector.get().inject(factory1);
         injector.get().inject(factory2);
-
-        when(configuration.getBrowser()).thenReturn("xyz");
-        when(configuration.isRemoteReusable()).thenReturn(true);
-        when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
-        when(configuration.getRemoteAddress()).thenReturn(hubUrl);
-        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
 
         // when
         fire(new BeforeSuite());

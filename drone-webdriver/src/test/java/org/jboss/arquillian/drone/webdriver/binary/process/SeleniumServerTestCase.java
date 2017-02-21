@@ -1,24 +1,29 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.test.AbstractTestTestBase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
+import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,9 +46,16 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
     @Before
     public void initialise() throws Exception {
-        seleniumServerBinary =
-                new SeleniumServerBinaryHandler(new DesiredCapabilities()).downloadAndPrepare().toString();
         capabilities = new DesiredCapabilities();
+        // use selenium server version defined in arquillian.xml
+        String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
+        if (!Validate.empty(selSerVersion)) {
+            capabilities
+                .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
+        }
+
+        seleniumServerBinary = new SeleniumServerBinaryHandler(capabilities).downloadAndPrepare().toString();
+
         url = new URL("http://localhost:5555/wd/hub/");
 
         attachLogCapture();
@@ -96,6 +108,12 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     public void stopSeleniumServer() {
         cleanUpStreams();
         fire(new AfterSuite());
+    }
+
+    private String getSeleniumServerVersion(ArquillianDescriptor arquillian) {
+        ExtensionDef webdriver = arquillian.extension("webdriver");
+        Map<String, String> props = webdriver.getExtensionProperties();
+        return props.get("seleniumServerVersion");
     }
 
     private String parseLogger() throws IOException {
