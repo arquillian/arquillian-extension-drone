@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.arquillian.spacelift.execution.ExecutionException;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.DummyRepositoryGitHubSource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinarySource;
-import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DownloaderTestCase {
 
+    private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
     public static final String TEST_DOWNLOAD_DIRECTORY =
-        Constants.DRONE_TARGET_DIRECTORY + "test-downloads" + File.separator;
+        TEST_DRONE_TARGET_DIRECTORY + "test-downloads" + File.separator;
     private File downloadDir = new File(TEST_DOWNLOAD_DIRECTORY);
 
     @Before
