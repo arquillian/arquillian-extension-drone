@@ -1,5 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+
 /**
  * {@link GoogleStorageSource} for Selenium binaries. Sets the url to selenium storage and provides useful methods.
  *
@@ -9,8 +11,8 @@ public abstract class SeleniumGoogleStorageSource extends GoogleStorageSource {
 
     public static final String SELENIUM_BASE_STORAGE_URL = "http://selenium-release.storage.googleapis.com/";
 
-    public SeleniumGoogleStorageSource() {
-        super(SELENIUM_BASE_STORAGE_URL);
+    public SeleniumGoogleStorageSource(HttpClient httpClient) {
+        super(SELENIUM_BASE_STORAGE_URL, httpClient);
     }
 
     /**

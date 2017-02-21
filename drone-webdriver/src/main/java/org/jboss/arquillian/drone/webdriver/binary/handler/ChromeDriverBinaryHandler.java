@@ -1,12 +1,13 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.util.regex.Pattern;
-
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.regex.Pattern;
 
 /**
  * A class for handling chromeDriver binaries
@@ -64,7 +65,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     private class ChromeStorageSources extends GoogleStorageSource {
 
         ChromeStorageSources(String baseUrl) {
-            super(baseUrl, baseUrl + "LATEST_RELEASE");
+            super(baseUrl, baseUrl + "LATEST_RELEASE", new HttpClient()); // TODO
         }
 
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {

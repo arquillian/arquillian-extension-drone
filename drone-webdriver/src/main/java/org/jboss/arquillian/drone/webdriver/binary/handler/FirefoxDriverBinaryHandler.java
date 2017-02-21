@@ -3,6 +3,7 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -42,7 +43,7 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new GeckoDriverGitHubSource();
+        return new GeckoDriverGitHubSource(new HttpClient()); // TODO improve design for testability
     }
 
     @Override protected DesiredCapabilities getCapabilities() {
@@ -60,14 +61,14 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
     private class GeckoDriverGitHubSource extends GitHubSource {
 
-        GeckoDriverGitHubSource() {
-            super("mozilla", "geckodriver");
+        GeckoDriverGitHubSource(HttpClient httpClient) {
+            super("mozilla", "geckodriver", httpClient);
         }
 
         @Override
-        protected String getExpectedFileNameRegex() {
+        protected String getExpectedFileNameRegex(String version) {
             StringBuilder fileNameRegex = new StringBuilder("geckodriver-");
-            fileNameRegex.append(getBinaryRelease().getVersion()).append("-");
+            fileNameRegex.append(version).append("-");
             if (PlatformUtils.isMac()) {
                 fileNameRegex.append("macos").toString();
             } else {

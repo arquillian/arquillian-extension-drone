@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -54,7 +50,11 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
@@ -63,7 +63,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class EnricherTestCase extends AbstractTestTestBase {
     private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
     private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
@@ -100,7 +100,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
                 .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
-        //DroneInstanceCreator instanceCreator = new DroneInstanceCreator();
         getManager().inject(testEnricher);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
@@ -111,7 +110,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
             Arrays.<Instantiator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
-
+        // These two stubbings are used in DeploymentTestCase -> hence Silent runner
         Mockito.when(deploymentDescription1.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_1);
         Mockito.when(deploymentDescription2.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_2);
 
