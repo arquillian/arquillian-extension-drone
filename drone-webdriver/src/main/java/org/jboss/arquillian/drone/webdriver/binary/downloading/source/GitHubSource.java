@@ -14,7 +14,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -55,7 +54,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         this.projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
         this.uniqueKey = organization + "@" + project;
         this.gson = new Gson(); // TODO think if that should be really a field
-        this.cache = gitHubLastUpdateCache; // TODO pass through constructor?
+        this.cache = gitHubLastUpdateCache;
     }
 
     /**
@@ -85,7 +84,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return binaryRelease;
     }
 
-    public Map<String, String> lastModificationHeader() {
+    private Map<String, String> lastModificationHeader() {
         final Map<String, String> headers = new HashMap<>();
         headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(this.uniqueKey).format(DateTimeFormatter.RFC_1123_DATE_TIME));
         return headers;
@@ -102,10 +101,9 @@ public abstract class GitHubSource implements ExternalBinarySource {
         final JsonArray releases = sentGetRequest(projectUrl + RELEASES_URL, Collections.emptyMap(), true).getAsJsonArray();
 
         if (releases != null) {
-            final Iterator<JsonElement> iterator = releases.iterator();
 
-            while (iterator.hasNext()) {
-                JsonObject releaseObject = iterator.next().getAsJsonObject();
+            for (JsonElement release : releases) {
+                JsonObject releaseObject = release.getAsJsonObject();
                 String releaseTagName = releaseObject.get(tagNameKey).getAsString();
 
                 if (version.equals(releaseTagName)) {
@@ -121,12 +119,11 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private String findReleaseBinaryUrl(JsonObject releaseObject, String version) throws Exception {
         final JsonArray assets = releaseObject.get(assetsKey).getAsJsonArray();
-        final Iterator<JsonElement> iterator = assets.iterator();
-        while (iterator.hasNext()) {
-            JsonObject asset = iterator.next().getAsJsonObject();
-            String name = asset.get(assetNameKey).getAsString();
+        for (JsonElement asset : assets) {
+            JsonObject assetJson = asset.getAsJsonObject();
+            String name = assetJson.get(assetNameKey).getAsString();
             if (name.matches(getExpectedFileNameRegex(version))) {
-                return asset.get(browserDownloadUrlKey).getAsString();
+                return assetJson.get(browserDownloadUrlKey).getAsString();
             }
         }
         return null;
@@ -157,7 +154,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return result;
     }
 
-    public HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers) throws Exception {
+    private HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers) throws Exception {
         final URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
         return httpClient.get(uri.toString(), headers);
     }
