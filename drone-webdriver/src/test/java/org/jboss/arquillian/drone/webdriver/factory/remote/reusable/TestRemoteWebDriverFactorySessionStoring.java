@@ -16,11 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.api.Event;
@@ -45,10 +40,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import static org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PhantomJSUrl.getPhantomJs211Url;
 import static org.junit.Assert.assertNotNull;
@@ -63,7 +63,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
     }
 
     @Mock
