@@ -10,7 +10,6 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Ignore
 public class GitHubSourceTestCase {
 
     @ClassRule
@@ -56,10 +54,10 @@ public class GitHubSourceTestCase {
 
     @Before
     public void createGithubUpdateCache() throws IOException {
-        tmpFolder = folder.newFolder();
+        this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
         this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
-        geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
+        this.geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
     }
 
     @Test
@@ -89,7 +87,7 @@ public class GitHubSourceTestCase {
                 .willReturn(
                         ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
                 )));
-        createCacheFile("gh.cache.mozilla@geckodriver.json");
+        createCacheFile("gh.cache.mozilla@geckodriver.json", CACHED_CONTENT);
 
         final String expectedVersion = "v0.14.0";
 
@@ -105,26 +103,26 @@ public class GitHubSourceTestCase {
         verify(cacheSpy, times(0)).store(any(), anyString(), any());
     }
 
-    private void createCacheFile(String fileName) throws FileNotFoundException {
+    private void createCacheFile(String fileName, String content) throws FileNotFoundException {
         try (final PrintWriter printWriter = new PrintWriter(new File(tmpFolder.getAbsolutePath() + "/" + fileName))) {
-            printWriter.print(CACHED_CONTENT);
+            printWriter.print(content);
             printWriter.flush();
         }
     }
 
     // Cleaning up system properties for proxies
     // We need this until hoverfly cleans up properly
-    static final String HTTP_PROXY_HOST = "http.proxyHost";
-    static final String HTTPS_PROXY_HOST = "https.proxyHost";
-    static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
-    static final String HTTP_PROXY_PORT = "http.proxyPort";
-    static final String HTTPS_PROXY_PORT = "https.proxyPort";
+    private static final String HTTP_PROXY_HOST = "http.proxyHost";
+    private static final String HTTPS_PROXY_HOST = "https.proxyHost";
+    private static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
+    private static final String HTTP_PROXY_PORT = "http.proxyPort";
+    private static final String HTTPS_PROXY_PORT = "https.proxyPort";
 
-    static String ORG_HTTP_PROXY_HOST = "";
-    static String ORG_HTTPS_PROXY_HOST = "";
-    static String ORG_HTTP_NON_PROXY_HOSTS = "";
-    static String ORG_HTTP_PROXY_PORT = "";
-    static String ORG_HTTPS_PROXY_PORT = "";
+    private static String ORG_HTTP_PROXY_HOST = "";
+    private static String ORG_HTTPS_PROXY_HOST = "";
+    private static String ORG_HTTP_NON_PROXY_HOSTS = "";
+    private static String ORG_HTTP_PROXY_PORT = "";
+    private static String ORG_HTTPS_PROXY_PORT = "";
 
     static { // @BeforeClass won't work due to order of junit execution - hoverfly would start first
         ORG_HTTP_PROXY_HOST = System.getProperty(HTTP_PROXY_HOST, "");
