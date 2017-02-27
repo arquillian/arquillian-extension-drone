@@ -1,0 +1,57 @@
+{
+  "data" : {
+    "pairs" : [ {
+      "request" : {
+        "path" : "/repos/mozilla/geckodriver/releases/latest",
+        "method" : "GET",
+        "destination" : "api.github.com",
+        "scheme" : "https",
+        "query" : "page=1",
+        "body" : "",
+        "headers" : {
+          "Accept-Encoding" : [ "gzip,deflate" ],
+          "Connection" : [ "Keep-Alive" ],
+          "If-Modified-Since" : [ "Thu, 10 Apr 2008 00:00:00 +0200" ],
+          "User-Agent" : [ "Apache-HttpClient/4.5.2 (Java/1.8.0_77)" ]
+        },
+        "requestType" : "recording"
+      },
+      "response" : {
+        "status" : 200,
+        "body" : "H4sIAAAAAAAAA+2aUW+rNhTHvwqir0nAQCAgXd1Nvbra47RlutJ2p9QBB7wARrZp2kb97jsGkiaUkio3iraKh6oJ2H+fHOyfD8dnq5c81QM9kbIQgWHggk5iKpNyOQlZZnBSMGFk7ImmKTZiEq5ZxOk94XAnJVgQYUxt5Pm+r490LASRYnEhQaOWA92ySBmOWrr1RXGesY329nOOMzJK8ZKkzzBQIrO0NcyBL3q9IHFs3JsT5ExMEKKRHjR+Gelwa6HGAS+/tJCYx0QuwMcZlVQkcDPDQhIOvZvG8CnieCX1YIVTQcC/pUwY14OtnrKY5tDl51KyDEsSzUnTV42MrNkUzaD9PYZh2s+jurjzWykID1kuSS6r510adefP959sGD/mjYaS1dWj6JssSkwYr23qd+vr9iuWpmwDWm3Tj+dm53DGvjNYW3+meXy+EHTeGkwmBPwIP0/NkpiKU7O827Sq49ZQ/xY0UlICHgUn7andWoPdYk1XMG6Tg13baqlWmuVShJwWkrL8LA8eCYAg4zHO6RM+WxAEBOhULDnnSVQdQYDcwzQ9S6HuuTUKYBcOH5WbOAkJgCxanK/akgBR+VioZf4HzBT1JKgkCxxlaqlWS/h5pBecNOTcL+uQE7WEFxhWum6ZyBubaGyjOfIC0wsc+0+QKsplCpToboWcYOqoVg0xg7+2/Qv1HVSvpQzb9D2ELNBWBGi+7Ql1sB+MG7SNMc+8ZDWBiT2Jn6BfBdcGHhXHwTUDwerdtXtlDwQbCNbeRY3/DsGacGHRsA4XRUrDanMw4idaKO5J4Bks+TpEI1GFwie4Ypnu1HJdiGtg06piupCVOWDP9TxnpPeAcI+4sojeguW+zZKzDRB4sR/lOGp5b0i3676L6w7D3zdw9zy6MHmdI/KCj5rYsIu8Kc3LB9sa0DsEjy8vcN1bzBA8dr7tdjvrQ6AX+SayLOs1ei1zZvejdxqYpoou+9C7a3NN9LZ4d2n22rsX+Srqtc3T7HWdgb0Dewf27tJRdfYQyHH+K/bHYO/MtmwbdbDXdx33JH0d6zR96yzB1en7QrxL0heZruXvcw71t176ZjhkYmDvwN6BvQN7VYrxJeWALH9qq+DtVcrBmbl+Z+BrQf51blmB4wYIvYHewzYVnq+J3iPcXRK8KtD10GHKwYNdqyflsKE5JBzqrM+Q6IWU1xvHqN0vlkOid0j0/j8TvafyvJY7tWdwAt2GLnJtrz/etczAqc6yerIN+zbXhO4L6i5NXFudtO+P12zwTz9xIegeiDsUB/QdIQ753Y+W3z1JXNv2/Y4UA7w9e1M4ces7W3MD0z+BXLRrc2XkNqx7/luVUfElTtv1We+uV2u6HxRpgUt/RLDpfiC4ZNEjxIA3NzfabYLzmETf+fd8rH2lnKzYg1ZwFhIhNCq0nG00KPaC0hB1mqnhPNKglk7AIapGcnh/0TYJyTUoO9JSqArTYPOBrVR1DFMmdrrfyPJLVYynpXTJMX/Umk1Tk0yDy5WcObHMiakMUX/Ktq/0Yafwu8ThWnIMZmmYk8osmodpeWQC4ZxxjXEKRWdgrtBWnGVgk0xobeNvJdgIzAnX9Q/+ZT7/9UslxokseQ5mM6hzCiV8FwWUJREtIaoSBKRA+e62rkAbz6F85q5yxt0tDhMyVjc4S+/AEzhfC/W7fvqnjGNI/Wd0TfTnfwEXgeVnvygAAA==",
+        "encodedBody" : true,
+        "headers" : {
+          "Access-Control-Allow-Origin" : [ "*" ],
+          "Access-Control-Expose-Headers" : [ "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval" ],
+          "Cache-Control" : [ "public, max-age=60, s-maxage=60" ],
+          "Content-Encoding" : [ "gzip" ],
+          "Content-Security-Policy" : [ "default-src 'none'" ],
+          "Content-Type" : [ "application/json; charset=utf-8" ],
+          "Date" : [ "Mon, 27 Feb 2017 12:53:45 GMT" ],
+          "Etag" : [ "W/\"7647812c19d8013f43b07663f0f6cd01\"" ],
+          "Hoverfly" : [ "Was-Here" ],
+          "Last-Modified" : [ "Tue, 31 Jan 2017 17:16:07 GMT" ],
+          "Server" : [ "GitHub.com" ],
+          "Status" : [ "200 OK" ],
+          "Strict-Transport-Security" : [ "max-age=31536000; includeSubdomains; preload" ],
+          "Vary" : [ "Accept", "Accept-Encoding" ],
+          "X-Content-Type-Options" : [ "nosniff" ],
+          "X-Frame-Options" : [ "deny" ],
+          "X-Github-Media-Type" : [ "github.v3; format=json" ],
+          "X-Github-Request-Id" : [ "A9D4:72B7:2C05F85:36FF845:58B42159" ],
+          "X-Ratelimit-Limit" : [ "60" ],
+          "X-Ratelimit-Remaining" : [ "56" ],
+          "X-Ratelimit-Reset" : [ "1488203017" ],
+          "X-Served-By" : [ "88531cdcf1929112ec480e1806d44a33" ],
+          "X-Xss-Protection" : [ "1; mode=block" ]
+        }
+      }
+    } ],
+    "globalActions" : {
+      "delays" : [ ]
+    }
+  },
+  "meta" : {
+    "schemaVersion" : "v1"
+  }
+}

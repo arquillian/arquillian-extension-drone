@@ -1,10 +1,13 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -12,10 +15,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class HttpClient {
+
+    private final String proxyHost;
+    private final Integer proxyPort;
+
+    public HttpClient(String proxyHost, Integer proxyPort) {
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
+    }
+
+    public HttpClient() {
+        this(null, null);
+    }
 
     public static class Response {
         private final String payload;
@@ -39,7 +51,13 @@ public class HttpClient {
         }
 
         public static Response from(HttpResponse response) throws IOException {
-            final String payload = EntityUtils.toString(response.getEntity(), "UTF-8");
+            final HttpEntity entity = response.getEntity();
+            final String payload;
+            if (entity == null) {
+                payload = null;
+            } else {
+                payload = EntityUtils.toString(entity, "UTF-8");
+            }
             final Map<String, String> headers = new HashMap<>();
             for (Header header : response.getAllHeaders()) {
                 headers.put(header.getName(), header.getValue());
@@ -53,7 +71,7 @@ public class HttpClient {
     }
 
     public Response get(String url, Map<String, String> headers) throws IOException {
-        try (final CloseableHttpClient client = HttpClientBuilder.create().build()) {
+        try (final CloseableHttpClient client = createHttpClient()) {
             final HttpGet request = new HttpGet(url);
             addHeaders(headers, request);
             final HttpResponse response = client.execute(request);
@@ -61,10 +79,26 @@ public class HttpClient {
         }
     }
 
+    private CloseableHttpClient createHttpClient() {
+
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.useSystemProperties();
+        if (hasProxySettings()) {
+            final HttpHost proxy = new HttpHost(this.proxyHost, this.proxyPort, "https");
+            httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy));
+        }
+        return httpClientBuilder.build();
+    }
+
+    private boolean hasProxySettings() {
+        return proxyHost != null && proxyPort != null;
+    }
+
     private void addHeaders(Map<String, String> headers, HttpGet request) {
         for (Map.Entry<String, String> header : headers.entrySet()) {
             request.addHeader(header.getKey(), header.getValue());
         }
     }
+
 
 }

@@ -1,173 +1,146 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.specto.hoverfly.junit.dsl.ResponseBuilder;
+import io.specto.hoverfly.junit.rule.HoverflyRule;
+import org.apache.http.HttpStatus;
+import org.assertj.core.api.JUnitSoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
+import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
+import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
+@Ignore
 public class GitHubSourceTestCase {
 
-    private static final String BASIC_PATH =
-        "src/test/resources/files/downloading/github/".replace("/", File.separator);
+    @ClassRule
+    public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.json"));
+
+    private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\"," +
+            "\"asset\":" +
+                    "{\"version\":\"v0.14.0\"," +
+                    "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
+            "}";
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8089);
+    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
-    private HttpClient httpClient;
-    private GitHubLastUpdateCache gitHubLastUpdateCache;
     private File tmpFolder;
+    private GeckoDriverGitHubSource geckoDriverGitHubSource;
+    private HttpClient httpClientSpy;
+    private GitHubLastUpdateCache cacheSpy;
 
     @Before
     public void createGithubUpdateCache() throws IOException {
         tmpFolder = folder.newFolder();
-        gitHubLastUpdateCache = new GitHubLastUpdateCache(tmpFolder);
-        httpClient = new HttpClient();
-        mockGitHubAPIcalls();
-    }
-
-    public void mockGitHubAPIcalls() {
-        stubFor(get(urlMatching("/mozilla/geckodriver/releases/latest"))
-                .willReturn(aResponse()
-                        .proxiedFrom("https://api.github.com/repos/")
-                        .withStatus(200)
-                        .withHeader("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT")
-                        .withBody("{\n" +
-                                "  \"url\": \"https://api.github.com/repos/mozilla/geckodriver/releases/5317999\",\n" +
-                                "  \"assets_url\": \"https://api.github.com/repos/mozilla/geckodriver/releases/5317999/assets\",\n" +
-                                "  \"upload_url\": \"https://uploads.github.com/repos/mozilla/geckodriver/releases/5317999/assets{?name,label}\",\n" +
-                                "  \"html_url\": \"https://github.com/mozilla/geckodriver/releases/tag/v0.14.0\",\n" +
-                                "  \"id\": 5317999,\n" +
-                                "  \"tag_name\": \"v0.14.0\",\n" +
-                                "  \"target_commitish\": \"master\",\n" +
-                                "  \"name\": \"\",\n" +
-                                "  \"draft\": false,\n" +
-                                "  \"author\": {\n" +
-                                "    \"login\": \"AutomatedTester\",\n" +
-                                "    \"id\": 128518,\n" +
-                                "    \"avatar_url\": \"https://avatars.githubusercontent.com/u/128518?v=3\",\n" +
-                                "    \"gravatar_id\": \"\",\n" +
-                                "    \"url\": \"https://api.github.com/users/AutomatedTester\",\n" +
-                                "    \"html_url\": \"https://github.com/AutomatedTester\",\n" +
-                                "    \"followers_url\": \"https://api.github.com/users/AutomatedTester/followers\",\n" +
-                                "    \"following_url\": \"https://api.github.com/users/AutomatedTester/following{/other_user}\",\n" +
-                                "    \"gists_url\": \"https://api.github.com/users/AutomatedTester/gists{/gist_id}\",\n" +
-                                "    \"starred_url\": \"https://api.github.com/users/AutomatedTester/starred{/owner}{/repo}\",\n" +
-                                "    \"subscriptions_url\": \"https://api.github.com/users/AutomatedTester/subscriptions\",\n" +
-                                "    \"organizations_url\": \"https://api.github.com/users/AutomatedTester/orgs\",\n" +
-                                "    \"repos_url\": \"https://api.github.com/users/AutomatedTester/repos\",\n" +
-                                "    \"events_url\": \"https://api.github.com/users/AutomatedTester/events{/privacy}\",\n" +
-                                "    \"received_events_url\": \"https://api.github.com/users/AutomatedTester/received_events\",\n" +
-                                "    \"type\": \"User\",\n" +
-                                "    \"site_admin\": false\n" +
-                                "  },\n" +
-                                "  \"prerelease\": false,\n" +
-                                "  \"created_at\": \"2017-01-31T17:07:43Z\",\n" +
-                                "  \"published_at\": \"2017-01-31T17:14:54Z\",\n" +
-                                "  \"assets\": [\n" +
-                                "    {\n" +
-                                "      \"url\": \"https://api.github.com/repos/mozilla/geckodriver/releases/assets/3097112\",\n" +
-                                "      \"id\": 3097112,\n" +
-                                "      \"name\": \"geckodriver-v0.14.0-arm7hf.tar.gz\",\n" +
-                                "      \"label\": \"\",\n" +
-                                "      \"uploader\": {\n" +
-                                "        \"login\": \"AutomatedTester\",\n" +
-                                "        \"id\": 128518,\n" +
-                                "        \"avatar_url\": \"https://avatars.githubusercontent.com/u/128518?v=3\",\n" +
-                                "        \"gravatar_id\": \"\",\n" +
-                                "        \"url\": \"https://api.github.com/users/AutomatedTester\",\n" +
-                                "        \"html_url\": \"https://github.com/AutomatedTester\",\n" +
-                                "        \"followers_url\": \"https://api.github.com/users/AutomatedTester/followers\",\n" +
-                                "        \"following_url\": \"https://api.github.com/users/AutomatedTester/following{/other_user}\",\n" +
-                                "        \"gists_url\": \"https://api.github.com/users/AutomatedTester/gists{/gist_id}\",\n" +
-                                "        \"starred_url\": \"https://api.github.com/users/AutomatedTester/starred{/owner}{/repo}\",\n" +
-                                "        \"subscriptions_url\": \"https://api.github.com/users/AutomatedTester/subscriptions\",\n" +
-                                "        \"organizations_url\": \"https://api.github.com/users/AutomatedTester/orgs\",\n" +
-                                "        \"repos_url\": \"https://api.github.com/users/AutomatedTester/repos\",\n" +
-                                "        \"events_url\": \"https://api.github.com/users/AutomatedTester/events{/privacy}\",\n" +
-                                "        \"received_events_url\": \"https://api.github.com/users/AutomatedTester/received_events\",\n" +
-                                "        \"type\": \"User\",\n" +
-                                "        \"site_admin\": false\n" +
-                                "      },\n" +
-                                "      \"content_type\": \"application/gzip\",\n" +
-                                "      \"state\": \"uploaded\",\n" +
-                                "      \"size\": 2065266,\n" +
-                                "      \"download_count\": 5185,\n" +
-                                "      \"created_at\": \"2017-01-31T17:14:54Z\",\n" +
-                                "      \"updated_at\": \"2017-01-31T17:14:54Z\",\n" +
-                                "      \"browser_download_url\": \"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-arm7hf.tar.gz\"\n" +
-                                "    }\n" )
-                ));
+        this.httpClientSpy = spy(new HttpClient());
+        this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
+        geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
     }
 
     @Test
-    public void should_return_latest_release() throws Exception {
+    public void should_load_release_information_from_gh_and_store_in_cache() throws Exception {
+        // given
+        final String expectedVersion = "v0.14.0";
 
-        // Given
-        GeckoDriverGitHubSource geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClient, gitHubLastUpdateCache);
+        // when
+        final ExternalBinary latestRelease = geckoDriverGitHubSource.getLatestRelease();
 
-        // When
-        ExternalBinary latestRelease = geckoDriverGitHubSource.getLatestRelease();
-
-
-        // Then
-        assertThat(latestRelease.getVersion()).isEqualTo("v0.14.0");
-        assertThat(tmpFolder.listFiles()).containsOnly(new File(tmpFolder.getAbsolutePath() + "/gh.cache.mozilla@geckodriver.json"));
+        // then
+        softly.assertThat(latestRelease.getVersion()).isEqualTo(expectedVersion);
+        softly.assertThat(tmpFolder.listFiles()).hasSize(1);
+        softly.assertThat(tmpFolder.listFiles()[0]).isFile().hasContent(CACHED_CONTENT);
+        verify(httpClientSpy).get(anyString(), anyMap());
+        verify(cacheSpy, times(0)).load(anyString(), any());
+        verify(cacheSpy, times(1)).store(any(), anyString(), any());
     }
 
     @Test
-    public void should_return_latest_release_for_version() throws Exception {
+    public void should_load_release_information_from_cache_when_not_changed() throws Exception {
+        // given
+        hoverflyRule.simulate(dsl(service("https://api.github.com")
+                .get("/repos/mozilla/geckodriver/releases/latest")
+                .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 31 Jan 2017 17:16:07 GMT")
+                .queryParam("page", 1)
+                .willReturn(
+                        ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
+                )));
+        createCacheFile("gh.cache.mozilla@geckodriver.json");
 
-        // Given
-        GeckoDriverGitHubSource geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClient, gitHubLastUpdateCache);
+        final String expectedVersion = "v0.14.0";
 
-        // When
-        ExternalBinary latestRelease = geckoDriverGitHubSource.getReleaseForVersion("v0.14.0");
+        // when
+        final ExternalBinary latestRelease = geckoDriverGitHubSource.getLatestRelease();
 
-        // Then
-        assertThat(latestRelease.getVersion()).isEqualTo("v0.14.0");
+        // then
+        softly.assertThat(latestRelease.getVersion()).isEqualTo(expectedVersion);
+        softly.assertThat(tmpFolder.listFiles()).hasSize(1);
+        softly.assertThat(tmpFolder.listFiles()[0]).isFile().hasContent(CACHED_CONTENT);
+        verify(httpClientSpy).get(anyString(), anyMap());
+        verify(cacheSpy, times(1)).load(anyString(), any());
+        verify(cacheSpy, times(0)).store(any(), anyString(), any());
     }
 
-    @Test
-    public void should_return_latest_release_from_cache() throws Exception {
-
-        //Given
-
-        //When
-
-        //Then
-
+    private void createCacheFile(String fileName) throws FileNotFoundException {
+        try (final PrintWriter printWriter = new PrintWriter(new File(tmpFolder.getAbsolutePath() + "/" + fileName))) {
+            printWriter.print(CACHED_CONTENT);
+            printWriter.flush();
+        }
     }
 
-    @Test
-    public void exampleTest() throws IOException {
-        final String url = "http://api.github.com/repos/MatousJobanek/my-test-repository/releases/latest";
+    // Cleaning up system properties for proxies
+    // We need this until hoverfly cleans up properly
+    static final String HTTP_PROXY_HOST = "http.proxyHost";
+    static final String HTTPS_PROXY_HOST = "https.proxyHost";
+    static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
+    static final String HTTP_PROXY_PORT = "http.proxyPort";
+    static final String HTTPS_PROXY_PORT = "https.proxyPort";
 
-        stubFor(get(urlEqualTo("/MatousJobanek/my-test-repository/releases/latest")).willReturn(
-                aResponse()
-                        .proxiedFrom("https://api.github.com/repos/")
-                        .withStatus(200)
-                        .withHeader("Last-Modified", "Tue, 20 Dec 2016 13:27:15 GMT")
-                        .withBody("Hello")));
+    static String ORG_HTTP_PROXY_HOST = "";
+    static String ORG_HTTPS_PROXY_HOST = "";
+    static String ORG_HTTP_NON_PROXY_HOSTS = "";
+    static String ORG_HTTP_PROXY_PORT = "";
+    static String ORG_HTTPS_PROXY_PORT = "";
 
-        HttpClient httpClient = new HttpClient();
-        String response = httpClient.get(url).getPayload();
-        System.out.println(httpClient.get(url).getHeader("Last_Modified"));
-        System.out.println(response);
+    static { // @BeforeClass won't work due to order of junit execution - hoverfly would start first
+        ORG_HTTP_PROXY_HOST = System.getProperty(HTTP_PROXY_HOST, "");
+        ORG_HTTPS_PROXY_HOST = System.getProperty(HTTPS_PROXY_HOST, "");
+        ORG_HTTP_NON_PROXY_HOSTS = System.getProperty(HTTP_NON_PROXY_HOSTS, "");
+        ORG_HTTP_PROXY_PORT = System.getProperty(HTTP_PROXY_PORT, "");
+        ORG_HTTPS_PROXY_PORT = System.getProperty(HTTPS_PROXY_PORT, "");
     }
+
+    @AfterClass
+    public static void clean() {
+        System.setProperty(HTTP_PROXY_HOST, ORG_HTTP_PROXY_HOST);
+        System.setProperty(HTTPS_PROXY_HOST, ORG_HTTPS_PROXY_HOST);
+        System.setProperty(HTTP_NON_PROXY_HOSTS, ORG_HTTP_NON_PROXY_HOSTS);
+        System.setProperty(HTTP_PROXY_PORT, ORG_HTTP_PROXY_PORT);
+        System.setProperty(HTTPS_PROXY_PORT, ORG_HTTPS_PROXY_PORT);
+    }
+
 }
