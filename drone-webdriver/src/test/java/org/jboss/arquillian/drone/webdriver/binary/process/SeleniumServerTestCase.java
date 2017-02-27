@@ -1,5 +1,17 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
+import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,18 +24,6 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
-import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.test.AbstractTestTestBase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +51,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
         if (!Validate.empty(selSerVersion)) {
             capabilities
-                .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
+                    .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
         }
 
         seleniumServerBinary = new SeleniumServerBinaryHandler(capabilities).downloadAndPrepare().toString();
@@ -123,10 +123,9 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         final Pattern pattern = Pattern.compile(expectedLogPart);
         final Matcher matcher = pattern.matcher(capturedLog);
-        String command;
+        String command = "";
 
-        if (matcher.find()) ;
-        {
+        if (matcher.find()) {
             command = matcher.group();
         }
         return command;
