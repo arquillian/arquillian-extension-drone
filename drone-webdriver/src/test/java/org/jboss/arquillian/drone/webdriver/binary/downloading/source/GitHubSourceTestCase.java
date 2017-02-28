@@ -32,14 +32,14 @@ import static org.mockito.Mockito.verify;
 
 public class GitHubSourceTestCase {
 
-    @ClassRule
-    public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.json"));
-
     private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\"," +
             "\"asset\":" +
-                    "{\"version\":\"v0.14.0\"," +
-                    "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
+            "{\"version\":\"v0.14.0\"," +
+            "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
             "}";
+
+    @ClassRule
+    public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.json"));
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
@@ -53,7 +53,7 @@ public class GitHubSourceTestCase {
     private GitHubLastUpdateCache cacheSpy;
 
     @Before
-    public void createGithubUpdateCache() throws IOException {
+    public void wireComponentsUnderTest() throws IOException {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
         this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
