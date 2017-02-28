@@ -7,11 +7,7 @@ import org.assertj.core.api.JUnitSoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -26,9 +22,7 @@ import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class GitHubSourceTestCase {
 
@@ -38,6 +32,8 @@ public class GitHubSourceTestCase {
             "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
             "}";
 
+    //@ClassRule
+    //public static HoverflyRule hoverflyRule = HoverflyRule.inCaptureMode("hoverfly/gh.simulation.mozilla@geckodriver2.json");
     @ClassRule
     public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.json"));
 
@@ -101,6 +97,64 @@ public class GitHubSourceTestCase {
         verify(httpClientSpy).get(anyString(), anyMap());
         verify(cacheSpy, times(1)).load(anyString(), any());
         verify(cacheSpy, times(0)).store(any(), anyString(), any());
+    }
+
+    @Test
+    public void should_load_release_information_from_gh_and_overwrite_cache_when_last_modified_changed() throws Exception {
+        // given
+        hoverflyRule.simulate(dsl(service("https://api.github.com")
+                .get("/repos/mozilla/geckodriver/releases/latest")
+                .header(HttpHeaders.IF_MODIFIED_SINCE, "Mon, 30 Jan 2017 17:16:07 GMT")
+                .queryParam("page", 1)
+                .willReturn(
+                        ResponseBuilder.response().status(HttpStatus.SC_OK)
+                )));
+
+        final String expectedVersion = "v0.14.0";
+
+        // when
+        final ExternalBinary latestRelease = geckoDriverGitHubSource.getLatestRelease();
+
+        // then
+        softly.assertThat(latestRelease.getVersion()).isEqualTo(expectedVersion);
+        softly.assertThat(tmpFolder.listFiles()).hasSize(1);
+        softly.assertThat(tmpFolder.listFiles()[0]).isFile().hasContent(CACHED_CONTENT);
+        verify(httpClientSpy).get(anyString(), anyMap());
+        verify(cacheSpy, times(0)).load(anyString(), any());
+        verify(cacheSpy, times(1)).store(any(), anyString(), any());
+    }
+
+
+    @Test
+    public void should_load_release_information_from_gh_for_given_version() throws Exception {
+        // given
+        final String expectedVersion = "v0.14.0";
+
+        // when
+        final ExternalBinary latestRelease = geckoDriverGitHubSource.getReleaseForVersion(expectedVersion);
+
+        // then
+        softly.assertThat(latestRelease.getVersion()).isEqualTo(expectedVersion);
+        softly.assertThat(tmpFolder.listFiles()).hasSize(0);
+        verify(httpClientSpy, times(2)).get(anyString(), anyMap());
+        verify(cacheSpy, times(0)).load(anyString(), any());
+        verify(cacheSpy, times(0)).store(any(), anyString(), any());
+    }
+
+    @Test
+    public void should_log_warning_when_release_information_for_given_version_not_found() throws Exception {
+        // given
+        final String expectedVersion = "v0.14.0";
+
+        // when
+        final ExternalBinary latestRelease = geckoDriverGitHubSource.getReleaseForVersion(expectedVersion);
+
+        // then
+        /*softly.assertThat(latestRelease.getVersion()).isEqualTo(expectedVersion);
+        softly.assertThat(tmpFolder.listFiles()).hasSize(0);
+        verify(httpClientSpy, times(2)).get(anyString(), anyMap());
+        verify(cacheSpy, times(0)).load(anyString(), any());
+        verify(cacheSpy, times(0)).store(any(), anyString(), any());*/
     }
 
     private void createCacheFile(String fileName, String content) throws FileNotFoundException {
