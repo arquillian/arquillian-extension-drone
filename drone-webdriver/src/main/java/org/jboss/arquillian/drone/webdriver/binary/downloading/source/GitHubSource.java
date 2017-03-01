@@ -69,7 +69,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
         final HttpClient.Response response = sentGetRequestWithPagination(projectUrl + LATEST_URL, 1, lastModificationHeader());
-
         final ExternalBinary binaryRelease;
 
         if (response.hasPayload()) {

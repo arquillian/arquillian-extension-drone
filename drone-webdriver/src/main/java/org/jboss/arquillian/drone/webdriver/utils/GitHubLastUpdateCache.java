@@ -48,7 +48,7 @@ public class GitHubLastUpdateCache {
             final JsonElement lastModificationDate = deserializeCachedFile(uniqueKey).get(LAST_MODIFIED_PROPERTY);
             lastModification = gson.fromJson(lastModificationDate, ZonedDateTime.class);
         } else {
-            lastModification = ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.systemDefault());
+            lastModification = ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.of("GMT"));
         }
         return lastModification;
     }
@@ -86,7 +86,6 @@ public class GitHubLastUpdateCache {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.add(LAST_MODIFIED_PROPERTY, gson.toJsonTree(dateTime));
         jsonObject.add(ASSET_PROPERTY, assetAsJson);
-        System.out.println(jsonObject);
         return jsonObject;
     }
 

@@ -59,7 +59,7 @@ public class GitHubLastUpdateCacheTest {
         // given
         final ExternalBinary storedExternalBinary = new ExternalBinary("1.0.0.Final", "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/assets/2857399");
         final String releasesId = "4968399";
-        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, ZonedDateTime.now(ZoneId.systemDefault()).minusDays(2));
+        gitHubLastUpdateCache.store(storedExternalBinary, releasesId, ZonedDateTime.now(ZoneId.of("GMT")).minusDays(2));
 
         // when
         ZonedDateTime modificationDate = gitHubLastUpdateCache.lastModificationOf(releasesId);
@@ -77,7 +77,7 @@ public class GitHubLastUpdateCacheTest {
         ZonedDateTime modificationDate = gitHubLastUpdateCache.lastModificationOf(releasesId);
 
         // then
-        assertThat(modificationDate).isEqualToIgnoringHours(ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.systemDefault()));
+        assertThat(modificationDate).isEqualToIgnoringHours(ZonedDateTime.of(2008, 4, 10, 0, 0, 0, 0, ZoneId.of("GMT")));
     }
 
 }
