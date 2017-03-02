@@ -9,7 +9,10 @@ import org.assertj.core.api.JUnitSoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -47,6 +50,7 @@ public class LatestReleaseTestCase extends GitHubSourceTestCase {
     private GitHubLastUpdateCache cacheSpy;
 
     @Before
+    @Override
     public void wireComponentsUnderTest() throws IOException {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
@@ -138,9 +142,9 @@ public class LatestReleaseTestCase extends GitHubSourceTestCase {
 
     private String loadResponseBody(String path) {
         String response = null;
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            response = CharStreams.toString(new InputStreamReader(classLoader.getResourceAsStream(path), Charsets.UTF_8));
+        ClassLoader classLoader = getClass().getClassLoader();
+        try (final InputStreamReader inputStreamReader = new InputStreamReader(classLoader.getResourceAsStream(path), Charsets.UTF_8)) {
+            response = CharStreams.toString(inputStreamReader);
         } catch (IOException e) {
             e.printStackTrace();
         }

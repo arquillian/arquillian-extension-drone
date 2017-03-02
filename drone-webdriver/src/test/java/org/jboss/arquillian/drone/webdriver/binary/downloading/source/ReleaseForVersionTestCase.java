@@ -24,6 +24,7 @@ public class ReleaseForVersionTestCase extends GitHubSourceTestCase {
 
 
     @Before
+    @Override
     public void wireComponentsUnderTest() throws IOException {
         this.httpClientSpy = new HttpClient();
         this.cacheSpy = new GitHubLastUpdateCache();
