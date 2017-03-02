@@ -25,15 +25,13 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class LatestReleaseTestCase extends GitHubSourceTestCase {
+public class GitHubSourceLatestReleaseTestCase extends HoverflyProxyHandler {
 
     private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\"," +
             "\"asset\":" +
             "{\"version\":\"v0.14.0\"," +
             "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
             "}";
-
-    private final String RESPONSE_BODY = loadResponseBody("hoverfly/gh.simulation.mozilla@geckodriver.release.latest.json");
 
     @ClassRule
     public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode();
@@ -44,13 +42,17 @@ public class LatestReleaseTestCase extends GitHubSourceTestCase {
     @Rule
     public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
+    private final String RESPONSE_BODY;
     private File tmpFolder;
     private GeckoDriverGitHubSource geckoDriverGitHubSource;
     private HttpClient httpClientSpy;
     private GitHubLastUpdateCache cacheSpy;
 
+    public GitHubSourceLatestReleaseTestCase() throws IOException {
+        this.RESPONSE_BODY = loadResponseBody("hoverfly/gh.simulation.mozilla@geckodriver.release.latest.json");
+    }
+
     @Before
-    @Override
     public void wireComponentsUnderTest() throws IOException {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
@@ -140,13 +142,11 @@ public class LatestReleaseTestCase extends GitHubSourceTestCase {
         verify(cacheSpy, times(1)).store(any(), anyString(), any());
     }
 
-    private String loadResponseBody(String path) {
-        String response = null;
+    private String loadResponseBody(String path) throws IOException {
+        String response;
         ClassLoader classLoader = getClass().getClassLoader();
         try (final InputStreamReader inputStreamReader = new InputStreamReader(classLoader.getResourceAsStream(path), Charsets.UTF_8)) {
             response = CharStreams.toString(inputStreamReader);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return response;
     }

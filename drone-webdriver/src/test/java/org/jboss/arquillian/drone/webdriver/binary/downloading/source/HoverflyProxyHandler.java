@@ -1,10 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import java.io.IOException;
-
-public abstract class GitHubSourceTestCase {
-
-    public abstract void wireComponentsUnderTest() throws IOException;
+public abstract class HoverflyProxyHandler {
 
     // Cleaning up system properties for proxies
     // We need this until hoverfly cleans up properly

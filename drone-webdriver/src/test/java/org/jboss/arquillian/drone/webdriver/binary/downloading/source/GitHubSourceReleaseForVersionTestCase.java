@@ -4,32 +4,18 @@ import io.specto.hoverfly.junit.rule.HoverflyRule;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReleaseForVersionTestCase extends GitHubSourceTestCase {
+public class GitHubSourceReleaseForVersionTestCase extends HoverflyProxyHandler {
 
     @ClassRule
     public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.releases.json"));
 
-    private GeckoDriverGitHubSource geckoDriverGitHubSource;
-    private HttpClient httpClientSpy;
-    private GitHubLastUpdateCache cacheSpy;
-
-
-    @Before
-    @Override
-    public void wireComponentsUnderTest() throws IOException {
-        this.httpClientSpy = new HttpClient();
-        this.cacheSpy = new GitHubLastUpdateCache();
-        this.geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
-    }
+    GeckoDriverGitHubSource geckoDriverGitHubSource = new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
 
     @Test
     public void should_load_release_information_from_gh_for_given_version() throws Exception {
