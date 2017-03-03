@@ -1,5 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
+import org.junit.AfterClass;
+
 public abstract class HoverflyProxyHandler {
 
     // Cleaning up system properties for proxies
@@ -24,7 +26,8 @@ public abstract class HoverflyProxyHandler {
         ORG_HTTPS_PROXY_PORT = System.getProperty(HTTPS_PROXY_PORT, "");
     }
 
-    static void clean() {
+    @AfterClass
+    public static void cleanProxySystemProperties() {
         System.setProperty(HTTP_PROXY_HOST, ORG_HTTP_PROXY_HOST);
         System.setProperty(HTTPS_PROXY_HOST, ORG_HTTPS_PROXY_HOST);
         System.setProperty(HTTP_NON_PROXY_HOSTS, ORG_HTTP_NON_PROXY_HOSTS);
