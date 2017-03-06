@@ -38,8 +38,8 @@
         <!-- Versioning -->
         <version.arquillian.core>1.1.12.Final</version.arquillian.core>
         <version.phantom.driver>1.2.1.Final</version.phantom.driver>
-        <version.selenium>3.0.1</version.selenium>
-        <version.htmlunit.driver>2.23</version.htmlunit.driver>
+        <version.selenium>3.2.0</version.selenium>
+        <version.htmlunit.driver>2.24</version.htmlunit.driver>
 
         <!-- Test bits versions -->
         <version.junit>4.12</version.junit>

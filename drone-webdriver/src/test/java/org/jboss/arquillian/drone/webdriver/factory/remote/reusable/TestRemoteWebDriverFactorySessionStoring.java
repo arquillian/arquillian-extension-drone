@@ -116,7 +116,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
-        when(configuration.getSeleniumServerArgs()).thenReturn("-debug");
+        when(configuration.getSeleniumServerArgs()).thenReturn("-debug true");
     }
 
     private void runSeleniumServer() {

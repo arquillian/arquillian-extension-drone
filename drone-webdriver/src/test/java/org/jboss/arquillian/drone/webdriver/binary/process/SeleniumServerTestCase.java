@@ -66,7 +66,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     public void should_start_selenium_server_with_serverArgs_debug() throws Exception {
 
         final String browser = "chrome";
-        final String seleniumServerArgs = "-debug -role node";
+        final String seleniumServerArgs = "-debug true -role node";
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
 
