@@ -16,7 +16,8 @@
  */
 package org.arquillian.drone.browserstack.extension.webdriver;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -82,6 +83,7 @@ public class WebDriverUtil {
             return this;
         }
 
+        @Override
         public <V> V until(Function<? super WebDriver, V> isTrue) {
             if (message == null) {
                 return super.until(isTrue);

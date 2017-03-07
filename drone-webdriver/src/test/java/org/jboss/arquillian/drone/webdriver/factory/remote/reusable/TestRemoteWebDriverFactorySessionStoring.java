@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
@@ -50,7 +49,6 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import static org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PhantomJSUrl.getPhantomJs211Url;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
@@ -124,11 +122,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
             String browser = (String) desiredCapabilities.getCapability("browserName");
             DesiredCapabilities selServerCaps = new DesiredCapabilities(desiredCapabilities);
             String seleniumServerArgs = System.getProperty("seleniumServerArgs");
-
-            // hack to download also phantomjs binaries until it is fully supported
-            selServerCaps
-                .setCapability(PhantomJSDriverBinaryHandler.PHANTOMJS_BINARY_URL_PROPERTY, getPhantomJs211Url());
-            selServerCaps.setCapability(PhantomJSDriverBinaryHandler.PHANTOMJS_BINARY_VERSION_PROPERTY, "2.1.1");
 
             // use selenium server version defined in arquillian.xml
             String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());

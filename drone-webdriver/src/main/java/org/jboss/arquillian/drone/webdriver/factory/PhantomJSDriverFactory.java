@@ -97,7 +97,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
         // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        new PhantomJSDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
+        new PhantomJSDriverBinaryHandler(capabilities).checkAndSetBinaryWithoutResolve();
 
         return capabilities;
     }

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.webdriver.example;
 
 import java.net.URL;
+import java.util.function.Function;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -27,7 +28,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.google.common.base.Function;
 
 /**
  * A wrapper for login page to act as a component
@@ -105,6 +105,7 @@ public class LoginPage {
             return this;
         }
 
+        @Override
         public <V> V until(Function<? super WebDriver, V> isTrue) {
             if (message == null) {
                 return super.until(isTrue);
