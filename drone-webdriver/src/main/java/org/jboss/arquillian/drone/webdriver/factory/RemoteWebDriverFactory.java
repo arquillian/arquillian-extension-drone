@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -34,6 +36,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.Initializati
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PersistReusedSessionsEvent;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverToDestroy;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSession;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
@@ -66,6 +69,10 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     private Event<PersistReusedSessionsEvent> persistEvent;
     @Inject
     private Event<StartSeleniumServer> startSeleniumServerEvent;
+
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ReusableRemoteWebDriverToDestroy> lastRemoteWebDriverToDestroy;
 
     @Override
     public int getPrecedence() {
@@ -184,6 +191,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             ReusedSession session = ReusedSession.createInstance(sessionId, driverCapabilities);
             sessionStore.get().store(param, session);
             persistEvent.fire(new PersistReusedSessionsEvent());
+            lastRemoteWebDriverToDestroy.set(new ReusableRemoteWebDriverToDestroy(driver));
         } else {
             driver.quit();
         }
