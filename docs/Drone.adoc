@@ -1,0 +1,946 @@
+Drone
+=====
+
+The Arquillian Drone 2 extension for Arquillian provides a simple way
+to include functional tests for an application with a web-based
+user interface.
+
+Arquillian Drone 2 brings the power of WebDriver into the Arquillian framework.
+WebDriver serves as a language to communicate with the browser, by filling the forms, navigating the
+pages and validating their content. Compared with its predecessor
+Arquillian Drone 1, it offers
+http://github.com/arquillian/arquillian-extension-drone/wiki/SPI-changes-in-Drone-2[new
+features and tools] as part of the SPI as well as
+http://github.com/arquillian/arquillian-extension-drone/wiki/API-changes-in-Drone-2[multiple
+life cycle scopes of @Drone points] as part of the API.
+
+Why should I use Arquillian Drone instead of plain WebDriver?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are many reasons why you would want to do that, the most important ones
+being:
+
+* Life cycle management of the browser
+* Interaction with deployments and containers provided by Arquillian
+* Simple usage of multiple browsers in a single test
+* Configuration kept in a single place, outside of the Java code
+* Full compatibility with the IDE
+* Support for injection of Pages, PagesFragments, AJAX request guards
+and more via Arquillian Graphene 2
+* Integration with mobile based browser testing (Arquillian Droidium)
+* Integration of JavaScript test suite execution (QUnit)
+* Compatible with WebDriver (Selenium 2) and Selenium Grids
+
+The following example illustrates how Arquillian Drone can be used with
+WebDriver:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class WebDriverTest {
+
+    static final String USERNAME = "demo";
+    static final String PASSWORD = "demo";
+
+    @ArquillianResource
+    URL contextPath;
+
+    @Drone
+    WebDriver driver;
+
+    /**
+     * Creates a testing WAR of using ShrinkWrap
+     *
+     * @return WebArchive to be tested
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return Deployments.createDeployment();
+    }
+
+    @Test
+    @InSequence(1)
+    public void login() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.login(USERNAME, PASSWORD);
+    }
+
+    @Test
+    @InSequence(2)
+    public void logout() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.logout();
+    }
+}
+----
+
+Notice here that the Arquillian Drone test looks similar to an Arquillian
+test. There is `@RunWith(Arquillian.class)` runner, a `@Deployment`
+method and a few `@Test` methods. The only new elements are
+`@ArquillianResource`, which is here used to inject the `URL` of the
+deployed application and `@Drone`, which injects a `WebDriver` browser,
+managed for you as described in <<life-cycle-scopes-of-drone-points>>. 
+
+Even when using JUnit, Arquillian allows you to force method execution
+order via the @InSequence annotation. Arquillian Drone is obviously
+compatible with TestNG as well.
+
+The `testable=false` argument for deployment forces Arquillian to run in
+client mode, that is not inside of the server where the application is
+deployed. 
+
+NOTE: All Drone tests *must* run in client mode.
+
+If you need to combine tests running inside of the server as well as on the client using single
+deployments, mark the deployment as `testable=true` and force client
+execution via the `@RunAsClient` annotation on every client `@Test`
+method.
+
+//More details are listed in https://docs.jboss.org/author/display/ARQ/Test+run+modes[Arquillian
+//Documentation test run modes].
+
+For the completeness of the code, here are the deployment methods as
+well as the LoginPage abstraction:
+
+[source,java]
+----
+public class LoginPage {
+
+    private static final By LOGGED_IN = By.xpath("//li[contains(text(),'Welcome')]");
+    private static final By LOGGED_OUT = By.xpath("//li[contains(text(),'Goodbye')]");
+
+    private static final By USERNAME_FIELD = By.id("loginForm:username");
+    private static final By PASSWORD_FIELD = By.id("loginForm:password");
+
+    private static final By LOGIN_BUTTON = By.id("loginForm:login");
+    private static final By LOGOUT_BUTTON = By.id("loginForm:logout");
+
+    private final WebDriver driver;
+    private final URL contextPath;
+
+    public LoginPage(WebDriver driver, URL contextPath) {
+        this.driver = driver;
+        this.contextPath = contextPath;
+    }
+
+    public void login(String name, String password) {
+        driver.get(contextPath + "home.jsf");
+        driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
+        driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
+        driver.findElement(LOGIN_BUTTON).click();
+        Assert.isTrue("User is logged in.", driver.findElement(LOGGED_IN).isDisplayed());
+    }
+
+    public void logout() {
+        driver.findElement(LOGOUT_BUTTON).click();
+        Assert.isTrue("User is not logged in", driver.findElement(LOGGED_OUT).isDisplayed(), "User is logged out");
+    }
+}
+----
+
+[source,java]
+----
+public class Deployments {
+
+   public static WebArchive createDeployment() {
+
+        WebArchive war = ShrinkWrap.create(WebArchive.class)
+                // add classes
+                .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
+                // add configuration
+                .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
+                // add pages
+                .addAsWebResource(new File("src/test/webapp/index.html"))
+                .addAsWebResource(new File("src/test/webapp/home.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/template.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/users.xhtml"))
+                .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
+
+        return war;
+    }
+}
+----
+
+Supported frameworks and their versions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following frameworks are supported and tested with the latest
+version of Arquillian Drone. Drone type is the type you can inject via
+the `@Drone` annotation.
+
+[cols="1,1,8",options="header"]
+|===
+|Framework Name |Drone Type |Tested Version
+
+|WebDriver
+|ChromeDriver +
+ FirefoxDriver +
+ HtmlUnitDriver +
+ InternetExplorerDriver +
+ PhantomJSDriver +
+ OperaDriver +
+ RemoteDriver +
+ WebDriver
+|2.53.1
+
+|Arquillian Graphene
+|WebDriver
+|2.1.0.Final
+|===
+
+[NOTE]
+It is not required to use Arquillian Drone with the exact version we
+certified. You can override versions via `<dependencyManagement>`, as
+explained in the
+https://community.jboss.org/wiki/HowDoISpecifyTheSeleniumVersionInArquillianDrone[Arquillian
+FAQ].
+
+If you are in doubt what to use for a newly created project, Arquillian
+team recommends you to start with Graphene, which is based on WebDriver,
+however brings you a lot of AJAX goodies.
+
+Maven Setup Example
+~~~~~~~~~~~~~~~~~~~
+
+Adding an Arquillian Drone dependency can be divided into two parts:
+
+1.  Adding a Bill of Materials (BOM) into the dependency section for
+both Arquillian and Arquillian Drone. This step ensures that Maven will
+fetch the correct version of all dependencies.
+2.  Adding a Dependency Chain dependency. This greatly simplifies the
+entry point as you only need to add a single dependency. All transitive
+dependencies, like the version of Selenium, will be fetched for you
+automatically.
+
+[WARNING]
+The order in the `<dependencyManagement>` section matters. The first
+version defined takes precedence. By listing Arquillian BOM *before*
+Arquillian Drone BOM, you encore Drone to use latest Arquillian Core.
+
+As for the first step, this is the same for all supported Drones:
+
+[source,xml]
+----
+<properties>
+    <version.org.jboss.arquillian>1.1.11.Final</version.org.jboss.arquillian>
+    <version.org.jboss.arquillian.drone>2.0.1.Final</version.org.jboss.arquillian.drone>
+    <version.org.jboss.arquillian.graphene>2.1.0.Final</version.org.jboss.arquillian.graphene>
+</properties>
+
+<dependencyManagement>
+    <dependencies>
+        <!-- Arquillian Core dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Arquillian Drone dependencies and WebDriver/Selenium dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-bom</artifactId>
+            <version>${version.org.jboss.arquillian.drone}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+If you need to use newer Selenium version than the one used by Drone,
+you can specify `selenium-bom` in the dependencyManagement part as
+well.
+
+IMPORTANT: If you use `selenium-bom` make sure that it is specified
+before the `arquillian-drone-bom` (or also before other BOMs that manage
+Selenium version) to make the change effective. +
+Example of Selenium BOM for Selenium 3.0.0-beta3
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        ...
+        <!-- Selenium BOM -->
+        <dependency>
+            <groupId>org.jboss.arquillian.selenium</groupId>
+            <artifactId>selenium-bom</artifactId>
+            <version>3.0.0-beta3</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        ...
+    </dependencies>
+</dependencyManagement>
+----
+
+The latter step differs based on what Drone you want to use. Include one
+of the following into the `<dependencies>` section:
+
+To use Arquillian Graphene 2:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.jboss.arquillian.graphene</groupId>
+    <artifactId>graphene-webdriver</artifactId>
+    <version>${version.org.jboss.arquillian.graphene}</version>
+    <type>pom</type>
+    <scope>test</scope>
+</dependency>
+----
+
+To use WebDriver, also known as Selenium 2:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+    <version>${version.org.jboss.arquillian.drone}</version>
+    <type>pom</type>
+    <scope>test</scope>
+</dependency>
+----
+
+
+NOTE: WebDriver is a subset of Graphene. You can import Graphene and not to
+use any of the Graphene features from the start. However, it would be
+super easy to add them later on.
+
+[[life-cycle-scopes-of-drone-points]]
+Life Cycle Scopes of @Drone points
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Arquillian Drone does not allow you to control the life cycle of web
+testing framework objects, but it provides three different scopes which
+should be sufficient for most usages required by developers. These are:
+
+[[class-scoped-life-cycle]]
+1. Class Scoped Life Cycle
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the Drone points with the class scoped life cycle, a configuration
+for the instance is created before a test class is run. This
+configuration is used to properly initialize an instance of the tool.
+The instance is injected into the field and holds until the last test in
+the test class is finished, then it is disposed. You can think of
+`@BeforeClass` and `@AfterClass` equivalents.
+
+This scope is default scope for the field injection points. If you
+still want to declare the Drone point to be class-scoped use the
+annotation `@ClassLifecycle`.
+
+[[method-scoped-life-cycle]]
+2. Method Scoped Life Cycle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the Drone points with the method scoped life cycle, an instance is
+configured and created before Arquillian enters test method and it is
+destroyed after method finishes. You can think of `@Before` and `@After`
+equivalents.
+
+This scope is a default scope for the method parameter injection points.
+To declare a field injection point as a method-scoped Drone point use
+the annotation `@MethodLifecycle`
+
+[[deployment-scoped-life-cycle]]
+3. Deployment Scoped Life Cycle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the Drone points with the deployment scoped life cycle, an instance
+is configured and created after an Arquillian deployment is deployed and
+it is destroyed when the deployment is about to be undeployed. You can
+think of `@AfterDeploy` and `@BeforeUnDeploy` equivalents.
+
+To declare any injection point as a deployment-scoped Drone point use
+the annotation `@OperateOnDeployment("deployment_name")` with the
+specified name of the deployment the Drone point should be tied to.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class EnrichedClass
+{
+   @Deployment(name = "cool_deployment")
+   public static Archive deploy() {
+      return ShrinkWrap.create(Archive.class);
+   }
+
+   @Drone
+   @OperateOnDeployment("cool_deployment")
+   WebDriver foo;
+
+   ...
+}
+----
+
+It is important to know that you can combine multiple instances in one
+test and you can have them in different scopes. You can as well combine
+different framework types. Following example shows class-scoped instance
+`foo` and method-scoped instance `baz` of type `WebDriver` combined with
+method-scoped `bar` of type `FirefoxDriver`.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class EnrichedClass
+{
+   @Drone WebDriver foo;
+
+   @Drone @MethodLifecycle WebDriver baz;
+
+   // this will always retrieve FirefoxDriver, no matter what you specify in arquillian.xml file
+   @Test
+   public void runThisTestAlwaysWithFirefoxDriver(@Drone FirefoxDriver bar) {
+     ...
+   }
+}
+----
+
+[[keeping-multiple-drone-instances-of-the-same-field-type]]
+Keeping multiple Drone instances of the same field type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With Arquillian Drone, it is possible to keep more than one instance of
+a web test framework tool of the same type and determine which instance
+to use in a type safe way. Arquillian Drone uses the concept of a
+`@Qualifier` annotation which you may know from CDI. Drone defines its
+own `@Qualifier` meta-annotation which allows you to create your own
+annotations usable to qualify any `@Drone` injections. By default, if no
+`@Qualifier` annotation is present, Arquillian Drone implicitly uses the
+`@Default` qualifier. The following code defines a new qualifying
+annotation named `Different`.
+
+Take care to not accidentally import the Qualifier annotation defined by
+CDI (`javax.inject.Qualifier`). Drone defines its own meta-annotation of
+the same name.
+
+[source,java]
+----
+package org.jboss.arquillian.drone.example;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Qualifier
+public @interface Different {
+}
+----
+
+Once you have defined a qualifier, you can use it in your tests, for
+example in following way, having two distinct class based life cycle
+instances of `WebDriver`.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+@RunAsClient
+public class EnrichedClass {
+   @Drone WebDriver foo;
+   @Drone @Different WebDriver bar;
+
+
+   @Test
+   public void testWithBothFooAndBar() {
+     ...
+   }
+}
+----
+
+[[configuring-drone-instances]]
+Configuring Drone Instances
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Drone instances are automatically configured from arquillian.xml
+descriptor file or System properties, which take precedence. You can
+eventually omit the configuration altogether, if you are happy with the
+default values. Obviously, configurations are compatible with @Qualifier
+annotations, so you can create a special configuration for a method
+based life cycle browser if you will.
+
+Extension qualifier must match the value listed in configuration.
+Otherwise Drone won't pick the configuration.
+
+[[default-drone-configuration]]
+Default Drone Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Drone global configuration is applied for all supported frameworks at
+the same time. It uses `drone` extension qualifier.
+
+[source,xml]
+----
+<extension qualifier="drone">
+   <property name="instantiationTimeoutInSeconds">120</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|instantiationTimeoutInSeconds
+|60
+|Default timeout in seconds to get instance of a browser. Set to `0` if
+you want to disable the timeout altogether
+|===
+
+[[webdriver-configuration]]
+WebDriver configuration
+^^^^^^^^^^^^^^^^^^^^^^^
+
+WebDriver uses `webdriver` qualifier.
+
+[source,xml]
+----
+<extension qualifier="webdriver">
+   <property name="browser">firefox</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|browser
+|htmlUnit
+|Determines which browser instance is created for WebDriver testing.
+Following values are valid: +
+chrome +
+firefox +
+htmlUnit +
+internetExplorer +
+opera +
+phantomjs +
+safari
+
+|iePort
+|-
+|Default port where to connect for Internet Explorer driver
+
+|remoteAddress
+|http://localhost:14444/wd/hub
+|Default address for remote driver to connect
+
+|remoteReusable
+|false
+|The flag which indicates that remote session should be reused between
+subsequent executions - gives opportunity to reuse browser window for
+debugging and/or test execution speed-up.
+
+|reuseCookies
+|false
+|If you are using remote reusable browser, you can force it to reuse
+cookies
+
+|chromeDriverBinary
+|-
+|Path to chromedriver binary
+
+|ieDriverBinary
+|-
+|Path to Internet Explorer driver binary
+
+|firefoxExtensions
+|-
+|Path or multiple paths to xpi files that will be installed into Firefox
+instance as extensions. Separate paths using space, use quotes in case
+that path contains spaces
+
+|firefox_profile
+|-
+|Path to Firefox Profile to be used instead of default one delivered with
+FirefoxDriver
+
+|firefoxUserPreferences
+|-
+|Path to Firefox user preferences. This file will be parsed and values
+will be applied to freshly created Firefox profile.
+
+|dimensions
+|-
+|Dimensions of browser window in `widthxheight` format. This will resize
+the window if supported by underlying browser. Useful for **phantomjs**,
+which by default defines a very small viewport
+|===
+
+If you need to enable any
+http://code.google.com/p/selenium/wiki/DesiredCapabilities[browser
+capability], simply specify it as a property in extension configuration.
+For instance, if you are running Firefox browser and you want to change
+the binary location, you can do it via following code:
+
+[source,xml]
+----
+<extension qualifier="webdriver">
+   <property name="firefox_binary">/path/to/firefox</property>
+</extension>
+----
+
+We have enabled JavaScript for *htmlUnit* driver by default. If you want
+to disable it, configure appropriate capability to false:
+
+[source,xml]
+----
+<property name="javascriptEnabled">false</property>
+----
+
+WebDriver expects a Java Object stored in Capabilities settings for some
+of the WebDriver capabilities. Therefore, we provide a simple mappings
+to text format for some properties described in table below.
+
+[cols="2,8",options="header"]
+|===
+|Property Name |Format
+
+|loggingPrefs
+|Comma separated list of logging levels for FirefoxDriver. Use
+driver=$\{value1},profiler=$\{value2} where value is one of the
+following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST
+|===
+
+[[graphene-2-configuration]]
+Graphene 2 Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Graphene 2 reuses configuration specified for WebDriver, using
+`webdriver` qualifier. You can additionally use a
+https://docs.jboss.org/author/display/ARQGRA2/Graphene+Configuration[Arquillian
+Graphene 2 configuration] to set Graphene specific configuration, such
+as default UI timeouts.
+
+[[selenium-server-configuration]]
+Selenium Server Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Selenium Server uses `selenium-server` qualifier.
+
+[source,xml]
+----
+<extension qualifier="selenium-server">
+   <property name="host">myhost.org</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|avoidProxy
+|false
+|Do not use proxy for connection between clients and server
+
+|browserSessionReuse
+|false
+|Reuse browser session
+
+|browserSideLog
+|false
+|Enable logging in browser window
+
+|debug
+|false
+|Enable debug messages
+
+|dontTouchLogging
+|false
+|Disable Selenium specific logging configuration
+
+|ensureCleanSession
+|false
+|Automatic cleanup of the session
+
+|firefoxProfileTemplate
+|-
+|Path to the profile used as a template
+
+|forcedBrowserMode
+|
+|Mimic browser mode no matter which one is used to start the client
+
+|honorSystemProxy
+|false
+|Use system proxy for connections
+
+|host
+|localhost
+|Name of the machine where to start Selenium Server
+
+|logFile
+|-
+|Path to log file
+
+|nonProxyHosts
+|value of `http.nonProxyHosts` property
+|List of hosts where proxy settings are ignored
+
+|port
+|14444
+|Port on machine where to start Selenium Server
+
+|profilesLocation
+|-
+|Where profiles are located
+
+|proxyHost
+|value of `http.proxyHost` property
+|Name of proxy server
+
+|proxyInjectionMode
+|false
+|Use proxy approach between Selenium server and client
+
+|proxyPort
+|value of `http.proxyPort` property
+|Port of proxy server
+
+|retryTimeoutInSeconds
+|10
+|Timeout for commands to be retried
+
+|singleWindow
+|false
+|Use single window
+
+|skip
+|false
+|Do not manage Selenium Server lifecycle
+
+|systemProperties
+|-
+|Arbitrary system properties in -Dproperty.name=property.value format
+
+|timeoutInSeconds
+|Integer.MAX_VALUE
+|Timeout for Selenium Server
+
+|trustAllSSLCertificates
+|false
+|Trust all SSL certificates
+
+|trustStore
+|value of `javax.net.ssl.trustStore` property
+|Trust store path
+
+|trustStorePassword
+|value of `javax.net.ssl.trustStorePassword` property
+|Trust store password
+
+|userExtensions
+|-
+|Path to user extension files
+|===
+
+Selenium Server has different life cycle than Drone instances, it is
+created and started before test suite and disposed after test suite.
+Note, you need Selenium Server only if you plan to use remote and
+reusable instances of WebDriver.
+
+[NOTE]
+If you have your own Selenium Server instance running, you need either
+to remove Drone Selenium Server extension from the classpath, set it to
+a different host/port or disable its execution via skip=true.
+
+[[extended-configuration-configuring-qualifierd-drone-instances]]
+Extended Configuration, Configuring @Qualifier'd Drone Instances
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are wondering how to define configuration for `@Qualifier`
+`@Drone` instance, it's very easy. Only modification you have to do is
+to change qualifier to include - (`@Qualifier` annotation name converted
+to lowercase). For instance, if you qualified Arquillian Graphene
+instance with @MyExtraBrowser, its extension qualifier will become
+**graphene-myextrabrowser**.
+
+Arquillian Drone configures your browser using two-step process:
+
+1.  Search for the exact match of qualifier (e.g.
+`graphene-myextrabrowser`) in arquillian.xml, if found, step 2 is not
+performed.
+2.  Search for a match of base qualifier, without type safe `@Qualifier`
+(e.g. `graphene`) in arquillian.xml.
+
+Then System property are applied in the same fashion.
+
+[[arquillian-drone-spi]]
+Arquillian Drone SPI
+~~~~~~~~~~~~~~~~~~~~
+
+The big advantage of Arquillian Drone extension is its flexibility. We
+provide you reasonable defaults, but if they are not sufficient or if
+they do not fulfill your needs, you can change them. You can change the
+behavior of existing implementation or implement a support for your own
+testing framework as well.
+
+[[event-model]]
+Event Model
+^^^^^^^^^^^
+
+Drone itself is not using Arquillian Container related event, which
+means that it is able to work with Arquillian Standalone test runners.
+Arquillian Drone itself observes following events:
+
+[cols="2,8",options="header"]
+|===
+|Arquillian Event |Drone Default Action
+
+|BeforeSuite
+|Drone creates a registry with all Drone SPI implementation on the
+classpath +
+Drone creates a global configuration +
+Drone configures Selenium Server +
+Drone registers all Browser Capabilities implementation on the
+classpath +
+Drone creates a registry for session reuse
+
+|BeforeClass
+|Drone creates a configuration and future instance for Drone points with
+class scoped life cycle
+
+|AfterDeploy
+|Drone creates a configuration and future instance for Drone points with
+deployment scoped life cycle
+
+|Before
+|Drone creates a configuration for instances with method scoped life
+cycle +
+Drone converts a Drone instance callable into a real Drone instance +
+Drone enhances Drone instances
+
+|After
+|Drone destroys an instance of method scoped Drone points
+
+|AfterClass
+|Drone destroys an instance of class scoped Drone points
+
+|BeforeUnDeploy
+|Drone destroys an instance of deployment scoped Drone points
+
+|AfterSuite
+|Drone destroys Selenium Server instance
+|===
+
+Arquillian Drone fires following events you can observe in your
+extension:
+
+[cols="2,8",options="header"]
+|===
+|Arquillian Drone fired event |When is this event fired?
+
+|AfterDroneExtensionConfigured
+|Fired before the global configuration is prepared
+
+|AfterDronePrepared
+|Fired after Drone configuration and Drone callable instance are created
+and stored in the context
+
+|AfterDroneInstantiated
+|Fired after Drone instance callable is converted into real Drone
+instance
+
+|AfterDroneEnhanced
+|Fired after Drone instance is enhanced by an
+`DroneInstanceEnhancer and a window is resized (if requested)`
+
+|AfterDroneDeenhanced
+|Fired after Drone instance is deenhanced by an `DroneInstanceEnhancer`
+
+|AfterDroneDestroyed
+|Fired after Drone instance is destroyed
+
+|BeforeDroneExtensionConfigured
+|Fired before the global configuration is prepared
+
+|BeforeDronePrepared
+|Fired before Drone configuration and Drone callable instance are created
+
+|BeforeDroneInstantiated
+|Fired before Drone instance callable is converted into real Drone
+instance
+
+|BeforeDroneEnhanced
+|Fired before Drone instance is enhanced by an `DroneInstanceEnhancer`
+
+|BeforeDroneDeenhanced
+|Fired before Drone instance is deenhanced by an `DroneInstanceEnhancer`
+
+|BeforeDroneDestroyed
+|Fired before the Drone instance will be destroyed
+
+|DroneAugmented
+|Fired after WebDriver instance is augmented to support more features.
+|===
+
+NOTE: Events provide a class hierarchy, so you can observe their super classes
+if you want.
+
+[[working-with-drone-instances]]
+Working with Drone Instances
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to support another testing framework and manage it's
+lifecycle, you should implement following interfaces and register them
+in your own Arquillian Extension.
+
+Drone Factory SPI:
+
+* Configurator<T, C> +
+Provides a way how to configure configurations of type C for `@Drone`
+object of type T
+* Instantiator<T, C> +
+Provides a way how to instantiate `@Drone` object of type T with
+configuration C
+* Destructor<T> +
+Provides a way how to dispose `@Drone` object of type T
+* DroneInstanceEnhancer<T> +
+Provides a way how to enhance `Drone` object of type T with additional
+functionality. All enhancers available on class path and compatible with
+current Drone type are always applied.
+
+Drone Context SPI:
+
+* DroneConfiguration +
+This is effectively a marker for configuration of type C
+* DronePoint +
+An unique description of a Drone in a code.
+* DroneRegistry +
+Register of available {{Configurator}}s, {{Instantiator}}s and
+{{Destructor}}s discovered via SPI.
+* DronePointContext +
+A unique holder for configuration, callable instance and metadata of
+each Drone point.
+* DroneContext +
+Holder for all {{DronePointContext}}s and the global configuration.
+* InstanceOrCallableInstance +
+Holder for any object in DroneContext. It allows to hold both real
+instance and callable instance in union like manner. It is also used to
+hold Drone related configuration, which is always instantiated
+
+Drone WebDriver SPI:
+
+* BrowserCapabilitiesRegistry +
+Container for all registered WebDriver browser capabilities
+* BrowserCapabilities +
+Implementation of browser implementation for `WebDriver`
+
+[WARNING]
+Implementations of Configurator, Instantiator and Destructor are
+searched on the class path and they are sorted according to precedence
+they declare. Default implementation has precedence of 0, so if your
+implementation has a higher precedence and instantiates the exact type,
+Arquillian Drone will use it instead of default variant. This provides
+you the ultimate way how to change behavior if desired. Of course, you
+can provide support for your own framework in the very same way, so in
+your test you can use `@Drone` annotation to inject instances of
+arbitrary web testing framework.
