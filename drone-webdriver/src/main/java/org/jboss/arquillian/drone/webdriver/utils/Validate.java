@@ -82,7 +82,15 @@ public class Validate {
     }
 
     public static void isExecutable(String path, String message) throws IllegalArgumentException {
-        isEmpty(path, message);
+        if (!executable(path)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static boolean executable(String path) {
+        if (empty(path)){
+            return false;
+        }
 
         File file = new File(path);
 
@@ -90,9 +98,7 @@ public class Validate {
             throw new IllegalArgumentException(String.format("The file %s does not exist", path));
         }
 
-        if (!fileExecutableChecker.canExecute(file)) {
-            throw new IllegalArgumentException(message);
-        }
+        return fileExecutableChecker.canExecute(file);
     }
 
     /**

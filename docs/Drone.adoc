@@ -89,9 +89,7 @@ The `testable=false` argument for deployment forces Arquillian to run in
 client mode, that is not inside of the server where the application is
 deployed. 
 
-NOTE: All Drone tests *must* run in client mode.
-
-If you need to combine tests running inside of the server as well as on the client using single
+NOTE: All Drone tests *must* run in client mode. If you need to combine tests running inside of the server as well as on the client using single
 deployments, mark the deployment as `testable=true` and force client
 execution via the `@RunAsClient` annotation on every client `@Test`
 method.
@@ -163,7 +161,7 @@ public class Deployments {
 }
 ----
 
-Supported frameworks and their versions
+Supported Frameworks And Their Versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following frameworks are supported and tested with the latest
@@ -403,7 +401,7 @@ public class EnrichedClass
 ----
 
 [[keeping-multiple-drone-instances-of-the-same-field-type]]
-Keeping multiple Drone instances of the same field type
+Keeping Multiple Drone Instances Of The Same Field Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 With Arquillian Drone, it is possible to keep more than one instance of
@@ -666,7 +664,7 @@ Selenium Server uses `selenium-server` qualifier.
 |Path to the profile used as a template
 
 |forcedBrowserMode
-|
+|-
 |Mimic browser mode no matter which one is used to start the client
 
 |honorSystemProxy

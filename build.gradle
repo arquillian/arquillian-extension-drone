@@ -18,11 +18,11 @@ ext {
         browser = ['phantomjs']
     }
 
-    arquillianPhantomDriverCommit = '1.2.1.Final'
+    arquillianPhantomDriverCommit = '1.2.1.1'
     arquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '3.0.1'
+    seleniumVersion = '3.3.0'
     phantomjsVersion = '2.1.1'
 }
 
