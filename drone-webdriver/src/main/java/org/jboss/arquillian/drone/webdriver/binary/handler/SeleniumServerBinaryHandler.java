@@ -1,10 +1,11 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.logging.Logger;
 
 /**
  * A class for handling selenium server binaries. It also runs the selenium server with properties that are
@@ -44,7 +45,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new SeleniumServerStorage((String) capabilities.getCapability(SELENIUM_SERVER_VERSION_PROPERTY));
+        return new SeleniumServerStorage((String) capabilities.getCapability(SELENIUM_SERVER_VERSION_PROPERTY), new HttpClient());
     }
 
     @Override
@@ -66,7 +67,8 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
         private String version;
 
-        SeleniumServerStorage(String version) {
+        SeleniumServerStorage(String version, HttpClient httpClient) {
+            super(httpClient);
             this.version = version;
         }
 

@@ -16,16 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,6 +26,16 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -52,7 +52,7 @@ public class CapabilitiesOptionsMapper {
      * @param capabilities  A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
      * @param browserPrefix A prefix the should the mapped parameters should start with
      */
-    public static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
+    static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
 
         Method[] methods = object.getClass().getMethods();
         List<String> processedMethods = new ArrayList<String>();
@@ -122,7 +122,7 @@ public class CapabilitiesOptionsMapper {
 
     private static Object convert(Method method, String capability) {
         Class<?> parameterType = method.getParameterTypes()[0];
-        Object converted = null;
+        Object converted;
 
         if ((converted = convertToBooleanNumberStringOrFile(parameterType, capability)) != null) {
             return converted;
