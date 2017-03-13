@@ -1,0 +1,236 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+== Automatic Download
+Drone provides a functionality of automatic download of some binaries such as browser webdriver and Selenium Server jar. Which binaries and which features are supported can be found in tables below.
+
+=== How it works?
+
+Let say that I want to use Chrome for my UI tests. First of all, Drone checks if the path to the webdriver binary isn't already set. In this case it would check a system property `webdriver.chrome.driver`; if this is empty then it checks arquillian.xml property: `chromeDriverBinary`. In case that both properties are empty, then the automatic download comes up.
+
+Now we have several options how to specify which binary should be downloaded and where it should be stored. For storage purposes cache directories `$HOME/.arquillian/drone/subdirectory_specific_to_binary` are used so the binaries are not downloaded over and over again.
+
+==== Version
+Using the property
+
+`<property name="chromeDriverVersion">2.10</property>`
+
+you can define which version of the Chrome webdriver should be downloaded. The binary is then cached in a directory `$HOME/.arquillian/drone/chrome/2.10/`.
+
+==== URL
+Using the property
+
+`<property name="chromeDriverUrl">http://url/to/chrome/webdriver </property>`
+
+you can define which url the Chrome webdriver should be downloaded from. The directory where it is stored depends if you also specify the version of this binary or not. In case you use also the before-mentioned property `chromeDriverVersion` then it is cached in corresponding directory `$HOME/.arquillian/drone/chrome/specified_version/`; otherwise it is downloaded into `$project.directory/target/drone/downloaded/` so no cache is used.
+
+==== Latest
+In case that you don't define any property then Drone finds the latest version of the given binary and downloads this one. The binary (in case of Chrome webdriver) is cached at `$HOME/.arquillian/drone/chrome/latest_version/`.
+
+
+==== Properties, directory names and support of latest versions
+
+===== Selenium Server
+|===
+
+|System property |selenium.server.binary.path
+
+|arquillian.xml property
+|seleniumServerBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|seleniumServerVersion
+
+|Url driver property
+|seleniumServerUrl
+
+|Cache subdirectory
+|selenium-server
+|===
+
+===== Gecko driver (Firefox)
+|===
+
+|System property |webdriver.gecko.driver
+
+|arquillian.xml property
+|firefoxDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|firefoxDriverVersion
+
+|Url driver property
+|firefoxDriverUrl
+
+|Cache subdirectory
+|firefox
+|===
+
+
+===== Chrome driver
+|===
+
+|System property |webdriver.chrome.driver
+
+|arquillian.xml property
+|chromeDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|chromeDriverVersion
+
+|Url driver property
+|chromeDriverUrl
+
+|Cache subdirectory
+|chrome
+|===
+
+
+===== Edge driver
+|===
+
+|System property |webdriver.edge.driver
+
+|arquillian.xml property
+|edgeDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|edgeDriverVersion
+
+|Url driver property
+|edgeDriverUrl
+
+|Cache subdirectory
+|edge
+|===
+
+
+===== IE driver
+|===
+
+|System property |webdriver.ie.driver
+
+|arquillian.xml property
+|ieDriverBinary
+
+|Latest version supported
+|yes
+
+|Version driver property
+|ieDriverVersion
+
+|Url driver property
+|ieDriverUrl
+
+|Cache subdirectory
+|internetExplorer
+|===
+
+
+===== PhantomJS
+|===
+
+|System property |phantomjs.binary.path
+
+|arquillian.xml property
+|-
+
+|Latest version supported
+|no
+
+|Version driver property
+|-
+
+|Url driver property
+|-
+
+|Cache subdirectory
+|-
+|===
+
+
+===== Opera driver
+|===
+
+|System property |webdriver.opera.driver
+
+|arquillian.xml property
+|operaDriverBinary
+
+|Latest version supported
+|no
+
+|Version driver property
+|operaDriverVersion (only in combination with url)
+
+|Url driver property
+|operaDriverUrl
+
+|Cache subdirectory
+|opera
+|===
+
+
+===== Safari driver
+|===
+
+|System property |-
+
+|arquillian.xml property
+|-
+
+|Latest version supported
+|no
+
+|Version driver property
+|-
+
+|Url driver property
+|no
+
+|Cache subdirectory
+|-
+|===
+
+
+[NOTE]
+====
+*We are not supporting `Automatic downloading for safari` & `Download webdriver from a specific URL`
+due to following reasons:*
+
+* *Automatic Downloading for Safari:* +
+Starting with Safari 10 on OS X El Capitan and macOS Sierra, Safari comes bundled with a new driver
+implementation that’s maintained by the Web Developer Experience team at Apple.
+Safari’s driver is launchable via the /usr/bin/safaridriver executable, and most client libraries
+provided by Selenium will automatically launch the driver this way without further configuration.
+https://webkit.org/blog/6900/webdriver-support-in-safari-10/[Safari-10]
+* *Download Webdriver from a specific URL:* +
+Starting with Selenium 2.48.0, you must manually install the SafariDriver browser extension.
+Refer getting started section from https://github.com/SeleniumHQ/selenium/wiki/SafariDriver[SafariDiver]
+====
+
+=== Activate / Deactivate
+
+The automatic download functionality is activated by default; if you want to set it off use the property:
+
+`<property name="downloadBinaries">false</property>`
+
+and no binary will be downloaded.

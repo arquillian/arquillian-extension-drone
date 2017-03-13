@@ -1,0 +1,46 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+== Supported Frameworks And Their Versions
+
+The following frameworks are supported and tested with the latest
+version of Arquillian Drone. Drone type is the type you can inject via
+the `@Drone` annotation.
+
+[cols="2,4,4",options="header"]
+|===
+|Framework Name |Drone Type |Tested Version
+
+|WebDriver
+|ChromeDriver +
+ FirefoxDriver +
+ HtmlUnitDriver +
+ InternetExplorerDriver +
+ PhantomJSDriver +
+ OperaDriver +
+ RemoteDriver +
+ WebDriver
+|2.53.1
+
+|Arquillian Graphene
+|WebDriver
+|2.1.0.Final
+|===
+
+[NOTE]
+It is not required to use Arquillian Drone with the exact version we
+certified. You can override versions via `<dependencyManagement>`, as
+explained in the
+https://community.jboss.org/wiki/HowDoISpecifyTheSeleniumVersionInArquillianDrone[Arquillian
+FAQ].
+
+If you are in doubt what to use for a newly created project, Arquillian
+team recommends you to start with Graphene, which is based on WebDriver,
+however brings you a lot of AJAX goodies.
+

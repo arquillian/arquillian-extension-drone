@@ -1,0 +1,150 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+[[life-cycle-scopes-of-drone-points]]
+== Life Cycle Scopes of @Drone points
+
+Arquillian Drone does not allow you to control the life cycle of web
+testing framework objects, but it provides three different scopes which
+should be sufficient for most usages required by developers. These are:
+
+[[class-scoped-life-cycle]]
+=== 1. Class Scoped Life Cycle
+
+For the Drone points with the class scoped life cycle, a configuration
+for the instance is created before a test class is run. This
+configuration is used to properly initialize an instance of the tool.
+The instance is injected into the field and holds until the last test in
+the test class is finished, then it is disposed. You can think of
+`@BeforeClass` and `@AfterClass` equivalents.
+
+This scope is default scope for the field injection points. If you
+still want to declare the Drone point to be class-scoped use the
+annotation `@ClassLifecycle`.
+
+[[method-scoped-life-cycle]]
+=== 2. Method Scoped Life Cycle
+
+For the Drone points with the method scoped life cycle, an instance is
+configured and created before Arquillian enters test method and it is
+destroyed after method finishes. You can think of `@Before` and `@After`
+equivalents.
+
+This scope is a default scope for the method parameter injection points.
+To declare a field injection point as a method-scoped Drone point use
+the annotation `@MethodLifecycle`
+
+[[deployment-scoped-life-cycle]]
+=== 3. Deployment Scoped Life Cycle
+
+For the Drone points with the deployment scoped life cycle, an instance
+is configured and created after an Arquillian deployment is deployed and
+it is destroyed when the deployment is about to be undeployed. You can
+think of `@AfterDeploy` and `@BeforeUnDeploy` equivalents.
+
+To declare any injection point as a deployment-scoped Drone point use
+the annotation `@OperateOnDeployment("deployment_name")` with the
+specified name of the deployment the Drone point should be tied to.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class EnrichedClass
+{
+   @Deployment(name = "cool_deployment")
+   public static Archive deploy() {
+      return ShrinkWrap.create(Archive.class);
+   }
+
+   @Drone
+   @OperateOnDeployment("cool_deployment")
+   WebDriver foo;
+
+   ...
+}
+----
+
+It is important to know that you can combine multiple instances in one
+test and you can have them in different scopes. You can as well combine
+different framework types. Following example shows class-scoped instance
+`foo` and method-scoped instance `baz` of type `WebDriver` combined with
+method-scoped `bar` of type `FirefoxDriver`.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class EnrichedClass
+{
+   @Drone WebDriver foo;
+
+   @Drone @MethodLifecycle WebDriver baz;
+
+   // this will always retrieve FirefoxDriver, no matter what you specify in arquillian.xml file
+   @Test
+   public void runThisTestAlwaysWithFirefoxDriver(@Drone FirefoxDriver bar) {
+     ...
+   }
+}
+----
+
+[[keeping-multiple-drone-instances-of-the-same-field-type]]
+==== Keeping Multiple Drone Instances Of The Same Field Type
+
+With Arquillian Drone, it is possible to keep more than one instance of
+a web test framework tool of the same type and determine which instance
+to use in a type safe way. Arquillian Drone uses the concept of a
+`@Qualifier` annotation which you may know from CDI. Drone defines its
+own `@Qualifier` meta-annotation which allows you to create your own
+annotations usable to qualify any `@Drone` injections. By default, if no
+`@Qualifier` annotation is present, Arquillian Drone implicitly uses the
+`@Default` qualifier. The following code defines a new qualifying
+annotation named `Different`.
+
+Take care to not accidentally import the Qualifier annotation defined by
+CDI (`javax.inject.Qualifier`). Drone defines its own meta-annotation of
+the same name.
+
+[source,java]
+----
+package org.jboss.arquillian.drone.example;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Qualifier
+public @interface Different {
+}
+----
+
+Once you have defined a qualifier, you can use it in your tests, for
+example in following way, having two distinct class based life cycle
+instances of `WebDriver`.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+@RunAsClient
+public class EnrichedClass {
+   @Drone WebDriver foo;
+   @Drone @Different WebDriver bar;
+
+
+   @Test
+   public void testWithBothFooAndBar() {
+     ...
+   }
+}
+----
+

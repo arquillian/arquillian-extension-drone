@@ -1,0 +1,329 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+[[configuring-drone-instances]]
+== Configuring Drone Instances
+
+Drone instances are automatically configured from arquillian.xml
+descriptor file or System properties, which take precedence. You can
+eventually omit the configuration altogether, if you are happy with the
+default values. Obviously, configurations are compatible with
+<<extended-configuration-configuring-qualifierd-drone-instances, @Qualifier
+annotations>>, so you can create a special configuration for a method
+based life cycle browser if you will.
+
+Extension qualifier must match the value listed in configuration.
+Otherwise Drone won't pick the configuration.
+
+The different configuration options supported by Drone are:
+
+** <<default-drone-configuration, Default Drone Configuration>>
+** <<webdriver-configuration, WebDriver configuration>>
+** <<graphene-2-configuration, Graphene 2 Configuration>>
+** <<selenium-server-configuration, Selenium Server Configuration>>
+
+[[default-drone-configuration]]
+=== Default Drone Configuration
+
+Drone global configuration is applied for all supported frameworks at
+the same time. It uses `drone` extension qualifier.
+
+[source,xml]
+----
+<extension qualifier="drone">
+   <property name="instantiationTimeoutInSeconds">120</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|instantiationTimeoutInSeconds
+|60
+|Default timeout in seconds to get instance of a browser. Set to `0` if
+you want to disable the timeout altogether
+|===
+
+[[webdriver-configuration]]
+=== WebDriver configuration
+
+WebDriver uses `webdriver` qualifier.
+
+[source,xml]
+----
+<extension qualifier="webdriver">
+   <property name="browser">firefox</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|browser
+|htmlUnit
+|Determines which browser instance is created for WebDriver testing.
+
+Following values are valid:
+
+. chrome +
+. firefox +
+. htmlUnit +
+. internetExplorer +
+. opera +
+. phantomjs +
+. safari +
+
+|iePort
+|-
+|Default port where to connect for Internet Explorer driver
+
+|remoteAddress
+|http://localhost:14444/wd/hub
+|Default address for remote driver to connect
+
+|remoteReusable
+|false
+|The flag which indicates that remote session should be reused between
+subsequent executions - gives opportunity to reuse browser window for
+debugging and/or test execution speed-up.
+
+|reuseCookies
+|false
+|If you are using remote reusable browser, you can force it to reuse
+cookies
+
+|chromeDriverBinary
+|-
+|Path to chromedriver binary
+
+|ieDriverBinary
+|-
+|Path to Internet Explorer driver binary
+
+|firefoxExtensions
+|-
+|Path or multiple paths to xpi files that will be installed into Firefox
+instance as extensions. Separate paths using space, use quotes in case
+that path contains spaces
+
+|firefox_profile
+|-
+|Path to Firefox Profile to be used instead of default one delivered with
+FirefoxDriver
+
+|firefoxUserPreferences
+|-
+|Path to Firefox user preferences. This file will be parsed and values
+will be applied to freshly created Firefox profile.
+
+|dimensions
+|-
+|Dimensions of browser window in `widthxheight` format. This will resize
+the window if supported by underlying browser. Useful for **phantomjs**,
+which by default defines a very small viewport
+|===
+
+If you need to enable any
+http://code.google.com/p/selenium/wiki/DesiredCapabilities[browser
+capability], simply specify it as a property in extension configuration.
+For instance, if you are running Firefox browser and you want to change
+the binary location, you can do it via following code:
+
+[source,xml]
+----
+<extension qualifier="webdriver">
+   <property name="firefox_binary">/path/to/firefox</property>
+</extension>
+----
+
+We have enabled JavaScript for *htmlUnit* driver by default. If you want
+to disable it, configure appropriate capability to false:
+
+[source,xml]
+----
+<property name="javascriptEnabled">false</property>
+----
+
+WebDriver expects a Java Object stored in Capabilities settings for some
+of the WebDriver capabilities. Therefore, we provide a simple mappings
+to text format for some properties described in table below.
+
+[cols="2,8",options="header"]
+|===
+|Property Name |Format
+
+|loggingPrefs
+|Comma separated list of logging levels for FirefoxDriver. Use
+driver=$\{value1},profiler=$\{value2} where value is one of the
+following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST
+|===
+
+[[graphene-2-configuration]]
+=== Graphene 2 Configuration
+
+// TODO verify new link
+Graphene 2 reuses configuration specified for WebDriver, using
+`webdriver` qualifier. You can additionally use a
+https://raw.githubusercontent.com/arquillian/arquillian-graphene/master/docs/graphene-configuration[Arquillian
+Graphene 2 configuration] to set Graphene specific configuration, such
+as default UI timeouts.
+
+[[selenium-server-configuration]]
+=== Selenium Server Configuration
+
+Selenium Server uses `selenium-server` qualifier.
+
+[source,xml]
+----
+<extension qualifier="selenium-server">
+   <property name="host">myhost.org</property>
+</extension>
+----
+
+[cols="1,1,8",options="header"]
+|===
+|Property Name |Default Value |Description
+
+|avoidProxy
+|false
+|Do not use proxy for connection between clients and server
+
+|browserSessionReuse
+|false
+|Reuse browser session
+
+|browserSideLog
+|false
+|Enable logging in browser window
+
+|debug
+|false
+|Enable debug messages
+
+|dontTouchLogging
+|false
+|Disable Selenium specific logging configuration
+
+|ensureCleanSession
+|false
+|Automatic cleanup of the session
+
+|firefoxProfileTemplate
+|-
+|Path to the profile used as a template
+
+|forcedBrowserMode
+|-
+|Mimic browser mode no matter which one is used to start the client
+
+|honorSystemProxy
+|false
+|Use system proxy for connections
+
+|host
+|localhost
+|Name of the machine where to start Selenium Server
+
+|logFile
+|-
+|Path to log file
+
+|nonProxyHosts
+|value of `http.nonProxyHosts` property
+|List of hosts where proxy settings are ignored
+
+|port
+|14444
+|Port on machine where to start Selenium Server
+
+|profilesLocation
+|-
+|Where profiles are located
+
+|proxyHost
+|value of `http.proxyHost` property
+|Name of proxy server
+
+|proxyInjectionMode
+|false
+|Use proxy approach between Selenium server and client
+
+|proxyPort
+|value of `http.proxyPort` property
+|Port of proxy server
+
+|retryTimeoutInSeconds
+|10
+|Timeout for commands to be retried
+
+|singleWindow
+|false
+|Use single window
+
+|skip
+|false
+|Do not manage Selenium Server lifecycle
+
+|systemProperties
+|-
+|Arbitrary system properties in -Dproperty.name=property.value format
+
+|timeoutInSeconds
+|Integer.MAX_VALUE
+|Timeout for Selenium Server
+
+|trustAllSSLCertificates
+|false
+|Trust all SSL certificates
+
+|trustStore
+|value of `javax.net.ssl.trustStore` property
+|Trust store path
+
+|trustStorePassword
+|value of `javax.net.ssl.trustStorePassword` property
+|Trust store password
+
+|userExtensions
+|-
+|Path to user extension files
+|===
+
+Selenium Server has different life cycle than Drone instances, it is
+created and started before test suite and disposed after test suite.
+Note, you need Selenium Server only if you plan to use remote and
+reusable instances of WebDriver.
+
+[NOTE]
+If you have your own Selenium Server instance running, you need either
+to remove Drone Selenium Server extension from the classpath, set it to
+a different host/port or disable its execution via skip=true.
+
+[[extended-configuration-configuring-qualifierd-drone-instances]]
+== Extended Configuration: Configuring @Qualifier'd Drone Instances
+
+If you are wondering how to define configuration for `@Qualifier`
+`@Drone` instance, it's very easy. Only modification you have to do is
+to change qualifier to include - (`@Qualifier` annotation name converted
+to lowercase). For instance, if you qualified Arquillian Graphene
+instance with @MyExtraBrowser, its extension qualifier will become
+**graphene-myextrabrowser**.
+
+Arquillian Drone configures your browser using two-step process:
+
+1.  Search for the exact match of qualifier (e.g.
+`graphene-myextrabrowser`) in arquillian.xml, if found, step 2 is not
+performed.
+2.  Search for a match of base qualifier, without type safe `@Qualifier`
+(e.g. `graphene`) in arquillian.xml.
+
+Then System property are applied in the same fashion.
+
