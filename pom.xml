@@ -44,9 +44,7 @@
         <!-- Test bits versions -->
         <version.junit>4.12</version.junit>
         <version.assertj>3.6.1</version.assertj>
-        <version.mockito.all>2.0.2-beta</version.mockito.all>
-        <version.mockito.core>2.3.11</version.mockito.core>
-        <version.powermock>1.6.6</version.powermock>
+        <version.mockito>2.3.11</version.mockito>
 
         <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
         <version.org.eclipse.jetty>9.2.15.v20160210</version.org.eclipse.jetty>

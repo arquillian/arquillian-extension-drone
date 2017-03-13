@@ -106,10 +106,10 @@
             <scope>test</scope>
         </dependency>
     
-        <!-- external dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
 
