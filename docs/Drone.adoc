@@ -1,5 +1,13 @@
-Drone
-=====
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Drone
+:icons: font
 
 The Arquillian Drone 2 extension for Arquillian provides a simple way
 to include functional tests for an application with a web-based
@@ -14,8 +22,7 @@ features and tools] as part of the SPI as well as
 http://github.com/arquillian/arquillian-extension-drone/wiki/API-changes-in-Drone-2[multiple
 life cycle scopes of @Drone points] as part of the API.
 
-Why should I use Arquillian Drone instead of plain WebDriver?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Why should I use Arquillian Drone instead of plain WebDriver?
 
 There are many reasons why you would want to do that, the most important ones
 being:
@@ -94,8 +101,9 @@ deployments, mark the deployment as `testable=true` and force client
 execution via the `@RunAsClient` annotation on every client `@Test`
 method.
 
-//More details are listed in https://docs.jboss.org/author/display/ARQ/Test+run+modes[Arquillian
-//Documentation test run modes].
+// TODO Fix to Updated Link
+More details are listed in https://docs.jboss.org/author/display/ARQ/Test+run+modes[Arquillian
+Documentation test run modes].
 
 For the completeness of the code, here are the deployment methods as
 well as the LoginPage abstraction:
@@ -161,14 +169,13 @@ public class Deployments {
 }
 ----
 
-Supported Frameworks And Their Versions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Supported Frameworks And Their Versions
 
 The following frameworks are supported and tested with the latest
 version of Arquillian Drone. Drone type is the type you can inject via
 the `@Drone` annotation.
 
-[cols="1,1,8",options="header"]
+[cols="2,4,4",options="header"]
 |===
 |Framework Name |Drone Type |Tested Version
 
@@ -199,8 +206,7 @@ If you are in doubt what to use for a newly created project, Arquillian
 team recommends you to start with Graphene, which is based on WebDriver,
 however brings you a lot of AJAX goodies.
 
-Maven Setup Example
-~~~~~~~~~~~~~~~~~~~
+== Maven Setup Example
 
 Adding an Arquillian Drone dependency can be divided into two parts:
 
@@ -311,16 +317,14 @@ use any of the Graphene features from the start. However, it would be
 super easy to add them later on.
 
 [[life-cycle-scopes-of-drone-points]]
-Life Cycle Scopes of @Drone points
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Life Cycle Scopes of @Drone points
 
 Arquillian Drone does not allow you to control the life cycle of web
 testing framework objects, but it provides three different scopes which
 should be sufficient for most usages required by developers. These are:
 
 [[class-scoped-life-cycle]]
-1. Class Scoped Life Cycle
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== 1. Class Scoped Life Cycle
 
 For the Drone points with the class scoped life cycle, a configuration
 for the instance is created before a test class is run. This
@@ -334,8 +338,7 @@ still want to declare the Drone point to be class-scoped use the
 annotation `@ClassLifecycle`.
 
 [[method-scoped-life-cycle]]
-2. Method Scoped Life Cycle
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== 2. Method Scoped Life Cycle
 
 For the Drone points with the method scoped life cycle, an instance is
 configured and created before Arquillian enters test method and it is
@@ -347,8 +350,7 @@ To declare a field injection point as a method-scoped Drone point use
 the annotation `@MethodLifecycle`
 
 [[deployment-scoped-life-cycle]]
-3. Deployment Scoped Life Cycle
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== 3. Deployment Scoped Life Cycle
 
 For the Drone points with the deployment scoped life cycle, an instance
 is configured and created after an Arquillian deployment is deployed and
@@ -401,8 +403,7 @@ public class EnrichedClass
 ----
 
 [[keeping-multiple-drone-instances-of-the-same-field-type]]
-Keeping Multiple Drone Instances Of The Same Field Type
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Keeping Multiple Drone Instances Of The Same Field Type
 
 With Arquillian Drone, it is possible to keep more than one instance of
 a web test framework tool of the same type and determine which instance
@@ -457,8 +458,7 @@ public class EnrichedClass {
 ----
 
 [[configuring-drone-instances]]
-Configuring Drone Instances
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Configuring Drone Instances
 
 Drone instances are automatically configured from arquillian.xml
 descriptor file or System properties, which take precedence. You can
@@ -471,8 +471,7 @@ Extension qualifier must match the value listed in configuration.
 Otherwise Drone won't pick the configuration.
 
 [[default-drone-configuration]]
-Default Drone Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== Default Drone Configuration
 
 Drone global configuration is applied for all supported frameworks at
 the same time. It uses `drone` extension qualifier.
@@ -495,8 +494,7 @@ you want to disable the timeout altogether
 |===
 
 [[webdriver-configuration]]
-WebDriver configuration
-^^^^^^^^^^^^^^^^^^^^^^^
+=== WebDriver configuration
 
 WebDriver uses `webdriver` qualifier.
 
@@ -514,14 +512,16 @@ WebDriver uses `webdriver` qualifier.
 |browser
 |htmlUnit
 |Determines which browser instance is created for WebDriver testing.
-Following values are valid: +
-chrome +
-firefox +
-htmlUnit +
-internetExplorer +
-opera +
-phantomjs +
-safari
+
+Following values are valid:
+
+. chrome +
+. firefox +
+. htmlUnit +
+. internetExplorer +
+. opera +
+. phantomjs +
+. safari +
 
 |iePort
 |-
@@ -609,8 +609,7 @@ following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST
 |===
 
 [[graphene-2-configuration]]
-Graphene 2 Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^
+=== Graphene 2 Configuration
 
 Graphene 2 reuses configuration specified for WebDriver, using
 `webdriver` qualifier. You can additionally use a
@@ -619,8 +618,7 @@ Graphene 2 configuration] to set Graphene specific configuration, such
 as default UI timeouts.
 
 [[selenium-server-configuration]]
-Selenium Server Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== Selenium Server Configuration
 
 Selenium Server uses `selenium-server` qualifier.
 
@@ -751,8 +749,7 @@ to remove Drone Selenium Server extension from the classpath, set it to
 a different host/port or disable its execution via skip=true.
 
 [[extended-configuration-configuring-qualifierd-drone-instances]]
-Extended Configuration, Configuring @Qualifier'd Drone Instances
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Extended Configuration, Configuring @Qualifier'd Drone Instances
 
 If you are wondering how to define configuration for `@Qualifier`
 `@Drone` instance, it's very easy. Only modification you have to do is
@@ -772,8 +769,7 @@ performed.
 Then System property are applied in the same fashion.
 
 [[arquillian-drone-spi]]
-Arquillian Drone SPI
-~~~~~~~~~~~~~~~~~~~~
+== Arquillian Drone SPI
 
 The big advantage of Arquillian Drone extension is its flexibility. We
 provide you reasonable defaults, but if they are not sufficient or if
@@ -782,8 +778,7 @@ behavior of existing implementation or implement a support for your own
 testing framework as well.
 
 [[event-model]]
-Event Model
-^^^^^^^^^^^
+=== Event Model
 
 Drone itself is not using Arquillian Container related event, which
 means that it is able to work with Arquillian Standalone test runners.
@@ -884,8 +879,7 @@ NOTE: Events provide a class hierarchy, so you can observe their super classes
 if you want.
 
 [[working-with-drone-instances]]
-Working with Drone Instances
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== Working with Drone Instances
 
 If you want to support another testing framework and manage it's
 lifecycle, you should implement following interfaces and register them
