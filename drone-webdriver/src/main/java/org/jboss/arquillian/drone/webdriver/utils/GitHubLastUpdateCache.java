@@ -23,12 +23,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
 
 public class GitHubLastUpdateCache {
 
     private static final String ASSET_PROPERTY = "asset";
     private static final String LAST_MODIFIED_PROPERTY = "lastModified";
+    private static final File DEFAULT_CACHE_DIRECTORY = new File(ARQUILLIAN_DRONE_CACHE_DIRECTORY + File.separator + "gh_cache" + File.separator);
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>(){}.getType(), new ZonedDateTimeConverter()).create();
     private final File cacheDirectory;
@@ -38,7 +39,7 @@ public class GitHubLastUpdateCache {
     }
 
     public GitHubLastUpdateCache() {
-        this(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
+        this(DEFAULT_CACHE_DIRECTORY);
     }
 
     private File createCacheDirectory(File cacheDirectory) {
