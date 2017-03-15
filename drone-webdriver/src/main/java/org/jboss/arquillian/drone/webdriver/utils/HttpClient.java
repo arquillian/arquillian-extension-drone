@@ -2,12 +2,10 @@ package org.jboss.arquillian.drone.webdriver.utils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -16,18 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpClient {
-
-    private final String proxyHost;
-    private final Integer proxyPort;
-
-    public HttpClient(String proxyHost, Integer proxyPort) {
-        this.proxyHost = proxyHost;
-        this.proxyPort = proxyPort;
-    }
-
-    public HttpClient() {
-        this(null, null);
-    }
 
     public static class Response {
         private final String payload;
@@ -80,18 +66,9 @@ public class HttpClient {
     }
 
     private CloseableHttpClient createHttpClient() {
-
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.useSystemProperties();
-        if (hasProxySettings()) {
-            final HttpHost proxy = new HttpHost(this.proxyHost, this.proxyPort, "https");
-            httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy));
-        }
         return httpClientBuilder.build();
-    }
-
-    private boolean hasProxySettings() {
-        return proxyHost != null && proxyPort != null;
     }
 
     private void addHeaders(Map<String, String> headers, HttpGet request) {
