@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -34,6 +36,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.Initializati
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParametersMap;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PersistReusedSessionsEvent;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverToDestroy;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSession;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusedSessionStore;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseSessionException;
@@ -51,8 +54,8 @@ import org.openqa.selenium.remote.SessionId;
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDriver> implements
-        Configurator<RemoteWebDriver, WebDriverConfiguration>, Instantiator<RemoteWebDriver, WebDriverConfiguration>,
-        Destructor<RemoteWebDriver> {
+    Configurator<RemoteWebDriver, WebDriverConfiguration>, Instantiator<RemoteWebDriver, WebDriverConfiguration>,
+    Destructor<RemoteWebDriver> {
 
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
@@ -66,6 +69,10 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     private Event<PersistReusedSessionsEvent> persistEvent;
     @Inject
     private Event<StartSeleniumServer> startSeleniumServerEvent;
+
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ReusableRemoteWebDriverToDestroy> lastRemoteWebDriverToDestroy;
 
     @Override
     public int getPrecedence() {
@@ -95,13 +102,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
 
-        String seleniumServerArgs = configuration.getSeleniumServerArgs();
-        if (Validate.empty(seleniumServerArgs)) {
-            configuration.setSeleniumServerArgs(WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
-            log.log(Level.INFO, "Property \"seleniumServerArgs\" was not specified, using default value of {0}",
-                    WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
-        }
-
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
 
@@ -110,17 +110,11 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
                 log.info("The Selenium server is not running on: " + remoteAddress
                              + " and as the address seems to be a localhost address, Drone will start the Selenium Server automatically.");
                 try {
-                    String seleniumServer =
-                        new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
-                    if (!Validate.empty(seleniumServer)) {
-                        startSeleniumServerEvent
-                            .fire(new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress, seleniumServerArgs));
-                    }
+                    downloadAndStartSeleniumServer(configuration, browser, remoteAddress);
                 } catch (Exception e) {
                     throw new IllegalStateException(
                         "Something bad happened when Drone was trying to download and extract Selenium Server binary. "
                             + "For more information see the cause.", e);
-
                 }
             } else {
                 log.warning("The URL: " + remoteAddress
@@ -148,16 +142,36 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         return driver;
     }
+
+    private void downloadAndStartSeleniumServer(WebDriverConfiguration configuration, String browser,
+        URL remoteAddress) throws Exception {
+
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
+        String seleniumServer = new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
+
+        if (!Validate.empty(seleniumServer)) {
+            String seleniumServerArgs = configuration.getSeleniumServerArgs();
+
+            if (Validate.empty(seleniumServerArgs)) {
+                configuration.setSeleniumServerArgs(WebDriverConfiguration.DEFAULT_SELENIUM_SERVER_ARGS);
+            }
+
+            startSeleniumServerEvent.fire(
+                new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress,
+                                        seleniumServerArgs));
+        }
+    }
+
     /**
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         return configuration.getCapabilities();
     }
 
@@ -169,8 +183,9 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             try {
                 driver.quit();
             } catch (WebDriverException e) {
-                log.log(Level.WARNING, "@Drone {0} has been already destroyed and can't be destroyed again.", driver.getClass()
-                        .getSimpleName());
+                log.log(Level.WARNING, "@Drone {0} has been already destroyed and can't be destroyed again.",
+                        driver.getClass()
+                            .getSimpleName());
             }
             return;
         }
@@ -184,6 +199,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             ReusedSession session = ReusedSession.createInstance(sessionId, driverCapabilities);
             sessionStore.get().store(param, session);
             persistEvent.fire(new PersistReusedSessionsEvent());
+            lastRemoteWebDriverToDestroy.set(new ReusableRemoteWebDriverToDestroy(driver));
         } else {
             driver.quit();
         }

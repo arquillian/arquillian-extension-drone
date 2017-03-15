@@ -389,7 +389,7 @@ Limitations:
 In order to start Selenium Server, execute:
 
 [source,bash]
-java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.0.1.jar
+java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.3.0.jar
 
 Once Selenium Server is running, you can run the tests by:
 

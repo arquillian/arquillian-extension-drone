@@ -165,7 +165,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
      *
      * @param targetDir A directory where a downloaded binary should be stored
-     * @param from A url a binary should be downloaded from
+     * @param from      A url a binary should be downloaded from
      * @return An executable binary that was extracted/copied from the downloaded file
      * @throws Exception If anything bad happens
      */
@@ -177,7 +177,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
      *
      * @param targetDir A directory where a downloaded binary should be stored
-     * @param from A url a binary should be downloaded from
+     * @param from      A url a binary should be downloaded from
      * @return An executable binary that was extracted/copied from the downloaded file
      * @throws Exception If anything bad happens
      */
@@ -193,18 +193,20 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
     }
 
     /**
-     * Sets the given binary to be executable
+     * Sets the given binary to be executable (if it is not already set)
      *
      * @param binaryFile A binary file that should be set to be executable
      * @return the given binary file set to be executable
      */
-    protected File markAsExecutable(File binaryFile){
-        log.info("marking binary file: " + binaryFile.getPath() + " as executable");
-        try {
-            binaryFile.setExecutable(true);
-        } catch (SecurityException se) {
-            log.severe("The downloaded binary: " + binaryFile
-                           + " could not be set as executable. This may cause additional problems.");
+    protected File markAsExecutable(File binaryFile) {
+        if (!Validate.executable(binaryFile.getAbsolutePath())) {
+            log.info("marking binary file: " + binaryFile.getPath() + " as executable");
+            try {
+                binaryFile.setExecutable(true);
+            } catch (SecurityException se) {
+                log.severe("The downloaded binary: " + binaryFile
+                               + " could not be set as executable. This may cause additional problems.");
+            }
         }
         return binaryFile;
     }

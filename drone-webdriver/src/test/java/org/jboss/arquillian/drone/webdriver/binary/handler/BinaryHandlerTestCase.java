@@ -29,18 +29,23 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BinaryHandlerTestCase {
 
-    private static String TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY = "target/drone/test/".replace("/", File.separator);
+    private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
+    private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
+
     private static final String originalCacheDirectory = ARQUILLIAN_DRONE_CACHE_DIRECTORY;
+    private static final String originalTargetDirectory = DRONE_TARGET_DIRECTORY;
 
     @BeforeClass
     public static void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
-        setCacheDirectory(TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY);
+        setTargetDirectory(TEST_DRONE_TARGET_DIRECTORY);
+        setCacheDirectory(TEST_DRONE_CACHE_DIRECTORY);
     }
 
     @Before
@@ -54,7 +59,7 @@ public class BinaryHandlerTestCase {
     }
 
     private void cleanUp() throws IOException {
-        File targetDroneDir = new File(TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY).getParentFile();
+        File targetDroneDir = new File(TEST_DRONE_TARGET_DIRECTORY);
         if (targetDroneDir.exists()) {
             FileUtils.deleteDirectory(targetDroneDir);
         }
@@ -64,20 +69,29 @@ public class BinaryHandlerTestCase {
 
     @AfterClass
     public static void setOriginalCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
+        setTargetDirectory(originalTargetDirectory);
         setCacheDirectory(originalCacheDirectory);
     }
 
     private static void setCacheDirectory(String dirToSet) throws NoSuchFieldException, IllegalAccessException {
-        Field arquillianDroneCacheDirField = Constants.class.getField("ARQUILLIAN_DRONE_CACHE_DIRECTORY");
-        arquillianDroneCacheDirField.setAccessible(true);
+        setConstantProperty("ARQUILLIAN_DRONE_CACHE_DIRECTORY", dirToSet);
+    }
+
+    private static void setTargetDirectory(String dirToSet) throws NoSuchFieldException, IllegalAccessException {
+        setConstantProperty("DRONE_TARGET_DIRECTORY", dirToSet);
+    }
+
+    private static void setConstantProperty(String propertyVariable, String value)
+        throws NoSuchFieldException, IllegalAccessException {
+        Field constantField = Constants.class.getField(propertyVariable);
+        constantField.setAccessible(true);
 
         // remove final modifier from field
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
-        modifiersField
-            .setInt(arquillianDroneCacheDirField, arquillianDroneCacheDirField.getModifiers() & ~Modifier.FINAL);
+        modifiersField.setInt(constantField, constantField.getModifiers() & ~Modifier.FINAL);
 
-        arquillianDroneCacheDirField.set(null, dirToSet);
+        constantField.set(null, value);
     }
 
     @Test
@@ -215,11 +229,11 @@ public class BinaryHandlerTestCase {
 
         try {
             new LocalBinaryHandler(capabilities).checkAndSetBinary(true);
-            if (!PlatformUtils.isWindows()){
+            if (!PlatformUtils.isWindows()) {
                 Assert.fail("This test should have failed on all platforms but Windows");
             }
-        } catch (IllegalArgumentException iae){
-            if (PlatformUtils.isWindows()){
+        } catch (IllegalArgumentException iae) {
+            if (PlatformUtils.isWindows()) {
                 Assert.fail("This test should have not failed on Windows");
             }
         }
@@ -267,7 +281,7 @@ public class BinaryHandlerTestCase {
     }
 
     private String getDownloadedPath(String version, String fileName) {
-        return TEST_ARQUILLIAN_DRONE_CACHE_DIRECTORY + File.separator + LocalBinaryHandler.LOCAL_SOURCE_CACHE_SUBDIR
+        return TEST_DRONE_CACHE_DIRECTORY + File.separator + LocalBinaryHandler.LOCAL_SOURCE_CACHE_SUBDIR
             + File.separator + version + File.separator
             + fileName;
     }
