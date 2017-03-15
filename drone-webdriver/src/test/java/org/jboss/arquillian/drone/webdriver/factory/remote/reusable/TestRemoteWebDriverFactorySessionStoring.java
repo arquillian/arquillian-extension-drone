@@ -49,7 +49,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.arquillian.drone.webdriver.factory.remote.reusable.PhantomJSUrl.getPhantomJs211Url;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
@@ -115,7 +114,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
-        when(configuration.getSeleniumServerArgs()).thenReturn("-debug true");
+        configuration.setSeleniumServerArgs("-debug true");
     }
 
     private void runSeleniumServer() {

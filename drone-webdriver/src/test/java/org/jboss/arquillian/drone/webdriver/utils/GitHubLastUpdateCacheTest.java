@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
 public class GitHubLastUpdateCacheTest {
 
@@ -25,6 +26,20 @@ public class GitHubLastUpdateCacheTest {
     public void createGithubUpdateCache() throws IOException {
         tmpFolder = folder.newFolder();
         gitHubLastUpdateCache = new GitHubLastUpdateCache(tmpFolder);
+    }
+
+    @Test
+    public void should_create_release_cache_folder() throws Exception {
+        gitHubLastUpdateCache = new GitHubLastUpdateCache();
+        // given
+        final ExternalBinary externalBinary = new ExternalBinary("1.0.0.Final", "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/assets/2857399");
+        final String releasesId = "4968399";
+
+        // when
+        gitHubLastUpdateCache.store(externalBinary, releasesId, ZonedDateTime.now());
+
+        // then
+        assertThat(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator)).exists();
     }
 
     @Test

@@ -30,16 +30,22 @@ public class GitHubLastUpdateCache {
     private static final String ASSET_PROPERTY = "asset";
     private static final String LAST_MODIFIED_PROPERTY = "lastModified";
 
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>(){}.getType(), new ZonedDateTimeConverter()).create();
     private final File cacheDirectory;
-    private final Gson gson;
 
     public GitHubLastUpdateCache(final File cacheDirectory) {
-        this.gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>(){}.getType(), new ZonedDateTimeConverter()).create();
         this.cacheDirectory = cacheDirectory;
     }
 
     public GitHubLastUpdateCache() {
-        this(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
+        this.cacheDirectory = createCacheDirectory(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
+    }
+
+    private File createCacheDirectory(File cacheDirectory) {
+        if (!cacheDirectory.isDirectory()) {
+            cacheDirectory.mkdir();
+        }
+        return cacheDirectory;
     }
 
     public ZonedDateTime lastModificationOf(String uniqueKey) {
