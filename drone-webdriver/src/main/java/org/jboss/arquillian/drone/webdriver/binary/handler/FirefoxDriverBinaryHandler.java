@@ -43,7 +43,7 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache()); // TODO improve design for testability
+        return new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
     }
 
     @Override protected DesiredCapabilities getCapabilities() {

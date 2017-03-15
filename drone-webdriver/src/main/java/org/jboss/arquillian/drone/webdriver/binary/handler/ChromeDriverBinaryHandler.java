@@ -65,7 +65,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     private class ChromeStorageSources extends GoogleStorageSource {
 
         ChromeStorageSources(String baseUrl) {
-            super(baseUrl, baseUrl + "LATEST_RELEASE", new HttpClient()); // TODO
+            super(baseUrl, baseUrl + "LATEST_RELEASE", new HttpClient());
         }
 
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {

@@ -44,7 +44,7 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new IeStorageSource((String) capabilities.getCapability(IE_DRIVER_VERSION_PROPERTY), new HttpClient()); // TODO rethink
+        return new IeStorageSource((String) capabilities.getCapability(IE_DRIVER_VERSION_PROPERTY), new HttpClient());
     }
 
     @Override protected DesiredCapabilities getCapabilities() {
