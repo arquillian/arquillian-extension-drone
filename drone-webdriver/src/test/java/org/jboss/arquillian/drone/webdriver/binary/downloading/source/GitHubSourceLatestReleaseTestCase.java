@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import io.specto.hoverfly.junit.dsl.ResponseBuilder;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.JUnitSoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -15,17 +16,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import javax.ws.rs.core.HttpHeaders;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-public class GitHubSourceLatestReleaseTestCase extends HoverflyProxyHandler {
+public class GitHubSourceLatestReleaseTestCase {
 
     private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\"," +
             "\"asset\":" +

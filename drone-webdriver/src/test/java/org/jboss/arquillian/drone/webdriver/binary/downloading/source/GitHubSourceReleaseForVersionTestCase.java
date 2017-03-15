@@ -10,7 +10,7 @@ import org.junit.Test;
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GitHubSourceReleaseForVersionTestCase extends HoverflyProxyHandler {
+public class GitHubSourceReleaseForVersionTestCase {
 
     @ClassRule
     public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.releases.json"));
