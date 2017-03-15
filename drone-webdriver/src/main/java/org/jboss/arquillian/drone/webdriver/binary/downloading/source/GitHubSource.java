@@ -32,16 +32,16 @@ public abstract class GitHubSource implements ExternalBinarySource {
     private static final String RELEASES_URL = "/releases";
 
     private static final Logger log = Logger.getLogger(GitHubSource.class.toString());
+    private static final Gson gson = new Gson();
 
     // JSON keys
     private String tagNameKey = "tag_name";
     private String assetNameKey = "name";
     private String browserDownloadUrlKey = "browser_download_url";
-    private String assetsKey = "assets";
 
+    private String assetsKey = "assets";
     private final HttpClient httpClient;
     private final GitHubLastUpdateCache cache;
-    private final Gson gson;
     private final String projectUrl;
     private final String uniqueKey;
 
@@ -53,7 +53,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
         this.httpClient = httpClient;
         this.projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
         this.uniqueKey = organization + "@" + project;
-        this.gson = new Gson(); // TODO think if that should be really a field
         this.cache = gitHubLastUpdateCache;
     }
 

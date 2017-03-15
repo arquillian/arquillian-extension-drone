@@ -42,6 +42,8 @@ import java.util.Set;
  */
 public class CapabilitiesOptionsMapper {
 
+    private static final Gson GSON = new Gson();
+
     /**
      * Parses capabilities set in {@link DesiredCapabilities} and according to set-method names it sets the values into
      * corresponding variables of the given Object instance. It is expected that the parameters defined in arquillian.xml
@@ -103,7 +105,7 @@ public class CapabilitiesOptionsMapper {
 
         for (Map.Entry<String, JsonElement> entry : entries) {
             String key = entry.getKey();
-            Map<String, String> values = new Gson().fromJson(entry.getValue(), type);
+            Map<String, String> values = GSON.fromJson(entry.getValue(), type);
 
             method.invoke(object, key, values);
         }

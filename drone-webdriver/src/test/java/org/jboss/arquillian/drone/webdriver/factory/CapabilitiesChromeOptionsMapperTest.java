@@ -16,13 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,10 +27,19 @@ import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class CapabilitiesChromeOptionsMapperTest {
+
+    private static final Gson GSON = new Gson();
 
     @Test
     public void testParseChromeOptions() throws IOException {
@@ -89,7 +91,7 @@ public class CapabilitiesChromeOptionsMapperTest {
         Map<String, Map<String, String>> dictionaries = new HashMap<String, Map<String, String>>();
         for (Map.Entry<String, JsonElement> entry : entries) {
             String key = entry.getKey();
-            Map<String, String> values = new Gson().fromJson(entry.getValue(), type);
+            Map<String, String> values = GSON.fromJson(entry.getValue(), type);
             dictionaries.put(key, values);
         }
 
