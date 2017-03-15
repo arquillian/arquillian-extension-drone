@@ -1,5 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
+import org.assertj.core.api.Condition;
+import org.assertj.core.api.SoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,7 +14,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
 public class GitHubLastUpdateCacheTest {
 
@@ -30,16 +31,25 @@ public class GitHubLastUpdateCacheTest {
 
     @Test
     public void should_create_release_cache_folder() throws Exception {
-        gitHubLastUpdateCache = new GitHubLastUpdateCache();
         // given
+        final File customCacheFolder = new File(tmpFolder, "custom-cache-folder");
         final ExternalBinary externalBinary = new ExternalBinary("1.0.0.Final", "https://api.github.com/repos/MatousJobanek/my-test-repository/releases/assets/2857399");
         final String releasesId = "4968399";
+        gitHubLastUpdateCache = new GitHubLastUpdateCache(customCacheFolder);
 
         // when
         gitHubLastUpdateCache.store(externalBinary, releasesId, ZonedDateTime.now());
 
         // then
-        assertThat(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator)).exists();
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(customCacheFolder).exists().isDirectory();
+        softly.assertThat(new File(customCacheFolder, "gh.cache.4968399.json")).isFile().has(new Condition<File>() {
+            @Override
+            public boolean matches(File value) {
+                return value.length() > 0;
+            }
+        });
+        softly.assertAll();
     }
 
     @Test

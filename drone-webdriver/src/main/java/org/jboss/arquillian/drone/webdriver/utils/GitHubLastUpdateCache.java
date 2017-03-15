@@ -34,15 +34,15 @@ public class GitHubLastUpdateCache {
     private final File cacheDirectory;
 
     public GitHubLastUpdateCache(final File cacheDirectory) {
-        this.cacheDirectory = cacheDirectory;
+        this.cacheDirectory = createCacheDirectory(cacheDirectory);
     }
 
     public GitHubLastUpdateCache() {
-        this.cacheDirectory = createCacheDirectory(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
+        this(new File(DRONE_TARGET_DIRECTORY + File.separator + "gh_cache" + File.separator));
     }
 
     private File createCacheDirectory(File cacheDirectory) {
-        if (!cacheDirectory.isDirectory()) {
+        if (!cacheDirectory.exists()) {
             cacheDirectory.mkdir();
         }
         return cacheDirectory;
