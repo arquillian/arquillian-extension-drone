@@ -117,9 +117,10 @@ public class GitHubSourceLatestReleaseTestCase {
     }
 
     @Test
+    // With this test we make sure that the internal date is converted to RFC 2126 with GMT prior to GH call
     public void should_load_release_information_from_gh_and_overwrite_cache_when_last_modified_changed() throws Exception {
         // given
-        String cached_content = "{\"lastModified\":\"Mon, 30 Jan 2017 17:16:07 GMT\"," +
+        String cached_content = "{\"lastModified\":\"Sun, 01 Jan 2017 18:16:07 +0100\"," + // Here we store the date with the offset
                 "\"asset\":" +
                 "{\"version\":\"v0.14.0\"," +
                 "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
@@ -127,7 +128,7 @@ public class GitHubSourceLatestReleaseTestCase {
 
         hoverflyRule.simulate(dsl(service("https://api.github.com")
                 .get("/repos/mozilla/geckodriver/releases/latest")
-                .header(HttpHeaders.IF_MODIFIED_SINCE, "Mon, 30 Jan 2017 17:16:07 GMT")
+                .header(HttpHeaders.IF_MODIFIED_SINCE, "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
                 .queryParam("page", 1)
                 .willReturn(
                         ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)

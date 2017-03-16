@@ -100,7 +100,7 @@ public class GitHubLastUpdateCache {
     }
 
     private static class ZonedDateTimeConverter implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
-        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.RFC_1123_DATE_TIME;
+        private static final DateTimeFormatter FORMATTER = Rfc2126DateTimeFormatter.INSTANCE;
 
         @Override
         public JsonElement serialize(ZonedDateTime src, Type typeOfSrc, JsonSerializationContext context) {

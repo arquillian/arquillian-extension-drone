@@ -8,8 +8,10 @@ import org.apache.http.client.utils.URIBuilder;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 
 import java.net.URI;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -84,13 +86,14 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private Map<String, String> lastModificationHeader() {
         final Map<String, String> headers = new HashMap<>();
-        headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(this.uniqueKey).format(DateTimeFormatter.RFC_1123_DATE_TIME));
+        headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(this.uniqueKey).withZoneSameInstant(ZoneId.of("GMT")).format(Rfc2126DateTimeFormatter.INSTANCE));
+        System.out.println(headers);
         return headers;
     }
 
     private ZonedDateTime extractModificationDate(HttpClient.Response response) {
         final String modificationDate = response.getHeader(LAST_MODIFIED);
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.RFC_1123_DATE_TIME;
+        final DateTimeFormatter dateTimeFormatter = Rfc2126DateTimeFormatter.INSTANCE;
         return ZonedDateTime.parse(modificationDate, dateTimeFormatter);
     }
 
