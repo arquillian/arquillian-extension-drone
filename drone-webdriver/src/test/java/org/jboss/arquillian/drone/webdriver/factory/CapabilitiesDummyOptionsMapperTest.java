@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import com.google.gson.Gson;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,15 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class CapabilitiesDummyOptionsMapperTest {
+
+    private static final Gson GSON = new Gson();
 
     @Test
     public void testParseDummyOptions() throws IOException {
@@ -173,7 +175,7 @@ public class CapabilitiesDummyOptionsMapperTest {
     }
 
     private String getJsonString(Map<String, Map<String, String>> mapOfStrings) {
-        return new Gson().toJson(mapOfStrings).toString();
+        return GSON.toJson(mapOfStrings).toString();
     }
 
     private class DummyBrowserOptions {
