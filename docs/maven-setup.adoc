@@ -1,0 +1,119 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+== Maven Setup Example
+
+Adding an Arquillian Drone dependency can be divided into two parts:
+
+1.  Adding a Bill of Materials (BOM) into the dependency section for
+both Arquillian and Arquillian Drone. This step ensures that Maven will
+fetch the correct version of all dependencies.
+2.  Adding a Dependency Chain dependency. This greatly simplifies the
+entry point as you only need to add a single dependency. All transitive
+dependencies, like the version of Selenium, will be fetched for you
+automatically.
+
+[WARNING]
+The order in the `<dependencyManagement>` section matters. The first
+version defined takes precedence. By listing Arquillian BOM *before*
+Arquillian Drone BOM, you encore Drone to use latest Arquillian Core.
+
+As for the first step, this is the same for all supported Drones:
+
+[source,xml]
+----
+<properties>
+    <version.org.jboss.arquillian>1.1.11.Final</version.org.jboss.arquillian>
+    <version.org.jboss.arquillian.drone>2.0.1.Final</version.org.jboss.arquillian.drone>
+    <version.org.jboss.arquillian.graphene>2.1.0.Final</version.org.jboss.arquillian.graphene>
+</properties>
+
+<dependencyManagement>
+    <dependencies>
+        <!-- Arquillian Core dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Arquillian Drone dependencies and WebDriver/Selenium dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-bom</artifactId>
+            <version>${version.org.jboss.arquillian.drone}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+If you need to use newer Selenium version than the one used by Drone,
+you can specify `selenium-bom` in the dependencyManagement part as
+well.
+
+IMPORTANT: If you use `selenium-bom` make sure that it is specified
+before the `arquillian-drone-bom` (or also before other BOMs that manage
+Selenium version) to make the change effective. +
+Example of Selenium BOM for Selenium 3.0.0-beta3
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        ...
+        <!-- Selenium BOM -->
+        <dependency>
+            <groupId>org.jboss.arquillian.selenium</groupId>
+            <artifactId>selenium-bom</artifactId>
+            <version>3.0.0-beta3</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        ...
+    </dependencies>
+</dependencyManagement>
+----
+
+The latter step differs based on what Drone you want to use. Include one
+of the following into the `<dependencies>` section:
+
+To use Arquillian Graphene 2:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.jboss.arquillian.graphene</groupId>
+    <artifactId>graphene-webdriver</artifactId>
+    <version>${version.org.jboss.arquillian.graphene}</version>
+    <type>pom</type>
+    <scope>test</scope>
+</dependency>
+----
+
+To use WebDriver, also known as Selenium 2:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+    <version>${version.org.jboss.arquillian.drone}</version>
+    <type>pom</type>
+    <scope>test</scope>
+</dependency>
+----
+
+
+NOTE: WebDriver is a subset of Graphene. You can import Graphene and not to
+use any of the Graphene features from the start. However, it would be
+super easy to add them later on.
+

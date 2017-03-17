@@ -1,0 +1,198 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== Getting Started
+:icons: font
+
+=== See It in Action
+
+The following example illustrates how Arquillian Drone can be used with
+WebDriver:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class WebDriverTest {
+
+    static final String USERNAME = "demo";
+    static final String PASSWORD = "demo";
+
+    @ArquillianResource
+    URL contextPath;
+
+    @Drone
+    WebDriver driver;
+
+    /**
+     * Creates a testing WAR of using ShrinkWrap
+     *
+     * @return WebArchive to be tested
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return Deployments.createDeployment();
+    }
+
+    @Test
+    @InSequence(1)
+    public void login() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.login(USERNAME, PASSWORD);
+    }
+
+    @Test
+    @InSequence(2)
+    public void logout() {
+        LoginPage page = new LoginPage(driver, contextPath);
+        page.logout();
+    }
+}
+----
+
+Notice here that the Arquillian Drone test looks similar to an Arquillian
+test. There is `@RunWith(Arquillian.class)` runner, a `@Deployment`
+method and a few `@Test` methods. The only new elements are
+`@ArquillianResource`, which is here used to inject the `URL` of the
+deployed application and `@Drone`, which injects a `WebDriver` browser,
+managed for you as described in <<life-cycle-scopes-of-drone-points#,
+Life Cycle Scopes of @Drone points>>. 
+
+Even when using JUnit, Arquillian allows you to force method execution
+order via the @InSequence annotation. Arquillian Drone is obviously
+compatible with TestNG as well.
+
+The `testable=false` argument for deployment forces Arquillian to run in
+client mode, that is not inside of the server where the application is
+deployed. 
+
+NOTE: All Drone tests *must* run in client mode. If you need to combine tests running inside of the server as well as on the client using single
+deployments, mark the deployment as `testable=true` and force client
+execution via the `@RunAsClient` annotation on every client `@Test`
+method.
+
+// TODO Check for Updated Link
+More details are listed in https://raw.githubusercontent.com/arquillian/arquillian-core/master/docs/additional-features.adoc#test-run-modes[Arquillian
+Documentation test run modes].
+
+For the completeness of the code, here are the deployment methods as
+well as the LoginPage abstraction:
+
+[source,java]
+----
+public class LoginPage {
+
+    private static final By LOGGED_IN = By.xpath("//li[contains(text(),'Welcome')]");
+    private static final By LOGGED_OUT = By.xpath("//li[contains(text(),'Goodbye')]");
+
+    private static final By USERNAME_FIELD = By.id("loginForm:username");
+    private static final By PASSWORD_FIELD = By.id("loginForm:password");
+
+    private static final By LOGIN_BUTTON = By.id("loginForm:login");
+    private static final By LOGOUT_BUTTON = By.id("loginForm:logout");
+
+    private final WebDriver driver;
+    private final URL contextPath;
+
+    public LoginPage(WebDriver driver, URL contextPath) {
+        this.driver = driver;
+        this.contextPath = contextPath;
+    }
+
+    public void login(String name, String password) {
+        driver.get(contextPath + "home.jsf");
+        driver.findElement(USERNAME_FIELD).sendKeys(USERNAME);
+        driver.findElement(PASSWORD_FIELD).sendKeys(PASSWORD);
+        driver.findElement(LOGIN_BUTTON).click();
+        Assert.isTrue("User is logged in.", driver.findElement(LOGGED_IN).isDisplayed());
+    }
+
+    public void logout() {
+        driver.findElement(LOGOUT_BUTTON).click();
+        Assert.isTrue("User is not logged in", driver.findElement(LOGGED_OUT).isDisplayed(), "User is logged out");
+    }
+}
+----
+
+[source,java]
+----
+public class Deployments {
+
+   public static WebArchive createDeployment() {
+
+        WebArchive war = ShrinkWrap.create(WebArchive.class)
+                // add classes
+                .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
+                // add configuration
+                .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/beans.xml"))
+                .addAsWebInfResource(new File("src/test/webapp/WEB-INF/faces-config.xml"))
+                // add pages
+                .addAsWebResource(new File("src/test/webapp/index.html"))
+                .addAsWebResource(new File("src/test/webapp/home.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/template.xhtml"))
+                .addAsWebResource(new File("src/test/webapp/users.xhtml"))
+                .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
+
+        return war;
+    }
+}
+----
+
+You need to put following configuration to the pom.xml file of your project:
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <!-- Arquillian Core dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Arquillian Drone dependencies and WebDriver/Selenium dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-bom</artifactId>
+            <version>${version.org.jboss.arquillian.drone}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <!-- To use Arquillian Graphene (2) -->
+    <dependency>
+        <groupId>org.jboss.arquillian.graphene</groupId>
+        <artifactId>graphene-webdriver</artifactId>
+        <version>${version.org.jboss.arquillian.graphene2}</version>
+        <type>pom</type>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+----
+
+NOTE: You can use +graphene-webdriver+ dependency chain even if you are willing to use plain WebDriver.
+    Graphene will just bring you more goodies but it does not force you to change a single line of your code
+
+Nevertheless, if you still don't want to add the Graphene dependencies and just use the plain WebDriver, use this Drone dependency chain:
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+        <version>${version.org.jboss.arquillian.drone}</version>
+        <type>pom</type>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+----

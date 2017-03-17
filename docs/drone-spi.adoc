@@ -1,0 +1,180 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+[[arquillian-drone-spi]]
+== Arquillian Drone SPI
+
+The big advantage of Arquillian Drone extension is its flexibility. We
+provide you reasonable defaults, but if they are not sufficient or if
+they do not fulfill your needs, you can change them. You can change the
+behavior of existing implementation or implement a support for your own
+testing framework as well.
+
+* <<event-model, Event Model>>
+* <<working-with-drone-instances, Working with Drone Instances>>
+
+[[event-model]]
+=== Event Model
+
+Drone itself is not using Arquillian Container related event, which
+means that it is able to work with Arquillian Standalone test runners.
+Arquillian Drone itself observes following events:
+
+[cols="2,8",options="header"]
+|===
+|Arquillian Event |Drone Default Action
+
+|BeforeSuite
+|Drone creates a registry with all Drone SPI implementation on the
+classpath +
+Drone creates a global configuration +
+Drone configures Selenium Server +
+Drone registers all Browser Capabilities implementation on the
+classpath +
+Drone creates a registry for session reuse
+
+|BeforeClass
+|Drone creates a configuration and future instance for Drone points with
+class scoped life cycle
+
+|AfterDeploy
+|Drone creates a configuration and future instance for Drone points with
+deployment scoped life cycle
+
+|Before
+|Drone creates a configuration for instances with method scoped life
+cycle +
+Drone converts a Drone instance callable into a real Drone instance +
+Drone enhances Drone instances
+
+|After
+|Drone destroys an instance of method scoped Drone points
+
+|AfterClass
+|Drone destroys an instance of class scoped Drone points
+
+|BeforeUnDeploy
+|Drone destroys an instance of deployment scoped Drone points
+
+|AfterSuite
+|Drone destroys Selenium Server instance
+|===
+
+Arquillian Drone fires following events you can observe in your
+extension:
+
+[cols="2,8",options="header"]
+|===
+|Arquillian Drone fired event |When is this event fired?
+
+|AfterDroneExtensionConfigured
+|Fired before the global configuration is prepared
+
+|AfterDronePrepared
+|Fired after Drone configuration and Drone callable instance are created
+and stored in the context
+
+|AfterDroneInstantiated
+|Fired after Drone instance callable is converted into real Drone
+instance
+
+|AfterDroneEnhanced
+|Fired after Drone instance is enhanced by an
+`DroneInstanceEnhancer and a window is resized (if requested)`
+
+|AfterDroneDeenhanced
+|Fired after Drone instance is deenhanced by an `DroneInstanceEnhancer`
+
+|AfterDroneDestroyed
+|Fired after Drone instance is destroyed
+
+|BeforeDroneExtensionConfigured
+|Fired before the global configuration is prepared
+
+|BeforeDronePrepared
+|Fired before Drone configuration and Drone callable instance are created
+
+|BeforeDroneInstantiated
+|Fired before Drone instance callable is converted into real Drone
+instance
+
+|BeforeDroneEnhanced
+|Fired before Drone instance is enhanced by an `DroneInstanceEnhancer`
+
+|BeforeDroneDeenhanced
+|Fired before Drone instance is deenhanced by an `DroneInstanceEnhancer`
+
+|BeforeDroneDestroyed
+|Fired before the Drone instance will be destroyed
+
+|DroneAugmented
+|Fired after WebDriver instance is augmented to support more features.
+|===
+
+NOTE: Events provide a class hierarchy, so you can observe their super classes
+if you want.
+
+[[working-with-drone-instances]]
+=== Working with Drone Instances
+
+If you want to support another testing framework and manage it's
+lifecycle, you should implement following interfaces and register them
+in your own Arquillian Extension.
+
+*Drone Factory SPI:*
+
+* Configurator<T, C> +
+Provides a way how to configure configurations of type C for `@Drone`
+object of type T
+* Instantiator<T, C> +
+Provides a way how to instantiate `@Drone` object of type T with
+configuration C
+* Destructor<T> +
+Provides a way how to dispose `@Drone` object of type T
+* DroneInstanceEnhancer<T> +
+Provides a way how to enhance `Drone` object of type T with additional
+functionality. All enhancers available on class path and compatible with
+current Drone type are always applied.
+
+*Drone Context SPI:*
+
+* DroneConfiguration +
+This is effectively a marker for configuration of type C
+* DronePoint +
+An unique description of a Drone in a code.
+* DroneRegistry +
+Register of available {{Configurator}}s, {{Instantiator}}s and
+{{Destructor}}s discovered via SPI.
+* DronePointContext +
+A unique holder for configuration, callable instance and metadata of
+each Drone point.
+* DroneContext +
+Holder for all {{DronePointContext}}s and the global configuration.
+* InstanceOrCallableInstance +
+Holder for any object in DroneContext. It allows to hold both real
+instance and callable instance in union like manner. It is also used to
+hold Drone related configuration, which is always instantiated
+
+*Drone WebDriver SPI:*
+
+* BrowserCapabilitiesRegistry +
+Container for all registered WebDriver browser capabilities
+* BrowserCapabilities +
+Implementation of browser implementation for `WebDriver`
+
+[WARNING]
+Implementations of Configurator, Instantiator and Destructor are
+searched on the class path and they are sorted according to precedence
+they declare. Default implementation has precedence of 0, so if your
+implementation has a higher precedence and instantiates the exact type,
+Arquillian Drone will use it instead of default variant. This provides
+you the ultimate way how to change behavior if desired. Of course, you
+can provide support for your own framework in the very same way, so in
+your test you can use `@Drone` annotation to inject instances of
+arbitrary web testing framework.
