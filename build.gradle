@@ -22,7 +22,7 @@ ext {
     arquillianPhantomDriverOrganization = 'qa'
 
     // selenium server instance holder
-    seleniumVersion = '3.3.0'
+    seleniumVersion = '3.3.1'
     phantomjsVersion = '2.1.1'
 }
 
