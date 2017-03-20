@@ -14,7 +14,7 @@ Drone instances are automatically configured from arquillian.xml
 descriptor file or System properties, which take precedence. You can
 eventually omit the configuration altogether, if you are happy with the
 default values. Obviously, configurations are compatible with
-<<extended-configuration-configuring-qualifierd-drone-instances, @Qualifier
+<<extended-configuration-configuring-qualified-drone-instances, @Qualifier
 annotations>>, so you can create a special configuration for a method
 based life cycle browser if you will.
 
@@ -169,10 +169,9 @@ following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST
 [[graphene-2-configuration]]
 === Graphene 2 Configuration
 
-// TODO verify new link
 Graphene 2 reuses configuration specified for WebDriver, using
 `webdriver` qualifier. You can additionally use a
-https://raw.githubusercontent.com/arquillian/arquillian-graphene/master/docs/graphene-configuration[Arquillian
+http://arquillian.org/arquillian-graphene/#_graphene_configuration[Arquillian
 Graphene 2 configuration] to set Graphene specific configuration, such
 as default UI timeouts.
 

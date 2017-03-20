@@ -227,6 +227,9 @@ Starting with Selenium 2.48.0, you must manually install the SafariDriver browse
 Refer getting started section from https://github.com/SeleniumHQ/selenium/wiki/SafariDriver[SafariDiver]
 ====
 
+NOTE: GitHub release caching functionality caches GitHub responses based on the last modification date
+from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.
+
 === Activate / Deactivate
 
 The automatic download functionality is activated by default; if you want to set it off use the property:
