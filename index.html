@@ -1200,6 +1200,19 @@ Refer getting started section from <a href="https://github.com/SeleniumHQ/seleni
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+GitHub release caching functionality caches GitHub responses based on the last modification date
+from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -1597,7 +1610,7 @@ instances of <code>WebDriver</code>.</p>
 descriptor file or System properties, which take precedence. You can
 eventually omit the configuration altogether, if you are happy with the
 default values. Obviously, configurations are compatible with
-<a href="#extended-configuration-configuring-qualifierd-drone-instances">@Qualifier
+<a href="#extended-configuration-configuring-qualified-drone-instances">@Qualifier
 annotations</a>, so you can create a special configuration for a method
 based life cycle browser if you will.</p>
 </div>
@@ -1814,7 +1827,7 @@ following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST</p></td>
 <div class="paragraph">
 <p>Graphene 2 reuses configuration specified for WebDriver, using
 <code>webdriver</code> qualifier. You can additionally use a
-<a href="https://raw.githubusercontent.com/arquillian/arquillian-graphene/master/docs/graphene-configuration">Arquillian
+<a href="http://arquillian.org/arquillian-graphene/#_graphene_configuration">Arquillian
 Graphene 2 configuration</a> to set Graphene specific configuration, such
 as default UI timeouts.</p>
 </div>
@@ -2398,7 +2411,7 @@ your changes there first.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.3.0.jar</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.3.1.jar</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2445,7 +2458,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-17 19:03:41 CET
+Last updated 2017-03-21 18:35:08 UTC
 </div>
 </div>
 </body>
