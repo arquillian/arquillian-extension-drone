@@ -10,6 +10,9 @@
 :icons: font
 :toc: left
 
+ifndef::generated-doc[]
+To read complete documentation visit http://arquillian.org/arquillian-extension-drone/
+endif::generated-doc[]
 
 The Arquillian Drone 2 extension for Arquillian provides a simple way
 to include functional tests for an application with a web-based
@@ -39,6 +42,9 @@ There are many reasons why you want to do that, the most important being:
 
 If you are still not convinced that Arquillian Drone matches your needs, you might have a look at https://github.com/arquillian/arquillian-graphene[Arquillian Graphene 2], which is a wrapper on top of WebDriver, goes one step further and provides you a convenient way how to write tests for rich AJAX UIs with an ease, injections for Page Objects and Page Fragments and much more.
 
+
+ifdef::generated-doc[]
+
 include::{asciidoctor-source}/drone-getting-started.adoc[]
 
 include::{asciidoctor-source}/automatic-download.adoc[]
@@ -52,6 +58,8 @@ include::{asciidoctor-source}/life-cycle-scope-of-drone-points.adoc[]
 include::{asciidoctor-source}/configuring-drone-instances.adoc[]
 
 include::{asciidoctor-source}/drone-spi.adoc[]
+
+endif::generated-doc[]
 
 == Building the project
 
