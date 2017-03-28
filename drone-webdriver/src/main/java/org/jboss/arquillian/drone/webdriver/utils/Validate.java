@@ -38,6 +38,8 @@ import static org.openqa.selenium.Platform.WINDOWS;
  */
 public class Validate {
 
+    private static final Logger log = Logger.getLogger(Validate.class.getName());
+
     private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
     private static final ImmutableSet<String> ENDINGS = Platform.getCurrent().is(WINDOWS) ?
         ImmutableSet.of("", ".cmd", ".exe", ".com", ".bat") : ImmutableSet.of("");
@@ -158,7 +160,8 @@ public class Validate {
             try {
                 pathSegmentBuilder.addAll(Files.readLines(pathFile, Charsets.UTF_8));
             } catch (IOException e) {
-                // Guess we won't include those, then
+                log.warning(
+                    String.format("There was an error when the file %s was being read: %s", pathFile, e.getMessage()));
             }
         }
     }
