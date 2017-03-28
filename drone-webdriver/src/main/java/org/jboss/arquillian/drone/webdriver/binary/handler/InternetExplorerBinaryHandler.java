@@ -4,7 +4,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBi
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
+import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;

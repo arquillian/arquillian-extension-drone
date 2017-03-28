@@ -169,12 +169,10 @@
                 <artifactId>htmlunit-driver</artifactId>
                 <version>${version.htmlunit.driver}</version>
             </dependency>
-
-            <!-- PhanthomJS dependencies not present in the Selenium BOM file -->
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-phantom-driver</artifactId>
-                <version>${version.phantom.driver}</version>
+                <groupId>com.codeborne</groupId>
+                <artifactId>phantomjsdriver</artifactId>
+                <version>${phantomjs.driver.version}</version>
             </dependency>
 
             <!-- Testing dependencies -->

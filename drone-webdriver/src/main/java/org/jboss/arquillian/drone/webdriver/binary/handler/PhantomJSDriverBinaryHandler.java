@@ -1,13 +1,17 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.IOException;
-
+import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.PhantomJSGitHubBitbucketSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
-import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
-import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.jboss.arquillian.phantom.resolver.ResolvingPhantomJSDriverService;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.net.URL;
 
 import static org.openqa.selenium.phantomjs.PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
@@ -22,6 +26,9 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 
     public static final String PHANTOMJS_BINARY_VERSION_PROPERTY = "phantomjsBinaryVersion";
     public static final String PHANTOMJS_BINARY_URL_PROPERTY = "phantomjsBinaryUrl";
+    public static final String PHANTOMJS_BINARY_PROPERTY = "phantomjsBinary";
+
+    public static final String PHANTOMJS_BINARY_NAME = "phantomjs" + (PlatformUtils.isWindows() ? ".exe" : "");
 
     private DesiredCapabilities capabilities;
 
@@ -29,52 +36,39 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
         this.capabilities = capabilities;
     }
 
-    // TODO: fixme - rewrite to use download feature implemented in drone
-    public String checkAndSetBinary(boolean performExecutableValidations) {
-        try {
-            ResolvingPhantomJSDriverService.createDefaultService(capabilities);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
+    /**
+     * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
+     *
+     * @param targetDir A directory where a downloaded binary should be stored
+     * @param from      A url a binary should be downloaded from
+     * @return An executable binary that was extracted/copied from the downloaded file
+     * @throws Exception If anything bad happens
+     */
+    protected File downloadAndPrepare(File targetDir, URL from) throws Exception {
+        File downloaded = Downloader.download(targetDir, from);
+        File extraction = BinaryFilesUtils.extract(downloaded);
+
+        File[] phantomJSDirectory = extraction.listFiles(file -> file.isDirectory());
+        if (phantomJSDirectory == null || phantomJSDirectory.length == 0) {
+            throw new IllegalStateException(
+                "The extracted phantomJS directory directory is missing at the location: " + extraction
+                    + " - the  number of contained directories is 0");
         }
-        return checkAndSetBinaryWithoutResolve();
+
+        File binDir = new File(phantomJSDirectory[0], "bin");
+        File[] files = binDir.listFiles(file -> file.isFile() && file.getName().equals(PHANTOMJS_BINARY_NAME));
+
+        if (files == null || files.length == 0) {
+            throw new IllegalStateException(
+                "The phantomJS binary is not present on the expected path " + new File(binDir, PHANTOMJS_BINARY_NAME));
+        }
+
+        return markAsExecutable(files[0]);
     }
-
-    // TODO: fixme - rewrite to use download feature implemented in drone
-    public String checkAndSetBinaryWithoutResolve() {
-        String executablePath = PropertySecurityAction.getProperty(PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
-
-        if (Validate.empty(executablePath)) {
-            executablePath = (String) capabilities.getCapability(PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
-        }
-
-        if (!Validate.empty(executablePath)) {
-            PropertySecurityAction.setProperty(PHANTOMJS_EXECUTABLE_PATH_PROPERTY, executablePath);
-        }
-        return executablePath;
-    }
-
-    // TODO: fixme - rewrite to use download feature implemented in drone
-    //    protected File downloadAndPrepare(File targetDir, URL from) throws Exception {
-    //        File downloaded = Downloader.download(targetDir, from);
-    //        File extraction = BinaryFilesUtils.extract(downloaded);
-    //        File[] dir = extraction.listFiles(file -> file.isDirectory());
-    //        if (dir.length == 0) {
-    //            throw new IllegalStateException(
-    //                "There was expected that in the directory " + extraction + " should be directory containing PhantomJS");
-    //        }
-    //
-    //        // fixme: this is only a temporary solution - it won't be publicly announced till it is fixed
-    //        String phantomjsBinary = "phantomjs" + (PlatformUtils.isWindows() ? ".exe" : "");
-    //        File binary = new File(dir[0].getAbsolutePath(), "bin" + File.separator + phantomjsBinary);
-    //        if (!binary.exists()) {
-    //            throw new IllegalStateException("The PhantomJS binary: " + binary + "does not exist.");
-    //        }
-    //        return markAsExecutable(binary);
-    //    }
 
     @Override
     protected String getBinaryProperty() {
-        return null;
+        return PHANTOMJS_BINARY_PROPERTY;
     }
 
     @Override
@@ -99,7 +93,7 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return null;
+        return new PhantomJSGitHubBitbucketSource(new HttpClient(), new GitHubLastUpdateCache());
     }
 
     @Override

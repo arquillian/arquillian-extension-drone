@@ -16,14 +16,12 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.IOException;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.phantom.resolver.ResolvingPhantomJSDriverService;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -35,17 +33,14 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * PhantomJSDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
+ * @author <a href="mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDriver> implements
-        Configurator<PhantomJSDriver, WebDriverConfiguration>, Instantiator<PhantomJSDriver, WebDriverConfiguration>,
-        Destructor<PhantomJSDriver> {
-
-    // that's the only property we need to verify here
-    // the rest is already extracted from capabilities
-    private static final String PHANTOMJS_EXECUTABLE_PATH = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+    Configurator<PhantomJSDriver, WebDriverConfiguration>, Instantiator<PhantomJSDriver, WebDriverConfiguration>,
+    Destructor<PhantomJSDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.PhantomJS().getReadableName();
+    private static final String PHANTOMJS_DEFAULT_EXECUTABLE = "phantomjs";
 
     /*
      * (non-Javadoc)
@@ -77,29 +72,57 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
 
         Capabilities capabilities = getCapabilities(configuration, true);
 
-        try {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
-                new Object[] { ResolvingPhantomJSDriverService.createDefaultService(capabilities), capabilities }, PhantomJSDriver.class);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to create an instance of " + configuration.getImplementationClass() + ".", e);
-        }
+        PhantomJSDriverService phantomJSDriverService = PhantomJSDriverService.createDefaultService(capabilities);
+
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
+                                           new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
+                                           new Object[] { phantomJSDriverService, capabilities },
+                                           PhantomJSDriver.class);
     }
 
     /**
      * Returns a {@link Capabilities} instance with set all necessary properties (ie: phantomjs.binary.path).
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         // resolve capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        reformatCLIArgumentsInCapToArray(capabilities);
 
-        new PhantomJSDriverBinaryHandler(capabilities).checkAndSetBinaryWithoutResolve();
+        if (!isDefaultExecutablePresent()) {
+            new PhantomJSDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
+        }
 
         return capabilities;
+    }
+
+    /**
+     * Reformats {@link PhantomJSDriverService.PHANTOMJS_CLI_ARGS} and
+     * {@link PhantomJSDriverService.PHANTOMJS_GHOSTDRIVER_CLI_ARGS} from String to String[]
+     *
+     * @param capabilities Capabilities
+     */
+    public void reformatCLIArgumentsInCapToArray(DesiredCapabilities capabilities) {
+        reformatCapabilityToArray(capabilities, PhantomJSDriverService.PHANTOMJS_CLI_ARGS);
+        reformatCapabilityToArray(capabilities, PhantomJSDriverService.PHANTOMJS_GHOSTDRIVER_CLI_ARGS);
+    }
+
+    private void reformatCapabilityToArray(DesiredCapabilities capabilities, String capabilityName) {
+        Object capability = capabilities.getCapability(capabilityName);
+        if (capability != null) {
+            if (capability instanceof String) {
+                String[] splitArgs = ((String) capability).split(" ");
+                capabilities.setCapability(capabilityName, splitArgs);
+            }
+        }
+    }
+
+    private boolean isDefaultExecutablePresent() {
+        return Validate.isCommandExecutable(PHANTOMJS_DEFAULT_EXECUTABLE);
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.phantom.resolver.maven.PlatformUtils;
+import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 
 public class GeckoDriverGitHubSource extends GitHubSource {
 

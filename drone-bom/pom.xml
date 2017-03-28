@@ -39,9 +39,9 @@
     </developers>
 
     <properties>
-        <version.org.jboss.arquillian.phantom.driver>1.2.1.1</version.org.jboss.arquillian.phantom.driver>
         <version.org.jboss.arquillian.selenium>3.3.1</version.org.jboss.arquillian.selenium>
         <version.htmlunit.driver>2.24</version.htmlunit.driver>
+        <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     </properties>
@@ -108,11 +108,11 @@
                 <version>${version.htmlunit.driver}</version>
             </dependency>
 
-            <!-- PhantomDriver is kept externally from Selenium BOM -->
+            <!-- Ghost Driver is kept externally from Selenium BOM -->
             <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-phantom-driver</artifactId>
-                <version>${version.org.jboss.arquillian.phantom.driver}</version>
+                <groupId>com.codeborne</groupId>
+                <artifactId>phantomjsdriver</artifactId>
+                <version>${phantomjs.driver.version}</version>
             </dependency>
 
             <!-- Dependency Chain -->

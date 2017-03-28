@@ -1,5 +1,10 @@
 package org.jboss.arquillian.drone.webdriver.binary;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.arquillian.spacelift.Spacelift;
+import org.arquillian.spacelift.task.archive.UntarTool;
+import org.arquillian.spacelift.task.archive.UnzipTool;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,11 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.logging.Logger;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.arquillian.spacelift.Spacelift;
-import org.arquillian.spacelift.task.archive.UntarTool;
-import org.arquillian.spacelift.task.archive.UnzipTool;
 
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
@@ -41,7 +41,7 @@ public class BinaryFilesUtils {
             dir = UUID.randomUUID().toString();
         }
         File targetDir = new File(DRONE_TARGET_DIRECTORY + File.separator + dir);
-        if (!targetDir.exists() || targetDir.listFiles(file -> file.isFile()).length == 0) {
+        if (!targetDir.exists() || targetDir.listFiles().length == 0) {
 
             targetDir.mkdirs();
             String filePath = toExtract.getAbsolutePath();
