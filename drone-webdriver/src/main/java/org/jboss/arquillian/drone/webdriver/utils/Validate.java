@@ -16,12 +16,21 @@
  */
 package org.jboss.arquillian.drone.webdriver.utils;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
+import org.openqa.selenium.Platform;
+
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import static org.openqa.selenium.Platform.WINDOWS;
 
 /**
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
@@ -29,7 +38,11 @@ import java.util.logging.Logger;
  */
 public class Validate {
 
+    private static final Logger log = Logger.getLogger(Validate.class.getName());
+
     private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
+    private static final ImmutableSet<String> ENDINGS = Platform.getCurrent().is(WINDOWS) ?
+        ImmutableSet.of("", ".cmd", ".exe", ".com", ".bat") : ImmutableSet.of("");
 
     public static boolean empty(Object object) {
         return object == null;
@@ -84,6 +97,72 @@ public class Validate {
     public static void isExecutable(String path, String message) throws IllegalArgumentException {
         if (!executable(path)) {
             throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Find the executable by scanning the file system and the PATH. In the case of Windows this
+     * method allows common executable endings (".com", ".bat" and ".exe") to be omitted.
+     *
+     * @param command The name of the executable to find
+     * @return Whether the command is executable or not.
+     */
+    public static boolean isCommandExecutable(String command) throws IllegalArgumentException {
+        File file = new File(command);
+        if (fileExecutableChecker.canExecute(file)) {
+            return true;
+        }
+
+        if (Platform.getCurrent().is(WINDOWS)) {
+            file = new File(command + ".exe");
+            if (fileExecutableChecker.canExecute(file)) {
+                return true;
+            }
+        }
+
+        final ImmutableSet.Builder<String> pathSegmentBuilder = new ImmutableSet.Builder<>();
+        addPathFromEnvironment(pathSegmentBuilder);
+        if (Platform.getCurrent().is(Platform.MAC)) {
+            addMacSpecificPath(pathSegmentBuilder);
+        }
+
+        for (String pathSegment : pathSegmentBuilder.build()) {
+            for (String ending : ENDINGS) {
+                file = new File(pathSegment, command + ending);
+                if (fileExecutableChecker.canExecute(file)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void addPathFromEnvironment(final ImmutableSet.Builder<String> pathSegmentBuilder) {
+        String pathName = "PATH";
+        Map<String, String> env = System.getenv();
+        if (!env.containsKey(pathName)) {
+            for (String key : env.keySet()) {
+                if (pathName.equalsIgnoreCase(key)) {
+                    pathName = key;
+                    break;
+                }
+            }
+        }
+        String path = env.get(pathName);
+        if (path != null) {
+            pathSegmentBuilder.add(path.split(File.pathSeparator));
+        }
+    }
+
+    private static void addMacSpecificPath(final ImmutableSet.Builder<String> pathSegmentBuilder) {
+        File pathFile = new File("/etc/paths");
+        if (pathFile.exists()) {
+            try {
+                pathSegmentBuilder.addAll(Files.readLines(pathFile, Charsets.UTF_8));
+            } catch (IOException e) {
+                log.warning(
+                    String.format("There was an error when the file %s was being read: %s", pathFile, e.getMessage()));
+            }
         }
     }
 

@@ -1,9 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.File;
-import java.net.URL;
-import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -12,6 +8,10 @@ import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Class that handles system properties, properties stored in capabilities, downloading, extracting and setting binaries
@@ -185,7 +185,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         File downloaded = Downloader.download(targetDir, from);
         File extraction = BinaryFilesUtils.extract(downloaded);
         File[] files = extraction.listFiles(file -> file.isFile());
-        if (files.length == 0) {
+        if (files == null || files.length == 0) {
             throw new IllegalStateException(
                 "The number of extracted files in the directory " + extraction + " is 0. There is no file to use");
         }

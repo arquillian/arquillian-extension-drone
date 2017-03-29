@@ -47,7 +47,6 @@
             <version>${project.version}</version>
         </dependency>
 
-
         <!-- Arquillian dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -101,19 +100,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-phantom-driver</artifactId>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-edge-driver</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.testng</groupId>
-                    <artifactId>testng</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-edge-driver</artifactId>
+            <artifactId>selenium-safari-driver</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>phantomjsdriver</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -132,6 +130,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -202,6 +205,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <default.supported.phantomjs.binary.version>
+                                    ${default.supported.phantomjs.binary.version}
+                                </default.supported.phantomjs.binary.version>
+                            </systemPropertyVariables>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>default-test</id>
