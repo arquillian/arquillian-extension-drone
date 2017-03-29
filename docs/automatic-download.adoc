@@ -36,6 +36,20 @@ In case that you don't define any property then Drone finds the latest version o
 
 ==== Properties, directory names and support of latest versions
 
+Explanatory notes:
+
+_System property_ - intended to be used as a system property to define a path to a binary
+
+_arquillian.xml property_ - intended to be used as a property used in arquillian.xml file to define a path to a binary
+
+_Resolution of latest version supported_ - if the latest version is resolved when no property is defined
+
+_Version driver property_ - use this arquillian.xml property to define version of the binary that should be downloaded/used
+
+_Url driver property_ - use this arquillian.xml property to define an URL the binary should be downloaded from
+
+_Cache subdirectory_ - name of the sub-directory (withing `$HOME/.arquillian/drone/`) the binaries are cached in
+
 ===== Selenium Server
 |===
 
@@ -44,7 +58,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |seleniumServerBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |yes
 
 |Version driver property
@@ -65,7 +79,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |firefoxDriverBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |yes
 
 |Version driver property
@@ -87,7 +101,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |chromeDriverBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |yes
 
 |Version driver property
@@ -109,7 +123,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |edgeDriverBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |yes
 
 |Version driver property
@@ -131,7 +145,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |ieDriverBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |yes
 
 |Version driver property
@@ -151,19 +165,19 @@ In case that you don't define any property then Drone finds the latest version o
 |System property |phantomjs.binary.path
 
 |arquillian.xml property
-|-
+|phantomjsBinary
 
-|Latest version supported
-|no
+|Resolution of latest version supported
+|yes
 
 |Version driver property
-|-
+|phantomjsBinaryVersion
 
 |Url driver property
-|-
+|phantomjsBinaryUrl
 
 |Cache subdirectory
-|-
+|phantomjs
 |===
 
 
@@ -175,7 +189,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |operaDriverBinary
 
-|Latest version supported
+|Resolution of latest version supported
 |no
 
 |Version driver property
@@ -197,7 +211,7 @@ In case that you don't define any property then Drone finds the latest version o
 |arquillian.xml property
 |-
 
-|Latest version supported
+|Resolution of latest version supported
 |no
 
 |Version driver property
@@ -227,8 +241,11 @@ Starting with Selenium 2.48.0, you must manually install the SafariDriver browse
 Refer getting started section from https://github.com/SeleniumHQ/selenium/wiki/SafariDriver[SafariDiver]
 ====
 
-NOTE: GitHub release caching functionality caches GitHub responses based on the last modification date
+[NOTE]
+====
+GitHub release caching functionality caches GitHub responses based on the last modification date
 from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.
+====
 
 === Activate / Deactivate
 
@@ -237,3 +254,28 @@ The automatic download functionality is activated by default; if you want to set
 `<property name="downloadBinaries">false</property>`
 
 and no binary will be downloaded.
+
+
+=== Selenium Server
+
+Apart from the fact that the Selenium Server binary is automatically downloaded, in the case of @RemoteWebDriver@ it is also automatically started with the correct parameters (path to the webdriver that should be used).
+
+So, if you use `RemoteWebDriver` Drone checks the address specified using property `remoteAddress` in arquillian.xml file (default is: `http://localhost:4444/wd/hub`) and if the address is not accessible (there isn't running anything) then it automatically starts selenium server instance on the given address.
+
+For example I'd like to use `RemoteWebDriver` with the browser Firefox and without specifying any custom remote address, then the Selenium Server would be started using command:
+
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.3.1.jar -port 4444`
+
+In case you would like to add some additional selenium server arguments to the command, you can use parameter `seleniumServerArgs` in your arquillian.xml file.
+For example, if you used these properties:
+
+[source,xml]
+----
+<property name="seleniumServerArgs">-debug true -role node -browserTimeout 1000</property>
+<property name="browser">firefox</property>
+----
+
+then the command used for starting Selenium Server instance would look like:
+
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.3.1.jar -port 4444 -debug true -role node -browserTimeout 1000`
+

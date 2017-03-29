@@ -80,13 +80,14 @@ Following values are valid:
 . opera +
 . phantomjs +
 . safari +
+. edge +
 
 |iePort
 |-
 |Default port where to connect for Internet Explorer driver
 
 |remoteAddress
-|http://localhost:14444/wd/hub
+|http://localhost:4444/wd/hub
 |Default address for remote driver to connect
 
 |remoteReusable
@@ -99,14 +100,6 @@ debugging and/or test execution speed-up.
 |false
 |If you are using remote reusable browser, you can force it to reuse
 cookies
-
-|chromeDriverBinary
-|-
-|Path to chromedriver binary
-
-|ieDriverBinary
-|-
-|Path to Internet Explorer driver binary
 
 |firefoxExtensions
 |-
@@ -130,6 +123,8 @@ will be applied to freshly created Firefox profile.
 the window if supported by underlying browser. Useful for **phantomjs**,
 which by default defines a very small viewport
 |===
+
+Some additional configuration parameters related to binaries can be found in http://arquillian.org/arquillian-extension-drone/#_properties_directory_names_and_support_of_latest_versions[Properties, directory names and support of latest versions]
 
 If you need to enable any
 http://code.google.com/p/selenium/wiki/DesiredCapabilities[browser
@@ -178,133 +173,23 @@ as default UI timeouts.
 [[selenium-server-configuration]]
 === Selenium Server Configuration
 
-Selenium Server uses `selenium-server` qualifier.
+Selenium server is automatically started with the parameter reflecting browser that is used (path to the webdriver). For example, in case that the browser Firefox is used and with default address, then the Selenium Server instance would be started using a command:
+
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.3.1.jar -port 4444`
+
+In case you would like to add some additional selenium server arguments to the command, you can use parameter `seleniumServerArgs` in your arquillian.xml file.
+For example, if you used these properties:
 
 [source,xml]
 ----
-<extension qualifier="selenium-server">
-   <property name="host">myhost.org</property>
-</extension>
+<property name="seleniumServerArgs">-debug true -role node -browserTimeout 1000</property>
+<property name="browser">firefox</property>
 ----
 
-[cols="1,1,8",options="header"]
-|===
-|Property Name |Default Value |Description
+then the command used for starting Selenium Server instance would look like:
 
-|avoidProxy
-|false
-|Do not use proxy for connection between clients and server
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.3.1.jar -port 4444 -debug true -role node -browserTimeout 1000`
 
-|browserSessionReuse
-|false
-|Reuse browser session
-
-|browserSideLog
-|false
-|Enable logging in browser window
-
-|debug
-|false
-|Enable debug messages
-
-|dontTouchLogging
-|false
-|Disable Selenium specific logging configuration
-
-|ensureCleanSession
-|false
-|Automatic cleanup of the session
-
-|firefoxProfileTemplate
-|-
-|Path to the profile used as a template
-
-|forcedBrowserMode
-|-
-|Mimic browser mode no matter which one is used to start the client
-
-|honorSystemProxy
-|false
-|Use system proxy for connections
-
-|host
-|localhost
-|Name of the machine where to start Selenium Server
-
-|logFile
-|-
-|Path to log file
-
-|nonProxyHosts
-|value of `http.nonProxyHosts` property
-|List of hosts where proxy settings are ignored
-
-|port
-|14444
-|Port on machine where to start Selenium Server
-
-|profilesLocation
-|-
-|Where profiles are located
-
-|proxyHost
-|value of `http.proxyHost` property
-|Name of proxy server
-
-|proxyInjectionMode
-|false
-|Use proxy approach between Selenium server and client
-
-|proxyPort
-|value of `http.proxyPort` property
-|Port of proxy server
-
-|retryTimeoutInSeconds
-|10
-|Timeout for commands to be retried
-
-|singleWindow
-|false
-|Use single window
-
-|skip
-|false
-|Do not manage Selenium Server lifecycle
-
-|systemProperties
-|-
-|Arbitrary system properties in -Dproperty.name=property.value format
-
-|timeoutInSeconds
-|Integer.MAX_VALUE
-|Timeout for Selenium Server
-
-|trustAllSSLCertificates
-|false
-|Trust all SSL certificates
-
-|trustStore
-|value of `javax.net.ssl.trustStore` property
-|Trust store path
-
-|trustStorePassword
-|value of `javax.net.ssl.trustStorePassword` property
-|Trust store password
-
-|userExtensions
-|-
-|Path to user extension files
-|===
-
-Selenium Server has different life cycle than Drone instances, it is
-created and started before test suite and disposed after test suite.
-Note, you need Selenium Server only if you plan to use remote and
-reusable instances of WebDriver.
-
-[NOTE]
-If you have your own Selenium Server instance running, you need either
-to remove Drone Selenium Server extension from the classpath, set it to
-a different host/port or disable its execution via skip=true.
 
 [[extended-configuration-configuring-qualifierd-drone-instances]]
 == Extended Configuration: Configuring @Qualifier'd Drone Instances
