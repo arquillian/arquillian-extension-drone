@@ -87,7 +87,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
     protected Map<String, String> lastModificationHeader() {
         final Map<String, String> headers = new HashMap<>();
         headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(uniqueKey).withZoneSameInstant(ZoneId.of("GMT")).format(Rfc2126DateTimeFormatter.INSTANCE));
-        System.out.println(headers);
         return headers;
     }
 

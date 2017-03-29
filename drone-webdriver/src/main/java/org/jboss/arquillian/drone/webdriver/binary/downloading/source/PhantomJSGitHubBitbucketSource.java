@@ -77,8 +77,6 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
                 phantomJsUrl.append("x86_64.tar.bz2").toString();
             }
         }
-
-        System.out.println(phantomJsUrl.toString());
         return phantomJsUrl.toString();
     }
 
