@@ -517,6 +517,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#_how_it_works">3.1. How it works?</a></li>
 <li><a href="#_activate_deactivate">3.2. Activate / Deactivate</a></li>
+<li><a href="#_selenium_server_2">3.3. Selenium Server</a></li>
 </ul>
 </li>
 <li><a href="#_supported_frameworks_and_their_versions">4. Supported Frameworks And Their Versions</a></li>
@@ -880,6 +881,27 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 </div>
 <div class="sect3">
 <h4 id="_properties_directory_names_and_support_of_latest_versions"><a class="anchor" href="#_properties_directory_names_and_support_of_latest_versions"></a>3.1.4. Properties, directory names and support of latest versions</h4>
+<div class="paragraph">
+<p>Explanatory notes:</p>
+</div>
+<div class="paragraph">
+<p><em>System property</em> - intended to be used as a system property to define a path to a binary</p>
+</div>
+<div class="paragraph">
+<p><em>arquillian.xml property</em> - intended to be used as a property used in arquillian.xml file to define a path to a binary</p>
+</div>
+<div class="paragraph">
+<p><em>Resolution of latest version supported</em> - if the latest version is resolved when no property is defined</p>
+</div>
+<div class="paragraph">
+<p><em>Version driver property</em> - use this arquillian.xml property to define version of the binary that should be downloaded/used</p>
+</div>
+<div class="paragraph">
+<p><em>Url driver property</em> - use this arquillian.xml property to define an URL the binary should be downloaded from</p>
+</div>
+<div class="paragraph">
+<p><em>Cache subdirectory</em> - name of the sub-directory (withing <code>$HOME/.arquillian/drone/</code>) the binaries are cached in</p>
+</div>
 <div class="sect4">
 <h5 id="_selenium_server"><a class="anchor" href="#_selenium_server"></a>Selenium Server</h5>
 <table class="tableblock frame-all grid-all spread">
@@ -897,7 +919,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">seleniumServerBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -932,7 +954,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">firefoxDriverBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -967,7 +989,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">chromeDriverBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -1002,7 +1024,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">edgeDriverBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -1037,7 +1059,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">ieDriverBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -1069,23 +1091,23 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">arquillian.xml property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">phantomjsBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Version driver property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">phantomjsBinaryVersion</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Url driver property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">phantomjsBinaryUrl</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Cache subdirectory</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">phantomjs</p></td>
 </tr>
 </tbody>
 </table>
@@ -1107,7 +1129,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">operaDriverBinary</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 </tr>
 <tr>
@@ -1142,7 +1164,7 @@ You can use graphene-webdriver dependency chain even if you are willing to use p
 <td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Latest version supported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolution of latest version supported</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 </tr>
 <tr>
@@ -1198,8 +1220,10 @@ Refer getting started section from <a href="https://github.com/SeleniumHQ/seleni
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-GitHub release caching functionality caches GitHub responses based on the last modification date
-from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.
+<div class="paragraph">
+<p>GitHub release caching functionality caches GitHub responses based on the last modification date
+from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -1217,6 +1241,37 @@ from the returned response header guarding against exceeding GitHub rate limit f
 </div>
 <div class="paragraph">
 <p>and no binary will be downloaded.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_selenium_server_2"><a class="anchor" href="#_selenium_server_2"></a>3.3. Selenium Server</h3>
+<div class="paragraph">
+<p>Apart from the fact that the Selenium Server binary is automatically downloaded, in the case of @RemoteWebDriver@ it is also automatically started with the correct parameters (path to the webdriver that should be used).</p>
+</div>
+<div class="paragraph">
+<p>So, if you use <code>RemoteWebDriver</code> Drone checks the address specified using property <code>remoteAddress</code> in arquillian.xml file (default is: <code><a href="http://localhost:4444/wd/hub" class="bare">http://localhost:4444/wd/hub</a></code>) and if the address is not accessible (there isn&#8217;t running anything) then it automatically starts selenium server instance on the given address.</p>
+</div>
+<div class="paragraph">
+<p>For example I&#8217;d like to use <code>RemoteWebDriver</code> with the browser Firefox and without specifying any custom remote address, then the Selenium Server would be started using command:</p>
+</div>
+<div class="paragraph">
+<p><code>java -Dwebdriver.gecko.driver=target/&#8230;&#8203;/geckodriver -jar target/&#8230;&#8203;/selenium-server-standalone-3.3.1.jar -port 4444</code></p>
+</div>
+<div class="paragraph">
+<p>In case you would like to add some additional selenium server arguments to the command, you can use parameter <code>seleniumServerArgs</code> in your arquillian.xml file.
+For example, if you used these properties:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">seleniumServerArgs</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>-debug true -role node -browserTimeout 1000<span class="tag">&lt;/property&gt;</span>
+<span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">browser</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>firefox<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>then the command used for starting Selenium Server instance would look like:</p>
+</div>
+<div class="paragraph">
+<p><code>java -Dwebdriver.gecko.driver=target/&#8230;&#8203;/geckodriver -jar target/&#8230;&#8203;/selenium-server-standalone-3.3.1.jar -port 4444 -debug true -role node -browserTimeout 1000</code></p>
 </div>
 </div>
 </div>
@@ -1326,9 +1381,9 @@ Arquillian Drone BOM, you encore Drone to use latest Arquillian Core.
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;properties&gt;</span>
-    <span class="tag">&lt;version.org.jboss.arquillian&gt;</span>1.1.11.Final<span class="tag">&lt;/version.org.jboss.arquillian&gt;</span>
-    <span class="tag">&lt;version.org.jboss.arquillian.drone&gt;</span>2.0.1.Final<span class="tag">&lt;/version.org.jboss.arquillian.drone&gt;</span>
-    <span class="tag">&lt;version.org.jboss.arquillian.graphene&gt;</span>2.1.0.Final<span class="tag">&lt;/version.org.jboss.arquillian.graphene&gt;</span>
+    <span class="tag">&lt;version.org.jboss.arquillian&gt;</span>1.1.13.Final<span class="tag">&lt;/version.org.jboss.arquillian&gt;</span>
+    <span class="tag">&lt;version.org.jboss.arquillian.drone&gt;</span>2.1.0<span class="tag">&lt;/version.org.jboss.arquillian.drone&gt;</span>
+    <span class="tag">&lt;version.org.jboss.arquillian.graphene&gt;</span>2.2.0<span class="tag">&lt;/version.org.jboss.arquillian.graphene&gt;</span>
 <span class="tag">&lt;/properties&gt;</span>
 
 <span class="tag">&lt;dependencyManagement&gt;</span>
@@ -1382,7 +1437,7 @@ Example of Selenium BOM for Selenium 3.0.0-beta3
         <span class="tag">&lt;dependency&gt;</span>
             <span class="tag">&lt;groupId&gt;</span>org.jboss.arquillian.selenium<span class="tag">&lt;/groupId&gt;</span>
             <span class="tag">&lt;artifactId&gt;</span>selenium-bom<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>3.0.0-beta3<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;version&gt;</span>3.3.1<span class="tag">&lt;/version&gt;</span>
             <span class="tag">&lt;type&gt;</span>pom<span class="tag">&lt;/type&gt;</span>
             <span class="tag">&lt;scope&gt;</span>import<span class="tag">&lt;/scope&gt;</span>
         <span class="tag">&lt;/dependency&gt;</span>
@@ -1410,7 +1465,7 @@ of the following into the <code>&lt;dependencies&gt;</code> section:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>To use WebDriver, also known as Selenium 2:</p>
+<p>To use WebDriver:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1701,7 +1756,8 @@ you want to disable the timeout altogether</p></td>
 . internetExplorer<br>
 . opera<br>
 . phantomjs<br>
-. safari<br></p></td>
+. safari<br>
+. edge<br></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">iePort</p></td>
@@ -1710,7 +1766,7 @@ you want to disable the timeout altogether</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">remoteAddress</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://localhost:14444/wd/hub" class="bare">http://localhost:14444/wd/hub</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://localhost:4444/wd/hub" class="bare">http://localhost:4444/wd/hub</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Default address for remote driver to connect</p></td>
 </tr>
 <tr>
@@ -1725,16 +1781,6 @@ debugging and/or test execution speed-up.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">If you are using remote reusable browser, you can force it to reuse
 cookies</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">chromeDriverBinary</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Path to chromedriver binary</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ieDriverBinary</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Path to Internet Explorer driver binary</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">firefoxExtensions</p></td>
@@ -1764,6 +1810,9 @@ which by default defines a very small viewport</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Some additional configuration parameters related to binaries can be found in <a href="http://arquillian.org/arquillian-extension-drone/#_properties_directory_names_and_support_of_latest_versions">Properties, directory names and support of latest versions</a></p>
+</div>
 <div class="paragraph">
 <p>If you need to enable any
 <a href="http://code.google.com/p/selenium/wiki/DesiredCapabilities">browser
@@ -1826,180 +1875,26 @@ as default UI timeouts.</p>
 <div class="sect2">
 <h3 id="selenium-server-configuration"><a class="anchor" href="#selenium-server-configuration"></a>7.4. Selenium Server Configuration</h3>
 <div class="paragraph">
-<p>Selenium Server uses <code>selenium-server</code> qualifier.</p>
+<p>Selenium server is automatically started with the parameter reflecting browser that is used (path to the webdriver). For example, in case that the browser Firefox is used and with default address, then the Selenium Server instance would be started using a command:</p>
+</div>
+<div class="paragraph">
+<p><code>java -Dwebdriver.gecko.driver=target/&#8230;&#8203;/geckodriver -jar target/&#8230;&#8203;/selenium-server-standalone-3.3.1.jar -port 4444</code></p>
+</div>
+<div class="paragraph">
+<p>In case you would like to add some additional selenium server arguments to the command, you can use parameter <code>seleniumServerArgs</code> in your arquillian.xml file.
+For example, if you used these properties:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;extension</span> <span class="attribute-name">qualifier</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">selenium-server</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-   <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">host</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>myhost.org<span class="tag">&lt;/property&gt;</span>
-<span class="tag">&lt;/extension&gt;</span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">seleniumServerArgs</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>-debug true -role node -browserTimeout 1000<span class="tag">&lt;/property&gt;</span>
+<span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">browser</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>firefox<span class="tag">&lt;/property&gt;</span></code></pre>
 </div>
 </div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 10%;">
-<col style="width: 10%;">
-<col style="width: 80%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property Name</th>
-<th class="tableblock halign-left valign-top">Default Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">avoidProxy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Do not use proxy for connection between clients and server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">browserSessionReuse</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reuse browser session</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">browserSideLog</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enable logging in browser window</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">debug</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enable debug messages</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">dontTouchLogging</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Disable Selenium specific logging configuration</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ensureCleanSession</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Automatic cleanup of the session</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">firefoxProfileTemplate</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Path to the profile used as a template</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">forcedBrowserMode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Mimic browser mode no matter which one is used to start the client</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">honorSystemProxy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use system proxy for connections</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">host</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">localhost</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the machine where to start Selenium Server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">logFile</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Path to log file</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">nonProxyHosts</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of <code>http.nonProxyHosts</code> property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">List of hosts where proxy settings are ignored</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">port</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">14444</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Port on machine where to start Selenium Server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">profilesLocation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Where profiles are located</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">proxyHost</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of <code>http.proxyHost</code> property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of proxy server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">proxyInjectionMode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use proxy approach between Selenium server and client</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">proxyPort</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of <code>http.proxyPort</code> property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Port of proxy server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">retryTimeoutInSeconds</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Timeout for commands to be retried</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">singleWindow</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use single window</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">skip</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Do not manage Selenium Server lifecycle</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">systemProperties</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Arbitrary system properties in -Dproperty.name=property.value format</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">timeoutInSeconds</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Integer.MAX_VALUE</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Timeout for Selenium Server</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">trustAllSSLCertificates</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Trust all SSL certificates</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">trustStore</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of <code>javax.net.ssl.trustStore</code> property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Trust store path</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">trustStorePassword</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of <code>javax.net.ssl.trustStorePassword</code> property</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Trust store password</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">userExtensions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Path to user extension files</p></td>
-</tr>
-</tbody>
-</table>
 <div class="paragraph">
-<p>Selenium Server has different life cycle than Drone instances, it is
-created and started before test suite and disposed after test suite.
-Note, you need Selenium Server only if you plan to use remote and
-reusable instances of WebDriver.</p>
+<p>then the command used for starting Selenium Server instance would look like:</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you have your own Selenium Server instance running, you need either
-to remove Drone Selenium Server extension from the classpath, set it to
-a different host/port or disable its execution via skip=true.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><code>java -Dwebdriver.gecko.driver=target/&#8230;&#8203;/geckodriver -jar target/&#8230;&#8203;/selenium-server-standalone-3.3.1.jar -port 4444 -debug true -role node -browserTimeout 1000</code></p>
 </div>
 </div>
 </div>
@@ -2449,7 +2344,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-24 20:45:57 UTC
+Last updated 2017-03-29 12:31:07 UTC
 </div>
 </div>
 </body>
