@@ -32,12 +32,10 @@ import java.util.Properties;
 
 /**
  * SecurityActions
- *
+ * <p>
  * A set of privileged actions that are not to leak out of this package
  *
- *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  * @version $Revision: $
  */
 final class SecurityActions {
@@ -60,41 +58,43 @@ final class SecurityActions {
     // -------------------------------------------------------------------------------||
 
     static Map<String, Field> getAccessableFields(final Class<?> source) {
-        Map<String, Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<Map<String, Field>>() {
-            public Map<String, Field> run() {
-                Map<String, Field> foundFields = new LinkedHashMap<String, Field>();
-                for (Field field : source.getDeclaredFields()) {
-                    // omit final fields
-                    if (Modifier.isFinal(field.getModifiers())) {
-                        continue;
-                    }
+        Map<String, Field> declaredAccessableFields =
+            AccessController.doPrivileged(new PrivilegedAction<Map<String, Field>>() {
+                public Map<String, Field> run() {
+                    Map<String, Field> foundFields = new LinkedHashMap<String, Field>();
+                    for (Field field : source.getDeclaredFields()) {
+                        // omit final fields
+                        if (Modifier.isFinal(field.getModifiers())) {
+                            continue;
+                        }
 
-                    if (!field.isAccessible()) {
-                        field.setAccessible(true);
+                        if (!field.isAccessible()) {
+                            field.setAccessible(true);
+                        }
+                        foundFields.put(field.getName(), field);
                     }
-                    foundFields.put(field.getName(), field);
+                    return foundFields;
                 }
-                return foundFields;
-            }
-        });
+            });
         return declaredAccessableFields;
     }
 
     static Map<String, String> getProperties(final String prefix) {
         try {
-            Map<String, String> value = AccessController.doPrivileged(new PrivilegedExceptionAction<Map<String, String>>() {
-                public Map<String, String> run() {
-                    Properties props = System.getProperties();
-                    Map<String, String> subset = new LinkedHashMap<String, String>();
-                    for (Map.Entry<Object, Object> entry : props.entrySet()) {
-                        String name = entry.getKey().toString();
-                        if (name.startsWith(prefix)) {
-                            subset.put(name, entry.getValue().toString());
+            Map<String, String> value =
+                AccessController.doPrivileged(new PrivilegedExceptionAction<Map<String, String>>() {
+                    public Map<String, String> run() {
+                        Properties props = System.getProperties();
+                        Map<String, String> subset = new LinkedHashMap<String, String>();
+                        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+                            String name = entry.getKey().toString();
+                            if (name.startsWith(prefix)) {
+                                subset.put(name, entry.getValue().toString());
+                            }
                         }
+                        return subset;
                     }
-                    return subset;
-                }
-            });
+                });
             return value;
         }
         // Unwrap
@@ -140,9 +140,9 @@ final class SecurityActions {
                                 if (parameterizedType.getActualTypeArguments().length != parameters.length) {
                                     parameterMatched = false;
                                 } else {
-                                    for(int i = 0; i < parameterizedType.getActualTypeArguments().length; i++) {
+                                    for (int i = 0; i < parameterizedType.getActualTypeArguments().length; i++) {
                                         Class<?> actualType = (Class<?>) parameterizedType.getActualTypeArguments()[i];
-                                        if(!actualType.equals(parameters[i])) {
+                                        if (!actualType.equals(parameters[i])) {
                                             parameterMatched = false;
                                             break;
                                         }
@@ -216,5 +216,4 @@ final class SecurityActions {
             }
         }
     }
-
 }

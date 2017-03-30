@@ -48,7 +48,7 @@ public class DeploymentFilter implements DronePointFilter<Object> {
     @Override
     public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
         String deploymentName = context.get(dronePoint).getMetadata(DeploymentNameKey.class);
-        if(deploymentName == null) {
+        if (deploymentName == null) {
             return false;
         }
 

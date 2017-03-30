@@ -18,4 +18,5 @@ package org.jboss.arquillian.drone.spi.deployment;
 
 import org.jboss.arquillian.drone.spi.DronePointContext;
 
-public interface DeploymentNameKey extends DronePointContext.MetadataKey<String> {}
+public interface DeploymentNameKey extends DronePointContext.MetadataKey<String> {
+}

@@ -47,7 +47,8 @@ public class BrowserCapabilitiesRegistrar {
     }
 
     private void registerBrowserCapabilities() {
-        List<BrowserCapabilities> list = new ArrayList<BrowserCapabilities>(serviceLoader.get().all(BrowserCapabilities.class));
+        List<BrowserCapabilities> list =
+            new ArrayList<BrowserCapabilities>(serviceLoader.get().all(BrowserCapabilities.class));
         Collections.sort(list, SORTABLE_COMPARATOR);
 
         for (BrowserCapabilities browser : list) {
@@ -61,5 +62,4 @@ public class BrowserCapabilitiesRegistrar {
             return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
         }
     };
-
 }

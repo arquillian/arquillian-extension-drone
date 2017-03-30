@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
  * Mapper for URI
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum URIValueMapper implements ValueMapper<URI> {
 
@@ -42,6 +41,5 @@ public enum URIValueMapper implements ValueMapper<URI> {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Unable to convert value " + value + " to an URI.", e);
         }
-
     }
 }

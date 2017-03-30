@@ -57,7 +57,7 @@ public class HttpClient {
     }
 
     public Response get(String url, Map<String, String> headers) throws IOException {
-        try (final CloseableHttpClient client = createHttpClient()) {
+        try (CloseableHttpClient client = createHttpClient()) {
             final HttpGet request = new HttpGet(url);
             addHeaders(headers, request);
             final HttpResponse response = client.execute(request);
@@ -76,6 +76,4 @@ public class HttpClient {
             request.addHeader(header.getKey(), header.getValue());
         }
     }
-
-
 }

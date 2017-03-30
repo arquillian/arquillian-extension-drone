@@ -60,6 +60,6 @@ public class BrowserStackWebDriverTestCase {
         queryElement.submit();
 
         WebDriverUtil.checkElementContent(driver, SEARCH_RESULTS, "BrowserStack",
-                                          "The search result should contain a string \"BrowserStack\"");
+            "The search result should contain a string \"BrowserStack\"");
     }
 }

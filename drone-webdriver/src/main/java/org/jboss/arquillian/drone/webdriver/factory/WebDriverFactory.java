@@ -37,10 +37,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * WebDriver browser.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implements
-        Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>, Destructor<WebDriver> {
+    Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>,
+    Destructor<WebDriver> {
 
     private static final Logger log = Logger.getLogger(WebDriverFactory.class.getName());
 
@@ -72,14 +72,13 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         // get destructor which is able to handle RemoteReusable logic if set
         if (instance instanceof ReusableRemoteWebDriver) {
             destructor = getRemoteWebDriverDestructor();
-        }
-        else {
+        } else {
             try {
                 destructor = registryInstance.get().getEntryFor(instance.getClass(), Destructor.class);
             } catch (Exception ignored) {
                 log.log(Level.WARNING,
-                        "Unable to get destructor for @Drone WebDriver, real class {0}, quitting instance using default disposal method",
-                        instance.getClass().getSimpleName());
+                    "Unable to get destructor for @Drone WebDriver, real class {0}, quitting instance using default disposal method",
+                    instance.getClass().getSimpleName());
             }
         }
 
@@ -116,9 +115,9 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
             implementationClassName = configuration.getImplementationClass();
 
             Validate.isEmpty(implementationClassName,
-                    "The combination of browser=" + configuration.getBrowser()
-                            + ", implemenationClass=" + implementationClassName
-                            + " does not represent a valid browser. Please specify supported browser.");
+                "The combination of browser=" + configuration.getBrowser()
+                    + ", implemenationClass=" + implementationClassName
+                    + " does not represent a valid browser. Please specify supported browser.");
 
             DroneRegistry registry = registryInstance.get();
             Class<?> implementationClass = SecurityActions.getClass(implementationClassName);
@@ -134,13 +133,12 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         // this is a simple constructor which does not know anything advanced
         if (Validate.empty(implementationClassName)) {
             WebDriver driver = SecurityActions.newInstance(implementationClassName, new Class<?>[0], new Object[0],
-                    WebDriver.class);
+                WebDriver.class);
             return driver;
         }
 
         throw new IllegalStateException(
-                "Unable to create Arquillian WebDriver browser, please set \"browser\" property");
-
+            "Unable to create Arquillian WebDriver browser, please set \"browser\" property");
     }
 
     @Override
@@ -148,13 +146,13 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
         return null;
     }
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private Instantiator getRemoteWebDriverInstantiator() {
         DroneRegistry registry = registryInstance.get();
         return registry.getEntryFor(RemoteWebDriver.class, Instantiator.class);
     }
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private Destructor getRemoteWebDriverDestructor() {
         DroneRegistry registry = registryInstance.get();
         return registry.getEntryFor(RemoteWebDriver.class, Destructor.class);

@@ -35,7 +35,6 @@ import java.lang.annotation.Annotation;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class DroneContextFilteringTest extends AbstractTestTestBase {
 
@@ -52,7 +51,6 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
     public void setup() {
         context = new DroneContextImpl();
         getManager().inject(context);
-
 
         defaultClassDronePoint = createDefaultDronePoint(DronePoint.Lifecycle.CLASS);
         context.get(defaultClassDronePoint);
@@ -94,11 +92,11 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
     @Test
     public void testScopeFiltering() {
         assertThat(context.find(MockDrone.class)
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS)).size(), is(2));
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS)).size(), is(2));
         assertThat(context.find(MockDrone.class)
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD)).size(), is(2));
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD)).size(), is(2));
         assertThat(context.find(MockDrone.class)
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT)).size(), is(2));
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT)).size(), is(2));
     }
 
     @Test
@@ -106,74 +104,73 @@ public class DroneContextFilteringTest extends AbstractTestTestBase {
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT);
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(".*"))
-                .size(), is(3));
+            .filter(new DeploymentFilter(".*"))
+            .size(), is(3));
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(".*"))
-                .filter(lifecycleFilter)
-                .size(), is(2));
+            .filter(new DeploymentFilter(".*"))
+            .filter(lifecycleFilter)
+            .size(), is(2));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter())
-                .size(), is(3));
+            .filter(new DeploymentFilter())
+            .size(), is(3));
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter())
-                .filter(lifecycleFilter)
-                .size(), is(2));
+            .filter(new DeploymentFilter())
+            .filter(lifecycleFilter)
+            .size(), is(2));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter("deployment_.*"))
-                .size(), is(3));
+            .filter(new DeploymentFilter("deployment_.*"))
+            .size(), is(3));
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter("deployment_.*"))
-                .filter(lifecycleFilter)
-                .size(), is(2));
+            .filter(new DeploymentFilter("deployment_.*"))
+            .filter(lifecycleFilter)
+            .size(), is(2));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter("invalid_.*"))
-                .size(), is(0));
+            .filter(new DeploymentFilter("invalid_.*"))
+            .size(), is(0));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_1))
-                .single(), is(defaultDeploymentDronePoint));
+            .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_1))
+            .single(), is(defaultDeploymentDronePoint));
         assertThat(context.find(MockDrone.class)
-                .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_2))
-                .filter(lifecycleFilter)
-                .single(), is(differentDeploymentDronePoint));
+            .filter(new DeploymentFilter(AnnotationMocks.DEPLOYMENT_2))
+            .filter(lifecycleFilter)
+            .single(), is(differentDeploymentDronePoint));
     }
 
     @Test
     public void testCombinedFiltering() {
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Default.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS))
-                .single(), is(defaultClassDronePoint));
+            .filter(new QualifierFilter(Default.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS))
+            .single(), is(defaultClassDronePoint));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Default.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD))
-                .single(), is(defaultMethodDronePoint));
+            .filter(new QualifierFilter(Default.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD))
+            .single(), is(defaultMethodDronePoint));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Default.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT))
-                .single(), is(defaultDeploymentDronePoint));
+            .filter(new QualifierFilter(Default.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT))
+            .single(), is(defaultDeploymentDronePoint));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Different.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS))
-                .single(), is(differentClassDronePoint));
+            .filter(new QualifierFilter(Different.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.CLASS))
+            .single(), is(differentClassDronePoint));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Different.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD))
-                .single(), is(differentMethodDronePoint));
+            .filter(new QualifierFilter(Different.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.METHOD))
+            .single(), is(differentMethodDronePoint));
 
         assertThat(context.find(MockDrone.class)
-                .filter(new QualifierFilter(Different.class))
-                .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT))
-                .single(), is(differentDeploymentDronePoint));
+            .filter(new QualifierFilter(Different.class))
+            .filter(new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT))
+            .single(), is(differentDeploymentDronePoint));
     }
-
 }

@@ -51,7 +51,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
         if (!Validate.empty(selSerVersion)) {
             capabilities
-                    .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
+                .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
         }
 
         seleniumServerBinary = new SeleniumServerBinaryHandler(capabilities).downloadAndPrepare().toString();

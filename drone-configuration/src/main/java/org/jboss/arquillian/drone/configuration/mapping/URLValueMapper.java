@@ -23,7 +23,6 @@ import java.net.URL;
  * Mapper for URL
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum URLValueMapper implements ValueMapper<URL> {
 
@@ -43,6 +42,5 @@ public enum URLValueMapper implements ValueMapper<URL> {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Unable to convert value " + value + " to an URL.", e);
         }
-
     }
 }

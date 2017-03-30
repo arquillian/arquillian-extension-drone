@@ -28,15 +28,15 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
  * Utility to move legacy configuration to capability based configuration. This greatly simplifies configuration in Drone.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class LegacyConfigurationMapper {
     private static final Logger log = Logger.getLogger(LegacyConfigurationMapper.class.getName());
 
     // FIXME this should be in SPI with a proper event MODEL
     private static final Map<String, LegacyMapping> LEGACY_MAP;
+
     static {
-        LEGACY_MAP = new HashMap<String, LegacyMapping>();
+        LEGACY_MAP = new HashMap<>();
 
         // all legacy mappings were removed in Drone 2.0.0.Alpha1
     }
@@ -45,7 +45,7 @@ public class LegacyConfigurationMapper {
         return LEGACY_MAP.containsKey(propertyName);
     }
 
-    public static boolean remapsToProperty(String propertyName) {
+    private static boolean remapsToProperty(String propertyName) {
         LegacyMapping mapping = LEGACY_MAP.get(propertyName);
         if (mapping == null) {
             throw new IllegalStateException("Legacy mapping for property name " + propertyName + " is not defined.");
@@ -105,7 +105,7 @@ public class LegacyConfigurationMapper {
 
             log.log(Level.WARNING,
                 "Configuration property \"{0}\" is deprecated, please replace it with property \"{1}\" instead.",
-                new Object[] { oldFieldName, fieldName });
+                new Object[] {oldFieldName, fieldName});
             return fieldName;
         }
 
@@ -119,8 +119,7 @@ public class LegacyConfigurationMapper {
         private final String capabilityName;
         private final ValueMapper<?> mapper;
 
-        @SuppressWarnings("unused")
-        DefaultCapabilityMapping(String capabilityName) {
+        @SuppressWarnings("unused") DefaultCapabilityMapping(String capabilityName) {
             this(capabilityName, StringValueMapper.INSTANCE);
         }
 
@@ -143,7 +142,7 @@ public class LegacyConfigurationMapper {
 
             log.log(Level.WARNING,
                 "Configuration property \"{0}\" is deprecated, please replace it with capability based property \"{1}\" instead.",
-                new Object[] { fieldName, capabilityName });
+                new Object[] {fieldName, capabilityName});
 
             return capabilityName;
         }
@@ -168,7 +167,5 @@ public class LegacyConfigurationMapper {
             log.log(Level.WARNING, loggingMessage);
             return super.remapValue(value);
         }
-
     }
-
 }

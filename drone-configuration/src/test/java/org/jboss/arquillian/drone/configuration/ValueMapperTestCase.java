@@ -29,19 +29,18 @@ import org.junit.Test;
  * Test for value mapping
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class ValueMapperTestCase {
 
     @Test
     public void valueMappersTest() throws Exception {
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("booleanField", "true").property("intField", "12345").property("integerField", "123456")
-                .property("urlField", new URL("http://foo.org").toString())
-                .property("uriField", new URI("http://foo.org").toString()).property("longField", "12345678");
+            .property("booleanField", "true").property("intField", "12345").property("integerField", "123456")
+            .property("urlField", new URL("http://foo.org").toString())
+            .property("uriField", new URI("http://foo.org").toString()).property("longField", "12345678");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                new MockDroneConfiguration(), Default.class);
+            new MockDroneConfiguration(), Default.class);
 
         Assert.assertEquals("booleanField is set", true, configuration.isBooleanField());
         Assert.assertEquals("intField is set", 12345, configuration.getIntField());

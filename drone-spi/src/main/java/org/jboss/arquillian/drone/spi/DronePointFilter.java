@@ -28,5 +28,4 @@ public interface DronePointFilter<DRONE> {
      * @param dronePoint injection point of the drone.
      */
     boolean accepts(DroneContext context, DronePoint<? extends DRONE> dronePoint);
-
 }

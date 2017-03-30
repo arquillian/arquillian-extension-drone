@@ -8,11 +8,11 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
  */
 public class GoogleSeleniumStorageProvider {
 
-    public static ExternalBinarySource getIeStorageSource(String version, HttpClient httpClient){
+    public static ExternalBinarySource getIeStorageSource(String version, HttpClient httpClient) {
         return new InternetExplorerBinaryHandler.IeStorageSource(version, httpClient);
     }
 
-    public static ExternalBinarySource getSeleniumServerStorageSource(String version, HttpClient httpClient){
+    public static ExternalBinarySource getSeleniumServerStorageSource(String version, HttpClient httpClient) {
         return new SeleniumServerBinaryHandler.SeleniumServerStorage(version, httpClient);
     }
 }

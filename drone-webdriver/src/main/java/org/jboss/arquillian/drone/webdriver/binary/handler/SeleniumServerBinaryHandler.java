@@ -45,7 +45,8 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new SeleniumServerStorage((String) capabilities.getCapability(SELENIUM_SERVER_VERSION_PROPERTY), new HttpClient());
+        return new SeleniumServerStorage((String) capabilities.getCapability(SELENIUM_SERVER_VERSION_PROPERTY),
+            new HttpClient());
     }
 
     @Override

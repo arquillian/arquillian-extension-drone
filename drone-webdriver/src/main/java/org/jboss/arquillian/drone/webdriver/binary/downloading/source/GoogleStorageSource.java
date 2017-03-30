@@ -48,7 +48,7 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
     }
 
     /**
-     * @param storageUrl An url to a google storage from which information about releases should be retrieved from
+     * @param storageUrl         An url to a google storage from which information about releases should be retrieved from
      * @param urlToLatestRelease An url where a version of the latest release could be retrieved from
      */
     public GoogleStorageSource(String storageUrl, String urlToLatestRelease, HttpClient httpClient) {
@@ -93,8 +93,8 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
             return dateFormat.parse(date);
         } catch (ParseException e) {
             log.warning("Date " + date + " of content " + storageUrl + key
-                            + " could not have been parsed. This content will be omitted. See the exception msg: "
-                            + e.getMessage());
+                + " could not have been parsed. This content will be omitted. See the exception msg: "
+                + e.getMessage());
         }
         return null;
     }
@@ -122,11 +122,10 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
         }
 
         if (requiredVersion != null) {
-            return new ExternalBinary(requiredVersion,  storageUrl + matched.get(0).getKey());
+            return new ExternalBinary(requiredVersion, storageUrl + matched.get(0).getKey());
         } else {
             Content latestContent = findLatestContent(matched);
-            return new ExternalBinary(latestContent.getDirectory(),  storageUrl + latestContent.getKey());
-
+            return new ExternalBinary(latestContent.getDirectory(), storageUrl + latestContent.getKey());
         }
     }
 
@@ -149,7 +148,7 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
      *
      * @param requiredVersion The required version set using method {@link GoogleStorageSource#getReleaseForVersion},
      *                        or otherwise null
-     * @param directory The directory for the current binary the regex is being matched against
+     * @param directory       The directory for the current binary the regex is being matched against
      * @return A regex that represents a key of an expected binary/file stored in the google storage.
      */
     protected abstract String getExpectedKeyRegex(String requiredVersion, String directory);

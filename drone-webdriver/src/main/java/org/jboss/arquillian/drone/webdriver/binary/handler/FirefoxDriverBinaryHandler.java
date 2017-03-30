@@ -14,7 +14,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
-
     public static final String FIREFOX_SYSTEM_DRIVER_BINARY_PROPERTY = "webdriver.gecko.driver";
     public static final String FIREFOX_DRIVER_BINARY_PROPERTY = "firefoxDriverBinary";
     private static final String FIREFOX_DRIVER_VERSION_PROPERTY = "firefoxDriverVersion";
@@ -22,7 +21,7 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
 
     private DesiredCapabilities capabilities;
 
-    public FirefoxDriverBinaryHandler(DesiredCapabilities capabilities){
+    public FirefoxDriverBinaryHandler(DesiredCapabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -58,5 +57,4 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
     public String getSystemBinaryProperty() {
         return FIREFOX_SYSTEM_DRIVER_BINARY_PROPERTY;
     }
-
 }

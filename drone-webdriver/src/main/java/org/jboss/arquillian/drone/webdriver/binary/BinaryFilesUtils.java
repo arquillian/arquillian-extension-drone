@@ -49,20 +49,17 @@ public class BinaryFilesUtils {
             log.info("Extracting zip file: " + toExtract + " to " + targetDir.getPath());
             if (filePath.endsWith(".zip")) {
                 Spacelift.task(toExtract, UnzipTool.class).toDir(targetDir).execute().await();
-
             } else if (filePath.endsWith(".tar.gz")) {
                 Spacelift.task(toExtract, UntarTool.class).gzip(true).toDir(targetDir).execute().await();
-
             } else if (filePath.endsWith(".tar.bz2")) {
                 Spacelift.task(toExtract, UntarTool.class).bzip2(true).toDir(targetDir).execute().await();
-
             } else {
                 log.info(
                     "The file " + toExtract + " is not compressed by format by a format that is supported by Drone. "
                         + "Drone supported formats are .zip, .tar.gz, .tar.bz2. The file will be only copied");
                 targetDir.mkdirs();
                 Files.copy(toExtract.toPath(), new File(targetDir + File.separator + toExtract.getName()).toPath(),
-                           StandardCopyOption.REPLACE_EXISTING);
+                    StandardCopyOption.REPLACE_EXISTING);
             }
         }
         return targetDir;
@@ -81,14 +78,14 @@ public class BinaryFilesUtils {
             return DigestUtils.md5Hex(fis);
         } catch (IOException e) {
             log.warning("A problem occurred when md5 hash of a file " + file + " was being retrieved:\n"
-                            + e.getMessage());
+                + e.getMessage());
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
                     log.warning("A problem occurred when FileInputStream of a file " + file
-                                    + "was being closed:\n" + e.getMessage());
+                        + "was being closed:\n" + e.getMessage());
                 }
             }
         }

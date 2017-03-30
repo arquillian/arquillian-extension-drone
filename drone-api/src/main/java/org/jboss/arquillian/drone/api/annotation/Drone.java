@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Inherited
 public @interface Drone {
 }

@@ -31,7 +31,7 @@ public class ReusableRemoteWebDriverToDestroy {
                 remoteWebDriver.quit();
             } catch (WebDriverException e) {
                 log.log(Level.WARNING, "@Drone {0} has been already destroyed and can't be destroyed again.",
-                        remoteWebDriver.getClass().getSimpleName());
+                    remoteWebDriver.getClass().getSimpleName());
             }
         }
     }

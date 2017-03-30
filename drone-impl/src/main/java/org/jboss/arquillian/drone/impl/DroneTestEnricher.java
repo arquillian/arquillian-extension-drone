@@ -88,7 +88,7 @@ public class DroneTestEnricher implements TestEnricher {
                 continue;
             }
             log.log(Level.FINE, "Injecting @Drone for method {0}, injection point {1}",
-                    new Object[] { method.getName(), dronePoint }
+                new Object[] {method.getName(), dronePoint}
             );
 
             Object drone = context.get(dronePoint).getInstance();
@@ -113,7 +113,7 @@ public class DroneTestEnricher implements TestEnricher {
 
         DroneContext context = droneContext.get();
         Map<Field, DronePoint<?>> injectionPoints = InjectionPoints.fieldsInClass(droneContext.get(),
-                                                                                  testClass);
+            testClass);
 
         for (Field field : injectionPoints.keySet()) {
             if (onlyStatic && !Modifier.isStatic(field.getModifiers())) {
@@ -135,32 +135,32 @@ public class DroneTestEnricher implements TestEnricher {
             }
 
             log.log(Level.FINE, "Injecting @Drone for field {0}, injection point {1}",
-                    new Object[] { dronePoint.getDroneType().getSimpleName(), dronePoint }
+                new Object[] {dronePoint.getDroneType().getSimpleName(), dronePoint}
             );
 
             Object drone = context.get(dronePoint).getInstance();
             Validate.stateNotNull(drone, "Retrieved a null from Drone Context, " +
-                                      "which is not a valid Drone browser object. \nClass: {0}, field: {1}, injection point: {2}",
-                                  testClass.getName(), field.getName(), dronePoint
+                    "which is not a valid Drone browser object. \nClass: {0}, field: {1}, injection point: {2}",
+                testClass.getName(), field.getName(), dronePoint
             );
             SecurityActions.setFieldValue(testCase, field, drone);
         }
     }
 
     private void registerDeploymentDronePoint(DronePoint dronePoint, Object testCase) {
-            if (deploymentDronePointsRegistry.get() == null) {
-                deploymentDronePointsRegistry.set(injector.get().inject(new DeploymentDronePointsRegistry()));
-            }
-            deploymentDronePointsRegistry.get().addDronePoint(dronePoint, testCase);
+        if (deploymentDronePointsRegistry.get() == null) {
+            deploymentDronePointsRegistry.set(injector.get().inject(new DeploymentDronePointsRegistry()));
+        }
+        deploymentDronePointsRegistry.get().addDronePoint(dronePoint, testCase);
     }
 
     /**
      * Ensures whether the given drone point is prepared for injection
      *
      * @param dronePoint Drone point that should be checked
-     * @param forMethod Whether the given drone point is used as a method parameter
+     * @param forMethod  Whether the given drone point is used as a method parameter
      * @return whether the injection point is prepared or not. {@code false} is returned in case of deployment-scoped
-     *          drone point used as a instance variable and tied to a deployment that has not been deployed yet
+     * drone point used as a instance variable and tied to a deployment that has not been deployed yet
      */
     private boolean ensureInjectionPointPrepared(DronePoint<?> dronePoint, boolean forMethod) {
         if (!droneContext.get().get(dronePoint).hasFutureInstance()) {
@@ -177,12 +177,12 @@ public class DroneTestEnricher implements TestEnricher {
                     throw new IllegalStateException(
                         MessageFormat
                             .format("Injection point {0} was not prepared yet. "
-                                        + "It has deployment lifecycle and is used as a method parameter. "
-                                        + "In this case the injection point has to be prepared before the method starts. "
-                                        + "Please make sure that the deployment was already deployed before the method starts. "
-                                        + "In case of the manual deployment inside of the test method, "
-                                        + "use the injection point as an instance variable.",
-                                    dronePoint));
+                                    + "It has deployment lifecycle and is used as a method parameter. "
+                                    + "In this case the injection point has to be prepared before the method starts. "
+                                    + "Please make sure that the deployment was already deployed before the method starts. "
+                                    + "In case of the manual deployment inside of the test method, "
+                                    + "use the injection point as an instance variable.",
+                                dronePoint));
                 }
                 return false;
             }

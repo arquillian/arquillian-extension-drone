@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * <p>
  * Usage:
  * </p>
- *
+ * <p>
  * <pre><code>
  * &#64;Drone WebDriver instance1;
  * &#64;Drone @RemoteMachine WebDriver instance2;

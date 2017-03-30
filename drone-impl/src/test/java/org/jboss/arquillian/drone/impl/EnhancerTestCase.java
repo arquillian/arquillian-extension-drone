@@ -104,8 +104,8 @@ public class EnhancerTestCase extends AbstractTestTestBase {
     @org.junit.Before
     public void setUp() {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone-different")
-                .property("field", DIFFERENT_FIELD).extension("mockdrone-methodargumentone")
-                .property("field", METHOD_ARGUMENT_ONE_FIELD);
+            .property("field", DIFFERENT_FIELD).extension("mockdrone-methodargumentone")
+            .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
         getManager().inject(testEnricher);
@@ -116,15 +116,15 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         CachingMockDroneFactory factory = new CachingMockDroneFactory();
 
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(factory));
+            Arrays.<Configurator>asList(factory));
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(factory));
+            Arrays.<Configurator>asList(factory));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(factory));
+            Arrays.<Instantiator>asList(factory));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(Arrays.<Destructor>asList(factory));
 
         Mockito.when(serviceLoader.all(DroneInstanceEnhancer.class)).thenReturn(
-                Arrays.<DroneInstanceEnhancer>asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
+            Arrays.<DroneInstanceEnhancer>asList(new MockDroneEnhancer2(), new MockDroneEnhancer1()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
         Mockito.when(enhanced2.getField()).thenAnswer(new Answer<String>() {
             @Override
@@ -143,13 +143,13 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeSuite());
 
         DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
-                .class);
+            .class);
         Assert.assertNotNull("DroneContext created in the context", context);
 
         fire(new BeforeClass(EnrichedClass.class));
 
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
 
         MockDrone drone = context.get(dronePoint).getInstance();
 
@@ -173,14 +173,14 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         fire(new BeforeSuite());
 
         DroneContext context = getManager()
-                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+            .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("DroneContext created in the context", context);
 
         fire(new BeforeClass(MethodEnrichedClass.class));
         fire(new Before(instance, testMethod));
 
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
-                AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
 
         TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
 
@@ -208,7 +208,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
         public void testMethodEnrichment(@Drone @MethodArgumentOne MockDrone unused) {
             Assert.assertNotNull("Mock drone instance was created", unused);
             Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD,
-                    unused.getField());
+                unused.getField());
         }
     }
 
@@ -221,7 +221,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         @Override
         public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType,
-                                  Class<? extends Annotation> qualifier) {
+            Class<? extends Annotation> qualifier) {
             return MockDrone.class.isAssignableFrom(droneType);
         }
 
@@ -250,7 +250,7 @@ public class EnhancerTestCase extends AbstractTestTestBase {
 
         @Override
         public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType,
-                                  Class<? extends Annotation> qualifier) {
+            Class<? extends Annotation> qualifier) {
             return true;
         }
 
@@ -266,5 +266,4 @@ public class EnhancerTestCase extends AbstractTestTestBase {
             return enhanced1;
         }
     }
-
 }

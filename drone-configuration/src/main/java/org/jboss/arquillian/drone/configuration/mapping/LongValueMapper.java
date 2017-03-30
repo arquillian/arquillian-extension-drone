@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.configuration.mapping;
  * Mapper for long and Long.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum LongValueMapper implements ValueMapper<Long> {
 

@@ -25,7 +25,6 @@ import org.junit.Test;
  * Tests for StringUtils tokenizer
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class StringUtilsTest {
 
@@ -72,7 +71,6 @@ public class StringUtilsTest {
         Assert.assertEquals("List is not empty", 2, list.size());
         Assert.assertEquals("Expecting foo bar", "foo bar", list.get(0));
         Assert.assertEquals("Expecting baz\"", "baz\"", list.get(1));
-
     }
 
     @Test
@@ -83,5 +81,4 @@ public class StringUtilsTest {
         Assert.assertEquals("Expecting bar", "baz", list.get(1));
         Assert.assertEquals("Expecting \"", "\"", list.get(2));
     }
-
 }

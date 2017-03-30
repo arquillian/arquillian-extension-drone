@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.configuration.mapping;
  * Mapper for bool and Boolean.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum BooleanValueMapper implements ValueMapper<Boolean> {
 

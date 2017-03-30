@@ -31,7 +31,6 @@ import org.junit.Test;
  * Test for verification that Arquillian Core property parser is a proper replacement for legacy Drone property parser
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTestTestBase {
 
@@ -95,5 +94,4 @@ public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTes
             System.clearProperty("arq.extension.mockdrone-different.abcDef");
         }
     }
-
 }

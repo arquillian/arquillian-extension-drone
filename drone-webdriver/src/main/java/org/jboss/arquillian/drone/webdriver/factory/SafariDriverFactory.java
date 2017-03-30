@@ -28,11 +28,10 @@ import org.openqa.selenium.safari.SafariDriver;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for SafariDriver.
  *
  * @author <a href="jlocker@redhat.com">Jiri Locker</a>
- *
  */
 public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> implements
-        Configurator<SafariDriver, WebDriverConfiguration>, Instantiator<SafariDriver, WebDriverConfiguration>,
-        Destructor<SafariDriver> {
+    Configurator<SafariDriver, WebDriverConfiguration>, Instantiator<SafariDriver, WebDriverConfiguration>,
+    Destructor<SafariDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Safari().getReadableName();
 
@@ -51,21 +50,20 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
 
         Capabilities capabilities = getCapabilities(configuration, true);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, SafariDriver.class);
-
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {capabilities}, SafariDriver.class);
     }
 
     /**
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         return configuration.getCapabilities();
     }
 
@@ -73,5 +71,4 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
-
 }

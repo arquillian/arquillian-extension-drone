@@ -1,158 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Model Version -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!-- Artifact Configuration -->
-    <groupId>org.jboss.arquillian.extension</groupId>
-    <artifactId>arquillian-drone-bom</artifactId>
-    <packaging>pom</packaging>
-    <version>2.1.0-SNAPSHOT</version>
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.extension</groupId>
+  <artifactId>arquillian-drone-bom</artifactId>
+  <packaging>pom</packaging>
+  <version>2.1.0-SNAPSHOT</version>
 
-    <name>Arquillian Drone Extension BOM</name>
-    <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
-    <url>http://www.jboss.org/arquillian</url>
+  <name>Arquillian Drone Extension BOM</name>
+  <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+  <url>http://www.jboss.org/arquillian</url>
 
-    <!-- Licenses -->
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
+  <!-- Licenses -->
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
-    <!-- SCM -->
-    <scm>
-        <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-drone.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-drone.git</developerConnection>
-        <url>git://github.com/arquillian/arquillian-extension-drone.git</url>
-      <tag>HEAD</tag>
+  <!-- SCM -->
+  <scm>
+    <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-drone.git</connection>
+    <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-drone.git</developerConnection>
+    <url>git://github.com/arquillian/arquillian-extension-drone.git</url>
+    <tag>HEAD</tag>
   </scm>
 
 
-    <developers>
-        <developer>
-            <name>Karel Piwko</name>
-            <email>kpiwko@redhat.com</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Karel Piwko</name>
+      <email>kpiwko@redhat.com</email>
+    </developer>
+  </developers>
 
-    <properties>
-        <version.org.jboss.arquillian.selenium>3.3.1</version.org.jboss.arquillian.selenium>
-        <version.htmlunit.driver>2.24</version.htmlunit.driver>
-        <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
-        <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
-    </properties>
+  <properties>
+    <version.org.jboss.arquillian.selenium>3.3.1</version.org.jboss.arquillian.selenium>
+    <version.htmlunit.driver>2.24</version.htmlunit.driver>
+    <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
+    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
+    </jboss.releases.repo.url>
+    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
+    </jboss.snapshots.repo.url>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Arquillian Drone -->
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-configuration</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-selenium-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-webdriver</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Arquillian Drone -->
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-spi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-configuration</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-impl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-selenium-server</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-webdriver</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
-            <!-- Arquillian Drone extensions -->
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-saucelabs-extension</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-browserstack-extension</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+      <!-- Arquillian Drone extensions -->
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-saucelabs-extension</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-browserstack-extension</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
-            <!-- Selenium BOM -->
-            <dependency>
-                <groupId>org.jboss.arquillian.selenium</groupId>
-                <artifactId>selenium-bom</artifactId>
-                <version>${version.org.jboss.arquillian.selenium}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+      <!-- Selenium BOM -->
+      <dependency>
+        <groupId>org.jboss.arquillian.selenium</groupId>
+        <artifactId>selenium-bom</artifactId>
+        <version>${version.org.jboss.arquillian.selenium}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-            <!-- HtmlUnit is kept externally from Selenium BOM -->
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>htmlunit-driver</artifactId>
-                <version>${version.htmlunit.driver}</version>
-            </dependency>
+      <!-- HtmlUnit is kept externally from Selenium BOM -->
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>htmlunit-driver</artifactId>
+        <version>${version.htmlunit.driver}</version>
+      </dependency>
 
-            <!-- Ghost Driver is kept externally from Selenium BOM -->
-            <dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>${phantomjs.driver.version}</version>
-            </dependency>
+      <!-- Ghost Driver is kept externally from Selenium BOM -->
+      <dependency>
+        <groupId>com.codeborne</groupId>
+        <artifactId>phantomjsdriver</artifactId>
+        <version>${phantomjs.driver.version}</version>
+      </dependency>
 
-            <!-- Dependency Chain -->
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-webdriver-depchain</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-            </dependency>
+      <!-- Dependency Chain -->
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+      </dependency>
 
-        </dependencies>
-    </dependencyManagement>
+    </dependencies>
+  </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.1</version>
-                    <configuration>
-                        <pushChanges>false</pushChanges>
-                        <localCheckout>true</localCheckout>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <pushChanges>false</pushChanges>
+            <localCheckout>true</localCheckout>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
-    <distributionManagement>
-        <repository>
-            <id>jboss-releases-repository</id>
-            <name>JBoss Releases Repository</name>
-            <url>${jboss.releases.repo.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>jboss-snapshots-repository</id>
-            <name>JBoss Snapshots Repository</name>
-            <url>${jboss.snapshots.repo.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>jboss-releases-repository</id>
+      <name>JBoss Releases Repository</name>
+      <url>${jboss.releases.repo.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>jboss-snapshots-repository</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>${jboss.snapshots.repo.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
 
 
 </project>

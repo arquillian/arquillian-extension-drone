@@ -75,7 +75,8 @@ public class TestAugmentingEnhancer {
         assertTrue("AugmentingEnhancer should enhance when real instance already augmented!",
             enhancer.canEnhance(instance4, WebDriver.class, Default.class));
 
-        assertFalse("AugmentingEnhancer should not enhance when real instance is not RemoteWebDriver || ReusableRemoteWebDriver",
+        assertFalse(
+            "AugmentingEnhancer should not enhance when real instance is not RemoteWebDriver || ReusableRemoteWebDriver",
             enhancer.canEnhance(instance2, WebDriver.class, Default.class));
         assertFalse("AugmentingEnhancer should not enhance extensions of supported classes!",
             enhancer.canEnhance(instance3, WebDriver.class, Default.class));
@@ -118,13 +119,12 @@ public class TestAugmentingEnhancer {
 
     /**
      * We need to instantiate a class without calling a constructor.
-     *
+     * <p>
      * This is needed because we don't want to pollute test environment with webdrivers not related to the browser tested and by
      * default
      * RemoteWebDriver spawns Firefox driver. Yet, we can't mock it as Augementer asks for an exact class match *
      *
      * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
-     *
      */
     @SuppressWarnings("restriction")
     private static class Unsafe {
@@ -145,12 +145,10 @@ public class TestAugmentingEnhancer {
             } catch (IllegalAccessException e) {
                 throw new AssertionError("Unable to get sun.misc.Unsafe object for testing, " + e.getMessage());
             }
-
         }
 
         <T> T createInstanceWithoutInvokingConstructor(Class<T> clazz) throws InstantiationException {
             return clazz.cast(unsafe.allocateInstance(clazz));
         }
-
     }
 }

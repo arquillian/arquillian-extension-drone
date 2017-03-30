@@ -20,7 +20,7 @@ public class OperaDriverBinaryHandler extends AbstractBinaryHandler {
 
     private DesiredCapabilities capabilities;
 
-    public OperaDriverBinaryHandler(DesiredCapabilities capabilities){
+    public OperaDriverBinaryHandler(DesiredCapabilities capabilities) {
         this.capabilities = capabilities;
     }
 

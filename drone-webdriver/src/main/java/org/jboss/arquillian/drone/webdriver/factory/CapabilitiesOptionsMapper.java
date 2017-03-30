@@ -80,12 +80,10 @@ public class CapabilitiesOptionsMapper {
                                 method.invoke(object, converted);
                                 processedMethods.add(methodName);
                             }
-
                         } else if (shouldContainDictionaries(method)) {
                             handleDictionaries(object, method, capability);
                             processedMethods.add(methodName);
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -128,10 +126,8 @@ public class CapabilitiesOptionsMapper {
 
         if ((converted = convertToBooleanNumberStringOrFile(parameterType, capability)) != null) {
             return converted;
-
         } else if (parameterType.isArray()) {
             return handleArray(parameterType.getComponentType(), capability);
-
         } else if (parameterType.isAssignableFrom(List.class)) {
             return handleList(method, capability);
         }

@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
  * Representation of timeout related exception in Drone
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class DroneTimeoutException extends RuntimeException {
 
@@ -51,12 +50,12 @@ public class DroneTimeoutException extends RuntimeException {
             .append(timeoutInSeconds)
             .append(" ")
             .append(TimeUnit.SECONDS.toString().toLowerCase())
-            .append(". Make sure that browser or remote server in case of remotely executed driver is running and communication with Drone haven't failed.");
+            .append(
+                ". Make sure that browser or remote server in case of remotely executed driver is running and communication with Drone haven't failed.");
         if (messageFormat != null) {
             msg.append("\n").append(MessageFormat.format(messageFormat, params));
         }
 
         return msg.toString();
     }
-
 }

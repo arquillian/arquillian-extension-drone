@@ -74,8 +74,11 @@ public class ConfigurationTestCase {
     @Test
     public void mapNonCamelCases() {
 
-        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-            .property("opera.no_quit", "true").property("firefox_profile", "JSON value").property("acceptSslCerts", "true");
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
+            .extension("mockdrone")
+            .property("opera.no_quit", "true")
+            .property("firefox_profile", "JSON value")
+            .property("acceptSslCerts", "true");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
             new MockDroneConfiguration(), Default.class);
@@ -87,7 +90,6 @@ public class ConfigurationTestCase {
         Assert.assertEquals("Map entry was mapped", "true", configuration.getMapMap().get("opera.no_quit"));
         Assert.assertEquals("Map entry was mapped", "JSON value", configuration.getMapMap().get("firefox_profile"));
         Assert.assertEquals("Map entry was mapped", Boolean.TRUE, configuration.getMapMap().get("acceptSslCerts"));
-
     }
 
     @Test
@@ -113,7 +115,6 @@ public class ConfigurationTestCase {
         Assert.assertTrue("Logging Preferencies contain profiling", loggingPrefs.keySet().contains("profiling"));
         Assert.assertEquals("Logging Preferencies contain WARNING for driver", "WARNING", loggingPrefs.get("driver"));
         Assert.assertEquals("Logging Preferencies contain INFO for profiling", "INFO", loggingPrefs.get("profiling"));
-
     }
 
     @Test
@@ -133,7 +134,5 @@ public class ConfigurationTestCase {
         Assert.assertEquals("Mock drone configuration contains int", expectedInt, configuration.getIntField());
         Assert.assertEquals("Mock drone configuration contains boolean", expectedBoolean, configuration.isBooleanField());
         Assert.assertEquals("Mock drone configuration contains string", expectedString, configuration.getStringField());
-
     }
-
 }

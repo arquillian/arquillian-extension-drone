@@ -96,6 +96,6 @@ public class WindowResizer {
 
     private void logRequestIgnored(WebDriver driver, int width, int height, DronePoint<?> dronePoint) {
         log.log(Level.WARNING, "Ignoring request to resize browser window to {2}x{3} for {0}, not supported for {1}",
-            new Object[] { dronePoint, driver.getClass().getName(), width, height });
+            new Object[] {dronePoint, driver.getClass().getName(), width, height});
     }
 }

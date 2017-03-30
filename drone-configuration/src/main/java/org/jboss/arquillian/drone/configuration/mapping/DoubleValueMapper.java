@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.configuration.mapping;
  * Mapper for double and Double
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum DoubleValueMapper implements ValueMapper<Double> {
 

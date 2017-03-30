@@ -93,7 +93,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
     @org.junit.Before
     public void setMocks() {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("field", "foobar");
+            .property("field", "foobar");
 
         TestEnricher testEnricher = new DroneTestEnricher();
         getManager().inject(testEnricher);
@@ -101,11 +101,11 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDroneFactory()));
+            Arrays.<Configurator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDroneFactory()));
+            Arrays.<Instantiator>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Destructor.class)).thenReturn(
-                Arrays.<Destructor>asList(new MockDroneFactory()));
+            Arrays.<Destructor>asList(new MockDroneFactory()));
         Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
         //Mockito.when(serviceLoader.onlyOne(DroneInstanceCreator.class)).thenReturn(instanceCreator);
 
@@ -126,7 +126,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                          registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+            registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
 
         assertEventFired(BeforeDronePrepared.class, 0);
         assertEventFired(AfterDronePrepared.class, 0);
@@ -163,13 +163,13 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         Object instance = new DummyClass();
         Method testDummyMethod = DummyClass.class.getMethod("testDummyMethod");
         Method testDummyMethodWithParameters = DummyClass.class.getMethod("testDummyMethodWithParameters",
-                                                                          MockDrone.class, MockDrone.class);
+            MockDrone.class, MockDrone.class);
 
         getManager().getContext(TestContext.class).activate(instance);
         fire(new BeforeSuite());
 
         DroneContext context = getManager()
-                .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
+            .getContext(ApplicationContext.class).getObjectStore().get(DroneContext.class);
         Assert.assertNotNull("DroneContext was created in the context", context);
 
         DroneRegistry registry = getManager().getContext(SuiteContext.class).getObjectStore().get(DroneRegistry.class);
@@ -247,7 +247,6 @@ public class DestroyerTestCase extends AbstractTestTestBase {
 
         assertEventFired(BeforeDroneDestroyed.class, 3);
         assertEventFired(AfterDroneDestroyed.class, 3);
-
     }
 
     static class DummyClass {
@@ -263,7 +262,7 @@ public class DestroyerTestCase extends AbstractTestTestBase {
         }
 
         public void testDummyMethodWithParameters(@Drone MockDrone methodDrone,
-                                                  @Drone @OperateOnDeployment(DEPLOYMENT_NAME) MockDrone methodDrone2) {
+            @Drone @OperateOnDeployment(DEPLOYMENT_NAME) MockDrone methodDrone2) {
             Assert.assertNotSame(drone, methodDrone);
             Assert.assertEquals(deploymentDrone, methodDrone2);
         }

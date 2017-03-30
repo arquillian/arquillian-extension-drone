@@ -33,11 +33,15 @@ import static org.mockito.Mockito.verify;
 
 public class GitHubSourceLatestReleaseTestCase {
 
-    private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\"," +
-            "\"asset\":" +
-            "{\"version\":\"v0.14.0\"," +
-            "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
-            "}";
+    private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 31 Jan 2017 17:16:07 GMT\","
+        +
+        "\"asset\":"
+        +
+        "{\"version\":\"v0.14.0\","
+        +
+        "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}"
+        +
+        "}";
 
     @ClassRule
     public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode();
@@ -70,11 +74,11 @@ public class GitHubSourceLatestReleaseTestCase {
     public void should_load_release_information_from_gh_and_store_in_cache() throws Exception {
         // given
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                .get("/repos/mozilla/geckodriver/releases/latest")
-                .queryParam("page", 1)
-                .willReturn(
-                        ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
-                )));
+            .get("/repos/mozilla/geckodriver/releases/latest")
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
+            )));
 
         final String expectedVersion = "v0.14.0";
 
@@ -94,12 +98,12 @@ public class GitHubSourceLatestReleaseTestCase {
     public void should_load_release_information_from_cache_when_not_changed() throws Exception {
         // given
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                .get("/repos/mozilla/geckodriver/releases/latest")
-                .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 31 Jan 2017 17:16:07 GMT")
-                .queryParam("page", 1)
-                .willReturn(
-                        ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
-                )));
+            .get("/repos/mozilla/geckodriver/releases/latest")
+            .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 31 Jan 2017 17:16:07 GMT")
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
+            )));
         createCacheFile("gh.cache.mozilla@geckodriver.json", CACHED_CONTENT);
 
         final String expectedVersion = "v0.14.0";
@@ -118,21 +122,29 @@ public class GitHubSourceLatestReleaseTestCase {
 
     @Test
     // With this test we make sure that the internal date is converted to RFC 2126 with GMT prior to GH call
-    public void should_load_release_information_from_gh_and_overwrite_cache_when_last_modified_changed() throws Exception {
+    public void should_load_release_information_from_gh_and_overwrite_cache_when_last_modified_changed()
+        throws Exception {
         // given
-        String cached_content = "{\"lastModified\":\"Sun, 01 Jan 2017 18:16:07 +0100\"," + // Here we store the date with the offset
-                "\"asset\":" +
-                "{\"version\":\"v0.14.0\"," +
-                "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}" +
+        String cached_content =
+            "{\"lastModified\":\"Sun, 01 Jan 2017 18:16:07 +0100\","
+                +
+                // Here we store the date with the offset
+                "\"asset\":"
+                +
+                "{\"version\":\"v0.14.0\","
+                +
+                "\"url\":\"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-linux64.tar.gz\"}"
+                +
                 "}";
 
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                .get("/repos/mozilla/geckodriver/releases/latest")
-                .header(HttpHeaders.IF_MODIFIED_SINCE, "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
-                .queryParam("page", 1)
-                .willReturn(
-                        ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
-                )));
+            .get("/repos/mozilla/geckodriver/releases/latest")
+            .header(HttpHeaders.IF_MODIFIED_SINCE,
+                "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
+            )));
         createCacheFile("gh.cache.mozilla@geckodriver.json", cached_content);
 
         final String expectedVersion = "v0.14.0";
@@ -152,7 +164,8 @@ public class GitHubSourceLatestReleaseTestCase {
     private String loadResponseBody(String path) throws IOException {
         String response;
         ClassLoader classLoader = getClass().getClassLoader();
-        try (final InputStreamReader inputStreamReader = new InputStreamReader(classLoader.getResourceAsStream(path), Charsets.UTF_8)) {
+        try (final InputStreamReader inputStreamReader = new InputStreamReader(classLoader.getResourceAsStream(path),
+            Charsets.UTF_8)) {
             response = CharStreams.toString(inputStreamReader);
         }
         return response;
@@ -164,5 +177,4 @@ public class GitHubSourceLatestReleaseTestCase {
             printWriter.flush();
         }
     }
-
 }

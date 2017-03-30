@@ -29,5 +29,4 @@ public class AfterDroneEnhanced extends BaseDroneEvent implements DroneEnhanceme
     public AfterDroneEnhanced(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
-
 }

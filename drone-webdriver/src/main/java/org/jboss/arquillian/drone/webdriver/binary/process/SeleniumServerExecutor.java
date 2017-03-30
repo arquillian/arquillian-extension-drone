@@ -72,9 +72,10 @@ public class SeleniumServerExecutor {
         }
 
         try {
-            List<String> parameterList = new ArrayList<>(Arrays.asList("-jar", seleniumServer, "-port", String.valueOf(port)));
+            List<String> parameterList =
+                new ArrayList<>(Arrays.asList("-jar", seleniumServer, "-port", String.valueOf(port)));
 
-            if (seleniumServerArgs != null && !seleniumServerArgs.isEmpty()){
+            if (seleniumServerArgs != null && !seleniumServerArgs.isEmpty()) {
                 parameterList.addAll(Arrays.asList(seleniumServerArgs.split(" ")));
             }
 
@@ -83,7 +84,6 @@ public class SeleniumServerExecutor {
             SeleniumServerExecution execution = new SeleniumServerExecution().execute(build);
 
             seleniumServerExecutionInstanceProducer.set(execution);
-
         } catch (Exception e) {
             throw new IllegalStateException(
                 "Something bad happened when Drone was trying to run Selenium Server binary: " + seleniumServer
@@ -133,11 +133,11 @@ public class SeleniumServerExecutor {
                 .task(CommandTool.class)
                 .command(command)
                 .interaction(new BinaryInteraction()
-                                 .outputPrefix("[Selenium server] ")
-                                 .printToOut(".*")
-                                 .when(".*Selenium Server is up and running")
-                                 .thenCountDown(countDownLatch)
-                                 .build())
+                    .outputPrefix("[Selenium server] ")
+                    .printToOut(".*")
+                    .when(".*Selenium Server is up and running")
+                    .thenCountDown(countDownLatch)
+                    .build())
                 .execute();
             server.registerShutdownHook();
             countDownLatch.await(10, TimeUnit.SECONDS);

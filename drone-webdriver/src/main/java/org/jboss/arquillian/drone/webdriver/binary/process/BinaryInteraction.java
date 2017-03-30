@@ -143,6 +143,5 @@ public class BinaryInteraction {
         public OutputTransformer transformer() {
             return transformer;
         }
-
     }
 }

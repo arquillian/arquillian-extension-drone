@@ -34,7 +34,6 @@ import static org.openqa.selenium.Platform.WINDOWS;
 
 /**
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class Validate {
 
@@ -167,7 +166,7 @@ public class Validate {
     }
 
     public static boolean executable(String path) {
-        if (empty(path)){
+        if (empty(path)) {
             return false;
         }
 
@@ -183,7 +182,6 @@ public class Validate {
     /**
      * Checker if a file can be executed. It requires Java 6 to do that. If anything goes wrong, it supposes that a file can be
      * executed.
-     *
      */
     private static final class FileExecutableChecker {
         private static final Logger log = Logger.getLogger(FileExecutableChecker.class.getName());
@@ -195,9 +193,11 @@ public class Validate {
             try {
                 m = File.class.getMethod("canExecute");
             } catch (SecurityException e) {
-                log.warning("Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
+                log.warning(
+                    "Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
             } catch (NoSuchMethodException e) {
-                log.warning("Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
+                log.warning(
+                    "Unable to verify executable bits for files, will consider them all executable. " + e.getMessage());
             }
 
             this.isExecutableMethod = m;
@@ -212,18 +212,20 @@ public class Validate {
             try {
                 result = (Boolean) isExecutableMethod.invoke(file);
             } catch (IllegalArgumentException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                log.warning(
+                    "Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
                         + e.getMessage());
             } catch (IllegalAccessException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                log.warning(
+                    "Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
                         + e.getMessage());
             } catch (InvocationTargetException e) {
-                log.warning("Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
+                log.warning(
+                    "Unable to check if " + file.getAbsolutePath() + " can be executed, will consider it executable."
                         + e.getMessage());
             }
 
             return result;
         }
     }
-
 }

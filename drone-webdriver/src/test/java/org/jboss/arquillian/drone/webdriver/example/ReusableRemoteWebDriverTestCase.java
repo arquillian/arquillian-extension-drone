@@ -34,13 +34,12 @@ import qualifier.Reusable;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
- *
+ * <p>
  * Uses standard settings of Selenium 2.0, that is RemoteWebDriver by default, but allows user to pass another driver specified
  * as a System property or in the Arquillian configuration.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
- *
  * @see org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory
  */
 @RunWith(Arquillian.class)
@@ -102,5 +101,4 @@ public class ReusableRemoteWebDriverTestCase {
         checkIfWebdriverHubIsRunning();
         Assert.assertFalse("Drone instance is not reusable", d instanceof ReusableRemoteWebDriver);
     }
-
 }

@@ -90,7 +90,6 @@ public class SauceConnectRunner {
                 prepareSauceConnect();
             }
             runSauceConnect(sauceConnectFile, username, accessKey, additionalArgs);
-
         } else {
             runSauceConnect(new File(localBinary), username, accessKey, additionalArgs);
         }
@@ -125,7 +124,6 @@ public class SauceConnectRunner {
             reader.start();
             Runtime.getRuntime().addShutdownHook(new ChildProcessCloser());
             countDownLatch.await(30, TimeUnit.SECONDS);
-
         } catch (Exception e) {
             throw new SauceConnectException("Running SauceConnect binary unexpectedly failed: ", e);
         }
@@ -173,7 +171,7 @@ public class SauceConnectRunner {
             sauceConnectFile.setExecutable(true);
         } catch (SecurityException se) {
             log.severe("The downloaded SauceConnect binary: " + sauceConnectFile
-                           + " could not be set as executable. This may cause additional problems.");
+                + " could not be set as executable. This may cause additional problems.");
         }
     }
 
@@ -212,7 +210,6 @@ public class SauceConnectRunner {
                         }
                         Thread.sleep(100);
                     }
-
                 } catch (Exception e) {
                     throw new SauceConnectException("Reading SauceConnect binary output unexpectedly failed: ", e);
                 }

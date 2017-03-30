@@ -36,5 +36,4 @@ public class DimensionsPatternTest {
         Matcher m = WindowResizer.DIMENSIONS_PATTERN.matcher("100,200");
         Assert.assertFalse(m.matches());
     }
-
 }

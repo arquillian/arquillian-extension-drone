@@ -20,7 +20,6 @@ import java.io.File;
 
 /**
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 class Validate {
 
@@ -80,5 +79,4 @@ class Validate {
 
         return true;
     }
-
 }

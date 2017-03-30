@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.configuration.legacy;
  * Encapsulation for changing a property value into different property or capability value
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface LegacyMapping {
 

@@ -4,7 +4,7 @@ package org.jboss.arquillian.drone.webdriver.spi;
  * <p>
  * Interface which is implemented by WebDriver's Augmenter during augmentation.
  * </p>
- *
+ * <p>
  * <p>
  * Allows to unwrap the augmented instance of WebDriver.
  * </p>

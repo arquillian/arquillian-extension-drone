@@ -78,8 +78,8 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
         Capabilities capabilities = getCapabilities(configuration, true);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { capabilities }, ChromeDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {capabilities}, ChromeDriver.class);
     }
 
     /**
@@ -88,12 +88,12 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         // set capabilities
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -124,7 +124,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
                 chromeOptionsLog.append(chromeOptions.toJson().toString()).append("\n");
                 chromeOptionsLog.append("===== End of Chrome options =====");
                 log.info(chromeOptionsLog.toString());
-
             } catch (IOException e) {
                 log.warning("Something bad happened during printing chrome options: ");
                 log.warning(e.getMessage());
@@ -149,5 +148,4 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         }
         return configuration;
     }
-
 }

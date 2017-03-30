@@ -17,6 +17,7 @@ import static java.time.temporal.ChronoField.YEAR;
 public class Rfc2126DateTimeFormatter {
 
     public static final DateTimeFormatter INSTANCE;
+
     static {
         // manually code maps to ensure correct data always used
         // (locale data can be changed by application code)
@@ -42,27 +43,27 @@ public class Rfc2126DateTimeFormatter {
         moy.put(11L, "Nov");
         moy.put(12L, "Dec");
         INSTANCE = new DateTimeFormatterBuilder()
-                .parseCaseInsensitive()
-                .parseLenient()
-                .optionalStart()
-                .appendText(DAY_OF_WEEK, dow)
-                .appendLiteral(", ")
-                .optionalEnd()
-                .appendValue(DAY_OF_MONTH, 2, 2, SignStyle.NOT_NEGATIVE)
-                .appendLiteral(' ')
-                .appendText(MONTH_OF_YEAR, moy)
-                .appendLiteral(' ')
-                .appendValue(YEAR, 4)  // 2 digit year not handled
-                .appendLiteral(' ')
-                .appendValue(HOUR_OF_DAY, 2)
-                .appendLiteral(':')
-                .appendValue(MINUTE_OF_HOUR, 2)
-                .optionalStart()
-                .appendLiteral(':')
-                .appendValue(SECOND_OF_MINUTE, 2)
-                .optionalEnd()
-                .appendLiteral(' ')
-                .appendOffset("+HHMM", "GMT")  // should handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
-                .toFormatter();
+            .parseCaseInsensitive()
+            .parseLenient()
+            .optionalStart()
+            .appendText(DAY_OF_WEEK, dow)
+            .appendLiteral(", ")
+            .optionalEnd()
+            .appendValue(DAY_OF_MONTH, 2, 2, SignStyle.NOT_NEGATIVE)
+            .appendLiteral(' ')
+            .appendText(MONTH_OF_YEAR, moy)
+            .appendLiteral(' ')
+            .appendValue(YEAR, 4)  // 2 digit year not handled
+            .appendLiteral(' ')
+            .appendValue(HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(MINUTE_OF_HOUR, 2)
+            .optionalStart()
+            .appendLiteral(':')
+            .appendValue(SECOND_OF_MINUTE, 2)
+            .optionalEnd()
+            .appendLiteral(' ')
+            .appendOffset("+HHMM", "GMT")  // should handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
+            .toFormatter();
     }
 }

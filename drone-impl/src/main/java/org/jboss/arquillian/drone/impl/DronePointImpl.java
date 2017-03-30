@@ -31,7 +31,7 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
 
     public DronePointImpl(Class<DRONE> droneClass, Lifecycle lifecycle, Annotation... annotations) {
         for (Annotation annotation : annotations) {
-            if(annotation == null) {
+            if (annotation == null) {
                 throw new IllegalArgumentException("Annotation cannot be null!");
             }
         }
@@ -104,9 +104,9 @@ public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
     @Override
     public String toString() {
         return "DronePointImpl{" +
-                "droneClass=" + droneClass +
-                ", annotations=" + Arrays.toString(annotations) +
-                ", lifecycle=" + lifecycle +
-                '}';
+            "droneClass=" + droneClass +
+            ", annotations=" + Arrays.toString(annotations) +
+            ", lifecycle=" + lifecycle +
+            '}';
     }
 }

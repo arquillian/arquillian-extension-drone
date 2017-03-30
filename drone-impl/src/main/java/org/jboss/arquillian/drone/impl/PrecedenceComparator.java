@@ -25,7 +25,6 @@ import org.jboss.arquillian.drone.spi.Sortable;
  * Comparator of {@link Sortable} interfaces
  *
  * @author Lukas Fryc
- *
  */
 class PrecedenceComparator implements Comparator<Sortable> {
 

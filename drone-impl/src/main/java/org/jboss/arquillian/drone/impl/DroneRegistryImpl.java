@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DroneRegistry;
@@ -29,14 +28,13 @@ import org.jboss.arquillian.drone.spi.Sortable;
  * Default implementation of {@link DroneRegistry}
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class DroneRegistryImpl implements DroneRegistry {
 
     private final Map<Class<?>, RegistryValue> registry;
 
-    public DroneRegistryImpl() {
-        registry = new HashMap<Class<?>, RegistryValue>();
+    DroneRegistryImpl() {
+        registry = new HashMap<>();
     }
 
     @Override
@@ -91,19 +89,23 @@ public class DroneRegistryImpl implements DroneRegistry {
     /**
      * Constructs pretty nice exception message when something was not registered
      *
-     * @param registry The registry to be checked
-     * @param unregistered The class which wasn't registered
-     * @param registeredType Type of the builder which was not registered
+     * @param registry
+     *     The registry to be checked
+     * @param unregistered
+     *     The class which wasn't registered
+     * @param registeredType
+     *     Type of the builder which was not registered
+     *
      * @return the exception message
      */
     String getUnregisteredExceptionMessage(Class<?> unregistered, RegisteredType registeredType) {
         StringBuilder sb = new StringBuilder();
         sb.append("No "
-                + registeredType
-                + " was found for object of type "
-                + unregistered.getName()
-                + ".\n"
-                + "Make sure you have Drone extension depchain for the given browser on the classpath, that is org.jboss.arquillian.extension:arquillian-drone-webdriver-depchain:pom for WebDriver browsers, org.jboss.arquillian.extension:arquillian-drone-selenium-depchain:pom for Selenium 1 browsers and org.jboss.arquillian.graphene:graphene-webdriver:pom for Graphene2 browsers. If you are using different browser extension, please make sure it is on classpath.\n");
+            + registeredType
+            + " was found for object of type "
+            + unregistered.getName()
+            + ".\n"
+            + "Make sure you have Drone extension depchain for the given browser on the classpath, that is org.jboss.arquillian.extension:arquillian-drone-webdriver-depchain:pom for WebDriver browsers, org.jboss.arquillian.extension:arquillian-drone-selenium-depchain:pom for Selenium 1 browsers and org.jboss.arquillian.graphene:graphene-webdriver:pom for Graphene2 browsers. If you are using different browser extension, please make sure it is on classpath.\n");
 
         sb.append("Currently registered " + registeredType + "s are: ");
 
@@ -122,7 +124,9 @@ public class DroneRegistryImpl implements DroneRegistry {
         Destructor<?> destructor;
 
         /**
-         * @param configurator the configurator to set
+         * @param configurator
+         *     the configurator to set
+         *
          * @return modified instance
          */
         public RegistryValue setConfigurator(Configurator<?, ?> configurator) {
@@ -131,7 +135,9 @@ public class DroneRegistryImpl implements DroneRegistry {
         }
 
         /**
-         * @param instantiator the instantiator to set
+         * @param instantiator
+         *     the instantiator to set
+         *
          * @return modified instance
          */
         public RegistryValue setInstantiator(Instantiator<?, ?> instantiator) {
@@ -140,14 +146,15 @@ public class DroneRegistryImpl implements DroneRegistry {
         }
 
         /**
-         * @param destructor the destructor to set
+         * @param destructor
+         *     the destructor to set
+         *
          * @return modified value
          */
         public RegistryValue setDestructor(Destructor<?> destructor) {
             this.destructor = destructor;
             return this;
         }
-
     }
 
     private enum RegisteredType {

@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * {@link After}, resulting in fresh instance of drone for every test.
  */
 @DroneLifecycle
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MethodLifecycle {
 }

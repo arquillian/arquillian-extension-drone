@@ -70,5 +70,4 @@ public class TypedMockDroneConfiguration implements DroneConfiguration<TypedMock
     public void setStringMap(Map<String, String> stringMap) {
         this.stringMap = stringMap;
     }
-
 }

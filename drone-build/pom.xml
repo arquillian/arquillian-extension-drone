@@ -1,203 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Parent -->
-    <parent>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-aggregator</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-drone-aggregator</artifactId>
+    <version>2.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <!-- Model Version -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!-- Artifact Configuration -->
-    <artifactId>arquillian-drone-build</artifactId>
+  <!-- Artifact Configuration -->
+  <artifactId>arquillian-drone-build</artifactId>
 
-    <packaging>pom</packaging>
-    <name>Arquillian Drone Extension Build</name>
-    <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+  <packaging>pom</packaging>
+  <name>Arquillian Drone Extension Build</name>
+  <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
-    <developers>
-        <developer>
-            <name>Karel Piwko</name>
-            <email>kpiwko@redhat.com</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Karel Piwko</name>
+      <email>kpiwko@redhat.com</email>
+    </developer>
+  </developers>
 
-    <properties>
-    </properties>
+  <properties>
+  </properties>
 
-    <!-- Plugin Configuration -->
-    <build>
-        <plugins>
-            <!-- Surefire -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <!-- Checkstyle -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>arquillian-drone-checkstyle/checkstyle.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <useFile />
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.arquillian.extension</groupId>
-                        <artifactId>arquillian-drone-build-config</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>check-style</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>checkstyle</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>signature-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java18</artifactId>
-                        <version>1.0</version>
-                    </signature>
-                </configuration>
-            </plugin>
-        </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            maven-checkstyle-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.5,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>checkstyle</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
-
-    <dependencyManagement>
+  <!-- Plugin Configuration -->
+  <build>
+    <plugins>
+      <!-- Surefire -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <!-- Checkstyle -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>arquillian-drone-checkstyle/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <useFile/>
+        </configuration>
         <dependencies>
-            <!-- Arquillian -->
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian.core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-build</artifactId>
-                <version>${version.arquillian.core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.core</groupId>
-                <artifactId>arquillian-core-impl-base</artifactId>
-                <classifier>tests</classifier>
-                <version>${version.arquillian.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.test</groupId>
-                <artifactId>arquillian-test-impl-base</artifactId>
-                <classifier>tests</classifier>
-                <version>${version.arquillian.core}</version>
-            </dependency>
-
-            <!-- Selenium and Selenium Server dependecies -->
-            <dependency>
-                <groupId>org.jboss.arquillian.selenium</groupId>
-                <artifactId>selenium-bom</artifactId>
-                <version>${version.selenium}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Selenium dependencies not present in the Selenium BOM file -->
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>htmlunit-driver</artifactId>
-                <version>${version.htmlunit.driver}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>${phantomjs.driver.version}</version>
-            </dependency>
-
-            <!-- Testing dependencies -->
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-jetty-embedded-9</artifactId>
-                <version>${version.arquillian.jetty}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-webapp</artifactId>
-                <version>${version.org.eclipse.jetty}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-plus</artifactId>
-                <version>${version.org.eclipse.jetty}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${version.junit}</version>
-            </dependency>
-
+          <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-build-config</artifactId>
+            <version>${project.version}</version>
+          </dependency>
         </dependencies>
-    </dependencyManagement>
+        <executions>
+          <execution>
+            <id>check-style</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>checkstyle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>signature-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java18</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>
+                      org.apache.maven.plugins
+                    </groupId>
+                    <artifactId>
+                      maven-checkstyle-plugin
+                    </artifactId>
+                    <versionRange>
+                      [2.5,)
+                    </versionRange>
+                    <goals>
+                      <goal>checkstyle</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Arquillian -->
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${version.arquillian.core}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-build</artifactId>
+        <version>${version.arquillian.core}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.core</groupId>
+        <artifactId>arquillian-core-impl-base</artifactId>
+        <classifier>tests</classifier>
+        <version>${version.arquillian.core}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.test</groupId>
+        <artifactId>arquillian-test-impl-base</artifactId>
+        <classifier>tests</classifier>
+        <version>${version.arquillian.core}</version>
+      </dependency>
+
+      <!-- Selenium and Selenium Server dependecies -->
+      <dependency>
+        <groupId>org.jboss.arquillian.selenium</groupId>
+        <artifactId>selenium-bom</artifactId>
+        <version>${version.selenium}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Selenium dependencies not present in the Selenium BOM file -->
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>htmlunit-driver</artifactId>
+        <version>${version.htmlunit.driver}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.codeborne</groupId>
+        <artifactId>phantomjsdriver</artifactId>
+        <version>${phantomjs.driver.version}</version>
+      </dependency>
+
+      <!-- Testing dependencies -->
+      <dependency>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-jetty-embedded-9</artifactId>
+        <version>${version.arquillian.jetty}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-webapp</artifactId>
+        <version>${version.org.eclipse.jetty}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-plus</artifactId>
+        <version>${version.org.eclipse.jetty}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
 
 </project>

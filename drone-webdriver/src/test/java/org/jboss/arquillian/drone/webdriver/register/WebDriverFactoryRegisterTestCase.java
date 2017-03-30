@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 
 import static org.junit.Assert.assertNotNull;
 
-
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */

@@ -23,7 +23,6 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
  * Mapper for bool and Boolean which logically negates value
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum NegatingBooleanValueMapper implements ValueMapper<Boolean> {
 

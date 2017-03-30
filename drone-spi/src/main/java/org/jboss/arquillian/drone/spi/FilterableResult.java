@@ -37,5 +37,4 @@ public interface FilterableResult<DRONE> extends Iterable<DronePoint<DRONE>> {
      * Returns number of drone points in this result.
      */
     int size();
-
 }

@@ -18,8 +18,8 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
 
     private final Map<String, BrowserCapabilities> cache;
 
-    public static ArquillianDescriptor getArquillianDescriptor(){
-        return  Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+    public static ArquillianDescriptor getArquillianDescriptor() {
+        return Descriptors.importAs(ArquillianDescriptor.class).fromStream(
             URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
     }
 
@@ -35,29 +35,21 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
         String browser = getBrowser(getArquillianDescriptor());
         if ("phantomjs".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
-        }
-        else if ("chrome".equals(browser)) {
+        } else if ("chrome".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Chrome());
-        }
-        else if ("edge".equals(browser)) {
+        } else if ("edge".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Edge());
-        }
-        else if ("firefox".equals(browser)) {
+        } else if ("firefox".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Firefox());
-        }
-        else if ("htmlUnit".equals(browser)) {
+        } else if ("htmlUnit".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.HtmlUnit());
-        }
-        else if ("internetExplorer".equals(browser)) {
+        } else if ("internetExplorer".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.InternetExplorer());
-        }
-        else if ("opera".equals(browser)) {
+        } else if ("opera".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());
-        }
-        else if ("safari".equals(browser)) {
+        } else if ("safari".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Safari());
-        }
-        else {
+        } else {
             Assert.fail("MockBrowserCapabilitiesRegistry does not implement " + browser);
         }
     }
@@ -73,7 +65,8 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
     }
 
     @Override
-    public BrowserCapabilitiesRegistry registerBrowserCapabilitiesFor(String key, BrowserCapabilities browserCapabilities) {
+    public BrowserCapabilitiesRegistry registerBrowserCapabilitiesFor(String key,
+        BrowserCapabilities browserCapabilities) {
         cache.put(key, browserCapabilities);
         return this;
     }
@@ -93,5 +86,4 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
 
         return props.get("browser");
     }
-
 }

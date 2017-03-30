@@ -55,20 +55,21 @@ public class ReusedSessionPermanentFileStorage implements ReusedSessionPermanent
                 return null;
             }
 
-            ReusedSessionStore loadedSession = SerializationUtils.deserializeFromBytes(ReusedSessionStore.class, readStore);
+            ReusedSessionStore loadedSession =
+                SerializationUtils.deserializeFromBytes(ReusedSessionStore.class, readStore);
             return loadedSession;
         } catch (InvalidClassException e) {
             log.log(Level.WARNING,
-                    "Unable to get reused session store from file storage, likely it is due to its internal format change. "
-                            + "Drone will replace file " + permanentFile + " with recent implementation. Cause: ", e);
+                "Unable to get reused session store from file storage, likely it is due to its internal format change. "
+                    + "Drone will replace file " + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (ClassNotFoundException e) {
             log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will replace file "
-                    + permanentFile + " with recent implementation. Cause: ", e);
+                + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         } catch (IOException e) {
             log.log(Level.WARNING, "Unable to get reused session store from file storage. " + "Drone will replace file "
-                    + permanentFile + " with recent implementation. Cause: ", e);
+                + permanentFile + " with recent implementation. Cause: ", e);
             return null;
         }
     }
@@ -79,7 +80,6 @@ public class ReusedSessionPermanentFileStorage implements ReusedSessionPermanent
             writeStore(permanentFile, serialized);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Unable to persist reused session store, session reuse will not work", e);
-
         }
     }
 

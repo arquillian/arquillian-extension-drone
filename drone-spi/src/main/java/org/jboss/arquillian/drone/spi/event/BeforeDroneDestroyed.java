@@ -29,5 +29,4 @@ public class BeforeDroneDestroyed extends BaseDroneEvent implements DroneLifecyc
     public BeforeDroneDestroyed(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
-
 }

@@ -36,12 +36,12 @@ public abstract class CachingCallableImpl<V> implements CachingCallable<V> {
 
     @Override
     public V call() throws Exception {
-        if(isValueCached()) {
+        if (isValueCached()) {
             return cachedValue;
         }
 
         synchronized (valueCached) {
-            if(!valueCached.get()) {
+            if (!valueCached.get()) {
                 cachedValue = createInstance();
                 valueCached.set(true);
             }

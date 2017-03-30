@@ -28,5 +28,4 @@ public class AfterDroneInstantiated extends BaseDroneEvent implements DroneLifec
     public AfterDroneInstantiated(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
-
 }

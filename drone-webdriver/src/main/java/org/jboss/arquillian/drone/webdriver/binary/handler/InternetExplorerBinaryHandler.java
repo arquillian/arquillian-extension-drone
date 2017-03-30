@@ -23,7 +23,7 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
 
     private DesiredCapabilities capabilities;
 
-    public InternetExplorerBinaryHandler(DesiredCapabilities capabilities){
+    public InternetExplorerBinaryHandler(DesiredCapabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -63,7 +63,6 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
     public File downloadAndPrepare() throws Exception {
         return super.downloadAndPrepare();
     }
-
 
     static class IeStorageSource extends SeleniumGoogleStorageSource {
 

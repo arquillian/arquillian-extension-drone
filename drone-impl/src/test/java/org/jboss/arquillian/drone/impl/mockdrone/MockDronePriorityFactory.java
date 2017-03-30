@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class MockDronePriorityFactory implements Configurator<MockDrone, MockDroneConfiguration>,
-        Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+    Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
     public static final String MOCK_DRONE_PRIORITY_FACTORY_FIELD = "Set by MockDronePriorityFactory";
 
     /*
@@ -40,8 +40,9 @@ public class MockDronePriorityFactory implements Configurator<MockDrone, MockDro
 
     @Override
     public MockDroneConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<MockDrone>
-            dronePoint) {
-        MockDroneConfiguration configuration = new MockDroneConfiguration().configure(descriptor, dronePoint.getQualifier());
+        dronePoint) {
+        MockDroneConfiguration configuration =
+            new MockDroneConfiguration().configure(descriptor, dronePoint.getQualifier());
         configuration.setField(MOCK_DRONE_PRIORITY_FACTORY_FIELD);
         return configuration;
     }
@@ -64,5 +65,4 @@ public class MockDronePriorityFactory implements Configurator<MockDrone, MockDro
         MockDrone instance = new MockDrone(configuration.getField());
         return instance;
     }
-
 }

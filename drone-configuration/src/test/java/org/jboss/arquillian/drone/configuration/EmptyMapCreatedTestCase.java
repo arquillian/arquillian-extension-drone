@@ -26,21 +26,19 @@ import org.junit.Test;
  * Tests creation of the map in configuration even if no capabilities are passed
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class EmptyMapCreatedTestCase {
 
     @Test
     public void emptyMapFromDescriptorTest() {
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("intField", "12345").property("stringField", "The descriptor string")
-                .property("booleanField", "true");
+            .property("intField", "12345").property("stringField", "The descriptor string")
+            .property("booleanField", "true");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                new MockDroneConfiguration(), Default.class);
+            new MockDroneConfiguration(), Default.class);
 
         Assert.assertNotNull("Map was created", configuration.getMapMap());
         Assert.assertEquals("Map has zero entries", 0, configuration.getMapMap().size());
-
     }
 }

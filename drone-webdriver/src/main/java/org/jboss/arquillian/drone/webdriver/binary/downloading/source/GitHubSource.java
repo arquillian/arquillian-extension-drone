@@ -51,7 +51,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
      * @param organization GitHub organization/user name the project belongs to
      * @param project      GitHub project name
      */
-    public GitHubSource(String organization, String project, HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
+    public GitHubSource(String organization, String project, HttpClient httpClient,
+        GitHubLastUpdateCache gitHubLastUpdateCache) {
         this.httpClient = httpClient;
         this.projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
         this.uniqueKey = organization + "@" + project;
@@ -69,7 +70,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
-        final HttpClient.Response response = sentGetRequestWithPagination(projectUrl + LATEST_URL, 1, lastModificationHeader());
+        final HttpClient.Response response =
+            sentGetRequestWithPagination(projectUrl + LATEST_URL, 1, lastModificationHeader());
         final ExternalBinary binaryRelease;
 
         if (response.hasPayload()) {
@@ -86,7 +88,9 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     protected Map<String, String> lastModificationHeader() {
         final Map<String, String> headers = new HashMap<>();
-        headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(uniqueKey).withZoneSameInstant(ZoneId.of("GMT")).format(Rfc2126DateTimeFormatter.INSTANCE));
+        headers.put(IF_MODIFIED_SINCE, cache.lastModificationOf(uniqueKey)
+            .withZoneSameInstant(ZoneId.of("GMT"))
+            .format(Rfc2126DateTimeFormatter.INSTANCE));
         return headers;
     }
 
@@ -98,7 +102,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
-        final JsonArray releases = sentGetRequest(projectUrl + RELEASES_URL, Collections.emptyMap(), true).getAsJsonArray();
+        final JsonArray releases =
+            sentGetRequest(projectUrl + RELEASES_URL, Collections.emptyMap(), true).getAsJsonArray();
 
         if (releases != null) {
 
@@ -112,7 +117,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
                     return binaryRelease;
                 }
             }
-            log.warning("There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+            log.warning(
+                "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
         }
         return null;
     }
@@ -154,24 +160,25 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return result;
     }
 
-    protected HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers) throws Exception {
+    protected HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers)
+        throws Exception {
         final URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
         return httpClient.get(uri.toString(), headers);
     }
 
-    protected String getProjectUrl(){
+    protected String getProjectUrl() {
         return projectUrl;
     }
 
-    protected Gson getGson(){
+    protected Gson getGson() {
         return gson;
     }
 
-    protected String getUniqueKey(){
+    protected String getUniqueKey() {
         return uniqueKey;
     }
 
-    protected GitHubLastUpdateCache getCache(){
+    protected GitHubLastUpdateCache getCache() {
         return cache;
     }
 }

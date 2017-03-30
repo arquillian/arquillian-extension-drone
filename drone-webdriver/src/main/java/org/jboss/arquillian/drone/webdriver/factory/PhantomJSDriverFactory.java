@@ -75,9 +75,9 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
         PhantomJSDriverService phantomJSDriverService = PhantomJSDriverService.createDefaultService(capabilities);
 
         return SecurityActions.newInstance(configuration.getImplementationClass(),
-                                           new Class<?>[] { PhantomJSDriverService.class, Capabilities.class },
-                                           new Object[] { phantomJSDriverService, capabilities },
-                                           PhantomJSDriver.class);
+            new Class<?>[] {PhantomJSDriverService.class, Capabilities.class},
+            new Object[] {phantomJSDriverService, capabilities},
+            PhantomJSDriver.class);
     }
 
     /**
@@ -129,5 +129,4 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
-
 }

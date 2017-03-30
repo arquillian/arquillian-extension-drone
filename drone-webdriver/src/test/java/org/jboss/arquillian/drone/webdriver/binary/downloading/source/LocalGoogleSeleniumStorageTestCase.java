@@ -39,7 +39,8 @@ public class LocalGoogleSeleniumStorageTestCase {
 
     @Test
     public void testGetLatestIERelease() throws Exception {
-        ExternalBinary latestRelease = GoogleSeleniumStorageProvider.getIeStorageSource(null, httpClient).getLatestRelease();
+        ExternalBinary latestRelease =
+            GoogleSeleniumStorageProvider.getIeStorageSource(null, httpClient).getLatestRelease();
         assertThat(latestRelease.getVersion()).isEqualTo("3.0");
         assertThat(latestRelease.getUrl())
             .startsWith("http://selenium-release.storage.googleapis.com/3.0/IEDriverServer_")

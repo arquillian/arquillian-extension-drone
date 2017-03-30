@@ -82,5 +82,4 @@ public class PlatformUtils {
 
         Architecture arch();
     }
-
 }

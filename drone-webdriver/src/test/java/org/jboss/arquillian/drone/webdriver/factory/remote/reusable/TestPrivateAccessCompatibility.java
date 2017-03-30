@@ -46,6 +46,6 @@ public class TestPrivateAccessCompatibility {
         driver.setReusedCapabilities(capabilities);
 
         assertSame("Something must change internally in RemoteWebDriver, since capabilities cannot be set", capabilities,
-                driver.getCapabilities());
+            driver.getCapabilities());
     }
 }

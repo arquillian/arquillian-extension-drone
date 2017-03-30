@@ -1,64 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-    <extension qualifier="webdriver">
-        <!-- browser is set externally -->
-        <property name="browser">${browser}</property>
+  <extension qualifier="webdriver">
+    <!-- browser is set externally -->
+    <property name="browser">${browser}</property>
 
-        <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
+    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
-        <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="seleniumServerVersion">${version.selenium}</property>
 
-        <property name="dimensions">1300x500</property>
+    <property name="dimensions">1300x500</property>
 
-        <!-- All these capabilities are related to Firefox only -->
-        <property name="webdriver.firefox.profile">selenium</property>
-        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
-        <property name="acceptSslCerts">true</property>
-        <property name="webStorageEnabled">true</property>
-        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
-    </extension>
+    <!-- All these capabilities are related to Firefox only -->
+    <property name="webdriver.firefox.profile">selenium</property>
+    <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+    <property name="acceptSslCerts">true</property>
+    <property name="webStorageEnabled">true</property>
+    <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+  </extension>
 
-    <!-- Set a different remote address then default for RemoteReusableTesting -->
-    <extension qualifier="webdriver-reusable">
-        <!-- browser is set externally -->
-        <property name="browser">${browser}</property>
+  <!-- Set a different remote address then default for RemoteReusableTesting -->
+  <extension qualifier="webdriver-reusable">
+    <!-- browser is set externally -->
+    <property name="browser">${browser}</property>
 
-        <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
+    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
-        <property name="seleniumServerVersion">${version.selenium}</property>
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remoteReusable">true</property>
+    <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+    <property name="remoteReusable">true</property>
 
-        <property name="dimensions">1300x500</property>
+    <property name="dimensions">1300x500</property>
 
-        <!-- All these capabilities are related to Firefox only -->
-        <property name="webdriver.firefox.profile">selenium</property>
-        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
-        <property name="acceptSslCerts">true</property>
-        <property name="webStorageEnabled">true</property>
-        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
-    </extension>
+    <!-- All these capabilities are related to Firefox only -->
+    <property name="webdriver.firefox.profile">selenium</property>
+    <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+    <property name="acceptSslCerts">true</property>
+    <property name="webStorageEnabled">true</property>
+    <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+  </extension>
 
-    <!-- Set a different remote address then default for RemoteReusableTesting -->
-    <extension qualifier="webdriver-reusecookies">
-        <!-- browser is set externally -->
-        <property name="browser">${browser}</property>
+  <!-- Set a different remote address then default for RemoteReusableTesting -->
+  <extension qualifier="webdriver-reusecookies">
+    <!-- browser is set externally -->
+    <property name="browser">${browser}</property>
 
-        <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
+    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
-        <property name="seleniumServerVersion">${version.selenium}</property>
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
-        <property name="remoteReusable">true</property>
+    <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+    <property name="remoteReusable">true</property>
 
-        <property name="dimensions">1300x500</property>
-        <property name="reuseCookies">true</property>
+    <property name="dimensions">1300x500</property>
+    <property name="reuseCookies">true</property>
 
-        <!-- All these capabilities are related to Firefox only -->
-        <property name="webdriver.firefox.profile">selenium</property>
-        <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
-        <property name="acceptSslCerts">true</property>
-        <property name="webStorageEnabled">true</property>
-        <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
-    </extension>
+    <!-- All these capabilities are related to Firefox only -->
+    <property name="webdriver.firefox.profile">selenium</property>
+    <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
+    <property name="acceptSslCerts">true</property>
+    <property name="webStorageEnabled">true</property>
+    <property name="loggingPrefs">driver=WARNING,profiling=INFO</property>
+  </extension>
 </arquillian>

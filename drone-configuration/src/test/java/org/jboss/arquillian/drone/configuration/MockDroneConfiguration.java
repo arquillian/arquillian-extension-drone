@@ -28,7 +28,6 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * Sample configuration
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfiguration> {
 
@@ -162,5 +161,4 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     public void setSeleniumServerArgs(String seleniumServerArgs) {
         this.seleniumServerArgs = seleniumServerArgs;
     }
-
 }

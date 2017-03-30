@@ -164,7 +164,7 @@ public class InjectionPointsTest extends AbstractTestTestBase {
         assertEventFired(PrepareDrone.class, 2);
         assertEventFired(BeforeDronePrepared.class, 2);
         assertEventFired(AfterDronePrepared.class, 2);
-        
+
         if (!createdInBeforeClass) {
             // was not instantiated yet
             assertEventFired(BeforeDroneInstantiated.class, 0);
@@ -195,7 +195,6 @@ public class InjectionPointsTest extends AbstractTestTestBase {
 
         assertEventFired(BeforeDroneDestroyed.class, 2);
         assertEventFired(AfterDroneDestroyed.class, 2);
-
     }
 
     private static void verifyInjections(MockDrone drone, MockDrone qualifiedDrone) {
@@ -205,7 +204,7 @@ public class InjectionPointsTest extends AbstractTestTestBase {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ ElementType.FIELD })
+    @Target({ElementType.FIELD})
     public @interface CustomAnnotation {
     }
 

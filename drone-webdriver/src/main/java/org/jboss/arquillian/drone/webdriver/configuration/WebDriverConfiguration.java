@@ -36,7 +36,6 @@ import java.util.logging.Logger;
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration> {
 
@@ -45,6 +44,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
     public static final String CONFIGURATION_NAME = "webdriver";
 
     public static URL DEFAULT_REMOTE_URL;
+
     static {
         try {
             DEFAULT_REMOTE_URL = new URL("http://localhost:4444/wd/hub");
@@ -106,7 +106,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         if (_originalBrowser != null && !_originalBrowser.equals(this.browser)) {
             log.log(Level.WARNING,
                 "Arquillian configuration is specifying a Drone of type {0}, however test class specifically asked for {1}. As Drone cannot guarantee that those two are compatible, \"browser\" property will be set to {1}.",
-                new Object[] { browser, _originalBrowser });
+                new Object[] {browser, _originalBrowser});
             this.browser = _originalBrowser;
         }
         return this;

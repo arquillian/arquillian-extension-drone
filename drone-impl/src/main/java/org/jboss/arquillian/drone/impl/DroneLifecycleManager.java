@@ -94,7 +94,8 @@ public class DroneLifecycleManager {
         } catch (TypeNotPresentException e) {
             log.log(Level.SEVERE,
                 "Unable to create Drone Context due to missing services on classpath. Please make sure to use Arquillian Core 1.1.4.Final or later.");
-            throw new IllegalStateException("Unable to create Drone Context due to missing services on classpath. Please make sure to use Arquillian Core 1.1.4.Final or later.",
+            throw new IllegalStateException(
+                "Unable to create Drone Context due to missing services on classpath. Please make sure to use Arquillian Core 1.1.4.Final or later.",
                 e);
         }
     }
@@ -196,8 +197,8 @@ public class DroneLifecycleManager {
         DeploymentFilter deploymentFilter = new DeploymentFilter(Pattern.quote(event.getDeployment().getName()));
         LifecycleFilter lifecycleFilter = new LifecycleFilter(DronePoint.Lifecycle.DEPLOYMENT);
         FilterableResult<Object> dronePoints = context.find(Object.class)
-                .filter(deploymentFilter)
-                .filter(lifecycleFilter);
+            .filter(deploymentFilter)
+            .filter(lifecycleFilter);
 
         for (DronePoint<?> dronePoint : dronePoints) {
             destroyDroneCommand.fire(new DestroyDrone(dronePoint));
@@ -257,5 +258,4 @@ public class DroneLifecycleManager {
             this.instantiationTimeoutInSeconds = instantiationTimeoutInSeconds;
         }
     }
-
 }

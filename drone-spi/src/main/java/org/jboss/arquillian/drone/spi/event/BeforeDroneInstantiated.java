@@ -30,5 +30,4 @@ public class BeforeDroneInstantiated extends BaseDroneEvent implements DroneLife
     public <T> BeforeDroneInstantiated(DronePoint<T> dronePoint) {
         super(dronePoint);
     }
-
 }

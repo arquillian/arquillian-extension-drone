@@ -45,12 +45,11 @@ public class AnnotationFilter implements DronePointFilter<Object> {
     @Override
     public boolean accepts(DroneContext context, DronePoint<?> dronePoint) {
         List<Annotation> droneAnnotations = Arrays.asList(dronePoint.getAnnotations());
-        for(Annotation annotation : annotations) {
-            if(!droneAnnotations.contains(annotation)) {
+        for (Annotation annotation : annotations) {
+            if (!droneAnnotations.contains(annotation)) {
                 return false;
             }
         }
         return true;
     }
-
 }

@@ -59,5 +59,4 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     public String getField() {
         return field;
     }
-
 }

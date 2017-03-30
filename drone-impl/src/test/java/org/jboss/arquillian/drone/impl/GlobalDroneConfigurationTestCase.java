@@ -84,7 +84,7 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
     public void specificConfiguration() throws Exception {
         // given
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-                .extension("drone").property("instantiationTimeoutInSeconds", "40");
+            .extension("drone").property("instantiationTimeoutInSeconds", "40");
 
         getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
@@ -99,7 +99,7 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
         // given
         System.setProperty("arquillian.debug", "true");
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
-                .extension("drone").property("instantiationTimeoutInSeconds", "40");
+            .extension("drone").property("instantiationTimeoutInSeconds", "40");
 
         getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
@@ -117,15 +117,13 @@ public class GlobalDroneConfigurationTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
-                .class);
+            .class);
         Assert.assertNotNull("DroneContext was created in the context", context);
 
         GlobalDroneConfiguration globalDroneConfiguration = context.getGlobalDroneConfiguration
-                (GlobalDroneConfiguration.class);
+            (GlobalDroneConfiguration.class);
         Assert.assertNotNull("Global Drone configuration was created", globalDroneConfiguration);
         Assert.assertEquals("Drone timeout is set to " + timeout + " seconds", timeout,
-                globalDroneConfiguration.getInstantiationTimeoutInSeconds());
-
-
+            globalDroneConfiguration.getInstantiationTimeoutInSeconds());
     }
 }

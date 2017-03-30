@@ -32,8 +32,6 @@ import java.util.logging.Logger;
 /**
  * Storage for ReusedSession. It allows to work with sessions stored with different versions of Drones in a single place.
  *
- *
- *
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
@@ -123,7 +121,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
             log.log(Level.FINE, "Stored session {0} within {1}", new Object[] {
                 timeStampedSession.getSession().getSessionId(),
-                key });
+                key});
         }
     }
 
@@ -153,11 +151,10 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     /**
      * Wrapper for array of bytes to act as a key/value in a map. This abstraction allows as to have stored sessions for Drones
      * with incompatible serialVersionUID, for instance Drones based on different Selenium version.
-     *
+     * <p>
      * This implementation ignores invalid content, it simply returns null when a object cannot be deserialized
      *
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     *
      */
     static class ByteArray implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -210,16 +207,14 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
                 return false;
             return true;
         }
-
     }
 
     /**
      * Wrapper for ReusedSession. This session is stored in binary format including a timestamp.
-     *
+     * <p>
      * This allows implementation to invalidate a session without actually trying to deserialize it.
      *
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     *
      */
     static class TimeStampedSession implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -288,14 +283,12 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             sb.append(timestamp).append(" ").append(getSession());
             return sb.toString();
         }
-
     }
 
     /**
      * Wrapper for reusable session with ability to dispose data from rawStore.
      *
      * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
-     *
      */
     private static class RawDisposableReusedSession {
         private final ByteArray key;
@@ -324,7 +317,8 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
                 while (iterator.hasNext()) {
                     TimeStampedSession candidate = iterator.next().as(TimeStampedSession.class);
                     // check if both point to the same session
-                    if (candidate != null && candidate.getSession() != null && candidate.getSession().equals(wrappedKey)) {
+                    if (candidate != null && candidate.getSession() != null && candidate.getSession()
+                        .equals(wrappedKey)) {
                         iterator.remove();
                     }
                 }

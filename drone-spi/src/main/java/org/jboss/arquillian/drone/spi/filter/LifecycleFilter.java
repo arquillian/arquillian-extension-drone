@@ -37,7 +37,7 @@ public class LifecycleFilter implements DronePointFilter<Object> {
      * @throws java.lang.IllegalArgumentException If any of the given lifecycles is null.
      */
     public LifecycleFilter(DronePoint.Lifecycle lifecycle, DronePoint.Lifecycle... additionalLifecycles) throws
-            IllegalArgumentException {
+        IllegalArgumentException {
         lifecycles = new HashSet<DronePoint.Lifecycle>();
         if (lifecycle == null) {
             throw new IllegalArgumentException("Lifecycle cannot be null!");
@@ -53,7 +53,6 @@ public class LifecycleFilter implements DronePointFilter<Object> {
                 lifecycles.add(additionalLifecycle);
             }
         }
-
     }
 
     @Override

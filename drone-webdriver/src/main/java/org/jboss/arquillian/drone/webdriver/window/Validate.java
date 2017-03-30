@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.webdriver.window;
  * Simple validation utility
  *
  * @author <a href="@mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 class Validate {
 
@@ -33,7 +32,7 @@ class Validate {
     /**
      * Checks that object is not null, throws exception if it is.
      *
-     * @param obj The object to check
+     * @param obj     The object to check
      * @param message The exception message
      * @throws IllegalArgumentException Thrown if obj is null
      */

@@ -5,7 +5,7 @@ package org.arquillian.drone.browserstack.extension.local;
  *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class BrowserStackLocalException extends RuntimeException{
+public class BrowserStackLocalException extends RuntimeException {
 
     public BrowserStackLocalException() {
         super();

@@ -80,7 +80,6 @@ final class InjectionPoints {
         }
 
         return mergedInjectionPoints;
-
     }
 
     static DronePoint<?>[] parametersInMethod(DroneContext context, Method method) {
@@ -115,20 +114,19 @@ final class InjectionPoints {
     }
 
     static <T> DronePoint<T> resolveInjectionPoint(DroneContext context, Class<T> droneType,
-                                                   Annotation[] parameterAnnotations) {
+        Annotation[] parameterAnnotations) {
         return createInjectionPoint(context, droneType, parameterAnnotations, DronePoint.Lifecycle.METHOD);
     }
 
     // We can't instantiate class with wildcard generic parameter directly, so we delegate it through parameter <T>
     static <T> DronePoint<T> createInjectionPoint(DroneContext context, Class<T> droneType,
-                                                  Annotation[] annotations,
-                                                  DronePoint.Lifecycle defaultLifecycle) {
+        Annotation[] annotations,
+        DronePoint.Lifecycle defaultLifecycle) {
         Class<? extends Annotation> scopeAnnotation = SecurityActions.getScope(annotations);
         OperateOnDeployment operateOnDeployment = SecurityActions.findAnnotation(annotations,
-                OperateOnDeployment.class);
+            OperateOnDeployment.class);
 
         DronePoint.Lifecycle lifecycle = scopeForAnnotation(scopeAnnotation, operateOnDeployment, defaultLifecycle);
-
 
         DronePoint<T> dronePoint = new DronePointImpl<T>(droneType, lifecycle, annotations);
         // We register the drone point into context immediately
@@ -141,8 +139,8 @@ final class InjectionPoints {
     }
 
     static DronePoint.Lifecycle scopeForAnnotation(Class<? extends Annotation> annotation,
-                                                   OperateOnDeployment deployment,
-                                                   DronePoint.Lifecycle defaultLifecycle) {
+        OperateOnDeployment deployment,
+        DronePoint.Lifecycle defaultLifecycle) {
         if (annotation == ClassLifecycle.class) {
             return DronePoint.Lifecycle.CLASS;
         } else if (annotation == MethodLifecycle.class) {
@@ -155,5 +153,4 @@ final class InjectionPoints {
             }
         }
     }
-
 }

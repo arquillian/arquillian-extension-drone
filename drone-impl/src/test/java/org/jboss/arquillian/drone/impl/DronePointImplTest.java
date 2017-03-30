@@ -31,9 +31,9 @@ public class DronePointImplTest {
     public void testClassScopeEquality() {
         // given
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
         DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
         // then
         Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
     }
@@ -42,9 +42,9 @@ public class DronePointImplTest {
     public void testMethodScopeEquality() {
         // given
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
         DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
         // then
         Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
     }
@@ -53,10 +53,10 @@ public class DronePointImplTest {
     public void testDeploymentScopeEquality() {
         // given
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.DEPLOYMENT,
-                AnnotationMocks.drone());
+            DronePoint.Lifecycle.DEPLOYMENT,
+            AnnotationMocks.drone());
         DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.DEPLOYMENT, AnnotationMocks.drone());
+            DronePoint.Lifecycle.DEPLOYMENT, AnnotationMocks.drone());
         // then
         Assert.assertEquals("Injection points are equal", dronePoint, dronePoint1);
     }
@@ -65,9 +65,9 @@ public class DronePointImplTest {
     public void testAnnotationOrderDoesNotMatter() {
         // given
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.drone(), AnnotationMocks.defaultQualifier(), AnnotationMocks.differentQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.defaultQualifier(), AnnotationMocks.differentQualifier());
         DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.differentQualifier(), AnnotationMocks.drone(), AnnotationMocks.defaultQualifier());
+            AnnotationMocks.differentQualifier(), AnnotationMocks.drone(), AnnotationMocks.defaultQualifier());
 
         // then
         assertThat(dronePoint, is(dronePoint1));
@@ -87,9 +87,9 @@ public class DronePointImplTest {
     public void testVariousQualifiersInequality() {
         // given
         DronePoint<MockDrone> defaultDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.drone(), AnnotationMocks.defaultQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.defaultQualifier());
         DronePoint<MockDrone> differentDronePoint = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.drone(), AnnotationMocks.differentQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.differentQualifier());
 
         // then
         Assert.assertNotSame("Injection points aren't equal", defaultDronePoint, differentDronePoint);
@@ -99,11 +99,11 @@ public class DronePointImplTest {
     public void testVariousScopeInequality() {
         // given
         DronePoint<MockDrone> classScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
+            DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
         DronePoint<MockDrone> methodScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.METHOD, AnnotationMocks.drone());
+            DronePoint.Lifecycle.METHOD, AnnotationMocks.drone());
         DronePoint<MockDrone> deploymentScopePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.DEPLOYMENT, AnnotationMocks.drone());
+            DronePoint.Lifecycle.DEPLOYMENT, AnnotationMocks.drone());
 
         // then
         Assert.assertNotSame("Injection points aren't equal", classScopePoint, methodScopePoint);
@@ -115,13 +115,11 @@ public class DronePointImplTest {
     public void testVariousDeploymentsInequaility() {
         // given
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.drone(), AnnotationMocks.operateOnDeployment1());
+            AnnotationMocks.drone(), AnnotationMocks.operateOnDeployment1());
         DronePoint<MockDrone> dronePoint1 = new DronePointImpl<MockDrone>(MockDrone.class, null,
-                AnnotationMocks.drone(), AnnotationMocks.operateOnDeployment2());
+            AnnotationMocks.drone(), AnnotationMocks.operateOnDeployment2());
 
         // then
         assertThat(dronePoint, is(not(dronePoint1)));
     }
-
-
 }

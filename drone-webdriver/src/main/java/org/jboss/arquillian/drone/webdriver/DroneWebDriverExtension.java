@@ -60,7 +60,6 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.WEB_DRIVER_NO
  * Arquillian Drone support for WebDriver
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class DroneWebDriverExtension implements LoadableExtension {
 
@@ -108,10 +107,9 @@ public class DroneWebDriverExtension implements LoadableExtension {
             builder.service(Configurator.class, factory);
             builder.service(Instantiator.class, factory);
             builder.service(Destructor.class, factory);
-
         } catch (ClassNotFoundException e) {
             log.log(Level.WARNING, WEB_DRIVER_NOT_FOUND_ERROR_MESSAGE,
-                new Object[] { expectedDriver, factory.getCanonicalName() });
+                new Object[] {expectedDriver, factory.getCanonicalName()});
         }
     }
 }

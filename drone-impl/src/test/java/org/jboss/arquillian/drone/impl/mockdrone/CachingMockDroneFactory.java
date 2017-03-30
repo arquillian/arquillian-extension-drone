@@ -27,10 +27,9 @@ import static org.hamcrest.CoreMatchers.is;
 
 /**
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class CachingMockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
-        Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+    Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
 
     private MockDrone instanceCache;
 
@@ -56,7 +55,8 @@ public class CachingMockDroneFactory implements Configurator<MockDrone, MockDron
     public void destroyInstance(MockDrone instance) {
         // here we assert that instance we are going to destroy is the same as instance we created
         // this check verifies that deenhancers were called and they deenhanced instance
-        Assert.assertThat("Instance we want to destroy must be deenhanced if previously enhanced", instance, is(instanceCache));
+        Assert.assertThat("Instance we want to destroy must be deenhanced if previously enhanced", instance,
+            is(instanceCache));
     }
 
     /*
@@ -65,12 +65,10 @@ public class CachingMockDroneFactory implements Configurator<MockDrone, MockDron
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     public synchronized MockDrone createInstance(MockDroneConfiguration configuration) {
-        if(instanceCache==null) {
+        if (instanceCache == null) {
             MockDrone instance = new MockDrone(configuration.getField());
             instanceCache = instance;
         }
         return instanceCache;
-
     }
-
 }

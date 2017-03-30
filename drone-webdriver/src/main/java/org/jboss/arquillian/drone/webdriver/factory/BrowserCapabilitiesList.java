@@ -35,7 +35,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class Edge implements BrowserCapabilities {
 
@@ -58,7 +60,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class Firefox implements BrowserCapabilities {
 
@@ -81,7 +85,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class HtmlUnit implements BrowserCapabilities {
 
@@ -104,7 +110,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class InternetExplorer implements BrowserCapabilities {
 
@@ -127,7 +135,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class Opera implements BrowserCapabilities {
 
@@ -150,7 +160,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
-    };
+    }
+
+    ;
 
     public static class Remote implements BrowserCapabilities {
 
@@ -173,8 +185,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
+    }
 
-    };
+    ;
 
     public static class Safari implements BrowserCapabilities {
 
@@ -197,8 +210,9 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
+    }
 
-    };
+    ;
 
     public static class PhantomJS implements BrowserCapabilities {
 
@@ -221,7 +235,7 @@ public class BrowserCapabilitiesList {
         public int getPrecedence() {
             return 0;
         }
+    }
 
-    };
-
+    ;
 }

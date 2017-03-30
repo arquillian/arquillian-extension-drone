@@ -69,7 +69,7 @@ public class DroneEnhancer {
     @Inject
     private Event<DroneEnhancementEvent> droneEnhancementEvent;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> void enhanceDrone(@Observes AfterDroneInstantiated event, DroneContext context) {
 
         List<DroneInstanceEnhancer> enhancers = new ArrayList<DroneInstanceEnhancer>(serviceLoader.get().all(
@@ -87,7 +87,7 @@ public class DroneEnhancer {
             if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(), dronePoint.getQualifier())) {
                 log.log(Level.FINE,
                     "Enhancing Drone {0} using enhancer {2} with precedence {3}",
-                    new Object[] { dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence() });
+                    new Object[] {dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence()});
 
                 droneEnhancementEvent.fire(new BeforeDroneEnhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
@@ -104,7 +104,7 @@ public class DroneEnhancer {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> void deenhanceDrone(@Observes BeforeDroneDestroyed event, DroneContext context) {
 
         List<DroneInstanceEnhancer> enhancers = new ArrayList<DroneInstanceEnhancer>(serviceLoader.get().all(
@@ -123,7 +123,7 @@ public class DroneEnhancer {
             if (enhancer.canEnhance(instanceOrCallableInstance, dronePoint.getDroneType(), dronePoint.getQualifier())) {
                 log.log(Level.FINER,
                     "Deenhancing {0} using enhancer {1} with precedence {2}",
-                    new Object[] { dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence() });
+                    new Object[] {dronePoint, enhancer.getClass().getName(), enhancer.getPrecedence()});
 
                 droneEnhancementEvent.fire(new BeforeDroneDeenhanced(enhancer, dronePoint));
                 DroneInstanceEnhancer<T> supportedEnhancer = (DroneInstanceEnhancer<T>) enhancer;
@@ -136,7 +136,6 @@ public class DroneEnhancer {
                     drone = deenhancedDrone;
                 }
                 droneEnhancementEvent.fire(new AfterDroneDeenhanced(dronePoint));
-
             }
         }
     }
@@ -193,5 +192,4 @@ public class DroneEnhancer {
             throw new UnsupportedOperationException("CompatibilityInstanceOrCallableInstance only provides instance!");
         }
     }
-
 }

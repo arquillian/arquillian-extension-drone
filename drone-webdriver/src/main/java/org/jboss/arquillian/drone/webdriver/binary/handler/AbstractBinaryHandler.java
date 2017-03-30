@@ -80,7 +80,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         if (Validate.nonEmpty(binary) && Validate.nonEmpty(getSystemBinaryProperty())) {
             if (performExecutableValidations) {
                 Validate.isExecutable(binary,
-                                      "The binary must point to an executable file, " + binary);
+                    "The binary must point to an executable file, " + binary);
             }
             PropertySecurityAction.setProperty(getSystemBinaryProperty(), binary);
         }
@@ -205,7 +205,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
                 binaryFile.setExecutable(true);
             } catch (SecurityException se) {
                 log.severe("The downloaded binary: " + binaryFile
-                               + " could not be set as executable. This may cause additional problems.");
+                    + " could not be set as executable. This may cause additional problems.");
             }
         }
         return binaryFile;
@@ -270,5 +270,4 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * @return A desired capabilities with stored properties
      */
     protected abstract DesiredCapabilities getCapabilities();
-
 }

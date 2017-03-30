@@ -34,11 +34,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * InternetExplorerDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<InternetExplorerDriver> implements
-        Configurator<InternetExplorerDriver, WebDriverConfiguration>,
-        Instantiator<InternetExplorerDriver, WebDriverConfiguration>, Destructor<InternetExplorerDriver> {
+    Configurator<InternetExplorerDriver, WebDriverConfiguration>,
+    Instantiator<InternetExplorerDriver, WebDriverConfiguration>, Destructor<InternetExplorerDriver> {
 
     private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
 
@@ -78,15 +77,16 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
 
         // capabilities based
         if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                    new Object[] { getCapabilities(configuration, true) }, InternetExplorerDriver.class);
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[] {Capabilities.class},
+                new Object[] {getCapabilities(configuration, true)}, InternetExplorerDriver.class);
         }
         // port specified, we cannot use capabilities
         else {
             log.log(Level.FINE, "Creating InternetExplorerDriver bound to port {0}", port);
 
-            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { int.class },
-                    new Object[] { port }, InternetExplorerDriver.class);
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {int.class},
+                new Object[] {port}, InternetExplorerDriver.class);
         }
     }
 
@@ -94,12 +94,12 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         new InternetExplorerBinaryHandler(capabilities).checkAndSetBinary(performValidations);

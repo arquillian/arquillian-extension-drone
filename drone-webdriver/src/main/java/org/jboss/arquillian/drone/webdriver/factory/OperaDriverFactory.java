@@ -37,8 +37,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> implements
-        Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,
-        Destructor<OperaDriver> {
+    Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,
+    Destructor<OperaDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Opera().getReadableName();
     private static final String OPERA_BINARY_KEY = "opera.binary";
@@ -52,20 +52,20 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
     public OperaDriver createInstance(WebDriverConfiguration configuration) {
 
         Capabilities operaCapabilities = getCapabilities(configuration, true);
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { operaCapabilities }, OperaDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {operaCapabilities}, OperaDriver.class);
     }
 
     /**
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
 
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
@@ -101,5 +101,4 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
-
 }

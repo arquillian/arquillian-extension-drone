@@ -41,5 +41,4 @@ public class QualifierFilter implements DronePointFilter<Object> {
     public boolean accepts(DroneContext context, DronePoint<? extends Object> dronePoint) {
         return dronePoint.getQualifier() == qualifier;
     }
-
 }

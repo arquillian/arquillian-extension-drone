@@ -26,7 +26,7 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
 
     @Override
     public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<T>
-            dronePoint) {
+        dronePoint) {
 
         BrowserCapabilitiesRegistry registry = registryInstance.get();
 
@@ -42,7 +42,7 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
                 throw new IllegalStateException(
                     MessageFormat
                         .format("Unable to initialize WebDriver instance. Please specify a valid browser " +
-                            "instead of {1}. Available options are: {0}",
+                                "instead of {1}. Available options are: {0}",
                             getAvailableBrowserCapabilities(), configuration.getBrowser()));
             }
             configuration.setBrowserInternal(browser);

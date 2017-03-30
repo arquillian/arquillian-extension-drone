@@ -25,18 +25,22 @@ import org.junit.Test;
 /**
  * Tests for map related configurations
  *
- *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class MapPropertiesMappingTestCase {
 
     @Test
     public void mapFromDescriptorTest() {
-        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-            .property("intField", "12345").property("stringField", "The descriptor string")
-            .property("booleanField", "true").property("foo", "foo value").property("foo.bar", "foo.bar value")
-            .property("foo_bar", "foo_bar value").property("abcDef", "abcDef value").property("FOOO-bar", "FOOO-bar value");
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
+            .extension("mockdrone")
+            .property("intField", "12345")
+            .property("stringField", "The descriptor string")
+            .property("booleanField", "true")
+            .property("foo", "foo value")
+            .property("foo.bar", "foo.bar value")
+            .property("foo_bar", "foo_bar value")
+            .property("abcDef", "abcDef value")
+            .property("FOOO-bar", "FOOO-bar value");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
             new MockDroneConfiguration(), Default.class);
@@ -50,14 +54,20 @@ public class MapPropertiesMappingTestCase {
         Assert.assertEquals("Map entry was mapped", "abcDef value", configuration.getMapMap().get("abcDef"));
         Assert.assertEquals("Map entry was mapped", "FOOO-bar value", configuration.getMapMap().get("FOOO-bar"));
     }
-    
-    @Test 
+
+    @Test
     public void mapFromPropertiesWithoutName() {
-        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
+        ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class)
+            .extension("mockdrone")
             .property(null, "A NULL property")
-            .property("intField", "12345").property("stringField", "The descriptor string")
-            .property("booleanField", "true").property("foo", "foo value").property("foo.bar", "foo.bar value")
-            .property("foo_bar", "foo_bar value").property("abcDef", "abcDef value").property("FOOO-bar", "FOOO-bar value");
+            .property("intField", "12345")
+            .property("stringField", "The descriptor string")
+            .property("booleanField", "true")
+            .property("foo", "foo value")
+            .property("foo.bar", "foo.bar value")
+            .property("foo_bar", "foo_bar value")
+            .property("abcDef", "abcDef value")
+            .property("FOOO-bar", "FOOO-bar value");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
             new MockDroneConfiguration(), Default.class);

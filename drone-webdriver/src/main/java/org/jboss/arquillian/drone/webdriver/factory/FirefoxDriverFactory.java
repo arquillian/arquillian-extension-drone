@@ -37,11 +37,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for FirefoxDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver> implements
-        Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
-        Destructor<FirefoxDriver> {
+    Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
+    Destructor<FirefoxDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
 
@@ -75,8 +74,8 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         Capabilities capabilities = getCapabilities(configuration, true);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                                        new Object[] { capabilities }, FirefoxDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {capabilities}, FirefoxDriver.class);
     }
 
     /**
@@ -86,9 +85,9 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance with set all necessary properties; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      */
@@ -112,8 +111,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
             }
             firefoxProfile = new FirefoxProfile(new File(profile));
-        }
-        else {
+        } else {
             firefoxProfile = new FirefoxProfile();
         }
 
@@ -136,16 +134,15 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         if (Validate.nonEmpty(userPreferences)) {
             Validate.isValidPath(userPreferences, "User preferences does not point to a valid path " + userPreferences);
             // we need to manually parse preferences, as Selenium provides no way to set these value
-            for (Map.Entry<String, Object> preference : FirefoxPrefsReader.getPreferences(new File(userPreferences)).entrySet()) {
+            for (Map.Entry<String, Object> preference : FirefoxPrefsReader.getPreferences(new File(userPreferences))
+                .entrySet()) {
                 String key = preference.getKey();
                 Object value = preference.getValue();
                 if (value instanceof Boolean) {
                     firefoxProfile.setPreference(key, (Boolean) value);
-                }
-                else if (value instanceof Integer) {
+                } else if (value instanceof Integer) {
                     firefoxProfile.setPreference(key, (Integer) value);
-                }
-                else if (value instanceof String) {
+                } else if (value instanceof String) {
                     firefoxProfile.setPreference(key, (String) value);
                 }
             }
@@ -158,5 +155,4 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
     }
-
 }

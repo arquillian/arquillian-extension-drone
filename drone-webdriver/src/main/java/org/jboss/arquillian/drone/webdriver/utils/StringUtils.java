@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
  * Utility class to parse a list of strings
  *
  * @author <a href="trepel@redhat.com">Tomas Repel</a>
- *
  */
 public class StringUtils {
 
@@ -67,5 +66,4 @@ public class StringUtils {
         }
         return builder.toString().trim();
     }
-
 }

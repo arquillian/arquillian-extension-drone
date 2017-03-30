@@ -54,7 +54,7 @@ public class LocalhostWebDriverTestCase {
         return ShrinkWrap.create(WebArchive.class, "test.war")
             .addAsWebResource(new File("../../drone-webdriver/src/test/resources/form.html"), "form.html")
             .addAsWebResource(new File("../../drone-webdriver/src/test/resources/js/jquery-1.8.2.min.js"),
-                              "js/jquery-1.8.2.min.js");
+                "js/jquery-1.8.2.min.js");
     }
 
     @Test

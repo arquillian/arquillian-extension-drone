@@ -29,5 +29,4 @@ import org.openqa.selenium.remote.SessionId;
 public class InitializationParametersMap extends HashMap<SessionId, InitializationParameter> {
 
     private static final long serialVersionUID = -2370516918873010433L;
-
 }

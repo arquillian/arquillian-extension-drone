@@ -31,5 +31,4 @@ public interface DroneEvent {
      * @return Injection point for drone
      */
     DronePoint<?> getDronePoint();
-
 }

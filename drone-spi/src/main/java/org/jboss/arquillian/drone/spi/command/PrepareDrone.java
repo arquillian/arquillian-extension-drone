@@ -29,5 +29,4 @@ public class PrepareDrone extends InjectionPointCommand {
     public PrepareDrone(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
-
 }

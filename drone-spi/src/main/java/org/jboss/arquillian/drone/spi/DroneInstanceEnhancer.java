@@ -21,10 +21,9 @@ import java.lang.annotation.Annotation;
 /**
  * Enhances Drone instance in order to give it additional capabilities.
  *
- *
- * @deprecated
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author Lukas Fryc
+ * @deprecated
  */
 @Deprecated
 public interface DroneInstanceEnhancer<T> extends Sortable {
@@ -32,11 +31,11 @@ public interface DroneInstanceEnhancer<T> extends Sortable {
     /**
      * Returns {@code true} when this {@link DroneInstanceEnhancer} is able to enhance or deenhance given type.
      *
-     * @param instance instance of Drone to be enhanced / deenhanced
+     * @param instance  instance of Drone to be enhanced / deenhanced
      * @param droneType the field or parameter type defined in test
      * @param qualifier the qualifier associated with the injected type
      * @return {@code true} when this {@link DroneInstanceEnhancer} is able to enhance or deenhance given type, {@code false}
-     *         otherwise
+     * otherwise
      */
     boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier);
 
@@ -45,7 +44,7 @@ public interface DroneInstanceEnhancer<T> extends Sortable {
      * Takes the instance instantiated by Drone and returns its enhanced version.
      * </p>
      *
-     * @param instance the instance to be enhanced
+     * @param instance  the instance to be enhanced
      * @param qualifier the qualifier associated with an instance
      * @return the enhanced instance
      */
@@ -57,7 +56,7 @@ public interface DroneInstanceEnhancer<T> extends Sortable {
      * </p>
      *
      * @param enhancedInstance the instance which was previously enhanced by {@link #enhance(Object)}.
-     * @param qualifier the qualifier associated with an instance
+     * @param qualifier        the qualifier associated with an instance
      * @return the deenhanced instance
      */
     T deenhance(T enhancedInstance, Class<? extends Annotation> qualifier);

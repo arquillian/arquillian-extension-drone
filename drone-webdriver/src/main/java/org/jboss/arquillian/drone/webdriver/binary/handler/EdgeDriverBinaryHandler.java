@@ -67,7 +67,8 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
 
         private Logger log = Logger.getLogger(EdgeStorageSources.class.toString());
 
-        private static final String EDGE_WEB_DRIVERS_URL = "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/";
+        private static final String EDGE_WEB_DRIVERS_URL =
+            "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/";
 
         private static final String DRIVERS_LIST = ".driver-downloads li";
 

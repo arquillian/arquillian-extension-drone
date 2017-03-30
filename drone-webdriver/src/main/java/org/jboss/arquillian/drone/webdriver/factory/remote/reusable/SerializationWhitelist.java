@@ -27,7 +27,6 @@ import java.util.logging.Logger;
  * ARQ-1450 for more details.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class SerializationWhitelist {
     private static final Logger log = Logger.getLogger(SerializationWhitelist.class.getName());
@@ -120,5 +119,4 @@ public class SerializationWhitelist {
         // class was in the whitelist and it is serializable, proceed
         return true;
     }
-
 }

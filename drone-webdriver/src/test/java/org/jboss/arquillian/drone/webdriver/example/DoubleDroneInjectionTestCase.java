@@ -30,7 +30,6 @@ import org.openqa.selenium.WebDriver;
  * scope.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 @RunWith(Arquillian.class)
 public class DoubleDroneInjectionTestCase {
@@ -55,6 +54,5 @@ public class DoubleDroneInjectionTestCase {
         Assert.assertNotNull("Class scoped webdriver2 was instantiated", this.webdriver2);
         Assert.assertNotNull("Method scoped webdriver1 was instantiated", webdriver1);
         Assert.assertNotNull("Method scoped webdriver2 was instantiated", webdriver2);
-
     }
 }

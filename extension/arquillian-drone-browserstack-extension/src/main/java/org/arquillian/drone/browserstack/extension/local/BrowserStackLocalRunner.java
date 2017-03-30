@@ -49,7 +49,7 @@ public class BrowserStackLocalRunner {
     private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
     private final File browserStackLocalFile =
         new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal"
-                     + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+            + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
     private final String basicUrl = "https://www.browserstack.com/browserstack-local/";
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -90,7 +90,6 @@ public class BrowserStackLocalRunner {
                 prepareBrowserStackLocal();
             }
             runBrowserStackLocal(browserStackLocalFile, accessKey, additionalArgs);
-
         } else {
             runBrowserStackLocal(new File(localBinary), accessKey, additionalArgs);
         }
@@ -121,7 +120,6 @@ public class BrowserStackLocalRunner {
             reader.start();
             Runtime.getRuntime().addShutdownHook(new ChildProcessCloser());
             countDownLatch.await(20, TimeUnit.SECONDS);
-
         } catch (Exception e) {
             throw new BrowserStackLocalException("Running BrowserStackLocal binary unexpectedly failed: ", e);
         }
@@ -156,7 +154,7 @@ public class BrowserStackLocalRunner {
             browserStackLocalFile.setExecutable(true);
         } catch (SecurityException se) {
             log.severe("The downloaded BrowserStackLocal binary: " + browserStackLocalFile
-                           + " could not be set as executable. This may cause additional problems.");
+                + " could not be set as executable. This may cause additional problems.");
         }
     }
 
@@ -171,7 +169,6 @@ public class BrowserStackLocalRunner {
 
         if (SystemUtils.IS_OS_WINDOWS) {
             return String.format(binary, "win32");
-
         } else if (SystemUtils.IS_OS_UNIX) {
             if (Utils.is64()) {
                 return String.format(binary, "linux-x64");
@@ -182,9 +179,9 @@ public class BrowserStackLocalRunner {
             return String.format(binary, "darwin-x64");
         } else {
             throw new IllegalStateException("The current platform is not supported."
-                                                + "Supported platforms are windows, linux and macosx."
-                                                + "Your platform has been detected as "
-                                                + SystemUtils.OS_NAME);
+                + "Supported platforms are windows, linux and macosx."
+                + "Your platform has been detected as "
+                + SystemUtils.OS_NAME);
         }
     }
 

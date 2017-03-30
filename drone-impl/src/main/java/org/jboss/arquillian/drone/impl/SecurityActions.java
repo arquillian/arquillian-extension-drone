@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.drone.api.annotation.Default;
-import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
-import org.jboss.arquillian.drone.api.annotation.Qualifier;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -33,6 +29,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
+import org.jboss.arquillian.drone.api.annotation.Qualifier;
 
 /**
  * SecurityActions
@@ -71,13 +70,10 @@ final class SecurityActions {
     /**
      * Obtains the Constructor specified from the given Class and argument types
      *
-     * @param clazz
-     * @param argumentTypes
-     * @return
      * @throws NoSuchMethodException
      */
     static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes) throws
-            NoSuchMethodException {
+        NoSuchMethodException {
         try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>>() {
                 public Constructor<?> run() throws NoSuchMethodException {
@@ -108,17 +104,24 @@ final class SecurityActions {
      * Create a new instance by finding a constructor that matches the argumentTypes signature using the arguments for
      * instantiation.
      *
-     * @param className     Full classname of class to create
-     * @param argumentTypes The constructor argument types
-     * @param arguments     The constructor arguments
+     * @param className
+     *     Full classname of class to create
+     * @param argumentTypes
+     *     The constructor argument types
+     * @param arguments
+     *     The constructor arguments
+     *
      * @return a new instance
-     * @throws IllegalArgumentException if className, argumentTypes, or arguments are null
-     * @throws RuntimeException         if any exceptions during creation
+     *
+     * @throws IllegalArgumentException
+     *     if className, argumentTypes, or arguments are null
+     * @throws RuntimeException
+     *     if any exceptions during creation
      * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
      * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
      */
     static <T> T newInstance(final String className, final Class<?>[] argumentTypes, final Object[] arguments,
-                             final Class<T> expectedType) {
+        final Class<T> expectedType) {
         if (className == null) {
             throw new IllegalArgumentException("ClassName must be specified");
         }
@@ -136,7 +139,7 @@ final class SecurityActions {
             obj = constructor.newInstance(arguments);
         } catch (Exception e) {
             throw new RuntimeException("Could not create new instance of " + className + ", " +
-                    "missing package from classpath?", e);
+                "missing package from classpath?", e);
         }
 
         // Cast
@@ -145,7 +148,7 @@ final class SecurityActions {
         } catch (final ClassCastException cce) {
             // Reconstruct so we get some useful information
             throw new ClassCastException("Incorrect expected type, " + expectedType.getName() + ", defined for "
-                    + obj.getClass().getName());
+                + obj.getClass().getName());
         }
     }
 
@@ -160,32 +163,31 @@ final class SecurityActions {
     }
 
     static Map<Integer, Annotation[]> getParametersWithAnnotation(final Method method,
-                                                                  final Class<? extends Annotation> annotationClass) {
+        final Class<? extends Annotation> annotationClass) {
 
         Map<Integer, Annotation[]> declaredParameters = AccessController
-                .doPrivileged(new PrivilegedAction<Map<Integer, Annotation[]>>() {
+            .doPrivileged(new PrivilegedAction<Map<Integer, Annotation[]>>() {
 
-                    @Override
-                    public Map<Integer, Annotation[]> run() {
-                        Map<Integer, Annotation[]> foundParameters = new LinkedHashMap<Integer, Annotation[]>();
+                @Override
+                public Map<Integer, Annotation[]> run() {
+                    Map<Integer, Annotation[]> foundParameters = new LinkedHashMap<Integer, Annotation[]>();
 
-                        Class<?>[] parameterTypes = method.getParameterTypes();
-                        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-                        for (int i = 0; i < parameterTypes.length; i++) {
-                            if (isAnnotationPresent(parameterAnnotations[i], annotationClass)) {
-                                foundParameters.put(i, parameterAnnotations[i]);
-                            }
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        if (isAnnotationPresent(parameterAnnotations[i], annotationClass)) {
+                            foundParameters.put(i, parameterAnnotations[i]);
                         }
-                        return foundParameters;
                     }
-
-                });
+                    return foundParameters;
+                }
+            });
         return declaredParameters;
     }
 
     static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation>
-            annotationClass) {
+        annotationClass) {
         List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>() {
             public List<Field> run() {
                 List<Field> foundFields = new ArrayList<Field>();
@@ -275,7 +277,7 @@ final class SecurityActions {
                 throw (IllegalArgumentException) t;
             } else if (t instanceof IllegalAccessException) {
                 throw new IllegalStateException("Unable to get field value of " + field.getName() + " due to: "
-                        + t.getMessage(), t.getCause());
+                    + t.getMessage(), t.getCause());
             } else {
                 // No other checked Exception thrown by Class.getConstructor
                 try {
@@ -304,7 +306,7 @@ final class SecurityActions {
                 throw (IllegalArgumentException) t;
             } else if (t instanceof IllegalAccessException) {
                 throw new IllegalStateException("Unable to set field value of " + field.getName() + " due to: "
-                        + t.getMessage(), t.getCause());
+                    + t.getMessage(), t.getCause());
             } else {
                 // No other checked Exception thrown by Class.getConstructor
                 try {
@@ -319,7 +321,7 @@ final class SecurityActions {
     }
 
     static List<Class<? extends Annotation>> findAnnotationAnnotatedWith(Class<? extends Annotation> parentAnnotation,
-                                                                         Annotation[] annotations) {
+        Annotation[] annotations) {
         List<Class<? extends Annotation>> candidates = new ArrayList<Class<? extends Annotation>>();
 
         for (Annotation annotation : annotations) {
@@ -341,7 +343,7 @@ final class SecurityActions {
         }
 
         throw new IllegalStateException("Unable to determine Qualifier, multiple (" + candidates.size()
-                + ") Qualifier annotations were present");
+            + ") Qualifier annotations were present");
     }
 
     static Class<? extends Annotation> getScope(Annotation[] annotations) {
@@ -354,9 +356,8 @@ final class SecurityActions {
         }
 
         throw new IllegalStateException("Unable to determine Lifecycle, multiple (" + candidates.size() + ") Lifecycle " +
-                "annotations were present");
+            "annotations were present");
     }
-
 
     static String getProperty(final String key) {
         try {
@@ -405,7 +406,5 @@ final class SecurityActions {
         public ClassLoader run() {
             return Thread.currentThread().getContextClassLoader();
         }
-
     }
-
 }

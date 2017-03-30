@@ -29,9 +29,11 @@ public class GitHubLastUpdateCache {
 
     private static final String ASSET_PROPERTY = "asset";
     private static final String LAST_MODIFIED_PROPERTY = "lastModified";
-    private static final File DEFAULT_CACHE_DIRECTORY = new File(ARQUILLIAN_DRONE_CACHE_DIRECTORY + File.separator + "gh_cache" + File.separator);
+    private static final File DEFAULT_CACHE_DIRECTORY =
+        new File(ARQUILLIAN_DRONE_CACHE_DIRECTORY + File.separator + "gh_cache" + File.separator);
 
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>(){}.getType(), new ZonedDateTimeConverter()).create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>() {
+    }.getType(), new ZonedDateTimeConverter()).create();
     private final File cacheDirectory;
 
     public GitHubLastUpdateCache(final File cacheDirectory) {
@@ -44,7 +46,8 @@ public class GitHubLastUpdateCache {
 
     private File createCacheDirectory(File cacheDirectory) {
         if (cacheDirectory.exists() && !cacheDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Passed [" + cacheDirectory.getAbsolutePath() + "] exists and is not a directory.");
+            throw new IllegalArgumentException(
+                "Passed [" + cacheDirectory.getAbsolutePath() + "] exists and is not a directory.");
         }
         if (!cacheDirectory.exists()) {
             cacheDirectory.mkdir();
@@ -71,7 +74,7 @@ public class GitHubLastUpdateCache {
     public <T> void store(T asset, String uniqueKey, ZonedDateTime dateTime) {
         final String cachedFilePath = createCachedFilePath(uniqueKey);
         final JsonObject jsonObject = combineAsJson(asset, dateTime);
-        try (final FileOutputStream fileOutputStream = new FileOutputStream(cachedFilePath, false)) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(cachedFilePath, false)) {
             fileOutputStream.write(jsonObject.toString().getBytes());
         } catch (IOException e) {
             throw new RuntimeException("Unable to store " + jsonObject + "%n as [" + cachedFilePath + "]", e);
@@ -84,7 +87,7 @@ public class GitHubLastUpdateCache {
 
     private JsonObject deserializeCachedFile(String uniqueKey) {
         final String cachedFilePath = createCachedFilePath(uniqueKey);
-        try (final FileReader reader = new FileReader(cachedFilePath)) {
+        try (FileReader reader = new FileReader(cachedFilePath)) {
             return gson.fromJson(reader, JsonObject.class);
         } catch (IOException e) {
             throw new RuntimeException("Unable to deserialize file [" + cachedFilePath + "]", e);
@@ -99,7 +102,8 @@ public class GitHubLastUpdateCache {
         return jsonObject;
     }
 
-    private static class ZonedDateTimeConverter implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
+    private static class ZonedDateTimeConverter
+        implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
         private static final DateTimeFormatter FORMATTER = Rfc2126DateTimeFormatter.INSTANCE;
 
         @Override
@@ -109,7 +113,7 @@ public class GitHubLastUpdateCache {
 
         @Override
         public ZonedDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
+            throws JsonParseException {
             return ZonedDateTime.parse(json.getAsString(), FORMATTER);
         }
     }

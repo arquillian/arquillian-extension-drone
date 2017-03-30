@@ -41,5 +41,4 @@ public class LocalBinarySource implements ExternalBinarySource {
             .as("MD5 hash should be same")
             .isEqualTo(BinaryFilesUtils.getMd5hash(latest ? LATEST_FILE : FIRST_FILE));
     }
-
 }

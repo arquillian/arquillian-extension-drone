@@ -100,5 +100,4 @@ public class DroneContextImpl implements DroneContext {
 
         return new FilterableResultImpl<DRONE>(this, matchedDronePoints);
     }
-
 }

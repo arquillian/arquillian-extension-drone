@@ -24,18 +24,18 @@ import org.jboss.arquillian.drone.api.annotation.Default;
 /**
  * Configuration of arbitrary Drone Web user interface test framework. It allows to get configured
  * from both Arquillian Descriptor and System properties which takes precedence.
- *
+ * <p>
  * <p>
  * A matching extension in the descriptor with is searched by using
  * configuration name. If {@link org.jboss.arquillian.drone.spi.Qualifier} extension differs from
  * {@link Default}, it is used to get the configuration if it exists, otherwise the
  * default one is used.
  * </p>
- *
+ * <p>
  * <p>
  * See following example which explains the mapping.
  * </p>
- *
+ * <p>
  * <p>
  * If configuration is named {@code webdriver}, then
  * {@code <extension qualifier="webdriver">} is looked in the descriptor
@@ -44,7 +44,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  * configuration values, possibly overriding values provided within descriptor
  * file.
  * </p>
- *
+ * <p>
  * <pre>
  *    &lt;extension qualifier="webdriver"&gt;
  *    &lt;configuration&gt;
@@ -52,7 +52,7 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  *    &lt;/configuration&gt;
  *    &lt;/extension&gt;
  * </pre>
- *
+ * <p>
  * <p>
  * A system property is passed as
  * {@code -Darq.extension.webdriver.remoteAddresss=http://localhost:6000}
@@ -61,16 +61,16 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  * Then configuration will read descriptor and set remote address value to http://localhost:5000  which
  * becomes later overridden by http://localhost:6000 passed from the command line.
  * </p>
- *
- *
+ * <p>
+ * <p>
  * <p>
  * For more complex example, see following rules are applied to compute
  * {@code qualifier} value, system property prefix and property name:
  * </p>
- *
+ * <p>
  * <ul>
- *    <li>qualifier = {@link DroneConfiguration#getConfigurationName()} + - + @Qualifier, where all letters are lower case</li>
- *    <li>System property prefix = arq.extension. + {@link DroneConfiguration#getConfigurationName()} + . + qualifier</li>
+ * <li>qualifier = {@link DroneConfiguration#getConfigurationName()} + - + @Qualifier, where all letters are lower case</li>
+ * <li>System property prefix = arq.extension. + {@link DroneConfiguration#getConfigurationName()} + . + qualifier</li>
  * </ul>
  *
  * @param <C> Configuration type
@@ -88,7 +88,7 @@ public interface DroneConfiguration<C extends DroneConfiguration<C>> {
      * Configures configuration from descriptor and System properties
      *
      * @param descriptor Arquillian Descriptor
-     * @param qualifier Qualifier
+     * @param qualifier  Qualifier
      * @return Configured configuration instance
      */
     @Deprecated

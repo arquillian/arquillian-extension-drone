@@ -68,7 +68,7 @@ public class BrowserStackDriverFactory implements
         BrowserCapabilities browser = registry.getEntryFor(READABLE_NAME);
 
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(arquillianDescriptor,
-                                                                                             dronePoint.getQualifier());
+            dronePoint.getQualifier());
         return configuration;
     }
 
@@ -93,7 +93,6 @@ public class BrowserStackDriverFactory implements
             if (Utils.isNullOrEmpty(username) || Utils.isNullOrEmpty(accessKey)) {
                 throw new IllegalArgumentException(
                     "You have to specify either an username and an access.key or the whole url in your arquillian descriptor");
-
             } else {
                 url = "http://" + username + ":" + accessKey + "@hub.browserstack.com/wd/hub";
             }
@@ -113,12 +112,12 @@ public class BrowserStackDriverFactory implements
                 String localBinary = (String) capabilities.getCapability(BROWSERSTACK_LOCAL_BINARY);
 
                 BrowserStackLocalRunner.getBrowserStackLocalInstance().runBrowserStackLocal(accessKey,
-                                                                                            additionalArgs,
-                                                                                            localBinary);
+                    additionalArgs,
+                    localBinary);
             }
 
             return new BrowserStackDriver(browserStackUrl, capabilities, isSetBrowserStackLocal,
-                                          isSetBrowserStackLocalManaged);
+                isSetBrowserStackLocalManaged);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(
                 "The BrowserStack url: " + url + " has been detected as a malformed URL. ", e);

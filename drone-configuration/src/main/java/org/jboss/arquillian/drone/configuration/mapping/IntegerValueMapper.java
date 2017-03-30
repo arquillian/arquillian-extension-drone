@@ -20,7 +20,6 @@ package org.jboss.arquillian.drone.configuration.mapping;
  * Mapper for int and Integer
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public enum IntegerValueMapper implements ValueMapper<Integer> {
 

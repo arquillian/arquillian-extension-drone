@@ -35,7 +35,7 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
 
         if (response.hasPayload()) {
             JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
-            if (releaseTags.size() == 0){
+            if (releaseTags.size() == 0) {
                 return null;
             }
             String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
@@ -50,25 +50,21 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
         return latestPhantomJSBinary;
     }
 
-
     @Override
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
         ExternalBinary phantomJSBinary = new ExternalBinary(version);
         phantomJSBinary.setUrl(getUrlForVersion(version));
-        return  phantomJSBinary;
+        return phantomJSBinary;
     }
 
-
-    private String getUrlForVersion(String version){
+    private String getUrlForVersion(String version) {
         StringBuilder phantomJsUrl = new StringBuilder(BASE_DOWNLOAD_URL);
         phantomJsUrl.append(version).append("-");
 
         if (PlatformUtils.isMac()) {
             phantomJsUrl.append("macosx.zip").toString();
-
         } else if (PlatformUtils.isWindows()) {
             phantomJsUrl.append("windows.zip");
-
         } else {
             phantomJsUrl.append("linux-");
             if (PlatformUtils.is32()) {
@@ -80,14 +76,9 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
         return phantomJsUrl.toString();
     }
 
-
-
     @Override
     protected String getExpectedFileNameRegex(String version) {
         return PHANTOMJS_BINARY_NAME;
     }
-
-
-
 }
 

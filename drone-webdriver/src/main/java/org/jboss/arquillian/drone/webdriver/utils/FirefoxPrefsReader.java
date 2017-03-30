@@ -3,24 +3,24 @@
  * Copyright 2013, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *
+ * <p>
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- *
+ * <p>
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- *
+ * <p>
  * Copyright 2007-2009 Selenium committers
- *
+ * <p>
  * This is a parsing replacement for org.openqa.selenium.firefox.Preferences, which is not public.
  * As such, it shares the parsing logic.
  */
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public class FirefoxPrefsReader {
 
     private static final Pattern PREFERENCE_PATTERN =
-            Pattern.compile("user_pref\\(\"([^\"]+)\", (\"?.+?\"?)\\);");
+        Pattern.compile("user_pref\\(\"([^\"]+)\", (\"?.+?\"?)\\);");
 
     /**
      * Reads Firefox preferences in specific format from file and
@@ -68,7 +68,7 @@ public class FirefoxPrefsReader {
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("User preferences for firefox " + prefs.getAbsolutePath()
-                    + " does not represent a valid preferences file", e);
+                + " does not represent a valid preferences file", e);
         } finally {
             try {
                 reader.close();

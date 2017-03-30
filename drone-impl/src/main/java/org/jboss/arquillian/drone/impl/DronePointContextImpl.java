@@ -74,7 +74,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
         final CachingCallable<DRONE> futureInstance = this.futureInstance;
         if (futureInstance == null) {
             throw new IllegalStateException(MessageFormat.format("Future instance callable is not stored for drone " +
-                    "point {0}!", dronePoint));
+                "point {0}!", dronePoint));
         }
 
         boolean newInstance = !futureInstance.isValueCached();
@@ -98,12 +98,12 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
 
     @Override
     public <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws IllegalArgumentException,
-            IllegalStateException {
+        IllegalStateException {
         Validate.notNull(droneClass, "Given drone class cannot be null!");
 
         if (!dronePoint.conformsTo(droneClass)) {
             throw new IllegalStateException(MessageFormat.format("Could not cast instance from {0} to {1}!",
-                    dronePoint.getDroneType().getName(), droneClass.getName()));
+                dronePoint.getDroneType().getName(), droneClass.getName()));
         }
 
         return droneClass.cast(getInstance());
@@ -111,17 +111,17 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
 
     @Override
     public <CONF extends DroneConfiguration<CONF>> CONF getConfigurationAs(Class<CONF> configurationClass) throws
-            IllegalArgumentException, IllegalStateException {
+        IllegalArgumentException, IllegalStateException {
         Validate.notNull(configurationClass, "Given configuration class cannot be null!");
 
         if (configuration == null) {
             throw new IllegalStateException(MessageFormat.format("Configuration is not set for drone point {0}!",
-                    dronePoint));
+                dronePoint));
         }
 
         if (!configurationClass.isAssignableFrom(configuration.getClass())) {
             throw new IllegalStateException(MessageFormat.format("Could not cast configuration from {0} to {1}!",
-                    configuration.getClass().getName(), configurationClass.getName()));
+                configuration.getClass().getName(), configurationClass.getName()));
         }
 
         return configurationClass.cast(configuration);
@@ -130,7 +130,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     @Override
     @SuppressWarnings("unchecked")
     public <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) throws
-            IllegalArgumentException {
+        IllegalArgumentException {
         Validate.notNull(keyClass, "Given key class canoot be null!");
 
         return (VALUE) metadataMap.get(keyClass);
@@ -162,7 +162,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     public void setFutureInstance(CachingCallable<DRONE> futureInstance) {
         if (hasFutureInstance()) {
             LOGGER.log(Level.FINE, "Future instance was previously set for drone point {0}, replacing.",
-                    dronePoint);
+                dronePoint);
         }
         this.futureInstance = futureInstance;
     }
@@ -186,7 +186,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     public void removeFutureInstance() {
         if (!hasFutureInstance()) {
             LOGGER.log(Level.WARNING, "Could not remove future instance, because it was not set! Drone point: {0}.",
-                    dronePoint);
+                dronePoint);
         }
         this.futureInstance = null;
     }
@@ -195,7 +195,7 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     public void removeConfiguration() {
         if (!hasConfiguration()) {
             LOGGER.log(Level.WARNING, "Could not remove configuration, because it was not set! Drone point: {0}.",
-                    dronePoint);
+                dronePoint);
         }
         this.configuration = null;
     }
@@ -211,8 +211,8 @@ public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
         // FIXME we need to make some kind of global drone configuration!
 
         int timeout = droneContext.get().getGlobalDroneConfiguration(DroneLifecycleManager.GlobalDroneConfiguration
-                .class)
-                .getInstantiationTimeoutInSeconds();
+            .class)
+            .getInstantiationTimeoutInSeconds();
 
         try {
             T drone;

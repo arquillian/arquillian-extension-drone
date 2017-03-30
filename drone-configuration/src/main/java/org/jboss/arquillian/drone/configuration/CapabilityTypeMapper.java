@@ -30,7 +30,6 @@ import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
  * Maps properties to ValuesMappers so that the property value can be cast to desired type.
  *
  * @author <a href="mailto:trepel@redhat.com">Tomas Repel</a>
- *
  */
 public class CapabilityTypeMapper {
 
@@ -38,6 +37,7 @@ public class CapabilityTypeMapper {
 
     // FIXME this should be in SPI with a proper event MODEL
     private static final Map<String, ValueMapper<?>> TYPE_MAP;
+
     static {
         TYPE_MAP = new HashMap<String, ValueMapper<?>>();
 
@@ -79,12 +79,17 @@ public class CapabilityTypeMapper {
             try {
                 return TYPE_MAP.get(propertyName).transform(value);
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("The property '" + propertyName + "' has value '" + value + "' that cannot be transformed using '" + TYPE_MAP.get(propertyName).getClass().getSimpleName() + "'.", e);
+                throw new IllegalArgumentException("The property '"
+                    + propertyName
+                    + "' has value '"
+                    + value
+                    + "' that cannot be transformed using '"
+                    + TYPE_MAP.get(propertyName).getClass().getSimpleName()
+                    + "'.", e);
             }
         } else {
-            log.log(Level.WARNING, "The type for property \"{0}\" cannot be determined, java.lang.String is used" );
+            log.log(Level.WARNING, "The type for property \"{0}\" cannot be determined, java.lang.String is used");
             return value;
         }
     }
-
 }

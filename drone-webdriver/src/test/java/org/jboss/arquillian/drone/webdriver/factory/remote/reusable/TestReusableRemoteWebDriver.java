@@ -51,28 +51,29 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
     @Test
     public void whenBrowserIsCreatedThenCouldBeReused(@Drone @Reusable RemoteWebDriver driver)
-            throws UnableReuseSessionException {
+        throws UnableReuseSessionException {
 
         driver.navigate().to(SERVER_URL.toString());
 
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
 
         Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
-                .getCapabilities()));
+            .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
         RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities,
-                reusedSessionId);
+            reusedSessionId);
         reusedDriver.navigate().to(HUB_URL.toString());
     }
 
     @Test
-    public void whenBrowserIsCreatedAndQuitAndTriedToReuseThenItShouldThrowException(@Drone @Reusable RemoteWebDriver driver) {
+    public void whenBrowserIsCreatedAndQuitAndTriedToReuseThenItShouldThrowException(
+        @Drone @Reusable RemoteWebDriver driver) {
 
         driver.navigate().to(SERVER_URL.toString());
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
         Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
-                .getCapabilities()));
+            .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
         driver.quit();
 

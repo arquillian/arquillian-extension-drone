@@ -48,36 +48,36 @@ public class DeploymentTestCase extends EnricherTestCase {
 
         DronePoint<MockDrone> dronePoint1 =
             new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.DEPLOYMENT,
-                                          AnnotationMocks.drone(),
-                                          AnnotationMocks.operateOnDeployment1());
+                AnnotationMocks.drone(),
+                AnnotationMocks.operateOnDeployment1());
         DronePoint<MockDrone> dronePoint2 =
             new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.DEPLOYMENT,
-                                          AnnotationMocks.drone(),
-                                          AnnotationMocks.operateOnDeployment2());
+                AnnotationMocks.drone(),
+                AnnotationMocks.operateOnDeployment2());
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, false, false, false, false, instance, context,
-                                "testBeforeDeployment");
+            "testBeforeDeployment");
 
         runFailingTestMethod(instance, "testShouldFailDeployment1NotDeployed", MockDrone.class);
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, false, false, true, false, instance, context,
-                                "testDeploy1");
+            "testDeploy1");
 
         runFailingTestMethod(instance, "testShouldFailDeployment2NotDeployed", MockDrone.class);
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, true, false, true, true, instance, context,
-                                "testDeploy2Deployed1", MockDrone.class);
+            "testDeploy2Deployed1", MockDrone.class);
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, true, true, true, true, instance, context,
-                                "testDeployed12", MockDrone.class, MockDrone.class);
+            "testDeployed12", MockDrone.class, MockDrone.class);
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, true, true, false, true, instance, context,
-                                "testDestroy1Deployed2", MockDrone.class, MockDrone.class);
+            "testDestroy1Deployed2", MockDrone.class, MockDrone.class);
 
         runFailingTestMethod(instance, "testShouldFailDeployment1Destroyed", MockDrone.class);
 
         runDeploymentTestMethod(dronePoint1, dronePoint2, false, true, false, false, instance, context,
-                                "testDestroy2Destroyed1", MockDrone.class);
+            "testDestroy2Destroyed1", MockDrone.class);
 
         runFailingTestMethod(instance, "testShouldFailDeployment2Destroyed", MockDrone.class);
 
@@ -105,7 +105,7 @@ public class DeploymentTestCase extends EnricherTestCase {
             }
         }
         Assert.fail("The test method " + testMethodName
-                        + " should have thrown the IllegalStateException containing word: \"has deployment lifecycle\"");
+            + " should have thrown the IllegalStateException containing word: \"has deployment lifecycle\"");
     }
 
     /**
@@ -253,6 +253,5 @@ public class DeploymentTestCase extends EnricherTestCase {
                     "Mock drone instance tied to " + deploymentName + " should be null", mockDrone);
             }
         }
-
     }
 }

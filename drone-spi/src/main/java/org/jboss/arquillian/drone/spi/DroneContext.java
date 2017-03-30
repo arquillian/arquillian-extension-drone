@@ -28,8 +28,7 @@ public interface DroneContext {
      * Returns drone extension configuration. This method is deprecated and will soon be replaced.
      */
     // TODO to be removed in Alpha 2
-    @Deprecated
-    <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass);
+    @Deprecated <C extends DroneConfiguration<C>> C getGlobalDroneConfiguration(Class<C> configurationClass);
 
     /**
      * Sets drone extension configuration. This method is deprecated and will soon be replaced.
@@ -59,6 +58,5 @@ public interface DroneContext {
      * Using the Object.class as the type, it returns all injection points stored.
      */
     <DRONE> FilterableResult<DRONE> find(Class<DRONE> droneClass);
-
 }
 

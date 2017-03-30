@@ -30,7 +30,6 @@ import org.openqa.selenium.WebDriver;
  * scope.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 @RunWith(Arquillian.class)
 public class TripleDroneInjectionTestCase extends DoubleDroneInjectionTestCase {
@@ -44,7 +43,8 @@ public class TripleDroneInjectionTestCase extends DoubleDroneInjectionTestCase {
     }
 
     @Test
-    public void tripleMethodWebDrivers(@Drone WebDriver webdriver1, @Drone WebDriver webdriver2, @Drone WebDriver webdriver3) {
+    public void tripleMethodWebDrivers(@Drone WebDriver webdriver1, @Drone WebDriver webdriver2,
+        @Drone WebDriver webdriver3) {
 
         Assert.assertNotNull("Class scoped webdriver1 was instantiated", this.webdriver1);
         Assert.assertNotNull("Class scoped webdriver2 was instantiated", this.webdriver2);
@@ -53,5 +53,4 @@ public class TripleDroneInjectionTestCase extends DoubleDroneInjectionTestCase {
         Assert.assertNotNull("Method scoped webdriver2 was instantiated", webdriver2);
         Assert.assertNotNull("Method scoped webdriver3 was instantiated", webdriver3);
     }
-
 }

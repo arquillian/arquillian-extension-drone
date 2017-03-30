@@ -75,10 +75,9 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         getManager().bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
         getManager().bind(ApplicationScoped.class, ArquillianDescriptor.class, descriptor);
         Mockito.when(serviceLoader.all(Configurator.class)).thenReturn(
-                Arrays.<Configurator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
+            Arrays.<Configurator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
         Mockito.when(serviceLoader.all(Instantiator.class)).thenReturn(
-                Arrays.<Instantiator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
-
+            Arrays.<Instantiator>asList(new MockDronePriorityFactory(), new MockDroneFactory()));
     }
 
     @Test
@@ -89,22 +88,22 @@ public class RegistrarTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertNotNull("Configurator for MockDrone was created",
-                registry.getEntryFor(MockDrone.class, Configurator.class));
+            registry.getEntryFor(MockDrone.class, Configurator.class));
 
         Assert.assertTrue("Configurator is of MockDronePriorityFactory type",
-                registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDronePriorityFactory);
+            registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDronePriorityFactory);
 
         getManager().fire(new BeforeClass(this.getClass()));
 
         DroneContext context = getManager().getContext(ApplicationContext.class).getObjectStore().get(DroneContext
-                .class);
+            .class);
         Assert.assertNotNull("Drone object holder was created in the context", context);
 
-        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class,DronePoint.Lifecycle.CLASS,
-                AnnotationMocks.drone());
+        DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
+            AnnotationMocks.drone());
 
         MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertEquals("MockDrone configuration was created by MockDronePriorityFactory",
-                MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());
+            MockDronePriorityFactory.MOCK_DRONE_PRIORITY_FACTORY_FIELD, configuration.getField());
     }
 }

@@ -1,481 +1,484 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Parent -->
-    <parent>
-        <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-build</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
-        <relativePath>../drone-build/pom.xml</relativePath>
-    </parent>
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian.extension</groupId>
+    <artifactId>arquillian-drone-build</artifactId>
+    <version>2.1.0-SNAPSHOT</version>
+    <relativePath>../drone-build/pom.xml</relativePath>
+  </parent>
 
-    <!-- Model Version -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!-- Artifact Configuration -->
-    <artifactId>arquillian-drone-webdriver</artifactId>
-    <name>Arquillian Drone Extension Support for WebDriver</name>
-    <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+  <!-- Artifact Configuration -->
+  <artifactId>arquillian-drone-webdriver</artifactId>
+  <name>Arquillian Drone Extension Support for WebDriver</name>
+  <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
 
-    <developers>
-        <developer>
-            <name>Karel Piwko</name>
-            <email>kpiwko@redhat.com</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <name>Karel Piwko</name>
+      <email>kpiwko@redhat.com</email>
+    </developer>
+  </developers>
 
-    <properties>
-        <!-- m2e settings -->
-        <m2e.jpa.activation>false</m2e.jpa.activation>
-    </properties>
+  <properties>
+    <!-- m2e settings -->
+    <m2e.jpa.activation>false</m2e.jpa.activation>
+  </properties>
 
-    <!-- Dependencies -->
-    <dependencies>
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-configuration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Arquillian dependencies -->
+    <dependency>
+      <groupId>org.jboss.arquillian.core</groupId>
+      <artifactId>arquillian-core-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.config</groupId>
+      <artifactId>arquillian-config-api</artifactId>
+    </dependency>
+
+    <!-- Selenium dependencies -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Drivers -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-chrome-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-ie-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-remote-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>htmlunit-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-opera-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-edge-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-safari-driver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.codeborne</groupId>
+      <artifactId>phantomjsdriver</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Utils -->
+    <dependency>
+      <groupId>org.arquillian.spacelift</groupId>
+      <artifactId>arquillian-spacelift</artifactId>
+      <version>1.0.0.Alpha9</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.8.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>21.0</version>
+    </dependency>
+
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.jboss.arquillian.extension</groupId>
+      <artifactId>arquillian-drone-impl</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${version.assertj}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+      <version>${version.mockito}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.core</groupId>
+      <artifactId>arquillian-core-impl-base</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-impl-base</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.specto</groupId>
+      <artifactId>hoverfly-java</artifactId>
+      <version>0.4.3</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+
+    <!-- Skips Selenium tests -->
+    <profile>
+      <id>default</id>
+
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <default.supported.phantomjs.binary.version>
+                  ${default.supported.phantomjs.binary.version}
+                </default.supported.phantomjs.binary.version>
+              </systemPropertyVariables>
+            </configuration>
+            <executions>
+              <execution>
+                <id>default-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skipTests>true</skipTests>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+    <!-- Functional tests -->
+    <!-- if we activate this profile, surefire execution is not skipped -->
+    <profile>
+      <id>functional-tests</id>
+
+      <activation>
+        <property>
+          <!-- Test execution is enable for any browser that matches enforcer plugin -->
+          <name>browser</name>
+        </property>
+      </activation>
+
+      <properties>
+        <selenium.chrome.driver>org.seleniumhq.selenium:selenium-chrome-driver:jar</selenium.chrome.driver>
+        <selenium.edge.driver>org.seleniumhq.selenium:selenium-edge-driver</selenium.edge.driver>
+        <selenium.firefox.driver>org.seleniumhq.selenium:selenium-firefox-driver</selenium.firefox.driver>
+        <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit-driver:jar</selenium.htmlunit.driver>
+        <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
+        <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
+        <codeborne.phantomjs.driver>com.codeborne:phantomjsdriver:jar</codeborne.phantomjs.driver>
+        <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
+      </properties>
+
+      <dependencies>
+        <!-- Container -->
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-drone-api</artifactId>
-            <version>${project.version}</version>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-jetty-embedded-9</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-drone-spi</artifactId>
-            <version>${project.version}</version>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-webapp</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-drone-configuration</artifactId>
-            <version>${project.version}</version>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-plus</artifactId>
+          <scope>test</scope>
         </dependency>
+      </dependencies>
 
-        <!-- Arquillian dependencies -->
-        <dependency>
-            <groupId>org.jboss.arquillian.core</groupId>
-            <artifactId>arquillian-core-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.test</groupId>
-            <artifactId>arquillian-test-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.config</groupId>
-            <artifactId>arquillian-config-api</artifactId>
-        </dependency>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>src/test/resources</directory>
+            <includes>
+              <include>**/arquillian.xml</include>
+            </includes>
+            <filtering>true</filtering>
+          </testResource>
+          <testResource>
+            <directory>src/test/resources</directory>
+            <excludes>
+              <exclude>**/arquillian.xml</exclude>
+            </excludes>
+            <filtering>false</filtering>
+          </testResource>
+        </testResources>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>supported-browser</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>browser</property>
+                      <message>browser property must be specified!</message>
+                      <regex>firefox|android|htmlUnit|safari|chrome|opera|phantomjs|iphone|internetExplorer|edge</regex>
+                      <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit, safari, chrome, opera,
+                        phantomjs, iphone, internetExplorer, edge but was ${browser}
+                      </regexMessage>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skipTests>false</skipTests>
+                </configuration>
+              </execution>
+              <execution>
+                <id>register-webdriverfactory-test</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>
+                      **/WebDriverFactoryRegisterTestCase.java
+                    </include>
+                  </includes>
+                  <classpathDependencyExcludes>
+                    <dependencyExclude>${selenium.chrome.driver}</dependencyExclude>
+                    <dependencyExclude>${selenium.edge.driver}</dependencyExclude>
+                    <dependencyExclude>${selenium.firefox.driver}</dependencyExclude>
+                    <dependencyExclude>${selenium.htmlunit.driver}</dependencyExclude>
+                    <dependencyExclude>${selenium.ie.driver}</dependencyExclude>
+                    <dependencyExclude>${selenium.safari.driver}</dependencyExclude>
+                    <dependencyExclude>${codeborne.phantomjs.driver}</dependencyExclude>
+                    <dependencyExclude>${opera.opera.driver}</dependencyExclude>
+                  </classpathDependencyExcludes>
+                  <skipTests>false</skipTests>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
-        <!-- Selenium dependencies -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-support</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <profile>
+      <id>firefox</id>
 
-        <!-- Drivers -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-ie-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>htmlunit-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-opera-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-edge-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-safari-driver</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>phantomjsdriver</artifactId>
-            <scope>provided</scope>
-        </dependency>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>firefox</value>
+        </property>
+      </activation>
 
-        <!-- Utils -->
-        <dependency>
-            <groupId>org.arquillian.spacelift</groupId>
-            <artifactId>arquillian-spacelift</artifactId>
-            <version>1.0.0.Alpha9</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.8.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>21.0</version>
-        </dependency>
+      <properties>
+        <browser>firefox</browser>
+        <selenium.firefox.driver>dummy</selenium.firefox.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>edge</id>
 
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-drone-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>edge</value>
+        </property>
+      </activation>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${version.assertj}</version>
-            <scope>test</scope>
-        </dependency>
+      <properties>
+        <browser>edge</browser>
+        <selenium.edge.driver>dummy</selenium.edge.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>chrome</id>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-            <version>${version.mockito}</version>
-        </dependency>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>chrome</value>
+        </property>
+      </activation>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.core</groupId>
-            <artifactId>arquillian-core-impl-base</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.test</groupId>
-            <artifactId>arquillian-test-impl-base</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+      <properties>
+        <browser>chrome</browser>
+        <selenium.chrome.driver>dummy</selenium.chrome.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>htmlunit</id>
 
-        <dependency>
-            <groupId>io.specto</groupId>
-            <artifactId>hoverfly-java</artifactId>
-            <version>0.4.3</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>htmlunit</value>
+        </property>
+      </activation>
 
-    <profiles>
+      <properties>
+        <browser>htmlunit</browser>
+        <selenium.htmlunit.driver>dummy</selenium.htmlunit.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>safari</id>
 
-        <!-- Skips Selenium tests -->
-        <profile>
-            <id>default</id>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>safari</value>
+        </property>
+      </activation>
 
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+      <properties>
+        <browser>safari</browser>
+        <selenium.safari.driver>dummy</selenium.safari.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>ie</id>
 
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <default.supported.phantomjs.binary.version>
-                                    ${default.supported.phantomjs.binary.version}
-                                </default.supported.phantomjs.binary.version>
-                            </systemPropertyVariables>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <skipTests>true</skipTests>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>ie</value>
+        </property>
+      </activation>
 
-        </profile>
+      <properties>
+        <browser>ie</browser>
+        <selenium.ie.driver>dummy</selenium.ie.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>phantomjs</id>
 
-        <!-- Functional tests -->
-        <!-- if we activate this profile, surefire execution is not skipped -->
-        <profile>
-            <id>functional-tests</id>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>phantomjs</value>
+        </property>
+      </activation>
 
-            <activation>
-                <property>
-                    <!-- Test execution is enable for any browser that matches enforcer plugin -->
-                    <name>browser</name>
-                </property>
-            </activation>
+      <properties>
+        <browser>phantomjs</browser>
+        <codeborne.phantomjs.driver>dummy</codeborne.phantomjs.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>opera</id>
 
-            <properties>
-                <selenium.chrome.driver>org.seleniumhq.selenium:selenium-chrome-driver:jar</selenium.chrome.driver>
-                <selenium.edge.driver>org.seleniumhq.selenium:selenium-edge-driver</selenium.edge.driver>
-                <selenium.firefox.driver>org.seleniumhq.selenium:selenium-firefox-driver</selenium.firefox.driver>
-                <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit-driver:jar</selenium.htmlunit.driver>
-                <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
-                <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
-                <codeborne.phantomjs.driver>com.codeborne:phantomjsdriver:jar</codeborne.phantomjs.driver>
-                <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
-            </properties>
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>opera</value>
+        </property>
+      </activation>
 
-            <dependencies>
-                <!-- Container -->
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jetty-embedded-9</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-webapp</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-plus</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <includes>
-                            <include>**/arquillian.xml</include>
-                        </includes>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <excludes>
-                            <exclude>**/arquillian.xml</exclude>
-                        </excludes>
-                        <filtering>false</filtering>
-                    </testResource>
-                </testResources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>supported-browser</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireProperty>
-                                            <property>browser</property>
-                                            <message>browser property must be specified!</message>
-                                            <regex>firefox|android|htmlUnit|safari|chrome|opera|phantomjs|iphone|internetExplorer|edge</regex>
-                                            <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit, safari, chrome, opera, phantomjs, iphone, internetExplorer, edge but was ${browser}</regexMessage>
-                                        </requireProperty>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <skipTests>false</skipTests>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>register-webdriverfactory-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>
-                                            **/WebDriverFactoryRegisterTestCase.java
-                                        </include>
-                                    </includes>
-                                    <classpathDependencyExcludes>
-                                        <dependencyExclude>${selenium.chrome.driver}</dependencyExclude>
-                                        <dependencyExclude>${selenium.edge.driver}</dependencyExclude>
-                                        <dependencyExclude>${selenium.firefox.driver}</dependencyExclude>
-                                        <dependencyExclude>${selenium.htmlunit.driver}</dependencyExclude>
-                                        <dependencyExclude>${selenium.ie.driver}</dependencyExclude>
-                                        <dependencyExclude>${selenium.safari.driver}</dependencyExclude>
-                                        <dependencyExclude>${codeborne.phantomjs.driver}</dependencyExclude>
-                                        <dependencyExclude>${opera.opera.driver}</dependencyExclude>
-                                    </classpathDependencyExcludes>
-                                    <skipTests>false</skipTests>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>firefox</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>firefox</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>firefox</browser>
-                <selenium.firefox.driver>dummy</selenium.firefox.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>edge</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>edge</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>edge</browser>
-                <selenium.edge.driver>dummy</selenium.edge.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>chrome</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>chrome</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>chrome</browser>
-                <selenium.chrome.driver>dummy</selenium.chrome.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>htmlunit</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>htmlunit</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>htmlunit</browser>
-                <selenium.htmlunit.driver>dummy</selenium.htmlunit.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>safari</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>safari</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>safari</browser>
-                <selenium.safari.driver>dummy</selenium.safari.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>ie</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>ie</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>ie</browser>
-                <selenium.ie.driver>dummy</selenium.ie.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>phantomjs</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>phantomjs</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>phantomjs</browser>
-                <codeborne.phantomjs.driver>dummy</codeborne.phantomjs.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>opera</id>
-
-            <activation>
-                <property>
-                    <name>browser</name>
-                    <value>opera</value>
-                </property>
-            </activation>
-
-            <properties>
-                <browser>opera</browser>
-                <opera.opera.driver>dummy</opera.opera.driver>
-            </properties>
-        </profile>
-    </profiles>
+      <properties>
+        <browser>opera</browser>
+        <opera.opera.driver>dummy</opera.opera.driver>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
 

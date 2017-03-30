@@ -22,7 +22,6 @@ import java.io.File;
  * Mapper for File
  *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- *
  */
 public enum FileValueMapper implements ValueMapper<File> {
 

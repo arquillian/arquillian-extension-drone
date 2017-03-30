@@ -13,9 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitHubSourceReleaseForVersionTestCase {
 
     @ClassRule
-    public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.releases.json"));
+    public static HoverflyRule hoverflyRule =
+        HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.releases.json"));
 
-    GeckoDriverGitHubSource geckoDriverGitHubSource = new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
+    GeckoDriverGitHubSource geckoDriverGitHubSource =
+        new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
 
     @Test
     public void should_load_release_information_from_gh_for_given_version() throws Exception {
@@ -40,5 +42,4 @@ public class GitHubSourceReleaseForVersionTestCase {
         // then
         assertThat(release).isNull();
     }
-
 }

@@ -28,7 +28,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for HtmlUnitDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriver> implements
     Configurator<HtmlUnitDriver, WebDriverConfiguration>, Instantiator<HtmlUnitDriver, WebDriverConfiguration>,
@@ -64,20 +63,20 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
     @Override
     public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
         Capabilities capabilities = getCapabilities(configuration, true);
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-            new Object[] { capabilities }, HtmlUnitDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {capabilities}, HtmlUnitDriver.class);
     }
 
     /**
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set
      *
-     * @param configuration A configuration object for Drone extension
+     * @param configuration      A configuration object for Drone extension
      * @param performValidations Whether a potential validation should be performed;
-     * if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations){
+    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         return configuration.getCapabilities();
     }
 

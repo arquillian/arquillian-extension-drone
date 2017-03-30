@@ -96,8 +96,8 @@ public class EnricherTestCase extends AbstractTestTestBase {
     @org.junit.Before
     public void setMocks() {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone-different")
-                .property("field", DIFFERENT_FIELD).extension("mockdrone-methodargumentone")
-                .property("field", METHOD_ARGUMENT_ONE_FIELD);
+            .property("field", DIFFERENT_FIELD).extension("mockdrone-methodargumentone")
+            .property("field", METHOD_ARGUMENT_ONE_FIELD);
 
         TestEnricher testEnricher = new DroneTestEnricher();
         getManager().inject(testEnricher);
@@ -113,7 +113,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
         // These two stubbings are used in DeploymentTestCase -> hence Silent runner
         Mockito.when(deploymentDescription1.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_1);
         Mockito.when(deploymentDescription2.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_2);
-
     }
 
     @Test
@@ -125,16 +124,16 @@ public class EnricherTestCase extends AbstractTestTestBase {
         fire(new BeforeClass(EnrichedClass.class));
 
         DronePoint<MockDrone> invalidDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
+            DronePoint.Lifecycle.CLASS, AnnotationMocks.drone());
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.CLASS,
-                AnnotationMocks.drone(), AnnotationMocks.differentQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.differentQualifier());
 
         MockDroneConfiguration configuration = context.get(dronePoint).getConfigurationAs(MockDroneConfiguration.class);
         Assert.assertFalse("There is no MockDroneConfiguration with @Default qualifier",
-                           context.get(invalidDronePoint).hasConfiguration());
+            context.get(invalidDronePoint).hasConfiguration());
         Assert.assertNotNull("MockDroneConfiguration is stored with @Different qualifier", configuration);
         Assert.assertEquals("MockDrone was configured from @Different configuration", DIFFERENT_FIELD,
-                            configuration.getField());
+            configuration.getField());
 
         getManager().getContext(ClassContext.class).deactivate();
         getManager().getContext(ClassContext.class).destroy(EnrichedClass.class);
@@ -154,7 +153,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = enrichClassAndResolveMethod(instance, testMethod);
 
         DronePoint<MockDrone> dronePoint = new DronePointImpl<MockDrone>(MockDrone.class, DronePoint.Lifecycle.METHOD,
-                AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
+            AnnotationMocks.drone(), AnnotationMocks.methodArgumentOneQualifier());
         verifyDronePointInstantiated(true, context, dronePoint);
 
         testMethod.invoke(instance, parameters);
@@ -178,7 +177,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = enrichClassAndResolveMethod(instance, testMethod);
 
         DronePoint<Object> dronePoint = new DronePointImpl<Object>(Object.class, DronePoint.Lifecycle.METHOD,
-                AnnotationMocks.drone());
+            AnnotationMocks.drone());
         verifyDronePointInstantiated(true, context, dronePoint);
 
         testMethod.invoke(instance, parameters);
@@ -204,13 +203,13 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Object[] parameters = testEnricher.resolve(testMethod);
 
         DronePoint<MockDrone> classDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                                                                              DronePoint.Lifecycle.CLASS,
-                                                                              AnnotationMocks.drone());
+            DronePoint.Lifecycle.CLASS,
+            AnnotationMocks.drone());
         verifyDronePointInstantiated(true, context, classDronePoint);
 
         DronePoint<MockDrone> methodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
-                                                                               DronePoint.Lifecycle.METHOD,
-                                                                               AnnotationMocks.drone());
+            DronePoint.Lifecycle.METHOD,
+            AnnotationMocks.drone());
         verifyDronePointInstantiated(true, context, methodDronePoint);
 
         testMethod.invoke(instance, parameters);
@@ -245,7 +244,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
         } else {
             String message = shouldDestroyed ? "Drone should be destroyed" : "Drone should NOT be created";
             Assert.assertFalse(message, context.get(dronePoint).isInstantiated());
-
         }
     }
 
@@ -265,9 +263,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
         Assert.assertNotNull("Drone registry was created in the context", registry);
 
         Assert.assertTrue("Configurator is of mock type",
-                          registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
+            registry.getEntryFor(MockDrone.class, Configurator.class) instanceof MockDroneFactory);
         Assert.assertTrue("Instantiator is of mock type",
-                          registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
+            registry.getEntryFor(MockDrone.class, Instantiator.class) instanceof MockDroneFactory);
         return context;
     }
 
@@ -297,7 +295,7 @@ public class EnricherTestCase extends AbstractTestTestBase {
         public void testMethodEnrichment(@Drone @MethodArgumentOne MockDrone unused) {
             Assert.assertNotNull("Mock drone instance was created", unused);
             Assert.assertEquals("MockDroneConfiguration is set via ArquillianDescriptor", METHOD_ARGUMENT_ONE_FIELD,
-                    unused.getField());
+                unused.getField());
         }
     }
 

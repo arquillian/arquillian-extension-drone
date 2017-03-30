@@ -45,7 +45,7 @@ public interface DronePointContext<DRONE> {
      *                                            the drone can be cast to it.
      */
     <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws IllegalArgumentException,
-            IllegalStateException;
+        IllegalStateException;
 
     /**
      * Returns an instance of {@link DroneConfiguration} cast to desired type.
@@ -55,7 +55,7 @@ public interface DronePointContext<DRONE> {
      * @throws java.lang.IllegalArgumentException If the given configuration class is null.
      */
     <CONF extends DroneConfiguration<CONF>> CONF getConfigurationAs(Class<CONF> configurationClass) throws
-            IllegalArgumentException, IllegalStateException;
+        IllegalArgumentException, IllegalStateException;
 
     /**
      * Returns saved metadata for the given key.
@@ -103,7 +103,7 @@ public interface DronePointContext<DRONE> {
      * @throws java.lang.IllegalArgumentException If the given key class is null.
      */
     <KEY extends MetadataKey<VALUE>, VALUE> void setMetadata(Class<KEY> keyClass,
-                                                             VALUE metadata) throws IllegalArgumentException;
+        VALUE metadata) throws IllegalArgumentException;
 
     /**
      * Removes future or instantiated drone instance, depending on the state.
@@ -132,5 +132,6 @@ public interface DronePointContext<DRONE> {
      *
      * @param <VALUE> Type of the value to be stored in the {@link DronePointContext}.
      */
-    public interface MetadataKey<VALUE> {}
+    public interface MetadataKey<VALUE> {
+    }
 }

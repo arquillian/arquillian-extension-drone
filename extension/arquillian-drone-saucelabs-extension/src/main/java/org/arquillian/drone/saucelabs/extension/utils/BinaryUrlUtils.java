@@ -64,10 +64,9 @@ public class BinaryUrlUtils {
             return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "osx.zip" : parsedUrl;
         } else {
             throw new IllegalStateException("The current platform is not supported."
-                                                + "Supported platforms are windows, linux and macosx."
-                                                + "Your platform has been detected as "
-                                                + SystemUtils.OS_NAME);
-
+                + "Supported platforms are windows, linux and macosx."
+                + "Your platform has been detected as "
+                + SystemUtils.OS_NAME);
         }
     }
 
@@ -107,7 +106,7 @@ public class BinaryUrlUtils {
                     rd.close();
                 } catch (Exception ex) {
                     log.warning("There has been thrown an exception during closing a BufferedReader, "
-                                    + "that was reading from the Sauce Connect versions website: " + ex.getMessage());
+                        + "that was reading from the Sauce Connect versions website: " + ex.getMessage());
                 } finally {
                     rd = null;
                 }

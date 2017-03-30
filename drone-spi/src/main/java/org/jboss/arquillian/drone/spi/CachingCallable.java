@@ -30,5 +30,4 @@ public interface CachingCallable<V> extends Callable<V> {
      * Returns true if the value has already been cached.
      */
     boolean isValueCached();
-
 }

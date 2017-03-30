@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
-
 import java.io.Serializable;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
@@ -52,6 +51,6 @@ public class TestCapabilitiesSerialization extends AbstractInBrowserTest {
         Capabilities initializedCapabilities = driver.getCapabilities();
 
         assertTrue("Capabilities obtained from running session should be serializable",
-                initializedCapabilities instanceof Serializable);
+            initializedCapabilities instanceof Serializable);
     }
 }

@@ -70,7 +70,7 @@ public class ReusableRemoteWebDriverExtension {
         permanentStorage.get().writeStore(storeInstance.get());
     }
 
-    public void destroyLastRemoteWebDriver(@Observes AfterClass event, ReusableRemoteWebDriverToDestroy toDestroy){
+    public void destroyLastRemoteWebDriver(@Observes AfterClass event, ReusableRemoteWebDriverToDestroy toDestroy) {
         toDestroy.destroy();
     }
 }

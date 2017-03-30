@@ -24,7 +24,6 @@ import org.jboss.arquillian.drone.spi.Sortable;
  * A mapping between browser representation in Drone and WebDriver capabilities
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface BrowserCapabilities extends Sortable {
 
@@ -48,5 +47,4 @@ public interface BrowserCapabilities extends Sortable {
      * @return
      */
     String getReadableName();
-
 }

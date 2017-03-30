@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * NOTE: It's recommended to not use parameter, but field drone if you need one with class lifecycle.
  */
 @DroneLifecycle
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassLifecycle {
 }

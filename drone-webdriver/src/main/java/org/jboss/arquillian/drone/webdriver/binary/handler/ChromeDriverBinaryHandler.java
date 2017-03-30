@@ -23,7 +23,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
     private DesiredCapabilities capabilities;
 
-    public ChromeDriverBinaryHandler(DesiredCapabilities capabilities){
+    public ChromeDriverBinaryHandler(DesiredCapabilities capabilities) {
         this.capabilities = capabilities;
     }
 

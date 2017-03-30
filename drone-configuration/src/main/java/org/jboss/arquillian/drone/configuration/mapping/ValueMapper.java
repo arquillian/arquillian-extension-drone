@@ -19,16 +19,15 @@ package org.jboss.arquillian.drone.configuration.mapping;
 /**
  * Transformer for a string to an object of given type
  *
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  * @param <T> Given type
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public interface ValueMapper<T> {
 
     /**
      * Checks if given type is supported by this handler
      *
-     * @param type Type to be supported
+     * @param type       Type to be supported
      * @param parameters Types that have to match in case type is generic type
      * @return {@code true} if this is supported, {@code false} otherwise
      */

@@ -70,13 +70,13 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
     public void should_load_release_information_from_gh_and_store_in_cache() throws Exception {
         // given
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                                      .get("/repos/ariya/phantomjs/tags")
-                                      .queryParam("page", 1)
-                                      .willReturn(
-                                          ResponseBuilder.response()
-                                              .header("Last-Modified", "Tue, 28 Mar 2017 05:23:15 GMT")
-                                              .body(RESPONSE_BODY)
-                                      )));
+            .get("/repos/ariya/phantomjs/tags")
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response()
+                    .header("Last-Modified", "Tue, 28 Mar 2017 05:23:15 GMT")
+                    .body(RESPONSE_BODY)
+            )));
 
         final String expectedVersion = "2.1.1";
 
@@ -96,12 +96,12 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
     public void should_load_release_information_from_cache_when_not_changed() throws Exception {
         // given
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                                      .get("/repos/ariya/phantomjs/tags")
-                                      .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 28 Mar 2017 05:23:15 GMT")
-                                      .queryParam("page", 1)
-                                      .willReturn(
-                                          ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
-                                      )));
+            .get("/repos/ariya/phantomjs/tags")
+            .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 28 Mar 2017 05:23:15 GMT")
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
+            )));
         createCacheFile("gh.cache.ariya@phantomjs.json", CACHED_CONTENT);
 
         final String expectedVersion = "2.1.1";
@@ -132,15 +132,15 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
                 "}";
 
         hoverflyRule.simulate(dsl(service("https://api.github.com")
-                                      .get("/repos/ariya/phantomjs/tags")
-                                      .header(HttpHeaders.IF_MODIFIED_SINCE,
-                                              "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
-                                      .queryParam("page", 1)
-                                      .willReturn(
-                                          ResponseBuilder.response()
-                                              .header("Last-Modified", "Tue, 28 Mar 2017 05:23:15 GMT")
-                                              .body(RESPONSE_BODY)
-                                      )));
+            .get("/repos/ariya/phantomjs/tags")
+            .header(HttpHeaders.IF_MODIFIED_SINCE,
+                "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
+            .queryParam("page", 1)
+            .willReturn(
+                ResponseBuilder.response()
+                    .header("Last-Modified", "Tue, 28 Mar 2017 05:23:15 GMT")
+                    .body(RESPONSE_BODY)
+            )));
         createCacheFile("gh.cache.ariya@phantomjs.json", cached_content);
 
         final String expectedVersion = "2.1.1";
@@ -162,7 +162,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
         ClassLoader classLoader = getClass().getClassLoader();
         try (
             final InputStreamReader inputStreamReader = new InputStreamReader(classLoader.getResourceAsStream(path),
-                                                                              Charsets.UTF_8)) {
+                Charsets.UTF_8)) {
             response = CharStreams.toString(inputStreamReader);
         }
         return response;
@@ -174,5 +174,4 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
             printWriter.flush();
         }
     }
-
 }

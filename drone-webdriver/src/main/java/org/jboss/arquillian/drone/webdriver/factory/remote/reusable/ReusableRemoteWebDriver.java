@@ -31,7 +31,7 @@ import org.openqa.selenium.remote.SessionId;
 /**
  * Reusable remote driver provides same functionality like {@link RemoteWebDriver}, but it additionally allows to reuse browser
  * session.
- *
+ * <p>
  * Provides reusing of {@link RemoteWebDriver} session by allowing to setup {@link DesiredCapabilities} and {@link SessionId}
  * from previous session.
  *
@@ -48,7 +48,7 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
     public static RemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
 
         RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteWebDriver.getCommandExecutor(),
-                remoteWebDriver.getCapabilities(), remoteWebDriver.getSessionId());
+            remoteWebDriver.getCapabilities(), remoteWebDriver.getSessionId());
         try {
             checkReusability(remoteWebDriver.getSessionId(), driver);
             return driver;
@@ -61,15 +61,16 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
      * Reuses browser session using sessionId and desiredCapabilities as fully-initialized {@link Capabilities} object from the
      * previous {@link RemoteWebDriver} session.
      *
-     * @param remoteAddress address of the remote Selenium Server hub
+     * @param remoteAddress       address of the remote Selenium Server hub
      * @param desiredCapabilities fully-initialized capabilities returned from previous {@link RemoteWebDriver} session
-     * @param sessionId sessionId from previous {@link RemoteWebDriver} session
+     * @param sessionId           sessionId from previous {@link RemoteWebDriver} session
      */
-    public static RemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities, SessionId sessionId)
-            throws UnableReuseSessionException {
+    public static RemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities,
+        SessionId sessionId)
+        throws UnableReuseSessionException {
 
         RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities,
-                sessionId);
+            sessionId);
         checkReusability(sessionId, driver);
         return driver;
     }
@@ -99,12 +100,13 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
 
     /**
      * Check that reused session can be controlled.
-     *
+     * <p>
      * If it cannot be controlled (API calls throw exception), throw {@link UnableReuseSessionException}.
      *
      * @throws UnableReuseSessionException
      */
-    private static void checkReusability(SessionId oldSessionId, RemoteWebDriver driver) throws UnableReuseSessionException {
+    private static void checkReusability(SessionId oldSessionId, RemoteWebDriver driver)
+        throws UnableReuseSessionException {
         if (!oldSessionId.equals(driver.getSessionId())) {
             throw new UnableReuseSessionException("The created session has another id then session we tried to reuse");
         }

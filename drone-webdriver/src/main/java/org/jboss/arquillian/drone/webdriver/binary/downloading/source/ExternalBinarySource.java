@@ -27,7 +27,4 @@ public interface ExternalBinarySource {
      * @throws Exception
      */
     ExternalBinary getReleaseForVersion(String version) throws Exception;
-
-
-
 }

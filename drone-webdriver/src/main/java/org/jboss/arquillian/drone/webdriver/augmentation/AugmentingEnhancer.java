@@ -75,7 +75,8 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
                 return (RemoteWebDriver) driver;
             } else {
                 logger.log(Level.WARNING,
-                    "Augmenter should be applied to (Reusable)RemoteWebDriver instances or previously augmented instances only, but it was {0}", driver.getClass().getName());
+                    "Augmenter should be applied to (Reusable)RemoteWebDriver instances or previously augmented instances only, but it was {0}",
+                    driver.getClass().getName());
                 return null;
             }
         }
@@ -87,7 +88,8 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
     }
 
     @Override
-    public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType, Class<? extends Annotation> qualifier) {
+    public boolean canEnhance(InstanceOrCallableInstance instance, Class<?> droneType,
+        Class<? extends Annotation> qualifier) {
 
         if (RemoteWebDriver.class == droneType || ReusableRemoteWebDriver.class == droneType) {
             return true;
@@ -130,7 +132,6 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
             }
 
             return original;
-
         }
         return enhancedInstance;
     }

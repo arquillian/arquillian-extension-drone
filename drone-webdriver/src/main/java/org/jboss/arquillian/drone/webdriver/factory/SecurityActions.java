@@ -25,13 +25,11 @@ import java.security.PrivilegedExceptionAction;
 
 /**
  * SecurityActions
- *
+ * <p>
  * A set of privileged actions that are not to leak out of this package
- *
  *
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  * @version $Revision: $
  */
 final class SecurityActions {
@@ -63,12 +61,10 @@ final class SecurityActions {
     /**
      * Obtains the Constructor specified from the given Class and argument types
      *
-     * @param clazz
-     * @param argumentTypes
-     * @return
      * @throws NoSuchMethodException
      */
-    static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes) throws NoSuchMethodException {
+    static Constructor<?> getConstructor(final Class<?> clazz, final Class<?>... argumentTypes)
+        throws NoSuchMethodException {
         try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>>() {
                 public Constructor<?> run() throws NoSuchMethodException {
@@ -105,26 +101,32 @@ final class SecurityActions {
             return Class.forName(className, false, tccl);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to find implementation class " + className
-                    + " on current classpath. Please make sure it is present on the classpath.");
+                + " on current classpath. Please make sure it is present on the classpath.");
         }
-
     }
 
     /**
      * Create a new instance by finding a constructor that matches the argumentTypes signature using the arguments for
      * instantiation.
      *
-     * @param className Full classname of class to create
-     * @param argumentTypes The constructor argument types
-     * @param arguments The constructor arguments
+     * @param className
+     *     Full classname of class to create
+     * @param argumentTypes
+     *     The constructor argument types
+     * @param arguments
+     *     The constructor arguments
+     *
      * @return a new instance
-     * @throws IllegalArgumentException if className, argumentTypes, or arguments are null
-     * @throws RuntimeException if any exceptions during creation
+     *
+     * @throws IllegalArgumentException
+     *     if className, argumentTypes, or arguments are null
+     * @throws RuntimeException
+     *     if any exceptions during creation
      * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
      * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
      */
     static <T> T newInstance(final String className, final Class<?>[] argumentTypes, final Object[] arguments,
-            final Class<T> expectedType) {
+        final Class<T> expectedType) {
         if (className == null) {
             throw new IllegalArgumentException("ClassName must be specified");
         }
@@ -142,26 +144,26 @@ final class SecurityActions {
             obj = constructor.newInstance(arguments);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Unable to find a constructor for implementation class "
-                    + getConstructorName(className, argumentTypes)
-                    + ". Please make sure that you haven't misconfigured Arquillian Drone, "
-                    + "e.g. you set an implementationClass which does not match the field/parameter type in your code.");
+                + getConstructorName(className, argumentTypes)
+                + ". Please make sure that you haven't misconfigured Arquillian Drone, "
+                + "e.g. you set an implementationClass which does not match the field/parameter type in your code.");
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Unable to instantiate a " + className
-                    + ". Please make sure that you haven't misconfigured Arquillian Drone, "
-                    + "e.g. you set an implementationClass which does not match the field/parameter type in your code.", e);
+                + ". Please make sure that you haven't misconfigured Arquillian Drone, "
+                + "e.g. you set an implementationClass which does not match the field/parameter type in your code.", e);
         } catch (InstantiationException e) {
             throw new IllegalStateException("Unable to instantiate a " + className
-                    + ". Please make sure that you haven't misconfigured Arquillian Drone, "
-                    + "e.g. you set an implementationClass which does not match the field/parameter type in your code.", e);
+                + ". Please make sure that you haven't misconfigured Arquillian Drone, "
+                + "e.g. you set an implementationClass which does not match the field/parameter type in your code.", e);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Unable to instantiate a " + className
-                    + " instance, access refused by SecurityManager.", e);
+                + " instance, access refused by SecurityManager.", e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(
-                    String.format("Unable to instantiate Drone via %s: %s",
+                String.format("Unable to instantiate Drone via %s: %s",
                     getConstructorName(className, argumentTypes),
                     e.getCause()), // this provides the message of the ITE cause, which is also important!
-                    e.getCause()); // this provides stack trace of the ITE cause
+                e.getCause()); // this provides stack trace of the ITE cause
         }
 
         // Cast
@@ -170,8 +172,8 @@ final class SecurityActions {
         } catch (final ClassCastException cce) {
             // Reconstruct so we get some useful information
             throw new ClassCastException("Unable to instantiate " + expectedType.getName()
-                    + " instance. Constructed object was type of " + obj.getClass().getName()
-                    + ", which is not compatible. Please make sure you haven't misconfigured Arquillian Drone.");
+                + " instance. Constructed object was type of " + obj.getClass().getName()
+                + ", which is not compatible. Please make sure you haven't misconfigured Arquillian Drone.");
         }
     }
 
@@ -201,7 +203,5 @@ final class SecurityActions {
         public ClassLoader run() {
             return Thread.currentThread().getContextClassLoader();
         }
-
     }
-
 }

@@ -85,7 +85,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ReusableRemoteWebDriverExtension.class);
         extensions.add(SeleniumServerExecutor.class);
-
     }
 
     @Before
@@ -94,7 +93,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // set browser capabilities to be the same as defined in arquillian.xml - webdriver-reusable configuration
         MockBrowserCapabilitiesRegistry registry = MockBrowserCapabilitiesRegistry.createSingletonRegistry();
         desiredCapabilities = new DesiredCapabilities(registry.getAllBrowserCapabilities().iterator().next()
-                                                          .getRawCapabilities());
+            .getRawCapabilities());
 
         permanentStorage = new MockReusedSessionPermanentStorage();
         when(serviceLoader.onlyOne(ReusedSessionPermanentStorage.class)).thenReturn(permanentStorage);
@@ -133,7 +132,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
                 new SeleniumServerBinaryHandler(selServerCaps).downloadAndPrepare().toString();
 
             fire(new StartSeleniumServer(seleniumServerBinary, browser, selServerCaps, hubUrl, seleniumServerArgs));
-
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -144,8 +142,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         Map<String, String> props = webdriver.getExtensionProperties();
         return props.get("seleniumServerVersion");
     }
-
-
 
     @After
     public void stopServer() {
@@ -169,7 +165,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // then
         ReusedSession reusedSession = sessionStore.get().pull(initializationParameter);
         assertNotNull("reusedSession must be stored", reusedSession);
-
     }
 
     @Test
@@ -210,7 +205,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         // pulls session - should be empty - it was cleared by last pull
         reusedSession = sessionStore.get().pull(initializationParameter);
         assertNull("reusedSession must not be stored", reusedSession);
-
     }
 
     public static class MockReusedSessionPermanentStorage implements ReusedSessionPermanentStorage {

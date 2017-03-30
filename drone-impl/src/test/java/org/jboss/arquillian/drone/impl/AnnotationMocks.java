@@ -24,7 +24,8 @@ public class AnnotationMocks {
     public static final String DEPLOYMENT_1 = "deployment_1";
     public static final String DEPLOYMENT_2 = "deployment_2";
 
-    private AnnotationMocks() { }
+    private AnnotationMocks() {
+    }
 
     @Drone
     private static Object drone;
@@ -75,6 +76,4 @@ public class AnnotationMocks {
             throw new RuntimeException(e);
         }
     }
-
-
 }

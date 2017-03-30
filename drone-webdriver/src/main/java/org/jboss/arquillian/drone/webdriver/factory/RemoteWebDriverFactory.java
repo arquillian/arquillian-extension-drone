@@ -88,7 +88,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         if (Validate.empty(remoteAddress)) {
             remoteAddress = WebDriverConfiguration.DEFAULT_REMOTE_URL;
             log.log(Level.INFO, "Property \"remoteAddress\" was not specified, using default value of {0}",
-                    WebDriverConfiguration.DEFAULT_REMOTE_URL);
+                WebDriverConfiguration.DEFAULT_REMOTE_URL);
         }
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
@@ -97,7 +97,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         if (Validate.empty(browser)) {
             configuration.setBrowser(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             log.log(Level.INFO, "Property \"browser\" was not specified, using default value of {0}",
-                    WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+                WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
         }
 
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
@@ -108,7 +108,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         if (!UrlUtils.isReachable(remoteAddress)) {
             if (UrlUtils.isLocalhost(remoteAddress)) {
                 log.info("The Selenium server is not running on: " + remoteAddress
-                             + " and as the address seems to be a localhost address, Drone will start the Selenium Server automatically.");
+                    + " and as the address seems to be a localhost address, Drone will start the Selenium Server automatically.");
                 try {
                     downloadAndStartSeleniumServer(configuration, browser, remoteAddress);
                 } catch (Exception e) {
@@ -118,7 +118,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
                 }
             } else {
                 log.warning("The URL: " + remoteAddress
-                                + " doesn't seem to be reachable. If there is no Selenium Server running, start it before the tests are run.");
+                    + " doesn't seem to be reachable. If there is no Selenium Server running, start it before the tests are run.");
             }
         }
 
@@ -158,7 +158,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
             startSeleniumServerEvent.fire(
                 new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress,
-                                        seleniumServerArgs));
+                    seleniumServerArgs));
         }
     }
 
@@ -184,8 +184,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
                 driver.quit();
             } catch (WebDriverException e) {
                 log.log(Level.WARNING, "@Drone {0} has been already destroyed and can't be destroyed again.",
-                        driver.getClass()
-                            .getSimpleName());
+                    driver.getClass()
+                        .getSimpleName());
             }
             return;
         }

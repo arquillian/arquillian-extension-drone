@@ -40,5 +40,4 @@ public class UnableReuseSessionException extends Exception {
     public UnableReuseSessionException(Throwable cause) {
         super(cause);
     }
-
 }

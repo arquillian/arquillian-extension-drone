@@ -21,12 +21,11 @@ package org.jboss.arquillian.drone.spi;
  *
  * @param <T> Type of the driver that the destructor is able to destroy
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface Destructor<T> extends Sortable {
     /**
      * Destroys an instance of the driver.
-     *
+     * <p>
      * After the last method is run, the driver instance is destroyed. This means browser windows, if any, are closed and used
      * resources are freed.
      *

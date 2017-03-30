@@ -104,7 +104,7 @@ public class DroneDestructor {
         if (log.isLoggable(Level.FINER)) {
             // FIXME possible nullpointerexception?
             log.fine("Using destructor defined in class: " + destructor.getClass().getName() + ", with precedence "
-                    + destructor.getPrecedence());
+                + destructor.getPrecedence());
         }
 
         return destructor;

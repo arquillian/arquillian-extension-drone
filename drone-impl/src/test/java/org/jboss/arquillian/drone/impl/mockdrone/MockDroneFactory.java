@@ -24,10 +24,9 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 
 /**
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
-        Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
+    Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
     /*
      * (non-Javadoc)
      *
@@ -59,5 +58,4 @@ public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfig
         MockDrone instance = new MockDrone(configuration.getField());
         return instance;
     }
-
 }

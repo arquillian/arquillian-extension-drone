@@ -56,12 +56,13 @@ public class BrowserCapabilitiesRegistryImpl implements BrowserCapabilitiesRegis
     /**
      * Registers a browser capability object for given key
      *
-     * @param key Type to be registered
+     * @param key                 Type to be registered
      * @param browserCapabilities {@link BrowserCapabilities} to be stored
      * @return Modified registry
      */
     @Override
-    public BrowserCapabilitiesRegistryImpl registerBrowserCapabilitiesFor(String key, BrowserCapabilities browserCapabilities) {
+    public BrowserCapabilitiesRegistryImpl registerBrowserCapabilitiesFor(String key,
+        BrowserCapabilities browserCapabilities) {
         registry.put(key, browserCapabilities);
         return this;
     }
@@ -70,5 +71,4 @@ public class BrowserCapabilitiesRegistryImpl implements BrowserCapabilitiesRegis
     public Collection<BrowserCapabilities> getAllBrowserCapabilities() {
         return Collections.unmodifiableCollection(registry.values());
     }
-
 }

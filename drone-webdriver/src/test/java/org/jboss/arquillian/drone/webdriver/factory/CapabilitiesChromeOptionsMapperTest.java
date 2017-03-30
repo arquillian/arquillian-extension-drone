@@ -79,8 +79,6 @@ public class CapabilitiesChromeOptionsMapperTest {
         Assert.assertEquals(expectedChromeOptions.toJson(), chromeOptions.toJson());
     }
 
-
-
     private static Map<String, Map<String, String>> handleJson(String capability) {
 
         String trimmedCapability = StringUtils.trimMultiline(capability);

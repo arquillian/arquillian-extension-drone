@@ -72,14 +72,14 @@ public class CapabilitiesDummyOptionsMapperTest {
         listOfLongs.add(new Long("secondLongListParam".hashCode()));
         dummyBrowserOptions.setListOfLongsParam(listOfLongs);
 
-        String[] arrayOfStrings = new String[] { "--firstString=ArrayParam", "--secondStringArrayParam" };
+        String[] arrayOfStrings = new String[] {"--firstString=ArrayParam", "--secondStringArrayParam"};
         dummyBrowserOptions.setArrayOfStringsParam(arrayOfStrings);
 
-        File[] arrayOfFiles = new File[] { new File("firstFileArrayParam"), new File("secondFileArrayParam") };
+        File[] arrayOfFiles = new File[] {new File("firstFileArrayParam"), new File("secondFileArrayParam")};
         dummyBrowserOptions.setArrayOfFilesParam(arrayOfFiles);
 
-        Double[] arrayOfDoubles = new Double[] { new Double("firstDoubleArrayParam".hashCode()),
-            new Double("secondDoubleArrayParam".hashCode()) };
+        Double[] arrayOfDoubles = new Double[] {new Double("firstDoubleArrayParam".hashCode()),
+            new Double("secondDoubleArrayParam".hashCode())};
         dummyBrowserOptions.setArrayOfDoublesParam(arrayOfDoubles);
 
         dummyBrowserOptions.setMapOfMapOfStringsParam("mapOfStrings", getMapOfStrings());
@@ -137,15 +137,15 @@ public class CapabilitiesDummyOptionsMapperTest {
 
         desiredCapabilities
             .setCapability("dummyListOfStringsParam",
-                           getListOrArray(dummyBrowserOptions.getListOfStringsParam().toArray()));
+                getListOrArray(dummyBrowserOptions.getListOfStringsParam().toArray()));
 
         desiredCapabilities
             .setCapability("dummyListOfFilesParam",
-                           getListOrArray(dummyBrowserOptions.getListOfFilesParam().toArray()));
+                getListOrArray(dummyBrowserOptions.getListOfFilesParam().toArray()));
 
         desiredCapabilities
             .setCapability("dummyListOfLongsParam",
-                           getListOrArray(dummyBrowserOptions.getListOfLongsParam().toArray()));
+                getListOrArray(dummyBrowserOptions.getListOfLongsParam().toArray()));
 
         desiredCapabilities
             .setCapability("dummyArrayOfStringsParam", getListOrArray(dummyBrowserOptions.getArrayOfStringsParam()));
@@ -158,7 +158,7 @@ public class CapabilitiesDummyOptionsMapperTest {
 
         desiredCapabilities
             .setCapability("dummyMapOfMapOfStringsParam",
-                           getJsonString(dummyBrowserOptions.getMapOfMapOfStringsParam()));
+                getJsonString(dummyBrowserOptions.getMapOfMapOfStringsParam()));
 
         desiredCapabilities
             .setCapability("dummyMapOfObjectParam", getJsonString(getMapOfMapOfObjectsInMapOfStrings()));

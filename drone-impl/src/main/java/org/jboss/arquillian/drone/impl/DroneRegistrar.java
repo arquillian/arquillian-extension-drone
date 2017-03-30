@@ -38,21 +38,20 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 /**
  * Registar of factories. Registers every {@link Configurator}, {@link Instantiator} and {@link Destructor} found via SPI. Only
  * ones with highes precedence are kept. See {@link Sortable#getPrecedence()}
- *
+ * <p>
  * <p>
  * Produces:
  * </p>
  * <ol>
  * {@link DroneRegistry}
  * </ol>
- *
+ * <p>
  * <p>
  * Observes:
  * </p>
  * {@link BeforeSuite}
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class DroneRegistrar {
     @Inject

@@ -26,7 +26,6 @@ import org.junit.Test;
  * Ensures that legacy field mapping works as expected
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public class LegacyMappingTestCase {
 
@@ -34,10 +33,10 @@ public class LegacyMappingTestCase {
     public void legacyCapabilityMapping() {
 
         ArquillianDescriptor descriptor = Descriptors.create(ArquillianDescriptor.class).extension("mockdrone")
-                .property("browserCapabilities", "mockdrone");
+            .property("browserCapabilities", "mockdrone");
 
         MockDroneConfiguration configuration = ConfigurationMapper.fromArquillianDescriptor(descriptor,
-                new MockDroneConfiguration(), Default.class);
+            new MockDroneConfiguration(), Default.class);
 
         Assert.assertNotSame("Browser capabilities was not remapped to browser", "mockdrone", configuration.getBrowser());
     }

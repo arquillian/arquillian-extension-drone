@@ -3,17 +3,17 @@
  * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *
+ * <p>
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- *
+ * <p>
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -56,6 +56,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class SerializationUtils {
 
     private static final SerializationWhitelist whitelist = new SerializationWhitelist();
+
     static {
 
         whitelist.enableClass(URL.class.getName());
@@ -85,7 +86,6 @@ public class SerializationUtils {
         whitelist.enableClass(ReusedSessionStoreImpl.ByteArray.class.getName());
         whitelist.enableClass(ReusedSessionStoreImpl.TimeStampedSession.class.getName());
         whitelist.enableClass(InitializationParameter.class.getName());
-
     }
 
     /**
@@ -156,5 +156,4 @@ public class SerializationUtils {
             return super.resolveClass(desc);
         }
     }
-
 }

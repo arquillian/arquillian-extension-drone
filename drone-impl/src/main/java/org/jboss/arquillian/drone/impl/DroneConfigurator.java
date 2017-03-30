@@ -3,7 +3,7 @@
  * Copyright 2015, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,7 +81,7 @@ public class DroneConfigurator {
 
     private <DRONE> void prepare(DronePoint<DRONE> dronePoint, DroneRegistry registry) {
         Validate.stateNotNull(droneContext.get(),
-                              "DroneContext should be available while working with method scoped instances");
+            "DroneContext should be available while working with method scoped instances");
 
         Configurator<DRONE, ?> droneConfigurator = getDroneConfigurator(registry, dronePoint);
         Instantiator callableInstantiator = getCallableInstantiator(registry, dronePoint);
@@ -130,17 +130,15 @@ public class DroneConfigurator {
     private <DRONE> Instantiator getCallableInstantiator(DroneRegistry registry, final DronePoint<DRONE> dronePoint) {
         if (droneContext.get().get(dronePoint).hasFutureInstance()) {
             logger.log(Level.WARNING, "Could not create drone callable for injection point {0}, " +
-                    "because it was already created!", dronePoint);
+                "because it was already created!", dronePoint);
             return null;
         }
 
         final Instantiator instantiator = registry.getEntryFor(dronePoint.getDroneType(), Instantiator.class);
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("Using instantiator defined in class: " + instantiator.getClass().getName() + ", " +
-                            "with precedence " + instantiator.getPrecedence());
-
+                "with precedence " + instantiator.getPrecedence());
         }
         return instantiator;
     }
-
 }

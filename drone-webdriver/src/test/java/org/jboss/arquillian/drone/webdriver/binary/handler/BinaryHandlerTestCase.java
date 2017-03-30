@@ -255,7 +255,7 @@ public class BinaryHandlerTestCase {
         assertThat(resultingFile.getParentFile().listFiles()).hasSize(1);
 
         Validate.isExecutable(resultingFile.getAbsolutePath(),
-                              "The file has to be an executable file, " + resultingFile);
+            "The file has to be an executable file, " + resultingFile);
         assertThat(System.getProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY)).isEqualTo(extracted);
 
         if (!PlatformUtils.isWindows()) {
@@ -272,9 +272,9 @@ public class BinaryHandlerTestCase {
             .command(new CommandBuilder(script))
             .runAsDaemon()
             .interaction(new BinaryInteraction()
-                             .outputPrefix("[Local Source] ")
-                             .printToOut(".*")
-                             .build())
+                .outputPrefix("[Local Source] ")
+                .printToOut(".*")
+                .build())
             .execute().awaitAtMost(5, TimeUnit.SECONDS);
         System.setOut(stdOut);
         assertThat(outContent.toString().trim()).isEqualTo("[Local Source] " + expected);

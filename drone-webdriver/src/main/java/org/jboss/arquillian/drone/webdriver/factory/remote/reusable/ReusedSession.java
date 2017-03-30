@@ -75,7 +75,7 @@ public class ReusedSession implements Serializable {
                             key,
                             value != null ? value.getClass().getName() : "unknown",
                             value,
-                            e.getCause() == null ? e : e.getCause() });
+                            e.getCause() == null ? e : e.getCause()});
                 }
             } else {
                 log.log(Level.FINE,
@@ -83,7 +83,7 @@ public class ReusedSession implements Serializable {
                     new Object[] {
                         key,
                         value != null ? value.getClass().getName() : "unknown",
-                        value });
+                        value});
             }
         }
         return capabilitiesForReuse;

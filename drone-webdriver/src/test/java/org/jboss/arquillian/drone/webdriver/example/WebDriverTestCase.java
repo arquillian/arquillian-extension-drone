@@ -37,7 +37,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  * Tests Arquillian Drone WebDriver against currently used browser
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 @RunWith(Arquillian.class)
 public class WebDriverTestCase {
@@ -54,8 +53,8 @@ public class WebDriverTestCase {
     @Deployment(testable = false)
     public static WebArchive deploySample() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addAsWebResource(new File("src/test/resources/form.html"), "form.html")
-                .addAsWebResource(new File("src/test/resources/js/jquery-1.8.2.min.js"), "js/jquery-1.8.2.min.js");
+            .addAsWebResource(new File("src/test/resources/form.html"), "form.html")
+            .addAsWebResource(new File("src/test/resources/js/jquery-1.8.2.min.js"), "js/jquery-1.8.2.min.js");
     }
 
     @Test

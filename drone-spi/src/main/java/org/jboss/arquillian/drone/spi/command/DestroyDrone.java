@@ -29,5 +29,4 @@ public class DestroyDrone extends InjectionPointCommand {
     public DestroyDrone(DronePoint<?> dronePoint) {
         super(dronePoint);
     }
-
 }

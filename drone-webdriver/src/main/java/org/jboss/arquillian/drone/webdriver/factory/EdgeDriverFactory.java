@@ -14,8 +14,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for EdgeDriver.
  */
 public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> implements
-        Configurator<EdgeDriver, WebDriverConfiguration>, Instantiator<EdgeDriver, WebDriverConfiguration>,
-        Destructor<EdgeDriver> {
+    Configurator<EdgeDriver, WebDriverConfiguration>, Instantiator<EdgeDriver, WebDriverConfiguration>,
+    Destructor<EdgeDriver> {
 
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Edge().getReadableName();
 
@@ -48,8 +48,8 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
     public EdgeDriver createInstance(WebDriverConfiguration configuration) {
         Capabilities edgeCapabilities = getCapabilities(configuration, true);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] { Capabilities.class },
-                new Object[] { edgeCapabilities }, EdgeDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+            new Object[] {edgeCapabilities}, EdgeDriver.class);
     }
 
     @Override

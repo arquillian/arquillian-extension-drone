@@ -22,7 +22,6 @@ import java.util.Collection;
  * A registry that holds all browser mappable types
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- *
  */
 public interface BrowserCapabilitiesRegistry {
 
@@ -31,18 +30,18 @@ public interface BrowserCapabilitiesRegistry {
      *
      * @param key the human readable name for the browser, e.g. firefox
      * @return The BrowserCapabilities object for given key or {@code null} if key is {@code null}, empty or it is not in the
-     *         registry
+     * registry
      */
     BrowserCapabilities getEntryFor(String key) throws IllegalStateException;
 
     /**
      * Checks if the registry has an entry for given implementation class name.
-     *
+     * <p>
      * This is a legacy method allowing backwards compatibility with Drone 1.0.0
      *
      * @param className Implementation class for appropriate WebDriver type
      * @return The {@link BrowserCapabilities} object for given implementation class or {@code null} if className is
-     *         {@code null}, empty or it is not in the registry
+     * {@code null}, empty or it is not in the registry
      */
     @Deprecated
     BrowserCapabilities getEntryByImplementationClassName(String className);
@@ -50,7 +49,7 @@ public interface BrowserCapabilitiesRegistry {
     /**
      * Registers a browser capability object for given key
      *
-     * @param key Type to be registered
+     * @param key                 Type to be registered
      * @param browserCapabilities {@link BrowserCapabilities} to be stored
      * @return Modified registry
      */

@@ -67,7 +67,7 @@ public class SauceLabsDriverFactory implements
         BrowserCapabilities browser = registry.getEntryFor(READABLE_NAME);
 
         WebDriverConfiguration configuration = new WebDriverConfiguration(browser).configure(arquillianDescriptor,
-                                                                                             dronePoint.getQualifier());
+            dronePoint.getQualifier());
         return configuration;
     }
 
@@ -112,9 +112,9 @@ public class SauceLabsDriverFactory implements
                 String localBinary = (String) capabilities.getCapability(SAUCE_CONNECT_BINARY);
 
                 SauceConnectRunner.getSauceConnectRunnerInstance().runSauceConnect(username,
-                                                                                   accessKey,
-                                                                                   additionalArgs,
-                                                                                   localBinary);
+                    accessKey,
+                    additionalArgs,
+                    localBinary);
             }
 
             return new SauceLabsDriver(sauceConnectUrl, capabilities, isSetSauceConnectManaged);

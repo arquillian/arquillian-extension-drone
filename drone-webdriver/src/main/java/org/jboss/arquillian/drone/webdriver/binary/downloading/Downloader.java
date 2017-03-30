@@ -28,11 +28,11 @@ public class Downloader {
      * a directory <code>target/drone/downloaded/</code>. The downloaded file is then returned.
      *
      * @param targetDir A directory where the downloaded file should be stored
-     * @param from A url a file should be downloaded from.
+     * @param from      A url a file should be downloaded from.
      * @return The downloaded file
      */
     public static File download(File targetDir, URL from) {
-        if (targetDir == null){
+        if (targetDir == null) {
             targetDir = new File(DRONE_TARGET_DOWNLOADED_DIRECTORY);
         }
         String fromUrl = from.toString();

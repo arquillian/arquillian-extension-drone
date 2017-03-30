@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
  * Mapper for Map<String, String>
  *
  * @author <a href="mailto:trepel@redhat.com">Tomas Repel</a>
- *
  */
 public enum MapValueMapper implements ValueMapper<Map<String, String>> {
 
@@ -33,11 +32,11 @@ public enum MapValueMapper implements ValueMapper<Map<String, String>> {
 
     @Override
     public boolean handles(Class<?> type, Class<?>... parameters) {
-        if (! Map.class.isAssignableFrom(type)) {
+        if (!Map.class.isAssignableFrom(type)) {
             return false;
         }
 
-        if (parameters.length != 2 ) {
+        if (parameters.length != 2) {
             return false;
         }
 
@@ -52,7 +51,8 @@ public enum MapValueMapper implements ValueMapper<Map<String, String>> {
     /**
      * It expects the string of format key=value,key1=value1,key2=value2.
      *
-     * @param value - the string to be parsed and transformed to Map.
+     * @param value
+     *     - the string to be parsed and transformed to Map.
      */
     @Override
     public Map<String, String> transform(String value) throws IllegalArgumentException {
@@ -60,14 +60,20 @@ public enum MapValueMapper implements ValueMapper<Map<String, String>> {
 
         try {
             StringTokenizer st = new StringTokenizer(value, ",");
-            while(st.hasMoreTokens()) {
+            while (st.hasMoreTokens()) {
                 StringTokenizer subSt = new StringTokenizer(st.nextToken().trim(), "=");
                 map.put(subSt.nextToken().trim(), subSt.nextToken().trim());
             }
         } catch (NoSuchElementException e) {
-            throw new IllegalArgumentException("Invalid format of '" + value + "', cannot be parsed to Map<String,String>. The expected format is 'key=value,key1=value1,key2=value2'", e);
+            throw new IllegalArgumentException("Invalid format of '"
+                + value
+                + "', cannot be parsed to Map<String,String>. The expected format is 'key=value,key1=value1,key2=value2'",
+                e);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Invalid format of '" + value + "', cannot be parsed to Map<String,String>. The expected format is 'key=value,key1=value1,key2=value2'", e);
+            throw new IllegalArgumentException("Invalid format of '"
+                + value
+                + "', cannot be parsed to Map<String,String>. The expected format is 'key=value,key1=value1,key2=value2'",
+                e);
         }
 
         return map;

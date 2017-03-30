@@ -31,10 +31,10 @@ public class FilterableResultImpl<DRONE> implements FilterableResult<DRONE> {
     private final Set<DronePoint<DRONE>> wrapped;
 
     public FilterableResultImpl(DroneContext context, Set<DronePoint<DRONE>> wrapped) {
-        if(context == null) {
+        if (context == null) {
             throw new IllegalArgumentException("DroneContext cannot be null!");
         }
-        if(wrapped == null) {
+        if (wrapped == null) {
             throw new IllegalArgumentException("Wrapped Set cannot be null!");
         }
         this.context = context;
@@ -44,8 +44,8 @@ public class FilterableResultImpl<DRONE> implements FilterableResult<DRONE> {
     @Override
     public FilterableResult<DRONE> filter(DronePointFilter<? super DRONE> filter) {
         Set<DronePoint<DRONE>> dronePoints = new HashSet<DronePoint<DRONE>>();
-        for(DronePoint<DRONE> dronePoint : wrapped) {
-            if(filter.accepts(context, dronePoint)) {
+        for (DronePoint<DRONE> dronePoint : wrapped) {
+            if (filter.accepts(context, dronePoint)) {
                 dronePoints.add(dronePoint);
             }
         }
@@ -61,7 +61,7 @@ public class FilterableResultImpl<DRONE> implements FilterableResult<DRONE> {
             builder.append(count).append(". Matched points: [ ");
             int i = 0;
             for (DronePoint<DRONE> dronePoint : wrapped) {
-                if(i > 0) {
+                if (i > 0) {
                     builder.append(", ");
                 }
                 builder.append(dronePoint);
@@ -82,5 +82,4 @@ public class FilterableResultImpl<DRONE> implements FilterableResult<DRONE> {
     public Iterator<DronePoint<DRONE>> iterator() {
         return wrapped.iterator();
     }
-
 }
