@@ -1,16 +1,14 @@
 import org.arquillian.spacelift.Spacelift
-import org.arquillian.spacelift.gradle.GradleSpaceliftDelegate
 import org.arquillian.spacelift.gradle.maven.MavenExecutor
 import org.arquillian.spacelift.gradle.utils.EnvironmentUtils
 import org.arquillian.spacelift.process.CommandBuilder
-import org.arquillian.spacelift.task.os.CommandTool
 
 defaultTasks 'test'
 apply plugin: 'org.arquillian.spacelift'
 
 ext {
     arquillianCoreVersion = ['1.1.6.Final', '1.1.7.Final', '1.1.8.Final', '1.1.9.Final', '1.1.10.Final', '1.1.11.Final',
-                             '1.1.12.Final']
+                             '1.1.12.Final', '1.1.13.Final']
 
     if (project.hasProperty("browser")) {
         browser = ["${browser}"]
