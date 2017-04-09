@@ -30,6 +30,18 @@ public class GitHubLastUpdateCacheTest {
     }
 
     @Test
+    public void should_create_nested_cache_folder() throws Exception {
+        // given
+        final File customCacheFolder = new File(new File(tmpFolder, "nested"), "custom-cache-folder");
+        gitHubLastUpdateCache = new GitHubLastUpdateCache(customCacheFolder);
+
+        // then
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(customCacheFolder).exists().isDirectory();
+        softly.assertAll();
+    }
+
+    @Test
     public void should_create_release_cache_folder() throws Exception {
         // given
         final File customCacheFolder = new File(tmpFolder, "custom-cache-folder");
