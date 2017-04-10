@@ -312,6 +312,7 @@
                     </requireProperty>
                   </rules>
                 </configuration>
+
               </execution>
             </executions>
           </plugin>
@@ -404,17 +405,17 @@
       </properties>
     </profile>
     <profile>
-      <id>htmlunit</id>
+      <id>htmlUnit</id>
 
       <activation>
         <property>
           <name>browser</name>
-          <value>htmlunit</value>
+          <value>htmlUnit</value>
         </property>
       </activation>
 
       <properties>
-        <browser>htmlunit</browser>
+        <browser>htmlUnit</browser>
         <selenium.htmlunit.driver>dummy</selenium.htmlunit.driver>
       </properties>
     </profile>
