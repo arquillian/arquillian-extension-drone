@@ -305,9 +305,12 @@
                     <requireProperty>
                       <property>browser</property>
                       <message>browser property must be specified!</message>
-                      <regex>firefox|android|htmlUnit|safari|chrome|opera|phantomjs|iphone|internetExplorer|edge</regex>
-                      <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit, safari, chrome, opera,
-                        phantomjs, iphone, internetExplorer, edge but was ${browser}
+                      <regex>
+                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|phantomjs|iphone|internetExplorer|internetexplorer|edge
+                      </regex>
+                      <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit/htmlunit, safari, chrome,
+                        opera,
+                        phantomjs, iphone, internetExplorer/internetexplorer, edge but was ${browser}
                       </regexMessage>
                     </requireProperty>
                   </rules>
@@ -402,6 +405,21 @@
       <properties>
         <browser>chrome</browser>
         <selenium.chrome.driver>dummy</selenium.chrome.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>htmlunit</id>
+
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>htmlunit</value>
+        </property>
+      </activation>
+
+      <properties>
+        <browser>htmlunit</browser>
+        <selenium.htmlunit.driver>dummy</selenium.htmlunit.driver>
       </properties>
     </profile>
     <profile>

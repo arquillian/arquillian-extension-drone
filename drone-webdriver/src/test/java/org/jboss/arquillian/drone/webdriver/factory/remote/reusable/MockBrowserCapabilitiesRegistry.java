@@ -29,9 +29,9 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Edge());
         } else if ("firefox".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Firefox());
-        } else if ("htmlUnit".equals(browser)) {
+        } else if ("htmlUnit".equals(browser) || "htmlunit".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.HtmlUnit());
-        } else if ("internetExplorer".equals(browser)) {
+        } else if ("internetExplorer".equals(browser) || "internetexplorer".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.InternetExplorer());
         } else if ("opera".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());

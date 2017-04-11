@@ -56,7 +56,9 @@ public class BrowserCapabilitiesRegistrar {
         Collections.sort(list, SORTABLE_COMPARATOR);
 
         for (BrowserCapabilities browser : list) {
-            browserCapabilitiesRegistry.get().registerBrowserCapabilitiesFor(browser.getReadableName(), browser);
+            final String browserReadableName = browser.getReadableName();
+            final String browserName = browserReadableName != null ? browserReadableName.toLowerCase() : null;
+            browserCapabilitiesRegistry.get().registerBrowserCapabilitiesFor(browserName, browser);
         }
     }
 }
