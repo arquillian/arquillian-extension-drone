@@ -49,8 +49,8 @@ public class GitHubLastUpdateCache {
             throw new IllegalArgumentException(
                 "Passed [" + cacheDirectory.getAbsolutePath() + "] exists and is not a directory.");
         }
-        if (!cacheDirectory.exists()) {
-            cacheDirectory.mkdir();
+        if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
+            throw new RuntimeException("Could not create cache directory: " + cacheDirectory);
         }
         return cacheDirectory;
     }
