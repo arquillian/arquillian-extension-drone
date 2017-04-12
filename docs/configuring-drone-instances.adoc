@@ -117,6 +117,12 @@ FirefoxDriver
 |Path to Firefox user preferences. This file will be parsed and values
 will be applied to freshly created Firefox profile.
 
+|htmlUnitWebClientOptions
+|-
+|Comma separated list of webClientOptions for HtmlUnitDriver. e.g.
+timeout=10,javaScriptEnabled=true, throwExceptionOnScriptError=false
+
+
 |dimensions
 |-
 |Dimensions of browser window in `widthxheight` format. This will resize

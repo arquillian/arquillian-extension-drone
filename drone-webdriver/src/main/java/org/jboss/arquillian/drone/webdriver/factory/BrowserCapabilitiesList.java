@@ -93,7 +93,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public String getImplementationClassName() {
-            return "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+            return "org.jboss.arquillian.drone.webdriver.htmlunit.HtmlUnitDriver";
         }
 
         @Override

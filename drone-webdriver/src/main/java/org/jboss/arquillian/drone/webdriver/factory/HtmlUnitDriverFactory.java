@@ -16,12 +16,18 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebClientOptions;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.htmlunit.HtmlUnitDriver;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -62,8 +68,17 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
     @Override
     public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
         Capabilities capabilities = getCapabilities(configuration, true);
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
-            new Object[] {capabilities}, HtmlUnitDriver.class);
+        final HtmlUnitDriver htmlUnitDriver =
+            SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+                new Object[] {capabilities}, HtmlUnitDriver.class);
+
+        final String htmlUnitClientOptions = (String) capabilities.getCapability("htmlUnitWebClientOptions");
+        if (Validate.nonEmpty(htmlUnitClientOptions)) {
+            WebClient webClient = htmlUnitDriver.getWebClient();
+            setClientOptions(webClient, htmlUnitClientOptions);
+        }
+
+        return htmlUnitDriver;
     }
 
     /**
@@ -85,5 +100,23 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
     @Override
     protected String getDriverReadableName() {
         return BROWSER_CAPABILITIES;
+    }
+
+    private void setClientOptions(WebClient webClient, String htmlUnitWebClientOptions) {
+        final WebClientOptions webClientOptions = webClient.getOptions();
+
+        Map<String, String> clientOptions = new LinkedHashMap<>();
+        final String[] options = htmlUnitWebClientOptions.split(",");
+        for (String option : options) {
+            final String[] keyValue = option.split("=");
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                key = BROWSER_CAPABILITIES + Character.toUpperCase(key.charAt(0)) + key.substring(1);
+                clientOptions.put(key, keyValue[1].trim());
+            }
+        }
+        final DesiredCapabilities webClientCapabilities = new DesiredCapabilities(clientOptions);
+
+        CapabilitiesOptionsMapper.mapCapabilities(webClientOptions, webClientCapabilities, BROWSER_CAPABILITIES);
     }
 }
