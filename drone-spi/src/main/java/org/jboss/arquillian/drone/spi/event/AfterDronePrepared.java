@@ -23,7 +23,6 @@ import org.jboss.arquillian.drone.spi.DronePoint;
  * This event is called after Drone preparation is finished. By observing this event, you can modify Drone configuration
  * after it's creation. Drone instance callable is created and stored in {@link DroneContext}
  *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class AfterDronePrepared extends BaseDroneEvent implements DroneConfigurationEvent {

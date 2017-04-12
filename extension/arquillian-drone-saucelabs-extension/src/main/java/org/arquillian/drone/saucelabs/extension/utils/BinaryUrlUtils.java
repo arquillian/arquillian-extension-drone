@@ -30,8 +30,6 @@ import org.json.JSONObject;
 
 /**
  * Util class for resolving download url of the SauceConnect binary
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BinaryUrlUtils {
 

@@ -28,8 +28,6 @@ import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration
 
 /**
  * A simple URL utility class
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class UrlUtils {
 

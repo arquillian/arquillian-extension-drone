@@ -5,8 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Representation of timeout related exception in Drone
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneTimeoutException extends RuntimeException {
 

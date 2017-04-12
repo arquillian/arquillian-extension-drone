@@ -27,8 +27,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Util class to make UI tests easier
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class WebDriverUtil {
 

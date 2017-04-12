@@ -30,8 +30,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Is responsible for launching and stopping selenium server binary
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SeleniumServerExecutor {
 

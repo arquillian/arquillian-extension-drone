@@ -32,7 +32,7 @@ import org.openqa.selenium.Platform;
 import static org.openqa.selenium.Platform.WINDOWS;
 
 /**
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ *
  */
 public class Validate {
 

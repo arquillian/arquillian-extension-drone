@@ -20,8 +20,6 @@ import java.util.concurrent.Callable;
 
 /**
  * Holder of either instance or Callable that after invoked, will result into the instance.
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 @Deprecated
 public interface InstanceOrCallableInstance {

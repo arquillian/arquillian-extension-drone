@@ -7,7 +7,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class LocalBinarySource implements ExternalBinarySource {
 

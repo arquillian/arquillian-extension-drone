@@ -62,8 +62,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests Destroyer activation when no context was created (no @Drone) won't fail
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DestroyerTestCase extends AbstractTestTestBase {

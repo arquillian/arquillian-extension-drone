@@ -56,7 +56,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * {@link BeforeDronePrepared} {@link AfterDronePrepared}
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class DroneConfigurator {
     private static Logger logger = Logger.getLogger(DroneConfigurator.class.getName());

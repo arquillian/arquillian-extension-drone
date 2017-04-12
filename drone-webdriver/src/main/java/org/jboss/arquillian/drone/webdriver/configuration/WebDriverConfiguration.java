@@ -33,8 +33,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration> {
 

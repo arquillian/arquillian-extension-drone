@@ -29,9 +29,6 @@ import qualifier.Reusable;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
- */
 @RunWith(Arquillian.class)
 public class TestReusingWebDriverSession extends AbstractInBrowserTest {
 

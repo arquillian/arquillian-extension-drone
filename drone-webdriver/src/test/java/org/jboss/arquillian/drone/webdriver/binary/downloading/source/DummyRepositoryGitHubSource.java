@@ -10,7 +10,7 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class DummyRepositoryGitHubSource extends GitHubSource {
 

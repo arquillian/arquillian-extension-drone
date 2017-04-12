@@ -34,7 +34,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class CapabilitiesChromeOptionsMapperTest {
 

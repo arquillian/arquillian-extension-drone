@@ -5,7 +5,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinar
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class LocalBinaryHandler extends AbstractBinaryHandler {
 

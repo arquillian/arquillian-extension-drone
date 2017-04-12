@@ -35,7 +35,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> implements
     Configurator<OperaDriver, WebDriverConfiguration>, Instantiator<OperaDriver, WebDriverConfiguration>,

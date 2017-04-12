@@ -18,8 +18,6 @@ import static org.openqa.selenium.phantomjs.PhantomJSDriverService.PHANTOMJS_EXE
  * A class for handling PhantomJS binaries
  * <br/>
  * <b>Not fully implemented - downloading is not supported using an {@link ExternalBinarySource}</b>
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 

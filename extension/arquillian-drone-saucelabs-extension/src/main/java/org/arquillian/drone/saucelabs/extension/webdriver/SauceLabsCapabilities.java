@@ -24,8 +24,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class
  * also
  * supports implementationClass property which is now legacy configuration value.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SauceLabsCapabilities implements BrowserCapabilities {
 

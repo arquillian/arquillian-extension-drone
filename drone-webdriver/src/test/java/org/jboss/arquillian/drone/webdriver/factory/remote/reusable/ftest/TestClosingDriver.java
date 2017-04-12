@@ -27,9 +27,6 @@ import qualifier.Reusable;
 
 import static org.junit.Assert.fail;
 
-/**
- * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
- */
 @RunWith(Arquillian.class)
 @Ignore
 public class TestClosingDriver extends AbstractInBrowserTest {

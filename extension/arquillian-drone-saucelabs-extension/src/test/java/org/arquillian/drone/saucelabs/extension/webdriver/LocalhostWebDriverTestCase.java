@@ -34,7 +34,6 @@ import org.openqa.selenium.WebDriver;
  * Tests Arquillian Drone WebDriver against currently used browser
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 @RunWith(Arquillian.class)
 public class LocalhostWebDriverTestCase {

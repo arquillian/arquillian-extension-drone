@@ -24,8 +24,6 @@ import static org.apache.http.HttpHeaders.LAST_MODIFIED;
 /**
  * GitHub source is an abstract class that helps you to retrieve either latest release or a release with some version
  * from some specific repository.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public abstract class GitHubSource implements ExternalBinarySource {
 

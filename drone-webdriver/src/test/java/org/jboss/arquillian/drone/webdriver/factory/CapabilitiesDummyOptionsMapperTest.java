@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class CapabilitiesDummyOptionsMapperTest {
 

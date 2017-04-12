@@ -15,8 +15,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * Class that handles system properties, properties stored in capabilities, downloading, extracting and setting binaries
  * as executable.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public abstract class AbstractBinaryHandler implements BinaryHandler {
 

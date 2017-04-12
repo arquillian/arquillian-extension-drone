@@ -3,8 +3,6 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading;
 /**
  * A representation of some external binary. Each external binary is represented by it's version and by a url that
  * points to the binary.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class ExternalBinary {
 

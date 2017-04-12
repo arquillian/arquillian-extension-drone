@@ -9,8 +9,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * A class for handling selenium server binaries. It also runs the selenium server with properties that are
  * appropriately configured
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 

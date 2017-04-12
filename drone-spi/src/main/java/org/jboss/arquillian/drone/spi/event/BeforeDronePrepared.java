@@ -26,7 +26,6 @@ import org.jboss.arquillian.drone.spi.Instantiator;
  * This event is fired before Drone preparation is started. You'd need to modify {@link ArquillianDescriptor} in
  * order to change configuration before it is created.
  *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class BeforeDronePrepared extends BaseDroneEvent implements DroneConfigurationEvent {

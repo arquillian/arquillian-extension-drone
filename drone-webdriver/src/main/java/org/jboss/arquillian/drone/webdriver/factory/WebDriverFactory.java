@@ -34,8 +34,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for a generic
  * WebDriver browser.
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implements
     Configurator<WebDriver, WebDriverConfiguration>, Instantiator<WebDriver, WebDriverConfiguration>,

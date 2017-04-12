@@ -36,8 +36,6 @@ import org.arquillian.spacelift.task.net.DownloadTool;
 
 /**
  * Is responsible for starting a BrowserStackLocal binary
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BrowserStackLocalRunner {
 

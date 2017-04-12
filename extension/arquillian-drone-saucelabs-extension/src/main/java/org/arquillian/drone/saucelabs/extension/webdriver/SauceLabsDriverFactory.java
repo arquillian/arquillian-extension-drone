@@ -45,8 +45,6 @@ import static org.arquillian.drone.saucelabs.extension.webdriver.SauceLabsCapabi
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
  * {@link SauceLabsDriver}.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SauceLabsDriverFactory implements
     Configurator<SauceLabsDriver, WebDriverConfiguration>,

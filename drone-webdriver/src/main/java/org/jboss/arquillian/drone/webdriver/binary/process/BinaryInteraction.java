@@ -13,8 +13,6 @@ import org.jboss.arquillian.drone.webdriver.utils.Validate;
 /**
  * Creates a Spacelift interaction for process that are usually tight with some specific output and for which you can
  * define which output should be printed to stdout
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BinaryInteraction {
 
@@ -131,8 +129,6 @@ public class BinaryInteraction {
 
     /**
      * Definition of allowed actions when output is matched
-     *
-     * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
      */
     public class MatchedOutputProcessInteractionBuilder {
 

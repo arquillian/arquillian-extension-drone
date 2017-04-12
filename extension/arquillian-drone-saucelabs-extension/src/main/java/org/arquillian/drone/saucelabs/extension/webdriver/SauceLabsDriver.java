@@ -25,8 +25,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * This is an implementation of the {@link RemoteWebDriver} intended to be used with Sauce Labs account.
  * saucelabs.com is a cloud-based cross-browser grid for executing Selenium WebDriver tests. See saucelabs.com
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class SauceLabsDriver extends RemoteWebDriver {
 

@@ -2,8 +2,6 @@ package org.arquillian.drone.browserstack.extension.local;
 
 /**
  * Throws when something bad happens during running BrowserStackLocal binary
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BrowserStackLocalException extends RuntimeException {
 

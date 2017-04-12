@@ -12,8 +12,6 @@ import static org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDrive
 /**
  * A slightly changed {@link GitHubSource} implementation handling PhantomJS binaries. The latest version is retrieved
  * from list of GH tags and download URL is constructed to use Bitbucket downloads storage.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class PhantomJSGitHubBitbucketSource extends GitHubSource {
 

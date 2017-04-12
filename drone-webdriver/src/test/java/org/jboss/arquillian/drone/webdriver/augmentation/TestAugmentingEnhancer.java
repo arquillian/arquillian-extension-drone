@@ -123,8 +123,6 @@ public class TestAugmentingEnhancer {
      * and by
      * default
      * RemoteWebDriver spawns Firefox driver. Yet, we can't mock it as Augementer asks for an exact class match *
-     *
-     * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
      */
     @SuppressWarnings("restriction")
     private static class Unsafe {

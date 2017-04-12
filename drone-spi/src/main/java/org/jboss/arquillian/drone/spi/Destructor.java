@@ -21,8 +21,6 @@ package org.jboss.arquillian.drone.spi;
  *
  * @param <T>
  *     Type of the driver that the destructor is able to destroy
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public interface Destructor<T> extends Sortable {
     /**

@@ -19,7 +19,7 @@ import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.Sel
 import static org.mockito.ArgumentMatchers.startsWith;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LocalGoogleSeleniumStorageTestCase {

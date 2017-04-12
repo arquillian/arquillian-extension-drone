@@ -25,8 +25,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 /**
  * This is an implementation of the {@link RemoteWebDriver} intended to be used with BrowserStack account.
  * BrowserStack is a cloud-based cross-browser testing tool. See browserstack.com
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BrowserStackDriver extends RemoteWebDriver {
 

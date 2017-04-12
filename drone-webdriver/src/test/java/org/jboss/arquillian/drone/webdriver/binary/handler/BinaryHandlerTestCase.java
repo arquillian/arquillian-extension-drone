@@ -31,7 +31,7 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DR
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class BinaryHandlerTestCase {
 

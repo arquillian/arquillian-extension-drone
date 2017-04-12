@@ -31,8 +31,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
  * InternetExplorerDriver.
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<InternetExplorerDriver> implements
     Configurator<InternetExplorerDriver, WebDriverConfiguration>,

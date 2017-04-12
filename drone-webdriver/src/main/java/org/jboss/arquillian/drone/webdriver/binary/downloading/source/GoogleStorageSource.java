@@ -23,8 +23,6 @@ import org.xml.sax.InputSource;
  * or a release with some version from some specific google storage.
  * Eg. http://selenium-release.storage.googleapis.com/ for selenium bits or https://chromedriver.storage.googleapis.com/
  * for chrome web-drivers
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public abstract class GoogleStorageSource implements ExternalBinarySource {
 

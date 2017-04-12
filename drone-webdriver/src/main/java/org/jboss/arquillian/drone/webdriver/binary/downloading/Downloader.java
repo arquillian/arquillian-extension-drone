@@ -12,8 +12,6 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_
 
 /**
  * A util class that enables you to download files.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class Downloader {
 

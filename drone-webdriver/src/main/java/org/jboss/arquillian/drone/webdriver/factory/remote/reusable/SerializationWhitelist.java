@@ -26,8 +26,6 @@ import java.util.logging.Logger;
  * List of classes that can be serialized and deserialized. This implementation reduces possibility of a security breach.
  * See
  * ARQ-1450 for more details.
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public class SerializationWhitelist {
     private static final Logger log = Logger.getLogger(SerializationWhitelist.class.getName());

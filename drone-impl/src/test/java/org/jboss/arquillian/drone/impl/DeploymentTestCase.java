@@ -23,8 +23,6 @@ import org.mockito.stubbing.Answer;
 
 /**
  * A test case for testing a proper enrichment of deployment-scoped drone points.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class DeploymentTestCase extends EnricherTestCase {
 

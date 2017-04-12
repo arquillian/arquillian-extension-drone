@@ -20,9 +20,6 @@ import java.io.Serializable;
 import java.net.URL;
 import org.openqa.selenium.Capabilities;
 
-/**
- * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
- */
 public class InitializationParameter implements Serializable {
     private static final long serialVersionUID = 7249154351129725604L;
 

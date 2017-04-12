@@ -10,8 +10,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * A class for handling chromeDriver binaries
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 

@@ -26,7 +26,7 @@ import org.junit.Assert;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ *
  */
 public class CachingMockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
     Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {

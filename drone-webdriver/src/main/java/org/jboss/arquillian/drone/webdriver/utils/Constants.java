@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.webdriver.utils;
 import java.io.File;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class Constants {
 

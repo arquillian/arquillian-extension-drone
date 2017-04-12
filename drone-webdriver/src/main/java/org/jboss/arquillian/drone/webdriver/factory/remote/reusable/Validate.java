@@ -19,7 +19,7 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.io.File;
 
 /**
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+ *
  */
 class Validate {
 

@@ -46,8 +46,6 @@ import static org.arquillian.drone.browserstack.extension.webdriver.BrowserStack
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
  * {@link BrowserStackDriver}.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class BrowserStackDriverFactory implements
     Configurator<BrowserStackDriver, WebDriverConfiguration>,

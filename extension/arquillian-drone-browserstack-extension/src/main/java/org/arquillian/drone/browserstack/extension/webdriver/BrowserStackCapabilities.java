@@ -25,7 +25,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * also
  * supports implementationClass property which is now legacy configuration value.
  *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @see DesiredCapabilities
  */
 public class BrowserStackCapabilities implements BrowserCapabilities {

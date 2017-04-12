@@ -4,8 +4,6 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 
 /**
  * A representation of an external source of some binarie.
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public interface ExternalBinarySource {
 

@@ -37,7 +37,7 @@ import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class CapabilitiesOptionsMapper {
 

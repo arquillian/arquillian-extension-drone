@@ -25,7 +25,6 @@ import org.openqa.selenium.WebDriver;
  * A wrapper for login page to act as a component
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class LoginPage {
 

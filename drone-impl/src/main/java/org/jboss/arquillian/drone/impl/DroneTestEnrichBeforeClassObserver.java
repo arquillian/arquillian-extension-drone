@@ -31,7 +31,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * This enricher is indirectly responsible for firing chain of events that transform a callable into real instance by
  * firing {@link BeforeDroneInstantiated} event.
  *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class DroneTestEnrichBeforeClassObserver {

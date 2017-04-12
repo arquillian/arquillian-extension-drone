@@ -45,7 +45,6 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * firing {@link BeforeDroneInstantiated} event.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class DroneTestEnricher implements TestEnricher {
     private static final Logger log = Logger.getLogger(DroneTestEnricher.class.getName());

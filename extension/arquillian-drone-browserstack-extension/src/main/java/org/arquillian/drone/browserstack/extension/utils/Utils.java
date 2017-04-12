@@ -3,7 +3,7 @@ package org.arquillian.drone.browserstack.extension.utils;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class Utils {
 

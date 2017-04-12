@@ -8,8 +8,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * A class for handling binaries for Opera
  * <br/>
  * <b>Not fully implemented - downloading is not supported so far</b>
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class OperaDriverBinaryHandler extends AbstractBinaryHandler {
 

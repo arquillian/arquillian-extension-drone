@@ -62,8 +62,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Ensures that custom annotation has no effect
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class InjectionPointsTest extends AbstractTestTestBase {

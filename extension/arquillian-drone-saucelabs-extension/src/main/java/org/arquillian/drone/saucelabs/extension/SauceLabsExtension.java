@@ -25,7 +25,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 
 /**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
+ *
  */
 public class SauceLabsExtension implements LoadableExtension {
     public void register(ExtensionBuilder extensionBuilder) {

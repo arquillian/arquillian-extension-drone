@@ -9,8 +9,6 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 /**
  * This registry keeps all {@link DronePoint}s with the {@link DronePoint.Lifecycle.DEPLOYMENT} scope and the reference
  * to the instance of the test class the DronePoint is declared in
- *
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class DeploymentDronePointsRegistry {
 
