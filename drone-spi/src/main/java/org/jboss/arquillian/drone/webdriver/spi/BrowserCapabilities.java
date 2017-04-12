@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.spi;
 
 import java.util.Map;
-
 import org.jboss.arquillian.drone.spi.Sortable;
 
 /**
@@ -29,22 +28,16 @@ public interface BrowserCapabilities extends Sortable {
 
     /**
      * Returns class name of appropriate Selenium browser
-     *
-     * @return
      */
     String getImplementationClassName();
 
     /**
      * Returns a map of Selenium capabilities of the browser
-     *
-     * @return
      */
     Map<String, ?> getRawCapabilities();
 
     /**
      * Returns a name of browser used to match the BrowserCapabilities object
-     *
-     * @return
      */
     String getReadableName();
 }

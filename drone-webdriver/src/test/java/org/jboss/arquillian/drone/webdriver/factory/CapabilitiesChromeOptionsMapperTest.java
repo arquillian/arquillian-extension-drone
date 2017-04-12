@@ -21,18 +21,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -40,6 +39,23 @@ import java.util.Set;
 public class CapabilitiesChromeOptionsMapperTest {
 
     private static final Gson GSON = new Gson();
+
+    private static Map<String, Map<String, String>> handleJson(String capability) {
+
+        String trimmedCapability = StringUtils.trimMultiline(capability);
+        JsonObject json = new JsonParser().parse(trimmedCapability).getAsJsonObject();
+        Set<Map.Entry<String, JsonElement>> entries = json.entrySet();
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, Map<String, String>> dictionaries = new HashMap<String, Map<String, String>>();
+        for (Map.Entry<String, JsonElement> entry : entries) {
+            String key = entry.getKey();
+            Map<String, String> values = GSON.fromJson(entry.getValue(), type);
+            dictionaries.put(key, values);
+        }
+
+        return dictionaries;
+    }
 
     @Test
     public void testParseChromeOptions() throws IOException {
@@ -77,22 +93,5 @@ public class CapabilitiesChromeOptionsMapperTest {
 
         Assert.assertEquals(expectedChromeOptions, chromeOptions);
         Assert.assertEquals(expectedChromeOptions.toJson(), chromeOptions.toJson());
-    }
-
-    private static Map<String, Map<String, String>> handleJson(String capability) {
-
-        String trimmedCapability = StringUtils.trimMultiline(capability);
-        JsonObject json = new JsonParser().parse(trimmedCapability).getAsJsonObject();
-        Set<Map.Entry<String, JsonElement>> entries = json.entrySet();
-        final Type type = new TypeToken<Map<String, String>>() {
-        }.getType();
-        Map<String, Map<String, String>> dictionaries = new HashMap<String, Map<String, String>>();
-        for (Map.Entry<String, JsonElement> entry : entries) {
-            String key = entry.getKey();
-            Map<String, String> values = GSON.fromJson(entry.getValue(), type);
-            dictionaries.put(key, values);
-        }
-
-        return dictionaries;
     }
 }

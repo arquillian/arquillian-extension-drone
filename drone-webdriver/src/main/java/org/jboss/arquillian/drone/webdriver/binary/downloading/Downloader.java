@@ -3,7 +3,6 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading;
 import java.io.File;
 import java.net.URL;
 import java.util.logging.Logger;
-
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.execution.Execution;
 import org.arquillian.spacelift.execution.ExecutionException;
@@ -18,17 +17,19 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_
  */
 public class Downloader {
 
-    private static Logger log = Logger.getLogger(Downloader.class.toString());
-
     public static final String DRONE_TARGET_DOWNLOADED_DIRECTORY =
         DRONE_TARGET_DIRECTORY + "downloaded" + File.separator;
+    private static Logger log = Logger.getLogger(Downloader.class.toString());
 
     /**
      * Downloads file from the given url and stores it either in given directory or if the directory is null, then in
      * a directory <code>target/drone/downloaded/</code>. The downloaded file is then returned.
      *
-     * @param targetDir A directory where the downloaded file should be stored
-     * @param from      A url a file should be downloaded from.
+     * @param targetDir
+     *     A directory where the downloaded file should be stored
+     * @param from
+     *     A url a file should be downloaded from.
+     *
      * @return The downloaded file
      */
     public static File download(File targetDir, URL from) {

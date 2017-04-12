@@ -149,7 +149,8 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
     }
 
     /**
-     * Wrapper for array of bytes to act as a key/value in a map. This abstraction allows as to have stored sessions for Drones
+     * Wrapper for array of bytes to act as a key/value in a map. This abstraction allows as to have stored sessions for
+     * Drones
      * with incompatible serialVersionUID, for instance Drones based on different Selenium version.
      * <p>
      * This implementation ignores invalid content, it simply returns null when a object cannot be deserialized
@@ -196,15 +197,19 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             ByteArray other = (ByteArray) obj;
-            if (!Arrays.equals(raw, other.raw))
+            if (!Arrays.equals(raw, other.raw)) {
                 return false;
+            }
             return true;
         }
     }
@@ -257,23 +262,30 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             TimeStampedSession other = (TimeStampedSession) obj;
             if (rawSession == null) {
-                if (other.rawSession != null)
+                if (other.rawSession != null) {
                     return false;
-            } else if (!rawSession.equals(other.rawSession))
+                }
+            } else if (!rawSession.equals(other.rawSession)) {
                 return false;
+            }
             if (timestamp == null) {
-                if (other.timestamp != null)
+                if (other.timestamp != null) {
                     return false;
-            } else if (!timestamp.equals(other.timestamp))
+                }
+            } else if (!timestamp.equals(other.timestamp)) {
                 return false;
+            }
             return true;
         }
 

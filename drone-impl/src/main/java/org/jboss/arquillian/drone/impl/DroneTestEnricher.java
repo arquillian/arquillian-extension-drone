@@ -23,7 +23,6 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -105,9 +104,12 @@ public class DroneTestEnricher implements TestEnricher {
      * Enriches the given test class with a drone instance and a context path. Injects existing instance into every field
      * annotated with {@link Drone}.
      *
-     * @param testClass  Test class to be enriched
-     * @param testCase   Instance of the test case (usually the class is same as the {@code testClass})
-     * @param onlyStatic If the drone instance should be injected only into static fields
+     * @param testClass
+     *     Test class to be enriched
+     * @param testCase
+     *     Instance of the test case (usually the class is same as the {@code testClass})
+     * @param onlyStatic
+     *     If the drone instance should be injected only into static fields
      */
     public void enrichTestClass(Class<?> testClass, Object testCase, boolean onlyStatic) {
 
@@ -157,8 +159,11 @@ public class DroneTestEnricher implements TestEnricher {
     /**
      * Ensures whether the given drone point is prepared for injection
      *
-     * @param dronePoint Drone point that should be checked
-     * @param forMethod  Whether the given drone point is used as a method parameter
+     * @param dronePoint
+     *     Drone point that should be checked
+     * @param forMethod
+     *     Whether the given drone point is used as a method parameter
+     *
      * @return whether the injection point is prepared or not. {@code false} is returned in case of deployment-scoped
      * drone point used as a instance variable and tied to a deployment that has not been deployed yet
      */

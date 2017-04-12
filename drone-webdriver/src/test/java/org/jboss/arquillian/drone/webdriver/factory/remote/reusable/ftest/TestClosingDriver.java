@@ -23,10 +23,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import qualifier.Reusable;
 
 import static org.junit.Assert.fail;
-
-import qualifier.Reusable;
 
 /**
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
@@ -35,7 +34,8 @@ import qualifier.Reusable;
 @Ignore
 public class TestClosingDriver extends AbstractInBrowserTest {
 
-    @Drone @Reusable
+    @Drone
+    @Reusable
     RemoteWebDriver driver;
 
     @Test

@@ -33,7 +33,8 @@ import java.lang.annotation.Target;
  * &#64;Drone @RemoteMachine WebDriver instance2;
  * </code></pre>
  * <p>
- * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different instances of WebDriver object
+ * If {@code @RemoteMachine} is an annotation marked with {@link Qualifier}, then two different instances of WebDriver
+ * object
  * will be configured and instantiated before execution of the first test method.
  * </p>
  *

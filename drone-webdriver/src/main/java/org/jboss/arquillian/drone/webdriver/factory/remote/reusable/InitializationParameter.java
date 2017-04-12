@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.Serializable;
 import java.net.URL;
-
 import org.openqa.selenium.Capabilities;
 
 /**
@@ -56,23 +55,30 @@ public class InitializationParameter implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         InitializationParameter other = (InitializationParameter) obj;
         if (desiredCapabilities == null) {
-            if (other.desiredCapabilities != null)
+            if (other.desiredCapabilities != null) {
                 return false;
-        } else if (!desiredCapabilities.equals(other.desiredCapabilities))
+            }
+        } else if (!desiredCapabilities.equals(other.desiredCapabilities)) {
             return false;
+        }
         if (url == null) {
-            if (other.url != null)
+            if (other.url != null) {
                 return false;
-        } else if (!url.equals(other.url))
+            }
+        } else if (!url.equals(other.url)) {
             return false;
+        }
         return true;
     }
 

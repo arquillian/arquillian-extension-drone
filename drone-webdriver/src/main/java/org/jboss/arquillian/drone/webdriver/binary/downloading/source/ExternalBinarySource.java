@@ -14,7 +14,9 @@ public interface ExternalBinarySource {
      * represents the latest release.
      *
      * @return An instance of {@link ExternalBinary} that contains information about the latest release of the binary.
-     * @throws Exception If anything bad happens
+     *
+     * @throws Exception
+     *     If anything bad happens
      */
     ExternalBinary getLatestRelease() throws Exception;
 
@@ -22,8 +24,12 @@ public interface ExternalBinarySource {
      * Retrieves information about a binary release with the desired version and returns an instance of
      * {@link ExternalBinary} that represents the found release.
      *
-     * @param version A version of a binary release that should be retrieved.
-     * @return An instance of {@link ExternalBinary} that contains information about a binary release with the desired version.
+     * @param version
+     *     A version of a binary release that should be retrieved.
+     *
+     * @return An instance of {@link ExternalBinary} that contains information about a binary release with the desired
+     * version.
+     *
      * @throws Exception
      */
     ExternalBinary getReleaseForVersion(String version) throws Exception;

@@ -4,12 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.http.client.utils.URIBuilder;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
-
 import java.net.URI;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -18,6 +12,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.http.client.utils.URIBuilder;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -35,21 +34,21 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private static final Logger log = Logger.getLogger(GitHubSource.class.toString());
     private static final Gson gson = new Gson();
-
-    // JSON keys
-    private String tagNameKey = "tag_name";
-    private String assetNameKey = "name";
-    private String browserDownloadUrlKey = "browser_download_url";
-
-    private String assetsKey = "assets";
     private final HttpClient httpClient;
     private final GitHubLastUpdateCache cache;
     private final String projectUrl;
     private final String uniqueKey;
+    // JSON keys
+    private String tagNameKey = "tag_name";
+    private String assetNameKey = "name";
+    private String browserDownloadUrlKey = "browser_download_url";
+    private String assetsKey = "assets";
 
     /**
-     * @param organization GitHub organization/user name the project belongs to
-     * @param project      GitHub project name
+     * @param organization
+     *     GitHub organization/user name the project belongs to
+     * @param project
+     *     GitHub project name
      */
     public GitHubSource(String organization, String project, HttpClient httpClient,
         GitHubLastUpdateCache gitHubLastUpdateCache) {

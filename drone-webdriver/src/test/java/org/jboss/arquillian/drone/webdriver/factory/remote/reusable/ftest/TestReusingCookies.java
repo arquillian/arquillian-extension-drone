@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
 import java.util.Date;
-
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;

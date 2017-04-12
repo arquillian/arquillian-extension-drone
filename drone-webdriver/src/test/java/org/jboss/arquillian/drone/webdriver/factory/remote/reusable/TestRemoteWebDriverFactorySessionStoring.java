@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.api.Event;
@@ -44,11 +48,6 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
@@ -59,11 +58,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBase {
 
-    @BeforeClass
-    public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
-    }
-
+    @Inject
+    Event<PersistReusedSessionsEvent> persistEvent;
     @Mock
     private ServiceLoader serviceLoader;
     @Mock
@@ -73,13 +69,15 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     private Instance<ReusedSessionStore> sessionStore;
     @Inject
     private Instance<Injector> injector;
-    @Inject
-    Event<PersistReusedSessionsEvent> persistEvent;
-
     private Capabilities desiredCapabilities;
     private URL hubUrl;
     private MockReusedSessionPermanentStorage permanentStorage;
     private InitializationParameter initializationParameter;
+
+    @BeforeClass
+    public static void skipIfEdgeBrowser() {
+        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
+    }
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {

@@ -4,6 +4,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import io.specto.hoverfly.junit.dsl.ResponseBuilder;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.JUnitSoftAssertions;
@@ -15,12 +20,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;

@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -166,9 +165,12 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {

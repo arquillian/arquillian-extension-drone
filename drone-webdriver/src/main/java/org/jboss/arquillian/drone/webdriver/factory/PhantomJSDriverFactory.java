@@ -83,9 +83,12 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
     /**
      * Returns a {@link Capabilities} instance with set all necessary properties (ie: phantomjs.binary.path).
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
@@ -104,7 +107,8 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
      * Reformats {@link PhantomJSDriverService.PHANTOMJS_CLI_ARGS} and
      * {@link PhantomJSDriverService.PHANTOMJS_GHOSTDRIVER_CLI_ARGS} from String to String[]
      *
-     * @param capabilities Capabilities
+     * @param capabilities
+     *     Capabilities
      */
     public void reformatCLIArgumentsInCapToArray(DesiredCapabilities capabilities) {
         reformatCapabilityToArray(capabilities, PhantomJSDriverService.PHANTOMJS_CLI_ARGS);

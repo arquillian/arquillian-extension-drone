@@ -2,7 +2,6 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import java.io.IOException;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
@@ -65,22 +64,15 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
 
     private class EdgeStorageSources implements ExternalBinarySource {
 
-        private Logger log = Logger.getLogger(EdgeStorageSources.class.toString());
-
         private static final String EDGE_WEB_DRIVERS_URL =
             "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/";
-
         private static final String DRIVERS_LIST = ".driver-downloads li";
-
         private static final String INFO_PARAGRAPH = "p";
-
         private static final String LINK = "a";
-
         private static final String URL = "href";
-
         private static final int VERSION_POSITION = 1;
-
         private static final int LATEST_DRIVER = 0;
+        private Logger log = Logger.getLogger(EdgeStorageSources.class.toString());
 
         @Override
         public ExternalBinary getLatestRelease() throws Exception {

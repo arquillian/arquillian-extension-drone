@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.lang.reflect.Field;
 import java.net.URL;
-
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.CommandExecutor;
@@ -29,51 +28,17 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 /**
- * Reusable remote driver provides same functionality like {@link RemoteWebDriver}, but it additionally allows to reuse browser
+ * Reusable remote driver provides same functionality like {@link RemoteWebDriver}, but it additionally allows to reuse
+ * browser
  * session.
  * <p>
- * Provides reusing of {@link RemoteWebDriver} session by allowing to setup {@link DesiredCapabilities} and {@link SessionId}
+ * Provides reusing of {@link RemoteWebDriver} session by allowing to setup {@link DesiredCapabilities} and {@link
+ * SessionId}
  * from previous session.
  *
  * @author <a href="mailto:lryc@redhat.com">Lukas Fryc</a>
  */
 public class ReusableRemoteWebDriver extends RemoteWebDriver {
-
-    /**
-     * Creates the {@link ReusableRemoteWebDriver} from valid {@link RemoteWebDriver} instance.
-     *
-     * @param remoteWebDriver valid {@link RemoteWebDriver} instance.
-     * @return the {@link RemoteWebDriver} wrapped as {@link ReusableRemoteWebDriver}
-     */
-    public static RemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
-
-        RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteWebDriver.getCommandExecutor(),
-            remoteWebDriver.getCapabilities(), remoteWebDriver.getSessionId());
-        try {
-            checkReusability(remoteWebDriver.getSessionId(), driver);
-            return driver;
-        } catch (UnableReuseSessionException e) {
-            throw new IllegalStateException("Reusing RemoteWebDriver session unexpectedly failed", e);
-        }
-    }
-
-    /**
-     * Reuses browser session using sessionId and desiredCapabilities as fully-initialized {@link Capabilities} object from the
-     * previous {@link RemoteWebDriver} session.
-     *
-     * @param remoteAddress       address of the remote Selenium Server hub
-     * @param desiredCapabilities fully-initialized capabilities returned from previous {@link RemoteWebDriver} session
-     * @param sessionId           sessionId from previous {@link RemoteWebDriver} session
-     */
-    public static RemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities,
-        SessionId sessionId)
-        throws UnableReuseSessionException {
-
-        RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities,
-            sessionId);
-        checkReusability(sessionId, driver);
-        return driver;
-    }
 
     ReusableRemoteWebDriver() {
         super();
@@ -99,6 +64,48 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
     }
 
     /**
+     * Creates the {@link ReusableRemoteWebDriver} from valid {@link RemoteWebDriver} instance.
+     *
+     * @param remoteWebDriver
+     *     valid {@link RemoteWebDriver} instance.
+     *
+     * @return the {@link RemoteWebDriver} wrapped as {@link ReusableRemoteWebDriver}
+     */
+    public static RemoteWebDriver fromRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
+
+        RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteWebDriver.getCommandExecutor(),
+            remoteWebDriver.getCapabilities(), remoteWebDriver.getSessionId());
+        try {
+            checkReusability(remoteWebDriver.getSessionId(), driver);
+            return driver;
+        } catch (UnableReuseSessionException e) {
+            throw new IllegalStateException("Reusing RemoteWebDriver session unexpectedly failed", e);
+        }
+    }
+
+    /**
+     * Reuses browser session using sessionId and desiredCapabilities as fully-initialized {@link Capabilities} object
+     * from the
+     * previous {@link RemoteWebDriver} session.
+     *
+     * @param remoteAddress
+     *     address of the remote Selenium Server hub
+     * @param desiredCapabilities
+     *     fully-initialized capabilities returned from previous {@link RemoteWebDriver} session
+     * @param sessionId
+     *     sessionId from previous {@link RemoteWebDriver} session
+     */
+    public static RemoteWebDriver fromReusedSession(URL remoteAddress, Capabilities desiredCapabilities,
+        SessionId sessionId)
+        throws UnableReuseSessionException {
+
+        RemoteWebDriver driver = new ReusableRemoteWebDriver(remoteAddress, desiredCapabilities,
+            sessionId);
+        checkReusability(sessionId, driver);
+        return driver;
+    }
+
+    /**
      * Check that reused session can be controlled.
      * <p>
      * If it cannot be controlled (API calls throw exception), throw {@link UnableReuseSessionException}.
@@ -115,16 +122,6 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
         } catch (WebDriverException e) {
             throw new UnableReuseSessionException(e);
         }
-    }
-
-    void setReusedCapabilities(Capabilities capabilities) {
-        Field capabilitiesField = getFieldSafely(this, RemoteWebDriver.class, "capabilities");
-        writeValueToField(this, capabilitiesField, capabilities);
-    }
-
-    void setValueToFieldInHttpCommandExecutor(Object instance, String fieldName, Object value) {
-        Field field = getFieldSafely(instance, HttpCommandExecutor.class, fieldName);
-        writeValueToField(instance, field, value);
     }
 
     private static Field getFieldSafely(Object object, Class<?> clazz, String fieldName) {
@@ -148,5 +145,15 @@ public class ReusableRemoteWebDriver extends RemoteWebDriver {
         if (!wasAccessible) {
             field.setAccessible(false);
         }
+    }
+
+    void setReusedCapabilities(Capabilities capabilities) {
+        Field capabilitiesField = getFieldSafely(this, RemoteWebDriver.class, "capabilities");
+        writeValueToField(this, capabilitiesField, capabilities);
+    }
+
+    void setValueToFieldInHttpCommandExecutor(Object instance, String fieldName, Object value) {
+        Field field = getFieldSafely(instance, HttpCommandExecutor.class, fieldName);
+        writeValueToField(instance, field, value);
     }
 }

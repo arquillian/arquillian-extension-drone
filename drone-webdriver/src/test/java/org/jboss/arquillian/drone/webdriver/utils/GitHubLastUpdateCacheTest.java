@@ -1,5 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -7,11 +11,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -27,9 +27,6 @@ public class DroneTimeoutException extends RuntimeException {
     /**
      * Checks whether any cause in hierarchy is a TimeoutException. TimeoutException is determited by class ending by
      * TimeoutException string.
-     *
-     * @param throwable
-     * @return
      */
     public static boolean isCausedByTimeoutException(Throwable throwable) {
         Throwable reason = throwable;

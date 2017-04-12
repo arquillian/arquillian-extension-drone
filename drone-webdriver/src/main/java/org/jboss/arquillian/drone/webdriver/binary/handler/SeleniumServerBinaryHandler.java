@@ -1,11 +1,10 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.util.logging.Logger;
 
 /**
  * A class for handling selenium server binaries. It also runs the selenium server with properties that are
@@ -15,9 +14,9 @@ import java.util.logging.Logger;
  */
 public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
+    public static final String SELENIUM_SERVER_VERSION_PROPERTY = "seleniumServerVersion";
     private static final String SELENIUM_SERVER_SYSTEM_DRIVER_BINARY_PROPERTY = "selenium.server.binary.path";
     private static final String SELENIUM_SERVER_DRIVER_BINARY_PROPERTY = "seleniumServerBinary";
-    public static final String SELENIUM_SERVER_VERSION_PROPERTY = "seleniumServerVersion";
     private static final String SELENIUM_SERVER_URL_PROPERTY = "seleniumServerUrl";
 
     private Logger log = Logger.getLogger(SeleniumServerBinaryHandler.class.toString());

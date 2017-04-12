@@ -1,10 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.arquillian.spacelift.Spacelift;
-import org.arquillian.spacelift.task.archive.UntarTool;
-import org.arquillian.spacelift.task.archive.UnzipTool;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.logging.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.arquillian.spacelift.Spacelift;
+import org.arquillian.spacelift.task.archive.UntarTool;
+import org.arquillian.spacelift.task.archive.UnzipTool;
 
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
@@ -30,9 +29,13 @@ public class BinaryFilesUtils {
      * If the archive is not one of the archives that are supported, then the file is only copied. Supported archive
      * types are: <code>.zip</code>, <code>.tar.gz</code> and <code>.tar.bz2</code>
      *
-     * @param toExtract File that should be extracted
+     * @param toExtract
+     *     File that should be extracted
+     *
      * @return Directory where the extraction is located
-     * @throws Exception If anything bad happens
+     *
+     * @throws Exception
+     *     If anything bad happens
      */
     public static File extract(File toExtract) throws Exception {
 
@@ -68,7 +71,9 @@ public class BinaryFilesUtils {
     /**
      * Counts and returns md5 hash of the given file
      *
-     * @param file A file the md5 hash should be counted for
+     * @param file
+     *     A file the md5 hash should be counted for
+     *
      * @return md5 hash of the given file
      */
     public static String getMd5hash(File file) {

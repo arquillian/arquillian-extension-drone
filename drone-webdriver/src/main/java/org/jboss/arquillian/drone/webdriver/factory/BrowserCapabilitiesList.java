@@ -1,12 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.util.Map;
-
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class also
+ * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class
+ * also
  * supports implemenationClass property which is now legacy configuration value.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>

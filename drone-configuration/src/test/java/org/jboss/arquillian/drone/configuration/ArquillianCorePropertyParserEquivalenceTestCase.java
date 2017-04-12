@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.configuration;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.impl.extension.ConfigurationRegistrar;
 import org.jboss.arquillian.core.api.event.ManagerStarted;

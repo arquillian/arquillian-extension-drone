@@ -24,7 +24,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
-
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 
 /**

@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
@@ -54,10 +53,8 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 public class DroneLifecycleManager {
-    private static final Logger log = Logger.getLogger(DroneLifecycleManager.class.getName());
-
     public static final int CLASS_SCAN_PRECEDENCE = 75;
-
+    private static final Logger log = Logger.getLogger(DroneLifecycleManager.class.getName());
     @Inject
     private Instance<Injector> injector;
 

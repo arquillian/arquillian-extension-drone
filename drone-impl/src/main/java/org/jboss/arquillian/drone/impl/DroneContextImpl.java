@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -24,12 +29,6 @@ import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointContext;
 import org.jboss.arquillian.drone.spi.FilterableResult;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Default implementation of {@link DroneContext}

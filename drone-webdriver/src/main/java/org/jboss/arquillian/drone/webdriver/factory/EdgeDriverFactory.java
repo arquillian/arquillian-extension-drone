@@ -11,7 +11,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for EdgeDriver.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
+ * EdgeDriver.
  */
 public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> implements
     Configurator<EdgeDriver, WebDriverConfiguration>, Instantiator<EdgeDriver, WebDriverConfiguration>,

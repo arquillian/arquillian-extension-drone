@@ -23,7 +23,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -71,6 +70,12 @@ public class InjectionPointsTest extends AbstractTestTestBase {
 
     @Mock
     private ServiceLoader serviceLoader;
+
+    private static void verifyInjections(MockDrone drone, MockDrone qualifiedDrone) {
+        Assert.assertNotNull(drone);
+        Assert.assertNotNull(qualifiedDrone);
+        Assert.assertNotSame(drone, qualifiedDrone);
+    }
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -195,12 +200,6 @@ public class InjectionPointsTest extends AbstractTestTestBase {
 
         assertEventFired(BeforeDroneDestroyed.class, 2);
         assertEventFired(AfterDroneDestroyed.class, 2);
-    }
-
-    private static void verifyInjections(MockDrone drone, MockDrone qualifiedDrone) {
-        Assert.assertNotNull(drone);
-        Assert.assertNotNull(qualifiedDrone);
-        Assert.assertNotSame(drone, qualifiedDrone);
     }
 
     @Retention(RetentionPolicy.RUNTIME)

@@ -23,7 +23,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
 import qualifier.Reusable;
 
 /**
@@ -33,7 +32,8 @@ import qualifier.Reusable;
 @Ignore
 public class TestQuitingDriver extends AbstractInBrowserTest {
 
-    @Drone @Reusable
+    @Drone
+    @Reusable
     RemoteWebDriver driver;
 
     @Test

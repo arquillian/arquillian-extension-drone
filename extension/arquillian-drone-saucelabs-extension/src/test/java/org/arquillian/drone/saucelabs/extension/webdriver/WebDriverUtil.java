@@ -17,7 +17,6 @@
 package org.arquillian.drone.saucelabs.extension.webdriver;
 
 import java.util.function.Function;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -35,7 +34,8 @@ public class WebDriverUtil {
 
     protected static void checkElementIsPresent(final WebDriver driver, final By by, final String errorMsg) {
         new WebDriverWaitWithMessage(driver, 10).failWith(errorMsg).until(new ExpectedCondition<Boolean>() {
-            @Override public Boolean apply(WebDriver webDriver) {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
                 try {
                     return driver.findElement(by) != null;
                 } catch (NoSuchElementException ignored) {

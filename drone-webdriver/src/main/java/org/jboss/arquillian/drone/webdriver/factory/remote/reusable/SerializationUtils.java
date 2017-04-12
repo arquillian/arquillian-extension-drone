@@ -43,7 +43,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -91,12 +90,17 @@ public class SerializationUtils {
     /**
      * Takes serializable object and serializes it to the byte array
      *
-     * @param object object to serialize
+     * @param object
+     *     object to serialize
+     *
      * @return the byte array representing serializable object
      *
-     * @throws InvalidClassException Something is wrong with a class used by serialization.
-     * @throws NotSerializableException Some object to be serialized does not implement the java.io.Serializable interface.
-     * @throws IOException Any exception thrown by the underlying OutputStream.
+     * @throws InvalidClassException
+     *     Something is wrong with a class used by serialization.
+     * @throws NotSerializableException
+     *     Some object to be serialized does not implement the java.io.Serializable interface.
+     * @throws IOException
+     *     Any exception thrown by the underlying OutputStream.
      */
     public static byte[] serializeToBytes(Serializable object) throws IOException {
 
@@ -116,14 +120,23 @@ public class SerializationUtils {
     /**
      * Takes byte array representing serialized object and constructs its object form
      *
-     * @param classType Type of the returned object
-     * @param serializedObject byte array representing serialized object
+     * @param classType
+     *     Type of the returned object
+     * @param serializedObject
+     *     byte array representing serialized object
+     *
      * @return deserialized object
-     * @throws ClassNotFoundException Class of a serialized object cannot be found.
-     * @throws InvalidClassException Something is wrong with a class used by serialization.
-     * @throws StreamCorruptedException Control information in the stream is inconsistent.
-     * @throws OptionalDataException Primitive data was found in the stream instead of objects.
-     * @throws IOException Any of the usual Input/Output related exceptions.
+     *
+     * @throws ClassNotFoundException
+     *     Class of a serialized object cannot be found.
+     * @throws InvalidClassException
+     *     Something is wrong with a class used by serialization.
+     * @throws StreamCorruptedException
+     *     Control information in the stream is inconsistent.
+     * @throws OptionalDataException
+     *     Primitive data was found in the stream instead of objects.
+     * @throws IOException
+     *     Any of the usual Input/Output related exceptions.
      */
     public static <T extends Serializable> T deserializeFromBytes(Class<T> classType, byte[] serializedObject)
         throws IOException, ClassNotFoundException {

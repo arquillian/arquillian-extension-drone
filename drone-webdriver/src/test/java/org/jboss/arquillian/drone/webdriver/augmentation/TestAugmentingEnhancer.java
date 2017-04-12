@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.webdriver.augmentation;
 
+import java.lang.reflect.Field;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
@@ -28,8 +29,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
-import java.lang.reflect.Field;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -120,7 +119,8 @@ public class TestAugmentingEnhancer {
     /**
      * We need to instantiate a class without calling a constructor.
      * <p>
-     * This is needed because we don't want to pollute test environment with webdrivers not related to the browser tested and by
+     * This is needed because we don't want to pollute test environment with webdrivers not related to the browser tested
+     * and by
      * default
      * RemoteWebDriver spawns Firefox driver. Yet, we can't mock it as Augementer asks for an exact class match *
      *

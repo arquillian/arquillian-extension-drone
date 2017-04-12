@@ -22,7 +22,8 @@ import java.util.concurrent.Callable;
  * Utility interface that should cache the return value of {@link java.util.concurrent.Callable#call()} and each next
  * call of the method, it should return the cached value.
  *
- * @param <V> type of cached value
+ * @param <V>
+ *     type of cached value
  */
 public interface CachingCallable<V> extends Callable<V> {
 

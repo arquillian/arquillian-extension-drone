@@ -16,11 +16,14 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.CachingMockDroneFactory;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
@@ -49,12 +52,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

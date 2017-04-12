@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.annotation.Annotation;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.spi.DroneContext;
@@ -29,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.lang.annotation.Annotation;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

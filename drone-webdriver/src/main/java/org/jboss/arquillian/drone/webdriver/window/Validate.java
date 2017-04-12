@@ -32,9 +32,13 @@ class Validate {
     /**
      * Checks that object is not null, throws exception if it is.
      *
-     * @param obj     The object to check
-     * @param message The exception message
-     * @throws IllegalArgumentException Thrown if obj is null
+     * @param obj
+     *     The object to check
+     * @param message
+     *     The exception message
+     *
+     * @throws IllegalArgumentException
+     *     Thrown if obj is null
      */
     public static void notNull(final Object obj, final String message) throws IllegalArgumentException {
         if (obj == null) {

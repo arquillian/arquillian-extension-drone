@@ -3,7 +3,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -18,11 +17,10 @@ import org.openqa.selenium.WebDriver;
 abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configurator<T, WebDriverConfiguration> {
 
     private static final Logger log = Logger.getLogger(AbstractWebDriverFactory.class.getName());
-
-    protected abstract String getDriverReadableName();
-
     @Inject
     protected Instance<BrowserCapabilitiesRegistry> registryInstance;
+
+    protected abstract String getDriverReadableName();
 
     @Override
     public WebDriverConfiguration createConfiguration(ArquillianDescriptor descriptor, DronePoint<T>

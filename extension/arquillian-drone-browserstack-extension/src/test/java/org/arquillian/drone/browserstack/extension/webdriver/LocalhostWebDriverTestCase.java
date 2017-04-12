@@ -18,7 +18,6 @@ package org.arquillian.drone.browserstack.extension.webdriver;
 
 import java.io.File;
 import java.net.URL;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;

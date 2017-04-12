@@ -29,7 +29,8 @@ public interface FilterableResult<DRONE> extends Iterable<DronePoint<DRONE>> {
     /**
      * Returns a single injection point that get matched by all of specified filters.
      *
-     * @throws IllegalStateException if matched injection points count is not exactly one
+     * @throws IllegalStateException
+     *     if matched injection points count is not exactly one
      */
     DronePoint<DRONE> single();
 

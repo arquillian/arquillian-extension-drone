@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
@@ -35,15 +34,14 @@ import org.openqa.selenium.remote.InterfaceImplementation;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
- * Augments {@link RemoteWebDriver} instances so that it implements all interfaces determined by provided {@link Capabilities}.
+ * Augments {@link RemoteWebDriver} instances so that it implements all interfaces determined by provided {@link
+ * Capabilities}.
  *
  * @author Lukas Fryc
  */
 public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver> {
-    private static final Logger logger = Logger.getLogger(AugmentingEnhancer.class.getName());
-
     public static final String DRONE_AUGMENTED = "droneAugmented";
-
+    private static final Logger logger = Logger.getLogger(AugmentingEnhancer.class.getName());
     /**
      * Augmenter instance which is able to handle invocations of {@link DroneAugmented} interface
      */

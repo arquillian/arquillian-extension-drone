@@ -1,17 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
-import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.test.AbstractTestTestBase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,17 +12,26 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
+import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SeleniumServerTestCase extends AbstractTestTestBase {
 
     private static Logger log = Logger.getLogger(SeleniumServerExecutor.class.toString());
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private OutputStream logCapturingStream;
     private StreamHandler customLogHandler;
-
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-
     private String seleniumServerBinary;
     private DesiredCapabilities capabilities;
     private URL url;

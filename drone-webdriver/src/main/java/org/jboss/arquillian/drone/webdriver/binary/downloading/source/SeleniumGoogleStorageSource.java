@@ -18,7 +18,9 @@ public abstract class SeleniumGoogleStorageSource extends GoogleStorageSource {
     /**
      * Parses the full version of a selenium release and returns directory name the binaries should be stored in.
      *
-     * @param version Full version of a selenium release
+     * @param version
+     *     Full version of a selenium release
+     *
      * @return A directory name (parsed from the given version) the binaries should be stored in.
      */
     protected String getDirectoryFromFullVersion(String version) {

@@ -19,7 +19,6 @@ package org.arquillian.drone.browserstack.extension.webdriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
-
 import org.arquillian.drone.browserstack.extension.local.BrowserStackLocalRunner;
 import org.arquillian.drone.browserstack.extension.utils.Utils;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;

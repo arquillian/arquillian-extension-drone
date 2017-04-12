@@ -26,7 +26,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Test for ARQ-1543. Checks that everything works fine if user misconfigures Drone by injecting same instance twice in a single
+ * Test for ARQ-1543. Checks that everything works fine if user misconfigures Drone by injecting same instance twice in a
+ * single
  * scope.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>

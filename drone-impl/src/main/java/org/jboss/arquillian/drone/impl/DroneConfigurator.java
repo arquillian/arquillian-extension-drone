@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.impl;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;

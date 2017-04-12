@@ -16,14 +16,6 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.drone.api.annotation.lifecycle.ClassLifecycle;
-import org.jboss.arquillian.drone.api.annotation.lifecycle.MethodLifecycle;
-import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DronePoint;
-import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,6 +25,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.drone.api.annotation.lifecycle.ClassLifecycle;
+import org.jboss.arquillian.drone.api.annotation.lifecycle.MethodLifecycle;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
 
 // FIXME make this class not static and do the API a better way
 final class InjectionPoints {

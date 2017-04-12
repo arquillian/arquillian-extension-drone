@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;

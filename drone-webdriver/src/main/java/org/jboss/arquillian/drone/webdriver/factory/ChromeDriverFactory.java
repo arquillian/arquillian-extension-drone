@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -35,7 +34,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for ChromeDriver.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
+ * ChromeDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
@@ -88,9 +88,12 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {

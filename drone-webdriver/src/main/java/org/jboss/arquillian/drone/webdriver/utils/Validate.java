@@ -19,8 +19,6 @@ package org.jboss.arquillian.drone.webdriver.utils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
-import org.openqa.selenium.Platform;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.openqa.selenium.Platform;
 
 import static org.openqa.selenium.Platform.WINDOWS;
 
@@ -103,7 +102,9 @@ public class Validate {
      * Find the executable by scanning the file system and the PATH. In the case of Windows this
      * method allows common executable endings (".com", ".bat" and ".exe") to be omitted.
      *
-     * @param command The name of the executable to find
+     * @param command
+     *     The name of the executable to find
+     *
      * @return Whether the command is executable or not.
      */
     public static boolean isCommandExecutable(String command) throws IllegalArgumentException {
@@ -180,7 +181,8 @@ public class Validate {
     }
 
     /**
-     * Checker if a file can be executed. It requires Java 6 to do that. If anything goes wrong, it supposes that a file can be
+     * Checker if a file can be executed. It requires Java 6 to do that. If anything goes wrong, it supposes that a file
+     * can be
      * executed.
      */
     private static final class FileExecutableChecker {

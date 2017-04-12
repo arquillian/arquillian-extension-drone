@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.impl.mockdrone;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -47,16 +46,17 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
     }
 
     /**
-     * @param field the field to set
-     */
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    /**
      * @return the field
      */
     public String getField() {
         return field;
+    }
+
+    /**
+     * @param field
+     *     the field to set
+     */
+    public void setField(String field) {
+        this.field = field;
     }
 }

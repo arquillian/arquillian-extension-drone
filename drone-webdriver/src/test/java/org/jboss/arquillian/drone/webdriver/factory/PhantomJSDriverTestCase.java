@@ -1,5 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URL;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,11 +15,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

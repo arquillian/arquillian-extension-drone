@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
 
@@ -142,12 +141,12 @@ public class MockDroneConfiguration implements DroneConfiguration<MockDroneConfi
         return browser;
     }
 
-    public String getBrowserCapabilities() {
-        return browserCapabilities;
-    }
-
     public void setBrowser(String browser) {
         this.browser = browser;
+    }
+
+    public String getBrowserCapabilities() {
+        return browserCapabilities;
     }
 
     public void setBrowserCapabilities(String browserCapabilities) {

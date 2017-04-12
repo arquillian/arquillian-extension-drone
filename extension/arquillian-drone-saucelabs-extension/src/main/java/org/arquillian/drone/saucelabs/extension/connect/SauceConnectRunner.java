@@ -28,7 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.arquillian.drone.saucelabs.extension.utils.BinaryUrlUtils;
 import org.arquillian.drone.saucelabs.extension.utils.Utils;
@@ -74,11 +73,17 @@ public class SauceConnectRunner {
     /**
      * Indirectly runs SauceConnect binary. In case that the binary has been already run, then does nothing.
      *
-     * @param username       A username the binary should be ran with
-     * @param accessKey      An accessKey the binary should be ran with
-     * @param additionalArgs additional arguments
-     * @param localBinary    Path to a local binary of the SauceConnect. If none, then it will be downloaded.
-     * @throws SauceConnectException when something bad happens during running BrowserStackLocal binary
+     * @param username
+     *     A username the binary should be ran with
+     * @param accessKey
+     *     An accessKey the binary should be ran with
+     * @param additionalArgs
+     *     additional arguments
+     * @param localBinary
+     *     Path to a local binary of the SauceConnect. If none, then it will be downloaded.
+     *
+     * @throws SauceConnectException
+     *     when something bad happens during running BrowserStackLocal binary
      */
     public void runSauceConnect(String username, String accessKey, String additionalArgs, String localBinary)
         throws SauceConnectException {
@@ -98,11 +103,17 @@ public class SauceConnectRunner {
     /**
      * Runs SauceConnect binary. In case that the binary has been already run, then does nothing.
      *
-     * @param username       A username the binary should be ran with
-     * @param binaryFile     A binary file to be run
-     * @param accessKey      An accessKey the binary should be ran with
-     * @param additionalArgs additional arguments
-     * @throws SauceConnectException when something bad happens during running BrowserStackLocal binary
+     * @param username
+     *     A username the binary should be ran with
+     * @param binaryFile
+     *     A binary file to be run
+     * @param accessKey
+     *     An accessKey the binary should be ran with
+     * @param additionalArgs
+     *     additional arguments
+     *
+     * @throws SauceConnectException
+     *     when something bad happens during running BrowserStackLocal binary
      */
     private void runSauceConnect(File binaryFile, String username, String accessKey, String additionalArgs)
         throws SauceConnectException {

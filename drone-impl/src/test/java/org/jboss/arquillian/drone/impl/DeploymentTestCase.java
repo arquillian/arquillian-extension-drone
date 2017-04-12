@@ -1,7 +1,6 @@
 package org.jboss.arquillian.drone.impl;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -33,7 +32,8 @@ public class DeploymentTestCase extends EnricherTestCase {
      * A complex test method for testing a proper enrichment of deployment-scoped drone points used in a combination
      * with manual deployment
      *
-     * @throws Exception When anything bad happens
+     * @throws Exception
+     *     When anything bad happens
      */
     @Test
     public void testClassWithManualDeployment() throws Exception {
@@ -88,10 +88,15 @@ public class DeploymentTestCase extends EnricherTestCase {
      * Runs a test method of the {@link ManualDeploymentClass} class that should fail with ISE with the message
      * containing: "has deployment lifecycle"
      *
-     * @param classInstance  an instance of the {@link ManualDeploymentClass} class
-     * @param testMethodName the test method to be run
-     * @param params         parameters of the test method (if any)
-     * @throws Exception When anything bad happens
+     * @param classInstance
+     *     an instance of the {@link ManualDeploymentClass} class
+     * @param testMethodName
+     *     the test method to be run
+     * @param params
+     *     parameters of the test method (if any)
+     *
+     * @throws Exception
+     *     When anything bad happens
      */
     private void runFailingTestMethod(Object classInstance, String testMethodName, Class<MockDrone>... params)
         throws Exception {
@@ -112,17 +117,29 @@ public class DeploymentTestCase extends EnricherTestCase {
      * Runs a test method of the {@link ManualDeploymentClass} class and check if the given {@link DronePoint}s are
      * instantiated or not
      *
-     * @param dronePoint1    a drone point tied to {@link AnnotationMocks.DEPLOYMENT_1} deployment to be verified
-     * @param dronePoint2    a drone point tied to {@link AnnotationMocks.DEPLOYMENT_2} deployment to be verified
-     * @param before1        whether the {@code dronePoint1} should be instantiated before the test run
-     * @param before2        whether the {@code dronePoint2} should be instantiated before the test run
-     * @param after1         whether the {@code dronePoint1} should be instantiated after the test run
-     * @param after2         whether the {@code dronePoint2} should be instantiated after the test run
-     * @param classInstance  an instance of the {@link ManualDeploymentClass} class
-     * @param context        a drone context the given {@link DronePoint}s should belong to
-     * @param testMethodName the test method to be run
-     * @param params         parameters of the test method (if any)
-     * @throws Exception When anything bad happens
+     * @param dronePoint1
+     *     a drone point tied to {@link AnnotationMocks.DEPLOYMENT_1} deployment to be verified
+     * @param dronePoint2
+     *     a drone point tied to {@link AnnotationMocks.DEPLOYMENT_2} deployment to be verified
+     * @param before1
+     *     whether the {@code dronePoint1} should be instantiated before the test run
+     * @param before2
+     *     whether the {@code dronePoint2} should be instantiated before the test run
+     * @param after1
+     *     whether the {@code dronePoint1} should be instantiated after the test run
+     * @param after2
+     *     whether the {@code dronePoint2} should be instantiated after the test run
+     * @param classInstance
+     *     an instance of the {@link ManualDeploymentClass} class
+     * @param context
+     *     a drone context the given {@link DronePoint}s should belong to
+     * @param testMethodName
+     *     the test method to be run
+     * @param params
+     *     parameters of the test method (if any)
+     *
+     * @throws Exception
+     *     When anything bad happens
      */
     private void runDeploymentTestMethod(DronePoint<MockDrone> dronePoint1, DronePoint<MockDrone> dronePoint2,
         boolean before1, boolean before2, boolean after1, boolean after2, Object classInstance, DroneContext context,
@@ -147,12 +164,14 @@ public class DeploymentTestCase extends EnricherTestCase {
      * Mocks a {@link TestClass} to return the given class when the method  {@link TestClass#getJavaClass()} is called.
      * The mocked test class will be also injectable inside of the Drone implementation.
      *
-     * @param classToReturn class to be returned
+     * @param classToReturn
+     *     class to be returned
      */
     private void mockTestClass(final Class<?> classToReturn) {
         TestClass testClassMock = Mockito.mock(TestClass.class);
         Mockito.when(testClassMock.getJavaClass()).thenAnswer(new Answer<Class<?>>() {
-            @Override public Class<?> answer(InvocationOnMock invocation) throws Throwable {
+            @Override
+            public Class<?> answer(InvocationOnMock invocation) throws Throwable {
                 return classToReturn;
             }
         });

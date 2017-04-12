@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -34,8 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.List;
 
 /**
  * Global Drone configuration test cases

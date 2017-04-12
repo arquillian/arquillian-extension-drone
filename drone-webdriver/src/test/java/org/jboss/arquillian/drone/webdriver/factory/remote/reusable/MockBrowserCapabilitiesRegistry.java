@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
@@ -17,17 +16,6 @@ import org.junit.Assert;
 public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
 
     private final Map<String, BrowserCapabilities> cache;
-
-    public static ArquillianDescriptor getArquillianDescriptor() {
-        return Descriptors.importAs(ArquillianDescriptor.class).fromStream(
-            URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
-    }
-
-    public static MockBrowserCapabilitiesRegistry createSingletonRegistry() {
-
-        MockBrowserCapabilitiesRegistry registry = new MockBrowserCapabilitiesRegistry();
-        return registry;
-    }
 
     public MockBrowserCapabilitiesRegistry() {
         this.cache = new HashMap<String, BrowserCapabilities>();
@@ -52,6 +40,17 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
         } else {
             Assert.fail("MockBrowserCapabilitiesRegistry does not implement " + browser);
         }
+    }
+
+    public static ArquillianDescriptor getArquillianDescriptor() {
+        return Descriptors.importAs(ArquillianDescriptor.class).fromStream(
+            URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
+    }
+
+    public static MockBrowserCapabilitiesRegistry createSingletonRegistry() {
+
+        MockBrowserCapabilitiesRegistry registry = new MockBrowserCapabilitiesRegistry();
+        return registry;
     }
 
     @Override

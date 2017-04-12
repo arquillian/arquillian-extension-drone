@@ -19,7 +19,6 @@ package org.arquillian.drone.browserstack.extension.webdriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
-
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 

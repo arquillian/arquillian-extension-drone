@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.window;
 
 import java.util.regex.Matcher;
-
 import org.junit.Assert;
 import org.junit.Test;
 

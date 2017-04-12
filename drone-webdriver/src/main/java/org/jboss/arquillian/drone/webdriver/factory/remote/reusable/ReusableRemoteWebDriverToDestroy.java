@@ -2,7 +2,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.RemoteWebDriver;
 

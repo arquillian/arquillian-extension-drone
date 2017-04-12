@@ -24,7 +24,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -11,7 +11,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;

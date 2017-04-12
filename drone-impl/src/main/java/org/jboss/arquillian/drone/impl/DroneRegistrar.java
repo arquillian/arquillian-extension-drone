@@ -21,7 +21,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -36,7 +35,8 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
- * Registar of factories. Registers every {@link Configurator}, {@link Instantiator} and {@link Destructor} found via SPI. Only
+ * Registar of factories. Registers every {@link Configurator}, {@link Instantiator} and {@link Destructor} found via SPI.
+ * Only
  * ones with highes precedence are kept. See {@link Sortable#getPrecedence()}
  * <p>
  * <p>
@@ -60,6 +60,18 @@ public class DroneRegistrar {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
+
+    private static Class<?> getFirstGenericParameterType(Class<?> clazz, Class<?> rawType) {
+        for (Type interfaceType : clazz.getGenericInterfaces()) {
+            if (interfaceType instanceof ParameterizedType) {
+                ParameterizedType ptype = (ParameterizedType) interfaceType;
+                if (rawType.isAssignableFrom((Class<?>) ptype.getRawType())) {
+                    return (Class<?>) ptype.getActualTypeArguments()[0];
+                }
+            }
+        }
+        return null;
+    }
 
     public void register(@Observes BeforeSuite event) {
         droneRegistry.set(new DroneRegistryImpl());
@@ -105,17 +117,5 @@ public class DroneRegistrar {
                 droneRegistry.get().registerDestructorFor(type, destructor);
             }
         }
-    }
-
-    private static Class<?> getFirstGenericParameterType(Class<?> clazz, Class<?> rawType) {
-        for (Type interfaceType : clazz.getGenericInterfaces()) {
-            if (interfaceType instanceof ParameterizedType) {
-                ParameterizedType ptype = (ParameterizedType) interfaceType;
-                if (rawType.isAssignableFrom((Class<?>) ptype.getRawType())) {
-                    return (Class<?>) ptype.getActualTypeArguments()[0];
-                }
-            }
-        }
-        return null;
     }
 }

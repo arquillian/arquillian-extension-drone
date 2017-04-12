@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
@@ -39,10 +38,8 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
     Configurator<InternetExplorerDriver, WebDriverConfiguration>,
     Instantiator<InternetExplorerDriver, WebDriverConfiguration>, Destructor<InternetExplorerDriver> {
 
-    private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
-
     public static final int DEFAULT_INTERNET_EXPLORER_PORT = 0;
-
+    private static final Logger log = Logger.getLogger(InternetExplorerDriverFactory.class.getName());
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.InternetExplorer().getReadableName();
 
     /*
@@ -94,9 +91,12 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {

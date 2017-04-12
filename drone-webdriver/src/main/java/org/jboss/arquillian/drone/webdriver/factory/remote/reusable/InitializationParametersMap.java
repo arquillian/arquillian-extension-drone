@@ -17,11 +17,11 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.util.HashMap;
-
 import org.openqa.selenium.remote.SessionId;
 
 /**
- * Contains a map of initialization parameters available in run time in time period between a reusable browser is created and
+ * Contains a map of initialization parameters available in run time in time period between a reusable browser is created
+ * and
  * destroyed
  *
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>

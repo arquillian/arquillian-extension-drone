@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -34,10 +33,15 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 public class BrowserCapabilitiesRegistrar {
 
+    // comparator
+    private static final Comparator<Sortable> SORTABLE_COMPARATOR = new Comparator<Sortable>() {
+        public int compare(Sortable o1, Sortable o2) {
+            return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
+        }
+    };
     @Inject
     @SuiteScoped
     private InstanceProducer<BrowserCapabilitiesRegistry> browserCapabilitiesRegistry;
-
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
@@ -55,11 +59,4 @@ public class BrowserCapabilitiesRegistrar {
             browserCapabilitiesRegistry.get().registerBrowserCapabilitiesFor(browser.getReadableName(), browser);
         }
     }
-
-    // comparator
-    private static final Comparator<Sortable> SORTABLE_COMPARATOR = new Comparator<Sortable>() {
-        public int compare(Sortable o1, Sortable o2) {
-            return new Integer(o1.getPrecedence()).compareTo(new Integer(o2.getPrecedence()));
-        }
-    };
 }

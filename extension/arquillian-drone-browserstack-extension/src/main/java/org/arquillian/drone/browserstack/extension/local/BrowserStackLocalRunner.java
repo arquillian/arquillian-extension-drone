@@ -28,7 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.arquillian.drone.browserstack.extension.utils.Utils;
 import org.arquillian.spacelift.Spacelift;
@@ -74,10 +73,15 @@ public class BrowserStackLocalRunner {
     /**
      * Indirectly runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
      *
-     * @param accessKey      An accessKey the binary should be ran with
-     * @param additionalArgs additional arguments
-     * @param localBinary    Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
-     * @throws BrowserStackLocalException when something bad happens during running BrowserStackLocal binary
+     * @param accessKey
+     *     An accessKey the binary should be ran with
+     * @param additionalArgs
+     *     additional arguments
+     * @param localBinary
+     *     Path to a local binary of the BrowserStackLocal. If none, then it will be downloaded.
+     *
+     * @throws BrowserStackLocalException
+     *     when something bad happens during running BrowserStackLocal binary
      */
     public void runBrowserStackLocal(String accessKey, String additionalArgs, String localBinary)
         throws BrowserStackLocalException {
@@ -98,10 +102,15 @@ public class BrowserStackLocalRunner {
     /**
      * Runs BrowserStackLocal binary. In case that the binary has been already run, then does nothing.
      *
-     * @param binaryFile     A binary file to be run
-     * @param accessKey      An accessKey the binary should be ran with
-     * @param additionalArgs additional arguments
-     * @throws BrowserStackLocalException when something bad happens during running BrowserStackLocal binary
+     * @param binaryFile
+     *     A binary file to be run
+     * @param accessKey
+     *     An accessKey the binary should be ran with
+     * @param additionalArgs
+     *     additional arguments
+     *
+     * @throws BrowserStackLocalException
+     *     when something bad happens during running BrowserStackLocal binary
      */
     private void runBrowserStackLocal(File binaryFile, String accessKey, String additionalArgs)
         throws BrowserStackLocalException {

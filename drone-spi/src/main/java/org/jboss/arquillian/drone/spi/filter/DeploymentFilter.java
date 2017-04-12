@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
-import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DronePointFilter;
-import org.jboss.arquillian.drone.spi.DronePoint;
-import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.DronePointFilter;
+import org.jboss.arquillian.drone.spi.deployment.DeploymentNameKey;
 
 /**
  * Filter for finding deployment injection points.

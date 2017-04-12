@@ -30,7 +30,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for OperaDriver.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
+ * OperaDriver.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
@@ -60,9 +61,12 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
      * Returns a {@link Capabilities} instance which is completely same as that one that is contained in the configuration
      * object itself - there is no necessary properties to be set.
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {

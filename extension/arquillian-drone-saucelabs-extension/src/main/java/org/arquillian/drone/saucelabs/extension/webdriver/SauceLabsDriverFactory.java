@@ -19,7 +19,6 @@ package org.arquillian.drone.saucelabs.extension.webdriver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
-
 import org.arquillian.drone.saucelabs.extension.connect.SauceConnectRunner;
 import org.arquillian.drone.saucelabs.extension.utils.Utils;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;

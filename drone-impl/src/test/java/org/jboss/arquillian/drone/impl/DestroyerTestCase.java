@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;

@@ -16,9 +16,8 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.drone.spi.CachingCallable;
-
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.jboss.arquillian.drone.spi.CachingCallable;
 
 public abstract class CachingCallableImpl<V> implements CachingCallable<V> {
 

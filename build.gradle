@@ -26,21 +26,21 @@ ext {
 
 spacelift {
     tools {
-       java {
-            command ([
-                linux: "java", 
-                windows: "java.exe", 
-                mac: "java",
+        java {
+            command([
+                linux  : "java",
+                windows: "java.exe",
+                mac    : "java",
                 solaris: "java"
             ])
-       }
-       mvn {
+        }
+        mvn {
             command {
                 def m2 = System.getenv("M2")
                 def m2_home = System.getenv("M2_HOME")
 
                 def mvnExpFile = 'mvn'
-                if(EnvironmentUtils.runsOnWindows()) {
+                if (EnvironmentUtils.runsOnWindows()) {
                     mvnExpFile += '.bat'
                 }
 
@@ -59,30 +59,32 @@ spacelift {
     profiles {
         "default" {
             enabledInstallations 'phantomjs'
-            tests '*'            
+            tests '*'
         }
     }
     installations {
         phantomjs {
             product 'phantomjs'
             version project.phantomjsVersion
-            remoteUrl ([
-                linux: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-linux-x86_64.tar.bz2",
-                mac: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-macosx.zip",
+            remoteUrl([
+                linux  : "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-linux-x86_64.tar.bz2",
+                mac    : "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-macosx.zip",
                 windows: "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${version}-windows.zip",
             ])
             home "phantomjs-${version}"
             extractMapper { toDir(home).cutdirs() }
             postActions {
                 // fix executable flags
-                project.ant.chmod(dir: "${home}", perm:"a+x", includes:"**/*phantomjs*")
+                project.ant.chmod(dir: "${home}", perm: "a+x", includes: "**/*phantomjs*")
             }
         }
         // this installation can be used if there is a need to test against not yet release version of arquillian-phantom-driver
         arquillianPhantomDriver {
             product 'arquillianPhantomDriver'
             version { project.arquillianPhantomDriverCommit }
-            remoteUrl { "https://github.com/${project.arquillianPhantomDriverOrganization}/arquillian-phantom-driver/archive/${version}.zip" }
+            remoteUrl {
+                "https://github.com/${project.arquillianPhantomDriverOrganization}/arquillian-phantom-driver/archive/${version}.zip"
+            }
             home { "arquillian-phantom-driver-${version}" }
             extractMapper { toDir(home).cutdirs() }
             postActions {
@@ -97,14 +99,14 @@ spacelift {
 
             def seleniumServer = null
             def phantomjsPath = "${phantomjs.home}/bin/phantomjs"
-            if(EnvironmentUtils.runsOnWindows()) {
+            if (EnvironmentUtils.runsOnWindows()) {
                 phantomjsPath += '.exe'
             }
 
             dataProvider {
                 def browser = project.browser
-                project.arquillianCoreVersion.collectMany{arqVersion ->
-                    browser.collect{ b->
+                project.arquillianCoreVersion.collectMany { arqVersion ->
+                    browser.collect { b ->
                         [arqVersion, b]
                     }
                 }
@@ -113,7 +115,7 @@ spacelift {
                 // execute all tests in the extension
 
                 Spacelift.task(MavenExecutor).pom("pom.xml")
-                    // replace property version.arquillian.core with compatibility version
+                // replace property version.arquillian.core with compatibility version
                     .property("phantomjs.binary.path=${phantomjsPath}")
                     .property("browser=${browserType}")
                     .goals('clean', 'verify').execute().await()

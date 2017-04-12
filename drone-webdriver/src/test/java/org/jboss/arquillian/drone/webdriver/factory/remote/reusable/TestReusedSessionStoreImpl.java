@@ -16,16 +16,15 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.SessionId;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Lukas Fryc

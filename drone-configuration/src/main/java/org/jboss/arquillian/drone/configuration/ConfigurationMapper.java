@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.spi.Validate;
@@ -44,7 +43,8 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 /**
  * Utility which maps Arquillian Descriptor to a Drone configuration.
  * <p>
- * Configuration mapper does inspect a configuration for available fields and it tries to fill the values according to what is
+ * Configuration mapper does inspect a configuration for available fields and it tries to fill the values according to
+ * what is
  * provided in arquillian.xml or in system properties.
  * <p>
  * All properties, which does not have an appropriate fields to be assigned, are stored in each available map, given that
@@ -54,15 +54,9 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
  * @see DroneConfiguration
  */
 public class ConfigurationMapper {
-    private static final Logger log = Logger.getLogger(ConfigurationMapper.class.getName());
-
-    // FIXME this should not be a static helper class but a proper observer on ArquillianDescriptor
-    private ConfigurationMapper() {
-        throw new InstantiationError();
-    }
-
     // FIXME this should be in SPI with a proper event model
     public static final List<ValueMapper<?>> VALUE_MAPPERS;
+    private static final Logger log = Logger.getLogger(ConfigurationMapper.class.getName());
 
     static {
         VALUE_MAPPERS = new ArrayList<ValueMapper<?>>();
@@ -76,13 +70,23 @@ public class ConfigurationMapper {
         VALUE_MAPPERS.add(FileValueMapper.INSTANCE);
     }
 
+    // FIXME this should not be a static helper class but a proper observer on ArquillianDescriptor
+    private ConfigurationMapper() {
+        throw new InstantiationError();
+    }
+
     /**
      * Maps a configuration using Arquillian Descriptor file
      *
-     * @param <T>           Type of the configuration
-     * @param descriptor    Arquillian Descriptor
-     * @param configuration Configuration object
-     * @param qualifier     Qualifier annotation
+     * @param <T>
+     *     Type of the configuration
+     * @param descriptor
+     *     Arquillian Descriptor
+     * @param configuration
+     *     Configuration object
+     * @param qualifier
+     *     Qualifier annotation
+     *
      * @return Configured configuration
      */
     public static <T extends DroneConfiguration<T>> T fromArquillianDescriptor(ArquillianDescriptor descriptor,
@@ -109,8 +113,11 @@ public class ConfigurationMapper {
     /**
      * Maps configuration values from Arquillian Descriptor
      *
-     * @param <T>           A type of configuration
-     * @param configuration Configuration object
+     * @param <T>
+     *     A type of configuration
+     * @param configuration
+     *     Configuration object
+     *
      * @return Configured configuration of given type
      */
     // @SuppressWarnings("unchecked")
@@ -166,9 +173,12 @@ public class ConfigurationMapper {
     /**
      * Parses Arquillian Descriptor into property name - value pairs value
      *
-     * @param descriptor          An Arquillian Descriptor
-     * @param descriptorQualifier A qualifier used for extension configuration in the descriptor
-     * @param qualifierName       Name of the qualifier passed
+     * @param descriptor
+     *     An Arquillian Descriptor
+     * @param descriptorQualifier
+     *     A qualifier used for extension configuration in the descriptor
+     * @param qualifierName
+     *     Name of the qualifier passed
      */
     static Map<String, String> loadNameValuePairs(ArquillianDescriptor descriptor, String descriptorQualifier,
         String qualifierName) {
@@ -206,7 +216,9 @@ public class ConfigurationMapper {
      * <p>
      * Replaces dot ('.') and lower case character with an upper case character
      *
-     * @param propertyName The name of field
+     * @param propertyName
+     *     The name of field
+     *
      * @return Corresponding field name
      */
     static String keyTransformReverse(String propertyName) {
@@ -286,9 +298,13 @@ public class ConfigurationMapper {
      * <p>
      * Converts string to a class of given type
      *
-     * @param <T>   Type of returned value
-     * @param clazz Type of desired value
-     * @param value String value to be converted
+     * @param <T>
+     *     Type of returned value
+     * @param clazz
+     *     Type of desired value
+     * @param value
+     *     String value to be converted
+     *
      * @return Value converted to a appropriate type
      */
     static Object convert(Class<?> clazz, String value) {

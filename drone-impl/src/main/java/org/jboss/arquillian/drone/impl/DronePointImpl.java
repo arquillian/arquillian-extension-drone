@@ -16,12 +16,11 @@
  */
 package org.jboss.arquillian.drone.impl;
 
-import org.jboss.arquillian.drone.api.annotation.Default;
-import org.jboss.arquillian.drone.spi.DronePoint;
-
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Comparator;
+import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.drone.spi.DronePoint;
 
 public class DronePointImpl<DRONE> implements DronePoint<DRONE> {
 

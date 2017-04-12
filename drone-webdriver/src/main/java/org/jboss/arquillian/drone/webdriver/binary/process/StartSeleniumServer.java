@@ -1,7 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
 import java.net.URL;
-
 import org.jboss.arquillian.core.spi.event.Event;
 import org.openqa.selenium.remote.DesiredCapabilities;
 

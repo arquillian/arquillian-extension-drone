@@ -30,7 +30,8 @@ public interface DronePointContext<DRONE> {
      * Returns an instance of drone. If the drone was not yet instantiated, it will fire {@link BeforeDroneInstantiated}
      * event, then instantiate the drone and fire {@link AfterDroneInstantiated} event.
      *
-     * @throws java.lang.IllegalStateException if there is no future instance set.
+     * @throws java.lang.IllegalStateException
+     *     if there is no future instance set.
      */
     DRONE getInstance() throws IllegalStateException;
 
@@ -38,11 +39,15 @@ public interface DronePointContext<DRONE> {
      * Returns an instance of drone, cast to desired type. If the drone was not yet instantiated, it will fire
      * {@link BeforeDroneInstantiated} event, then instantiate the drone and fire {@link AfterDroneInstantiated} event.
      *
-     * @param droneClass Class to cast drone instance to.
-     * @throws java.lang.IllegalArgumentException If the given class is null.
-     * @throws java.lang.IllegalStateException    If there is no future instance set or if the instance cannot be cast
-     *                                            to desired type. Use {@link DronePoint#conformsTo(Class)} to make sure
-     *                                            the drone can be cast to it.
+     * @param droneClass
+     *     Class to cast drone instance to.
+     *
+     * @throws java.lang.IllegalArgumentException
+     *     If the given class is null.
+     * @throws java.lang.IllegalStateException
+     *     If there is no future instance set or if the instance cannot be cast
+     *     to desired type. Use {@link DronePoint#conformsTo(Class)} to make sure
+     *     the drone can be cast to it.
      */
     <CAST_DRONE> CAST_DRONE getInstanceAs(Class<CAST_DRONE> droneClass) throws IllegalArgumentException,
         IllegalStateException;
@@ -50,9 +55,11 @@ public interface DronePointContext<DRONE> {
     /**
      * Returns an instance of {@link DroneConfiguration} cast to desired type.
      *
-     * @throws java.lang.IllegalStateException    If there is no configuration set or the configuration cannot be cast
-     *                                            to the desired type.
-     * @throws java.lang.IllegalArgumentException If the given configuration class is null.
+     * @throws java.lang.IllegalStateException
+     *     If there is no configuration set or the configuration cannot be cast
+     *     to the desired type.
+     * @throws java.lang.IllegalArgumentException
+     *     If the given configuration class is null.
      */
     <CONF extends DroneConfiguration<CONF>> CONF getConfigurationAs(Class<CONF> configurationClass) throws
         IllegalArgumentException, IllegalStateException;
@@ -60,7 +67,8 @@ public interface DronePointContext<DRONE> {
     /**
      * Returns saved metadata for the given key.
      *
-     * @throws java.lang.IllegalArgumentException If the given key class is null.
+     * @throws java.lang.IllegalArgumentException
+     *     If the given key class is null.
      */
     <KEY extends MetadataKey<VALUE>, VALUE> VALUE getMetadata(Class<KEY> keyClass) throws IllegalArgumentException;
 
@@ -82,7 +90,8 @@ public interface DronePointContext<DRONE> {
     /**
      * Returns true if there are metadata set for the given key.
      *
-     * @throws java.lang.IllegalArgumentException If the given key class is null.
+     * @throws java.lang.IllegalArgumentException
+     *     If the given key class is null.
      */
     <KEY extends MetadataKey<VALUE>, VALUE> boolean hasMetadata(Class<KEY> keyClass) throws IllegalArgumentException;
 
@@ -100,7 +109,8 @@ public interface DronePointContext<DRONE> {
     /**
      * Sets given metadata under specified key. If there are metadata set for the given key, it will replace them.
      *
-     * @throws java.lang.IllegalArgumentException If the given key class is null.
+     * @throws java.lang.IllegalArgumentException
+     *     If the given key class is null.
      */
     <KEY extends MetadataKey<VALUE>, VALUE> void setMetadata(Class<KEY> keyClass,
         VALUE metadata) throws IllegalArgumentException;
@@ -118,7 +128,8 @@ public interface DronePointContext<DRONE> {
     /**
      * Removes metadata set for the given key.
      *
-     * @throws java.lang.IllegalArgumentException If the given key class is null.
+     * @throws java.lang.IllegalArgumentException
+     *     If the given key class is null.
      */
     <KEY extends MetadataKey<VALUE>, VALUE> void removeMetadata(Class<KEY> keyClass);
 
@@ -130,7 +141,8 @@ public interface DronePointContext<DRONE> {
      * type of the metadata you want to store. Then use {@code .class} of your newly created interface as a key to
      * store and retrieve data from the context.
      *
-     * @param <VALUE> Type of the value to be stored in the {@link DronePointContext}.
+     * @param <VALUE>
+     *     Type of the value to be stored in the {@link DronePointContext}.
      */
     public interface MetadataKey<VALUE> {
     }

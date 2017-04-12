@@ -16,12 +16,11 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointFilter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Filter for finding injection points by the lifecycle.
@@ -34,7 +33,8 @@ public class LifecycleFilter implements DronePointFilter<Object> {
      * Creates lifecycle filter which will match injection points with any of specified lifecycles. Usage of multiple
      * lifecycles behaves like disjunction.
      *
-     * @throws java.lang.IllegalArgumentException If any of the given lifecycles is null.
+     * @throws java.lang.IllegalArgumentException
+     *     If any of the given lifecycles is null.
      */
     public LifecycleFilter(DronePoint.Lifecycle lifecycle, DronePoint.Lifecycle... additionalLifecycles) throws
         IllegalArgumentException {

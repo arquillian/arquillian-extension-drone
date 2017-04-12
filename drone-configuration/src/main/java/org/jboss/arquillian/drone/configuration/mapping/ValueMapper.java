@@ -19,7 +19,9 @@ package org.jboss.arquillian.drone.configuration.mapping;
 /**
  * Transformer for a string to an object of given type
  *
- * @param <T> Given type
+ * @param <T>
+ *     Given type
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public interface ValueMapper<T> {
@@ -27,8 +29,11 @@ public interface ValueMapper<T> {
     /**
      * Checks if given type is supported by this handler
      *
-     * @param type       Type to be supported
-     * @param parameters Types that have to match in case type is generic type
+     * @param type
+     *     Type to be supported
+     * @param parameters
+     *     Types that have to match in case type is generic type
+     *
      * @return {@code true} if this is supported, {@code false} otherwise
      */
     boolean handles(Class<?> type, Class<?>... parameters);
@@ -36,9 +41,13 @@ public interface ValueMapper<T> {
     /**
      * Returns converted value from a string
      *
-     * @param value String value to be converted
+     * @param value
+     *     String value to be converted
+     *
      * @return Converted object
-     * @throws IllegalArgumentException If conversion was not possible
+     *
+     * @throws IllegalArgumentException
+     *     If conversion was not possible
      */
     T transform(String value) throws IllegalArgumentException;
 }

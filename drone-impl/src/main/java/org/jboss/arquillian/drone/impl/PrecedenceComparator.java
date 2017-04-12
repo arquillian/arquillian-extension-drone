@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.impl;
 
 import java.util.Collections;
 import java.util.Comparator;
-
 import org.jboss.arquillian.drone.spi.Sortable;
 
 /**

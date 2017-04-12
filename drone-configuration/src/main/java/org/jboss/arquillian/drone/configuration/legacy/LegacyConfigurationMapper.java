@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.configuration.mapping.StringValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 
@@ -119,7 +118,8 @@ public class LegacyConfigurationMapper {
         private final String capabilityName;
         private final ValueMapper<?> mapper;
 
-        @SuppressWarnings("unused") DefaultCapabilityMapping(String capabilityName) {
+        @SuppressWarnings("unused")
+        DefaultCapabilityMapping(String capabilityName) {
             this(capabilityName, StringValueMapper.INSTANCE);
         }
 

@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;

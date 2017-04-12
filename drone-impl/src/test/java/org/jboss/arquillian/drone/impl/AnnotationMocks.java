@@ -23,27 +23,21 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 public class AnnotationMocks {
     public static final String DEPLOYMENT_1 = "deployment_1";
     public static final String DEPLOYMENT_2 = "deployment_2";
+    @Drone
+    private static Object drone;
+    @Default
+    private static Object aDefault;
+    @Different
+    private static Object different;
+    @MethodArgumentOne
+    private static Object methodArgumentOne;
+    @OperateOnDeployment(DEPLOYMENT_1)
+    private static Object operateOnDeployment1;
+    @OperateOnDeployment(DEPLOYMENT_2)
+    private static Object operateOnDeployment2;
 
     private AnnotationMocks() {
     }
-
-    @Drone
-    private static Object drone;
-
-    @Default
-    private static Object aDefault;
-
-    @Different
-    private static Object different;
-
-    @MethodArgumentOne
-    private static Object methodArgumentOne;
-
-    @OperateOnDeployment(DEPLOYMENT_1)
-    private static Object operateOnDeployment1;
-
-    @OperateOnDeployment(DEPLOYMENT_2)
-    private static Object operateOnDeployment2;
 
     public static Drone drone() {
         return getFieldAnnotation(Drone.class, "drone");

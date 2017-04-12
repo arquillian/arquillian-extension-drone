@@ -25,32 +25,31 @@ public interface LegacyMapping {
 
     /**
      * Returns {@code true} if remapped property will be backed by capability map
-     *
-     * @return
      */
     boolean remapsToCapability();
 
     /**
      * Returns {@code true} if remapped property will be backed by another property field
-     *
-     * @return
      */
     boolean remapsToProperty();
 
     /**
-     * Returns a new value for a property key, e.g. the key where the value will be stored as a capability in the map or a field
+     * Returns a new value for a property key, e.g. the key where the value will be stored as a capability in the map or a
+     * field
      * name
      *
-     * @param fieldName Original field name from legacy Drone configuration
+     * @param fieldName
+     *     Original field name from legacy Drone configuration
+     *
      * @return New name to be used
      */
     String remapKey(String fieldName);
 
     /**
-     * Returns a new value for a property value, e.g. the value which will be stored a the capability in the map or a field
+     * Returns a new value for a property value, e.g. the value which will be stored a the capability in the map or a
+     * field
      * value
      *
-     * @param value
      * @return New value to be used
      */
     String remapValue(String value);

@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -52,10 +55,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
  * <p/>
@@ -67,10 +66,8 @@ import java.util.List;
 public class EnricherTestCase extends AbstractTestTestBase {
     private static final String DIFFERENT_FIELD = "ArquillianDescriptor @DifferentMock";
     private static final String METHOD_ARGUMENT_ONE_FIELD = "ArquillianDescriptor @MethodArgumentOne";
-
-    @Mock
-    private ServiceLoader serviceLoader;
-
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
     @Mock
     DeploymentDescription deploymentDescription1;
 
@@ -79,9 +76,8 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
     @Mock
     DeployableContainer deployableContainer;
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
+    @Mock
+    private ServiceLoader serviceLoader;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -219,9 +215,12 @@ public class EnricherTestCase extends AbstractTestTestBase {
      * Verifies whether the given {@link DronePoint} is instantiated or not and throws an AssertException with an
      * appropriate message if necessary. It is verified in the context of creation of the instance (not destruction)
      *
-     * @param shouldInstantiated Whether the given {@link DronePoint} should be instantiated
-     * @param context            a Drone context the given {@link DronePoint} should belong to
-     * @param dronePoint         a drone point to be verified
+     * @param shouldInstantiated
+     *     Whether the given {@link DronePoint} should be instantiated
+     * @param context
+     *     a Drone context the given {@link DronePoint} should belong to
+     * @param dronePoint
+     *     a drone point to be verified
      */
     void verifyDronePointInstantiated(boolean shouldInstantiated, DroneContext context, DronePoint<?> dronePoint) {
         verifyDronePointInstantiated(shouldInstantiated, context, dronePoint, false);
@@ -231,11 +230,15 @@ public class EnricherTestCase extends AbstractTestTestBase {
      * Verifies whether the given {@link DronePoint} is instantiated or not and throws an AssertException with an
      * appropriate message if necessary.
      *
-     * @param shouldInstantiated Whether the given {@link DronePoint} should be instantiated
-     * @param context            a Drone context the given {@link DronePoint} should belong to
-     * @param dronePoint         a drone point to be verified
-     * @param shouldDestroyed    whether the given {@link DronePoint} should be destroyed - based on this parameter only
-     *                           the message is modified
+     * @param shouldInstantiated
+     *     Whether the given {@link DronePoint} should be instantiated
+     * @param context
+     *     a Drone context the given {@link DronePoint} should belong to
+     * @param dronePoint
+     *     a drone point to be verified
+     * @param shouldDestroyed
+     *     whether the given {@link DronePoint} should be destroyed - based on this parameter only
+     *     the message is modified
      */
     void verifyDronePointInstantiated(boolean shouldInstantiated, DroneContext context, DronePoint<?> dronePoint,
         boolean shouldDestroyed) {
@@ -272,8 +275,11 @@ public class EnricherTestCase extends AbstractTestTestBase {
     /**
      * Enriches the given instance of a test class and resolves the given test method
      *
-     * @param instance   a test class instance to be enriched
-     * @param testMethod a test method to be resolved
+     * @param instance
+     *     a test class instance to be enriched
+     * @param testMethod
+     *     a test method to be resolved
+     *
      * @return resolved parameters of the given test method
      */
     Object[] enrichClassAndResolveMethod(Object instance, Method testMethod) {

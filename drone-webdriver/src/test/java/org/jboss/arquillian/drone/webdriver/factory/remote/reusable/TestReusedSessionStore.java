@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -41,9 +40,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TestReusedSessionStore extends AbstractTestTestBase {
 
+    @Inject
+    Instance<ReusedSessionStore> store;
     @Mock
     private ServiceLoader serviceLoader;
-
     @Mock
     private ReusedSessionPermanentStorage permanentStorage;
 
@@ -58,9 +58,6 @@ public class TestReusedSessionStore extends AbstractTestTestBase {
         when(serviceLoader.onlyOne(ReusedSessionPermanentStorage.class)).thenReturn(permanentStorage);
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
     }
-
-    @Inject
-    Instance<ReusedSessionStore> store;
 
     @Test
     public void test_store_is_created_on_before_suite_event() {

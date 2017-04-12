@@ -1,5 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.io.File;
+import java.net.URL;
+import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -9,10 +12,6 @@ import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.File;
-import java.net.URL;
-import java.util.logging.Logger;
-
 /**
  * Class that handles system properties, properties stored in capabilities, downloading, extracting and setting binaries
  * as executable.
@@ -21,21 +20,23 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractBinaryHandler implements BinaryHandler {
 
-    private Logger log = Logger.getLogger(this.getClass().toString());
-
     /**
      * Capability property that sets downloading on or off. By default it is on
      */
     public static final String DOWNLOAD_BINARIES_PROPERTY = "downloadBinaries";
+    private Logger log = Logger.getLogger(this.getClass().toString());
 
     /**
      * Checks system properties and capabilities, whether a path to binary is already set there
-     * (see {@link AbstractBinaryHandler#getSystemBinaryProperty()} and {@link AbstractBinaryHandler#getBinaryProperty()} ).
+     * (see {@link AbstractBinaryHandler#getSystemBinaryProperty()} and {@link AbstractBinaryHandler#getBinaryProperty()}
+     * ).
      * If not and the downloading is not set off ({@link AbstractBinaryHandler#DOWNLOAD_BINARIES_PROPERTY}), then the
      * binary is downloaded. Resulting binary is then set as system property that is returned by the method
      * {@link AbstractBinaryHandler#getSystemBinaryProperty()}
      *
-     * @param performExecutableValidations If it should be checked whether the binary points to an executable file.
+     * @param performExecutableValidations
+     *     If it should be checked whether the binary points to an executable file.
+     *
      * @return Path to the binary
      */
     @Override
@@ -73,8 +74,10 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * Sets binary as a system property that is returned by method
      * {@link AbstractBinaryHandler#getSystemBinaryProperty()}
      *
-     * @param performExecutableValidations If it should be checked whether the binary points to an executable file.
-     * @param binary                       Path to the binary
+     * @param performExecutableValidations
+     *     If it should be checked whether the binary points to an executable file.
+     * @param binary
+     *     Path to the binary
      */
     protected void setBinaryAsSystemProperty(boolean performExecutableValidations, String binary) {
         if (Validate.nonEmpty(binary) && Validate.nonEmpty(getSystemBinaryProperty())) {
@@ -91,7 +94,8 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * <br/>
      * <h3>1. Checking properties</h3>
      * In the first step it checks capabilities if there is set either url a binary should be downloaded from or
-     * a desired binary version. For more information see methods {@link AbstractBinaryHandler#getUrlToDownloadProperty()} and
+     * a desired binary version. For more information see methods {@link AbstractBinaryHandler#getUrlToDownloadProperty()}
+     * and
      * {@link AbstractBinaryHandler#getDesiredVersionProperty()}.
      * <p>
      * <h3>2. Downloading</h3>
@@ -117,7 +121,8 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * </p>
      * <p>
      * <h3>3. Extraction/copy</h3>
-     * When the file is downloaded then it is expected that in most cases it is an archive (zip, tar) file. If the file is
+     * When the file is downloaded then it is expected that in most cases it is an archive (zip, tar) file. If the file
+     * is
      * an archive then it is extracted; if the file is not an archive file, then it is copied. The targeted directory
      * for this operation is:
      * <br/>
@@ -127,7 +132,9 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * In the last step the extracted/copied file is set as an executalbe file.
      *
      * @return An executable binary that was extracted/copied from the downloaded file
-     * @throws Exception If anything bad happens
+     *
+     * @throws Exception
+     *     If anything bad happens
      */
     public File downloadAndPrepare() throws Exception {
         String url = null;
@@ -164,10 +171,15 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
     /**
      * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
      *
-     * @param targetDir A directory where a downloaded binary should be stored
-     * @param from      A url a binary should be downloaded from
+     * @param targetDir
+     *     A directory where a downloaded binary should be stored
+     * @param from
+     *     A url a binary should be downloaded from
+     *
      * @return An executable binary that was extracted/copied from the downloaded file
-     * @throws Exception If anything bad happens
+     *
+     * @throws Exception
+     *     If anything bad happens
      */
     protected File downloadAndPrepare(File targetDir, String from) throws Exception {
         return downloadAndPrepare(targetDir, new URL(from));
@@ -176,10 +188,15 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
     /**
      * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
      *
-     * @param targetDir A directory where a downloaded binary should be stored
-     * @param from      A url a binary should be downloaded from
+     * @param targetDir
+     *     A directory where a downloaded binary should be stored
+     * @param from
+     *     A url a binary should be downloaded from
+     *
      * @return An executable binary that was extracted/copied from the downloaded file
-     * @throws Exception If anything bad happens
+     *
+     * @throws Exception
+     *     If anything bad happens
      */
     protected File downloadAndPrepare(File targetDir, URL from) throws Exception {
         File downloaded = Downloader.download(targetDir, from);
@@ -195,7 +212,9 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
     /**
      * Sets the given binary to be executable (if it is not already set)
      *
-     * @param binaryFile A binary file that should be set to be executable
+     * @param binaryFile
+     *     A binary file that should be set to be executable
+     *
      * @return the given binary file set to be executable
      */
     protected File markAsExecutable(File binaryFile) {

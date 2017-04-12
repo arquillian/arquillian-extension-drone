@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.example;
 
 import java.net.URL;
 import java.util.function.Function;
-
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;

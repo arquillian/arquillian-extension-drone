@@ -45,11 +45,13 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
         return new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
     }
 
-    @Override protected DesiredCapabilities getCapabilities() {
+    @Override
+    protected DesiredCapabilities getCapabilities() {
         return capabilities;
     }
 
-    @Override protected String getBinaryProperty() {
+    @Override
+    protected String getBinaryProperty() {
         return FIREFOX_DRIVER_BINARY_PROPERTY;
     }
 

@@ -23,14 +23,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Drone annotation is used to inject Selenium's WebDriver, Selenium's DefaultSelenium, Arquillian Ajocado AjaxSelenium or other
+ * Drone annotation is used to inject Selenium's WebDriver, Selenium's DefaultSelenium, Arquillian Ajocado AjaxSelenium or
+ * other
  * web ui browser implementation into your test.
  * <p/>
  * <p>
- * Any framework can be extended to support usage of this annotation to inject a web browser. See SPI package of Drone for more
+ * Any framework can be extended to support usage of this annotation to inject a web browser. See SPI package of Drone for
+ * more
  * details
  * <p>
- * {@code @Drone} can be used for both field in a class, thus class scoped instance of the browser or for parameter in a method,
+ * {@code @Drone} can be used for both field in a class, thus class scoped instance of the browser or for parameter in a
+ * method,
  * where injected instance will be method scoped.
  * </p>
  *

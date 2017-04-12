@@ -16,16 +16,15 @@
  */
 package org.jboss.arquillian.drone.spi.filter;
 
-import org.jboss.arquillian.drone.spi.DroneContext;
-import org.jboss.arquillian.drone.spi.DronePoint;
-import org.jboss.arquillian.drone.spi.DronePointFilter;
-
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jboss.arquillian.drone.spi.DroneContext;
+import org.jboss.arquillian.drone.spi.DronePoint;
+import org.jboss.arquillian.drone.spi.DronePointFilter;
 
 /**
  * Filter for finding injection points by the qualifier.

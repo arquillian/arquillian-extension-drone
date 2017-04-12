@@ -1,5 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.handler.GoogleSeleniumStorageProvider;
@@ -10,10 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource.SELENIUM_BASE_STORAGE_URL;

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.configuration;
 
 import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;

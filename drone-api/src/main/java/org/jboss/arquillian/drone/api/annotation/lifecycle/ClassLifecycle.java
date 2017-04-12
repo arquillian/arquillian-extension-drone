@@ -16,12 +16,11 @@
  */
 package org.jboss.arquillian.drone.api.annotation.lifecycle;
 
-import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.jboss.arquillian.drone.api.annotation.DroneLifecycle;
 
 /**
  * Declaration of class lifecycle, which means the drone will be prepared in {@link BeforeClass} and destroyed in

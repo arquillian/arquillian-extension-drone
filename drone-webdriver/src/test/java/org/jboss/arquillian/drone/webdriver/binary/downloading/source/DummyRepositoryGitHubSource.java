@@ -1,12 +1,11 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,11 +24,6 @@ public class DummyRepositoryGitHubSource extends GitHubSource {
         super("MatousJobanek", "my-test-repository", httpClient, gitHubLastUpdateCache);
     }
 
-    @Override
-    protected String getExpectedFileNameRegex(String version) {
-        return "release.zip";
-    }
-
     public static void assertThatCorrectReleaseWasDownloaded(String version, File releaseZip) throws Exception {
         assertThat(releaseZip).isFile();
 
@@ -42,5 +36,10 @@ public class DummyRepositoryGitHubSource extends GitHubSource {
 
         List<String> content = Files.readAllLines(versionFiles[0].toPath());
         assertThat(content).hasSize(1).contains(version);
+    }
+
+    @Override
+    protected String getExpectedFileNameRegex(String version) {
+        return "release.zip";
     }
 }

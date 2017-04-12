@@ -33,7 +33,9 @@ public class StringUtils {
      * the whole token has to be quoted. For instance string 'opt0 opt1=val1 "opt2=val2 with space"' results in three
      * tokens.
      *
-     * @param stringToBeParsed - string to be parsed to tokens
+     * @param stringToBeParsed
+     *     - string to be parsed to tokens
+     *
      * @return List of tokens, returns empty list rather that null value
      */
     public static List<String> tokenize(String stringToBeParsed) {

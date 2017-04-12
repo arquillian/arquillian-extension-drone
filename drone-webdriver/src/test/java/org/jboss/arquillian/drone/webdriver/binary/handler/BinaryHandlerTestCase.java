@@ -1,5 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.process.CommandBuilder;
@@ -19,14 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.concurrent.TimeUnit;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
@@ -36,35 +35,15 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_
  */
 public class BinaryHandlerTestCase {
 
-    private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
-    private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
-
     private static final String originalCacheDirectory = ARQUILLIAN_DRONE_CACHE_DIRECTORY;
     private static final String originalTargetDirectory = DRONE_TARGET_DIRECTORY;
+    private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
+    private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
 
     @BeforeClass
     public static void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
         setTargetDirectory(TEST_DRONE_TARGET_DIRECTORY);
         setCacheDirectory(TEST_DRONE_CACHE_DIRECTORY);
-    }
-
-    @Before
-    public void cleanupBefore() throws IOException {
-        cleanUp();
-    }
-
-    @After
-    public void cleanupAfter() throws IOException {
-        cleanUp();
-    }
-
-    private void cleanUp() throws IOException {
-        File targetDroneDir = new File(TEST_DRONE_TARGET_DIRECTORY);
-        if (targetDroneDir.exists()) {
-            FileUtils.deleteDirectory(targetDroneDir);
-        }
-        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY, "");
-        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY, "");
     }
 
     @AfterClass
@@ -92,6 +71,25 @@ public class BinaryHandlerTestCase {
         modifiersField.setInt(constantField, constantField.getModifiers() & ~Modifier.FINAL);
 
         constantField.set(null, value);
+    }
+
+    @Before
+    public void cleanupBefore() throws IOException {
+        cleanUp();
+    }
+
+    @After
+    public void cleanupAfter() throws IOException {
+        cleanUp();
+    }
+
+    private void cleanUp() throws IOException {
+        File targetDroneDir = new File(TEST_DRONE_TARGET_DIRECTORY);
+        if (targetDroneDir.exists()) {
+            FileUtils.deleteDirectory(targetDroneDir);
+        }
+        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY, "");
+        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY, "");
     }
 
     @Test

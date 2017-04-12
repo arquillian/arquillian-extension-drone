@@ -1,13 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.io.File;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.io.File;
 
 /**
  * A class for handling driver binaries for internet explorer
@@ -47,11 +46,13 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
         return new IeStorageSource((String) capabilities.getCapability(IE_DRIVER_VERSION_PROPERTY), new HttpClient());
     }
 
-    @Override protected DesiredCapabilities getCapabilities() {
+    @Override
+    protected DesiredCapabilities getCapabilities() {
         return capabilities;
     }
 
-    @Override protected String getBinaryProperty() {
+    @Override
+    protected String getBinaryProperty() {
         return IE_DRIVER_BINARY_PROPERTY;
     }
 

@@ -27,11 +27,16 @@ import java.util.concurrent.Callable;
 public interface InstanceOrCallableInstance {
 
     /**
-     * Sets value to {@code object}. This is a convenient method to modify content of {@link DroneContext} from various events.
+     * Sets value to {@code object}. This is a convenient method to modify content of {@link DroneContext} from various
+     * events.
      *
-     * @param object new value
+     * @param object
+     *     new value
+     *
      * @return modified instance
-     * @throws IllegalArgumentException If new value is {@code null}
+     *
+     * @throws IllegalArgumentException
+     *     If new value is {@code null}
      */
     InstanceOrCallableInstance set(Object object) throws IllegalArgumentException;
 
@@ -52,18 +57,26 @@ public interface InstanceOrCallableInstance {
     /**
      * Wraps as instance
      *
-     * @param type Type of the instance
+     * @param type
+     *     Type of the instance
+     *
      * @return wrapped instance
-     * @throws IllegalStateException If content is not an instance
+     *
+     * @throws IllegalStateException
+     *     If content is not an instance
      */
     <T> T asInstance(Class<T> type) throws IllegalStateException;
 
     /**
      * Wraps as callable
      *
-     * @param type Type of the callable
+     * @param type
+     *     Type of the callable
+     *
      * @return wrapped callable
-     * @throws IllegalStateException If content is not a callable
+     *
+     * @throws IllegalStateException
+     *     If content is not a callable
      */
     <T> Callable<T> asCallableInstance(Class<T> type) throws IllegalStateException;
 }

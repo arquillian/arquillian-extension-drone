@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -31,9 +33,6 @@ import org.jboss.arquillian.drone.spi.event.BeforeDroneDestroyed;
 import org.jboss.arquillian.drone.spi.event.DroneLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Destructor of Drone instance. Disposes both class scoped Drones as well as method scoped ones.

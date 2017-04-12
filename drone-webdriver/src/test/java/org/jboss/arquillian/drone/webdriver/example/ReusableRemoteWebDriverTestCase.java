@@ -29,13 +29,13 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-
 import qualifier.Reusable;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
  * <p>
- * Uses standard settings of Selenium 2.0, that is RemoteWebDriver by default, but allows user to pass another driver specified
+ * Uses standard settings of Selenium 2.0, that is RemoteWebDriver by default, but allows user to pass another driver
+ * specified
  * as a System property or in the Arquillian configuration.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>

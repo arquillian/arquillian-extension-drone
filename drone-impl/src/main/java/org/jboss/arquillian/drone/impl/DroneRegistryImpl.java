@@ -118,45 +118,6 @@ public class DroneRegistryImpl implements DroneRegistry {
         return sb.toString();
     }
 
-    private static class RegistryValue {
-        Configurator<?, ?> configurator;
-        Instantiator<?, ?> instantiator;
-        Destructor<?> destructor;
-
-        /**
-         * @param configurator
-         *     the configurator to set
-         *
-         * @return modified instance
-         */
-        public RegistryValue setConfigurator(Configurator<?, ?> configurator) {
-            this.configurator = configurator;
-            return this;
-        }
-
-        /**
-         * @param instantiator
-         *     the instantiator to set
-         *
-         * @return modified instance
-         */
-        public RegistryValue setInstantiator(Instantiator<?, ?> instantiator) {
-            this.instantiator = instantiator;
-            return this;
-        }
-
-        /**
-         * @param destructor
-         *     the destructor to set
-         *
-         * @return modified value
-         */
-        public RegistryValue setDestructor(Destructor<?> destructor) {
-            this.destructor = destructor;
-            return this;
-        }
-    }
-
     private enum RegisteredType {
         CONFIGURATOR {
             @Override
@@ -216,10 +177,6 @@ public class DroneRegistryImpl implements DroneRegistry {
             }
         };
 
-        public abstract boolean registeredIn(RegistryValue value);
-
-        public abstract <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass);
-
         public static RegisteredType getType(Class<? extends Sortable> registeredType) {
             Validate.stateNotNull(registeredType, "Registered type must not be null");
             if (Configurator.class.isAssignableFrom(registeredType)) {
@@ -231,6 +188,49 @@ public class DroneRegistryImpl implements DroneRegistry {
             }
 
             throw new AssertionError("Unable to determine registered Type from " + registeredType.getName());
+        }
+
+        public abstract boolean registeredIn(RegistryValue value);
+
+        public abstract <T extends Sortable> T unwrap(RegistryValue value, Class<T> unwrapClass);
+    }
+
+    private static class RegistryValue {
+        Configurator<?, ?> configurator;
+        Instantiator<?, ?> instantiator;
+        Destructor<?> destructor;
+
+        /**
+         * @param configurator
+         *     the configurator to set
+         *
+         * @return modified instance
+         */
+        public RegistryValue setConfigurator(Configurator<?, ?> configurator) {
+            this.configurator = configurator;
+            return this;
+        }
+
+        /**
+         * @param instantiator
+         *     the instantiator to set
+         *
+         * @return modified instance
+         */
+        public RegistryValue setInstantiator(Instantiator<?, ?> instantiator) {
+            this.instantiator = instantiator;
+            return this;
+        }
+
+        /**
+         * @param destructor
+         *     the destructor to set
+         *
+         * @return modified value
+         */
+        public RegistryValue setDestructor(Destructor<?> destructor) {
+            this.destructor = destructor;
+            return this;
         }
     }
 }

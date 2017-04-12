@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.apache.commons.io.FileUtils;
 import org.arquillian.spacelift.execution.ExecutionException;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.DummyRepositoryGitHubSource;

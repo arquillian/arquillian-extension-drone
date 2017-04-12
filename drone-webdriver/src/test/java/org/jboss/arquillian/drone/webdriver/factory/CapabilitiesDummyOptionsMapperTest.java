@@ -17,10 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import com.google.gson.Gson;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +24,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -319,54 +318,73 @@ public class CapabilitiesDummyOptionsMapperTest {
             this.mapOfObjectParam.put(paramName, mapOfObjectParam);
         }
 
-        @Override public boolean equals(Object o) {
-            if (this == o)
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
-            if (o == null || getClass() != o.getClass())
+            }
+            if (o == null || getClass() != o.getClass()) {
                 return false;
+            }
 
             DummyBrowserOptions that = (DummyBrowserOptions) o;
 
-            if (longParam != that.longParam)
+            if (longParam != that.longParam) {
                 return false;
-            if (Double.compare(that.doubleParam, doubleParam) != 0)
+            }
+            if (Double.compare(that.doubleParam, doubleParam) != 0) {
                 return false;
-            if (intParam != that.intParam)
+            }
+            if (intParam != that.intParam) {
                 return false;
-            if (booleanParam != that.booleanParam)
+            }
+            if (booleanParam != that.booleanParam) {
                 return false;
-            if (stringParam != null ? !stringParam.equals(that.stringParam) : that.stringParam != null)
+            }
+            if (stringParam != null ? !stringParam.equals(that.stringParam) : that.stringParam != null) {
                 return false;
-            if (integerParam != null ? !integerParam.equals(that.integerParam) : that.integerParam != null)
+            }
+            if (integerParam != null ? !integerParam.equals(that.integerParam) : that.integerParam != null) {
                 return false;
-            if (fileParam != null ? !fileParam.equals(that.fileParam) : that.fileParam != null)
+            }
+            if (fileParam != null ? !fileParam.equals(that.fileParam) : that.fileParam != null) {
                 return false;
+            }
             if (listOfStringsParam != null ? !listOfStringsParam.equals(that.listOfStringsParam) :
-                that.listOfStringsParam != null)
+                that.listOfStringsParam != null) {
                 return false;
+            }
             if (listOfFilesParam != null ? !listOfFilesParam.equals(that.listOfFilesParam) :
-                that.listOfFilesParam != null)
+                that.listOfFilesParam != null) {
                 return false;
+            }
             if (listOfLongsParam != null ? !listOfLongsParam.equals(that.listOfLongsParam) :
-                that.listOfLongsParam != null)
+                that.listOfLongsParam != null) {
                 return false;
-            if (!Arrays.equals(arrayOfStringsParam, that.arrayOfStringsParam))
+            }
+            if (!Arrays.equals(arrayOfStringsParam, that.arrayOfStringsParam)) {
                 return false;
-            if (!Arrays.equals(arrayOfFilesParam, that.arrayOfFilesParam))
+            }
+            if (!Arrays.equals(arrayOfFilesParam, that.arrayOfFilesParam)) {
                 return false;
-            if (!Arrays.equals(arrayOfDoublesParam, that.arrayOfDoublesParam))
+            }
+            if (!Arrays.equals(arrayOfDoublesParam, that.arrayOfDoublesParam)) {
                 return false;
+            }
             if (mapOfMapOfStringsParam != null ? !mapOfMapOfStringsParam.equals(that.mapOfMapOfStringsParam) :
-                that.mapOfMapOfStringsParam != null)
+                that.mapOfMapOfStringsParam != null) {
                 return false;
+            }
             if (mapOfObjectParam != null ? !mapOfObjectParam.equals(that.mapOfObjectParam) :
-                that.mapOfObjectParam != null)
+                that.mapOfObjectParam != null) {
                 return false;
+            }
 
             return true;
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             int result;
             long temp;
             result = stringParam != null ? stringParam.hashCode() : 0;

@@ -16,6 +16,15 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -27,16 +36,6 @@ import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointContext;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.BeforeDroneInstantiated;
-
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DronePointContextImpl<DRONE> implements DronePointContext<DRONE> {
     private static final Logger LOGGER = Logger.getLogger(DronePointContextImpl.class.getName());

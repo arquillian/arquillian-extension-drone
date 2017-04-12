@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.configuration.mapping.BooleanValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.IntegerValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.MapValueMapper;

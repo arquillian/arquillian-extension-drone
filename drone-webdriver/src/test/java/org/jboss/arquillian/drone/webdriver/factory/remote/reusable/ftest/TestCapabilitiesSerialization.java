@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
 import java.io.Serializable;
-
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assume;
@@ -26,10 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import qualifier.Reusable;
 
 import static org.junit.Assert.assertTrue;
-
-import qualifier.Reusable;
 
 /**
  * @author Lukas Fryc
@@ -37,14 +35,14 @@ import qualifier.Reusable;
 @RunWith(Arquillian.class)
 public class TestCapabilitiesSerialization extends AbstractInBrowserTest {
 
+    @Drone
+    @Reusable
+    RemoteWebDriver driver;
+
     @BeforeClass
     public static void skipIfEdgeBrowser() {
         Assume.assumeFalse(System.getProperty("browser").equals("edge"));
     }
-
-    @Drone
-    @Reusable
-    RemoteWebDriver driver;
 
     @Test
     public void whenGetCapabilitiesFromRunningSessionThenItShouldBeSerializable() {

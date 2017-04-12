@@ -21,8 +21,11 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 /**
  * Defines a contract for creating configurations for Drone Driver
  *
- * @param <T> Type of the driver
- * @param <C> Type of the configuration
+ * @param <T>
+ *     Type of the driver
+ * @param <C>
+ *     Type of the configuration
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  * @see org.jboss.arquillian.drone.spi.Qualifier
  */
@@ -32,8 +35,11 @@ public interface Configurator<T, C extends DroneConfiguration<C>> extends Sortab
      * suite is run
      * and stays in Arquillian's context until the test suite execution is finished.
      *
-     * @param descriptor A descriptor to be parsed
-     * @param qualifier  A qualifier for this configuration
+     * @param descriptor
+     *     A descriptor to be parsed
+     * @param qualifier
+     *     A qualifier for this configuration
+     *
      * @return Configuration holding values determined from Arquillian's descriptor
      */
     C createConfiguration(ArquillianDescriptor descriptor, DronePoint<T> dronePoint);

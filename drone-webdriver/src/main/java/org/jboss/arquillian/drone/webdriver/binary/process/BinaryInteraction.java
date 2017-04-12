@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
-
 import org.arquillian.spacelift.process.OutputTransformer;
 import org.arquillian.spacelift.process.ProcessInteraction;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
@@ -38,7 +37,9 @@ public class BinaryInteraction {
     /**
      * Defines an interaction when {@code pattern} is matched
      *
-     * @param pattern the line
+     * @param pattern
+     *     the line
+     *
      * @return current instance to allow chaining
      */
     public BinaryInteraction.MatchedOutputProcessInteractionBuilder when(String pattern) {
@@ -55,7 +56,9 @@ public class BinaryInteraction {
      * Defines a prefix for standard output and standard error output. Might be {@code null} or empty string,
      * in such case no prefix is added and process outputs cannot be distinguished
      *
-     * @param prefix the prefix
+     * @param prefix
+     *     the prefix
+     *
      * @return current instance to allow chaining
      */
     public BinaryInteraction outputPrefix(final String prefix) {
@@ -83,25 +86,6 @@ public class BinaryInteraction {
      */
     public ProcessInteraction build() {
         return new BinaryInteraction.ProcessInteractionImpl(transformer, allowedOutput);
-    }
-
-    /**
-     * Definition of allowed actions when output is matched
-     *
-     * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
-     */
-    public class MatchedOutputProcessInteractionBuilder {
-
-        /**
-         * Counts down the latch (if not null and is bigger than zero)
-         *
-         * @param countDownLatch A {@link CountDownLatch} to be counted down
-         * @return current instance to allow chaining
-         */
-        public BinaryInteraction thenCountDown(CountDownLatch countDownLatch) {
-            BinaryInteraction.this.countDownLatch = countDownLatch;
-            return BinaryInteraction.this;
-        }
     }
 
     private static class ProcessInteractionImpl implements ProcessInteraction {
@@ -142,6 +126,27 @@ public class BinaryInteraction {
         @Override
         public OutputTransformer transformer() {
             return transformer;
+        }
+    }
+
+    /**
+     * Definition of allowed actions when output is matched
+     *
+     * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
+     */
+    public class MatchedOutputProcessInteractionBuilder {
+
+        /**
+         * Counts down the latch (if not null and is bigger than zero)
+         *
+         * @param countDownLatch
+         *     A {@link CountDownLatch} to be counted down
+         *
+         * @return current instance to allow chaining
+         */
+        public BinaryInteraction thenCountDown(CountDownLatch countDownLatch) {
+            BinaryInteraction.this.countDownLatch = countDownLatch;
+            return BinaryInteraction.this;
         }
     }
 }

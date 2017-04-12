@@ -1,15 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +8,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * GoogleStorageSource source is an abstract class that helps you to retrieve either latest release
@@ -40,7 +39,8 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
     private String latestVersion;
 
     /**
-     * @param storageUrl An url to a google storage from which information about releases should be retrieved from
+     * @param storageUrl
+     *     An url to a google storage from which information about releases should be retrieved from
      */
     public GoogleStorageSource(String storageUrl, HttpClient httpClient) {
         this.storageUrl = storageUrl;
@@ -48,8 +48,10 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
     }
 
     /**
-     * @param storageUrl         An url to a google storage from which information about releases should be retrieved from
-     * @param urlToLatestRelease An url where a version of the latest release could be retrieved from
+     * @param storageUrl
+     *     An url to a google storage from which information about releases should be retrieved from
+     * @param urlToLatestRelease
+     *     An url where a version of the latest release could be retrieved from
      */
     public GoogleStorageSource(String storageUrl, String urlToLatestRelease, HttpClient httpClient) {
         this(storageUrl, httpClient);
@@ -146,9 +148,12 @@ public abstract class GoogleStorageSource implements ExternalBinarySource {
      * stored in the google storage. Key consist of <code>directory_name + / + file_name</code>. Keys are visible on
      * the root of the google storage url (without index.html suffix)
      *
-     * @param requiredVersion The required version set using method {@link GoogleStorageSource#getReleaseForVersion},
-     *                        or otherwise null
-     * @param directory       The directory for the current binary the regex is being matched against
+     * @param requiredVersion
+     *     The required version set using method {@link GoogleStorageSource#getReleaseForVersion},
+     *     or otherwise null
+     * @param directory
+     *     The directory for the current binary the regex is being matched against
+     *
      * @return A regex that represents a key of an expected binary/file stored in the google storage.
      */
     protected abstract String getExpectedKeyRegex(String requiredVersion, String directory);

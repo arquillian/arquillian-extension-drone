@@ -21,12 +21,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
-import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
-import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
-import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
+import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -50,9 +49,12 @@ public class CapabilitiesOptionsMapper {
      * file have a specific browserPrefix; after this prefix then there is the parameter name itself
      * (whole string has to be in camelcase)
      *
-     * @param object        An instance of an object the values should be set into
-     * @param capabilities  A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
-     * @param browserPrefix A prefix the should the mapped parameters should start with
+     * @param object
+     *     An instance of an object the values should be set into
+     * @param capabilities
+     *     A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
+     * @param browserPrefix
+     *     A prefix the should the mapped parameters should start with
      */
     static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
 

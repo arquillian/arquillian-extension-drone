@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDrone;
 import org.jboss.arquillian.drone.impl.mockdrone.MockDroneConfiguration;
@@ -44,9 +45,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Tests Registar precedence and its retrieval chain.
  *
@@ -54,11 +52,10 @@ import java.util.List;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrarTestCase extends AbstractTestTestBase {
-    @Mock
-    private ServiceLoader serviceLoader;
-
     @Drone
     MockDrone unused;
+    @Mock
+    private ServiceLoader serviceLoader;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {

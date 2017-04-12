@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
 import java.util.Map;
-
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
@@ -34,7 +33,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
- * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for FirefoxDriver.
+ * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
+ * FirefoxDriver.
  *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
@@ -85,10 +85,14 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
-     * @param configuration      A configuration object for Drone extension
-     * @param performValidations Whether a potential validation should be performed;
-     *                           if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
-     * @return A {@link Capabilities} instance with set all necessary properties; if set to true the IllegalArgumentException
+     * @param configuration
+     *     A configuration object for Drone extension
+     * @param performValidations
+     *     Whether a potential validation should be performed;
+     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
+     *
+     * @return A {@link Capabilities} instance with set all necessary properties; if set to true the
+     * IllegalArgumentException
      * can be thrown in case when requirements are not met
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {

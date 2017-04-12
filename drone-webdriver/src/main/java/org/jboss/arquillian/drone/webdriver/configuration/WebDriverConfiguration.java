@@ -16,6 +16,13 @@
  */
 package org.jboss.arquillian.drone.webdriver.configuration;
 
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.spi.DroneConfiguration;
@@ -24,14 +31,6 @@ import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
  *
@@ -39,10 +38,10 @@ import java.util.logging.Logger;
  */
 public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfiguration> {
 
-    private static final Logger log = Logger.getLogger(WebDriverConfiguration.class.getName());
-
     public static final String CONFIGURATION_NAME = "webdriver";
-
+    public static final String DEFAULT_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
+    public static final String DEFAULT_SELENIUM_SERVER_ARGS = "";
+    private static final Logger log = Logger.getLogger(WebDriverConfiguration.class.getName());
     public static URL DEFAULT_REMOTE_URL;
 
     static {
@@ -52,10 +51,6 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
             // ignore invalid url exception
         }
     }
-
-    public static final String DEFAULT_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
-
-    public static final String DEFAULT_SELENIUM_SERVER_ARGS = "";
 
     private int iePort;
 
@@ -121,6 +116,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return browser;
     }
 
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
+
     public Capabilities getCapabilities() {
         // return a merge of original capability plus capabilities user has specified in configuration
         // safely ignore null value here
@@ -134,6 +133,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return seleniumServerArgs;
     }
 
+    public void setSeleniumServerArgs(String seleniumServerArgs) {
+        this.seleniumServerArgs = seleniumServerArgs;
+    }
+
     @Override
     public String getConfigurationName() {
         return CONFIGURATION_NAME;
@@ -141,6 +144,10 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public int getIePort() {
         return iePort;
+    }
+
+    public void setIePort(final int iePort) {
+        this.iePort = iePort;
     }
 
     public String getImplementationClass() {
@@ -151,36 +158,32 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return remoteAddress;
     }
 
+    public void setRemoteAddress(final URL remoteAddress) {
+        this.remoteAddress = remoteAddress;
+    }
+
     public boolean isRemote() {
         return remote;
-    }
-
-    public boolean isRemoteReusable() {
-        return remoteReusable;
-    }
-
-    public String getDimensions() {
-        return dimensions;
-    }
-
-    public void setBrowser(String browser) {
-        this.browser = browser;
-    }
-
-    public void setIePort(final int iePort) {
-        this.iePort = iePort;
     }
 
     public void setRemote(final boolean remote) {
         this.remote = remote;
     }
 
-    public void setRemoteAddress(final URL remoteAddress) {
-        this.remoteAddress = remoteAddress;
+    public boolean isRemoteReusable() {
+        return remoteReusable;
     }
 
     public void setRemoteReusable(final boolean remoteReusable) {
         this.remoteReusable = remoteReusable;
+    }
+
+    public String getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
     }
 
     public boolean isReuseCookies() {
@@ -189,13 +192,5 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setReuseCookies(boolean reuseCookies) {
         this.reuseCookies = reuseCookies;
-    }
-
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
-    }
-
-    public void setSeleniumServerArgs(String seleniumServerArgs) {
-        this.seleniumServerArgs = seleniumServerArgs;
     }
 }

@@ -26,19 +26,28 @@ public interface DroneRegistry {
     /**
      * Checks if the registry has an entry for given key and type
      *
-     * @param key       the key
-     * @param entryType the type of the entry, that is {@link Configurator}, {@link Instantiator} or {@link Destructor}
-     * @param <E>       the entry type
+     * @param key
+     *     the key
+     * @param entryType
+     *     the type of the entry, that is {@link Configurator}, {@link Instantiator} or {@link Destructor}
+     * @param <E>
+     *     the entry type
+     *
      * @return The SPI object for given type
-     * @throws IllegalStateException in case that no given entry exists for key and entryType combination
+     *
+     * @throws IllegalStateException
+     *     in case that no given entry exists for key and entryType combination
      */
     <E extends Sortable> E getEntryFor(Class<?> key, Class<E> entryType) throws IllegalStateException;
 
     /**
      * Registers a configurator for given object type
      *
-     * @param key          Type to be registered
-     * @param configurator {@link Configurator} to be stored
+     * @param key
+     *     Type to be registered
+     * @param configurator
+     *     {@link Configurator} to be stored
+     *
      * @return Modified registry
      */
     DroneRegistry registerConfiguratorFor(Class<?> key, Configurator<?, ?> configurator);
@@ -46,8 +55,11 @@ public interface DroneRegistry {
     /**
      * Registers an instantiator for given object type
      *
-     * @param key   Type to be registered
-     * @param value {@link Instantiator} to be stored
+     * @param key
+     *     Type to be registered
+     * @param value
+     *     {@link Instantiator} to be stored
+     *
      * @return Modified registry
      */
     DroneRegistry registerInstantiatorFor(Class<?> key, Instantiator<?, ?> value);
@@ -55,8 +67,11 @@ public interface DroneRegistry {
     /**
      * Registers a destructor for given object type
      *
-     * @param key   Type to be registered
-     * @param value {@link Destructor} to be stored
+     * @param key
+     *     Type to be registered
+     * @param value
+     *     {@link Destructor} to be stored
+     *
      * @return Modified registry
      */
     DroneRegistry registerDestructorFor(Class<?> key, Destructor<?> value);

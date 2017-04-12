@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -47,14 +46,6 @@ public class ReusedSession implements Serializable {
     public static ReusedSession createInstance(SessionId sessionId, Capabilities capabilities) {
         DesiredCapabilities reusableCapabilities = createReusableCapabilities(capabilities);
         return new ReusedSession(sessionId, reusableCapabilities);
-    }
-
-    public SessionId getSessionId() {
-        return new SessionId(opaqueKey);
-    }
-
-    public Capabilities getCapabilities() {
-        return capabilities;
     }
 
     static DesiredCapabilities createReusableCapabilities(Capabilities driverCapabilities) {
@@ -89,6 +80,14 @@ public class ReusedSession implements Serializable {
         return capabilitiesForReuse;
     }
 
+    public SessionId getSessionId() {
+        return new SessionId(opaqueKey);
+    }
+
+    public Capabilities getCapabilities() {
+        return capabilities;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -100,23 +99,30 @@ public class ReusedSession implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ReusedSession other = (ReusedSession) obj;
         if (capabilities == null) {
-            if (other.capabilities != null)
+            if (other.capabilities != null) {
                 return false;
-        } else if (!capabilities.equals(other.capabilities))
+            }
+        } else if (!capabilities.equals(other.capabilities)) {
             return false;
+        }
         if (opaqueKey == null) {
-            if (other.opaqueKey != null)
+            if (other.opaqueKey != null) {
                 return false;
-        } else if (!opaqueKey.equals(other.opaqueKey))
+            }
+        } else if (!opaqueKey.equals(other.opaqueKey)) {
             return false;
+        }
         return true;
     }
 

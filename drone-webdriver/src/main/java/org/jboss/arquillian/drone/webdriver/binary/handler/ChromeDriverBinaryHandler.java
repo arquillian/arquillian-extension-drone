@@ -1,13 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.util.regex.Pattern;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.util.regex.Pattern;
 
 /**
  * A class for handling chromeDriver binaries

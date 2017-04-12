@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.execution.Execution;
 import org.arquillian.spacelift.process.Command;
@@ -101,7 +100,9 @@ public class SeleniumServerExecutor {
     /**
      * Returns an instance of a {@link BinaryHandler} according to a given browser
      *
-     * @param browser A browser name an associated {@link BinaryHandler} should be returned
+     * @param browser
+     *     A browser name an associated {@link BinaryHandler} should be returned
+     *
      * @return An instance of a {@link BinaryHandler} according to given browser
      */
     private BinaryHandler getBrowserBinaryHandler(DesiredCapabilities capabilities, String browser) {

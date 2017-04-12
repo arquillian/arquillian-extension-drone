@@ -17,7 +17,6 @@
 package org.arquillian.drone.saucelabs.extension.webdriver;
 
 import java.net.URL;
-
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

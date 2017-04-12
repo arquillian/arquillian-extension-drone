@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 
@@ -56,8 +55,11 @@ public class BrowserCapabilitiesRegistryImpl implements BrowserCapabilitiesRegis
     /**
      * Registers a browser capability object for given key
      *
-     * @param key                 Type to be registered
-     * @param browserCapabilities {@link BrowserCapabilities} to be stored
+     * @param key
+     *     Type to be registered
+     * @param browserCapabilities
+     *     {@link BrowserCapabilities} to be stored
+     *
      * @return Modified registry
      */
     @Override

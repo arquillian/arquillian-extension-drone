@@ -3,7 +3,6 @@ package org.jboss.arquillian.drone.impl;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.spi.DronePoint;
 
@@ -25,8 +24,11 @@ public class DeploymentDronePointsRegistry {
     /**
      * Adds a {@link DronePoint} to the registry with the test class the DronePoint is declared in
      *
-     * @param deploymentDronePoint a {@link DronePoint} to register
-     * @param testClass            a test class the {@link DronePoint} is declared in
+     * @param deploymentDronePoint
+     *     a {@link DronePoint} to register
+     * @param testClass
+     *     a test class the {@link DronePoint} is declared in
+     *
      * @return whether the addition was successful or not
      */
     public boolean addDronePoint(DronePoint<?> deploymentDronePoint, Object testClass) {
@@ -40,14 +42,17 @@ public class DeploymentDronePointsRegistry {
     /**
      * Filter for finding deployment {@link DronePoint}s tied to a deployment with the given deployment name
      *
-     * @param deploymentName name of a deployment the injection points should be tied to
+     * @param deploymentName
+     *     name of a deployment the injection points should be tied to
+     *
      * @return a map of DronePoints and testClasses tied to a deployment with the given deployment name
      */
     public Map<DronePoint<?>, Object> filterDeploymentDronePoints(String deploymentName) {
         Map<DronePoint<?>, Object> matched = new HashMap<DronePoint<?>, Object>();
         for (DronePoint dronePoint : deploymentDronePoints.keySet()) {
-            if (deploymentName.equals(getDeploymentName(dronePoint)))
+            if (deploymentName.equals(getDeploymentName(dronePoint))) {
                 matched.put(dronePoint, deploymentDronePoints.get(dronePoint));
+            }
         }
         return matched;
     }
@@ -55,7 +60,9 @@ public class DeploymentDronePointsRegistry {
     /**
      * Returns a deployment name of a deployment the given {@link DronePoint} is tied to
      *
-     * @param dronePoint a {@link DronePoint}
+     * @param dronePoint
+     *     a {@link DronePoint}
+     *
      * @return a deployment name of a deployment the given {@link DronePoint} is tied to
      */
     private String getDeploymentName(DronePoint<?> dronePoint) {

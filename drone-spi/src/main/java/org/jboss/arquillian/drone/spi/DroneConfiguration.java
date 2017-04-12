@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.spi;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.api.annotation.Default;
 
@@ -69,11 +68,14 @@ import org.jboss.arquillian.drone.api.annotation.Default;
  * </p>
  * <p>
  * <ul>
- * <li>qualifier = {@link DroneConfiguration#getConfigurationName()} + - + @Qualifier, where all letters are lower case</li>
+ * <li>qualifier = {@link DroneConfiguration#getConfigurationName()} + - + @Qualifier, where all letters are lower
+ * case</li>
  * <li>System property prefix = arq.extension. + {@link DroneConfiguration#getConfigurationName()} + . + qualifier</li>
  * </ul>
  *
- * @param <C> Configuration type
+ * @param <C>
+ *     Configuration type
+ *
  * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
  */
 public interface DroneConfiguration<C extends DroneConfiguration<C>> {
@@ -87,8 +89,11 @@ public interface DroneConfiguration<C extends DroneConfiguration<C>> {
     /**
      * Configures configuration from descriptor and System properties
      *
-     * @param descriptor Arquillian Descriptor
-     * @param qualifier  Qualifier
+     * @param descriptor
+     *     Arquillian Descriptor
+     * @param qualifier
+     *     Qualifier
+     *
      * @return Configured configuration instance
      */
     @Deprecated

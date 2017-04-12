@@ -16,14 +16,13 @@
  */
 package org.jboss.arquillian.drone.impl;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.DronePointFilter;
 import org.jboss.arquillian.drone.spi.FilterableResult;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class FilterableResultImpl<DRONE> implements FilterableResult<DRONE> {
 

@@ -36,7 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @author Selenium commiters
  */
@@ -48,9 +47,13 @@ public class FirefoxPrefsReader {
     /**
      * Reads Firefox preferences in specific format from file and
      *
-     * @param prefs File to be parsed
+     * @param prefs
+     *     File to be parsed
+     *
      * @return Map of String|Boolean|Integer to be later used by FirefoxProfile
-     * @throws IllegalArgumentException If parsing went wrong
+     *
+     * @throws IllegalArgumentException
+     *     If parsing went wrong
      */
     public static Map<String, Object> getPreferences(File prefs) throws IllegalArgumentException {
 

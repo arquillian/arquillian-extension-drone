@@ -17,7 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 
