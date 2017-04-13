@@ -119,8 +119,8 @@ will be applied to freshly created Firefox profile.
 
 |htmlUnitWebClientOptions
 |-
-|Comma separated list of webClientOptions for HtmlUnitDriver. e.g.
-timeout=10,javaScriptEnabled=true, throwExceptionOnScriptError=false
+|Semicolon separated list of webClientOptions for HtmlUnitDriver. e.g.
+timeout=10; javaScriptEnabled=true; throwExceptionOnScriptError=false; SSLClientProtocols=protocal1, protocal2
 
 
 |dimensions

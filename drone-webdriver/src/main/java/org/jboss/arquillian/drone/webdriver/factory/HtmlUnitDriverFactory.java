@@ -20,11 +20,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.htmlunit.HtmlUnitDriver;
+import org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver;
+import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -32,14 +34,15 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
  * {@link org.jboss.arquillian.drone.spi.Instantiator} and {@link org.jboss.arquillian.drone.spi.Destructor} for
- * HtmlUnitDriver.
+ * DroneHtmlUnitDriver.
  */
-public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriver> implements
-    Configurator<HtmlUnitDriver, WebDriverConfiguration>, Instantiator<HtmlUnitDriver, WebDriverConfiguration>,
-    Destructor<HtmlUnitDriver> {
+public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<DroneHtmlUnitDriver> implements
+    Configurator<DroneHtmlUnitDriver, WebDriverConfiguration>, Instantiator<DroneHtmlUnitDriver, WebDriverConfiguration>,
+    Destructor<DroneHtmlUnitDriver> {
 
-    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
-
+    private static final String BROWSER_NAME = new BrowserCapabilitiesList.HtmlUnit().getReadableName();
+    static final String webClientOptions = "htmlUnitWebClientOptions";
+    private static final Logger logger = Logger.getLogger(HtmlUnitDriverFactory.class.getName());
     /*
      * (non-Javadoc)
      *
@@ -56,7 +59,7 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
      * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
      */
     @Override
-    public void destroyInstance(HtmlUnitDriver instance) {
+    public void destroyInstance(DroneHtmlUnitDriver instance) {
         instance.quit();
     }
 
@@ -66,19 +69,19 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
-    public HtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
+    public DroneHtmlUnitDriver createInstance(WebDriverConfiguration configuration) {
         Capabilities capabilities = getCapabilities(configuration, true);
-        final HtmlUnitDriver htmlUnitDriver =
+        final DroneHtmlUnitDriver droneHtmlUnitDriver =
             SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
-                new Object[] {capabilities}, HtmlUnitDriver.class);
+                new Object[] {capabilities}, DroneHtmlUnitDriver.class);
 
-        final String htmlUnitClientOptions = (String) capabilities.getCapability("htmlUnitWebClientOptions");
+        final String htmlUnitClientOptions = (String) capabilities.getCapability(webClientOptions);
         if (Validate.nonEmpty(htmlUnitClientOptions)) {
-            WebClient webClient = htmlUnitDriver.getWebClient();
+            WebClient webClient = droneHtmlUnitDriver.getWebClient();
             setClientOptions(webClient, htmlUnitClientOptions);
         }
 
-        return htmlUnitDriver;
+        return droneHtmlUnitDriver;
     }
 
     /**
@@ -99,24 +102,33 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<HtmlUnitDriv
 
     @Override
     protected String getDriverReadableName() {
-        return BROWSER_CAPABILITIES;
+        return BROWSER_NAME;
     }
 
     private void setClientOptions(WebClient webClient, String htmlUnitWebClientOptions) {
         final WebClientOptions webClientOptions = webClient.getOptions();
-
         Map<String, String> clientOptions = new LinkedHashMap<>();
-        final String[] options = htmlUnitWebClientOptions.split(",");
+        final String multiline = StringUtils.trimMultiline(htmlUnitWebClientOptions);
+        final String[] options = multiline.split(";");
         for (String option : options) {
             final String[] keyValue = option.split("=");
             if (keyValue.length == 2) {
                 String key = keyValue[0].trim();
-                key = BROWSER_CAPABILITIES + Character.toUpperCase(key.charAt(0)) + key.substring(1);
-                clientOptions.put(key, keyValue[1].trim());
+                if (key.length() > 0) {
+                    key = BROWSER_NAME + Character.toUpperCase(key.charAt(0)) + key.substring(1);
+                    String value = keyValue[1].trim();
+                    if (value.contains(",")) {
+                        value = value.replaceAll("\\s*,\\s*", " ");
+                    }
+                    clientOptions.put(key, value);
+                } else  {
+                    logger.info("Excluding option : " + option + "to set for HtmlUnitDriver webClientOptions as it is not as per required format i.e. key=value");
+                }
             }
         }
         final DesiredCapabilities webClientCapabilities = new DesiredCapabilities(clientOptions);
 
-        CapabilitiesOptionsMapper.mapCapabilities(webClientOptions, webClientCapabilities, BROWSER_CAPABILITIES);
+        logger.info("Setting HtmlDriver web client options: " + clientOptions);
+        CapabilitiesOptionsMapper.mapCapabilities(webClientOptions, webClientCapabilities, BROWSER_NAME);
     }
 }
