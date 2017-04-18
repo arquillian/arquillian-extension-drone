@@ -75,8 +75,8 @@ Following values are valid:
 
 . chrome +
 . firefox +
-. htmlUnit +
-. internetExplorer +
+. htmlUnit  or htmlunit +
+. internetExplorer or internetexplorer +
 . opera +
 . phantomjs +
 . safari +

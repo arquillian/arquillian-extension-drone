@@ -35,7 +35,7 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
 
         // if not set, we hit a webdriver configuration and we want to use browser capabilities
         if (browser == null && Validate.nonEmpty(configuration.getBrowser())) {
-            browser = registry.getEntryFor(configuration.getBrowser());
+            browser = registry.getEntryFor(configuration.getBrowser().toLowerCase());
             if (browser == null) {
                 throw new IllegalStateException(
                     MessageFormat
