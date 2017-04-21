@@ -29,7 +29,9 @@ public class Constants {
     public static final String FIREFOX_DRIVER = "org.openqa.selenium.firefox.FirefoxDriver";
     public static final String EDGE_DRIVER = "org.openqa.selenium.edge.EdgeDriver";
     public static final String CHROME_DRIVER = "org.openqa.selenium.chrome.ChromeDriver";
-    public static final String HTMLUNIT_DRIVER = "org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver";
+    // This is only expected driver that needs to be on classpath to make DroneHtmlUnitDriver loadable
+    // the real HtmlUnitDriver implementation is: "org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver"
+    public static final String HTMLUNIT_DRIVER = "org.openqa.selenium.htmlunit.HtmlUnitDriver";
     public static final String IE_DRIVER = "org.openqa.selenium.ie.InternetExplorerDriver";
     public static final String WEB_DRIVER = "org.openqa.selenium.WebDriver";
     public static final String OPERA_DRIVER = "org.openqa.selenium.opera.OperaDriver";
