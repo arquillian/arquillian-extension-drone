@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.window;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -32,6 +28,11 @@ import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Support for resizing WebDriver windows to value defined in capabilities via {@code dimensions}.
@@ -78,21 +79,26 @@ public class WindowResizer {
                 int height = Integer.valueOf(m.group(2));
                 safelyResizeWindow(driver, width, height, dronePoint);
             }
+        } else {
+            safelyMaximizeWindow(driver, dronePoint);
         }
     }
 
     private void safelyResizeWindow(WebDriver driver, int width, int height, DronePoint<?> dronePoint) {
         try {
             driver.manage().window().setSize(new Dimension(width, height));
-        } catch (WebDriverException e) {
-            logRequestIgnored(driver, width, height, dronePoint);
-        } catch (UnsupportedOperationException e) {
-            logRequestIgnored(driver, width, height, dronePoint);
+        } catch (WebDriverException | UnsupportedOperationException e) {
+            log.log(Level.WARNING,"Ignoring request to resize browser window to {2}x{3} for {0}, not supported for {1}",
+                    new Object[] { dronePoint, driver.getClass().getName(), width, height });
         }
     }
 
-    private void logRequestIgnored(WebDriver driver, int width, int height, DronePoint<?> dronePoint) {
-        log.log(Level.WARNING, "Ignoring request to resize browser window to {2}x{3} for {0}, not supported for {1}",
-            new Object[] {dronePoint, driver.getClass().getName(), width, height});
+    private void safelyMaximizeWindow(WebDriver driver, DronePoint<?> dronePoint) {
+        try {
+            driver.manage().window().maximize();
+        } catch (WebDriverException | UnsupportedOperationException e) {
+            log.log(Level.INFO, "Drone cannot automatically maximize browser window for {0}, not supported for {1}",
+                    new Object[] { dronePoint, driver.getClass().getName() });
+        }
     }
 }
