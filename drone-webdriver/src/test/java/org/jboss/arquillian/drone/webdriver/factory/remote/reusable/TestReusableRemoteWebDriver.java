@@ -41,8 +41,9 @@ import static org.junit.Assert.fail;
 public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
     @BeforeClass
-    public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+    public static void skipIfEdgeOrHtmlUnitBrowser() {
+        final String browser = System.getProperty("browser");
+        Assume.assumeFalse(browser.equals("edge") || browser.equals("htmlunit") || browser.equals("htmlUnit"));
     }
 
     @Test

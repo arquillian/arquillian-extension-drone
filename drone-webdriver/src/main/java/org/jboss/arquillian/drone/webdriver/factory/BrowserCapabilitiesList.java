@@ -37,8 +37,6 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    ;
-
     public static class Edge implements BrowserCapabilities {
 
         @Override
@@ -61,8 +59,6 @@ public class BrowserCapabilitiesList {
             return 0;
         }
     }
-
-    ;
 
     public static class Firefox implements BrowserCapabilities {
 
@@ -87,13 +83,11 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    ;
-
     public static class HtmlUnit implements BrowserCapabilities {
 
         @Override
         public String getImplementationClassName() {
-            return "org.openqa.selenium.htmlunit.HtmlUnitDriver";
+            return "org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver";
         }
 
         @Override
@@ -111,8 +105,6 @@ public class BrowserCapabilitiesList {
             return 0;
         }
     }
-
-    ;
 
     public static class InternetExplorer implements BrowserCapabilities {
 

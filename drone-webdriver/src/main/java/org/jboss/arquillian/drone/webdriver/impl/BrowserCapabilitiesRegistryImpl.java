@@ -43,9 +43,9 @@ public class BrowserCapabilitiesRegistryImpl implements BrowserCapabilitiesRegis
             return null;
         }
 
-        for (BrowserCapabilities browser : registry.values()) {
-            if (className.equals(browser.getImplementationClassName())) {
-                return browser;
+        for (BrowserCapabilities browserCapabilities : registry.values()) {
+            if (className.equals(browserCapabilities.getImplementationClassName())) {
+                return browserCapabilities;
             }
         }
 
