@@ -1,8 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.util.Map;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.Map;
 
 /**
  * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class
@@ -97,7 +98,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public String getReadableName() {
-            return "htmlUnit";
+            return "htmlunit";
         }
 
         @Override
@@ -120,7 +121,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public String getReadableName() {
-            return "internetExplorer";
+            return "internetexplorer";
         }
 
         @Override
