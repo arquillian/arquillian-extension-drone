@@ -127,7 +127,8 @@ timeout=10; javaScriptEnabled=true; throwExceptionOnScriptError=false; SSLClient
 |-
 |Dimensions of browser window in `widthxheight` format. This will resize
 the window if supported by underlying browser. Useful for **phantomjs**,
-which by default defines a very small viewport
+which by default defines a very small viewport.
+If you need the browser in fullscreen mode, use any of the following strings: "full" "fullscreen" "max"
 |===
 
 Some additional configuration parameters related to binaries can be found in http://arquillian.org/arquillian-extension-drone/#_properties_directory_names_and_support_of_latest_versions[Properties, directory names and support of latest versions]

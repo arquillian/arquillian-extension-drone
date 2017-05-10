@@ -70,17 +70,18 @@ public class WindowResizer {
         WebDriverConfiguration configuration = context.get(dronePoint).getConfigurationAs(WebDriverConfiguration.class);
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
-        String dimensions = configuration.getDimensions();
-
-        if (dimensions != null) {
+        if (configuration.getDimensions() != null) {
+            String dimensions = configuration.getDimensions().toLowerCase().trim();
             Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
+
             if (m.matches()) {
                 int width = Integer.valueOf(m.group(1));
                 int height = Integer.valueOf(m.group(2));
                 safelyResizeWindow(driver, width, height, dronePoint);
+
+            } else if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
+                safelyMaximizeWindow(driver, dronePoint);
             }
-        } else {
-            safelyMaximizeWindow(driver, dronePoint);
         }
     }
 
