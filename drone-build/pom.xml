@@ -146,12 +146,14 @@
         <artifactId>arquillian-core-impl-base</artifactId>
         <classifier>tests</classifier>
         <version>${version.arquillian.core}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.test</groupId>
         <artifactId>arquillian-test-impl-base</artifactId>
         <classifier>tests</classifier>
         <version>${version.arquillian.core}</version>
+        <scope>test</scope>
       </dependency>
 
       <!-- Selenium and Selenium Server dependecies -->
@@ -180,31 +182,37 @@
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-jetty-embedded-9</artifactId>
         <version>${version.arquillian.jetty}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-webapp</artifactId>
         <version>${version.org.eclipse.jetty}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-plus</artifactId>
         <version>${version.org.eclipse.jetty}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-annotations</artifactId>
         <version>${version.org.eclipse.jetty}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-deploy</artifactId>
         <version>${version.org.eclipse.jetty}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
