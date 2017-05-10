@@ -1,7 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
@@ -20,32 +18,44 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
 
     private static String BASE_DOWNLOAD_URL = "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-";
 
+    private static String lastPhantomJSRelease = "2.1.1";
+
     public PhantomJSGitHubBitbucketSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
         super("ariya", "phantomjs", httpClient, gitHubLastUpdateCache);
     }
 
-    @Override
+    /**
+     * As there was announced the end of the development of PhantomJS:
+     * https://groups.google.com/forum/#!msg/phantomjs/9aI5d-LDuNE/5Z3SMZrqAQAJ
+     * it is not necessary to check the latest release - it is expected that there won't be any newer than the last
+     * one: 2.1.1
+     * If the development of PhantomJS is resurrected, then the logic will be uncommented.
+     */
     public ExternalBinary getLatestRelease() throws Exception {
+        // See the javadoc of this method for explanation why this code is commented out
 
-        final HttpClient.Response response =
-            sentGetRequestWithPagination(getProjectUrl() + TAGS_URL, 1, lastModificationHeader());
-        final ExternalBinary latestPhantomJSBinary;
+        //        final HttpClient.Response response =
+        //            sentGetRequestWithPagination(getProjectUrl() + TAGS_URL, 1, lastModificationHeader());
+        //        final ExternalBinary latestPhantomJSBinary;
+        //
+        //        if (response.hasPayload()) {
+        //            JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
+        //            if (releaseTags.size() == 0) {
+        //                return null;
+        //            }
+        //            String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
+        //            latestPhantomJSBinary = new ExternalBinary(version);
+        //
+        //            latestPhantomJSBinary.setUrl(getUrlForVersion(version));
+        //            getCache().store(latestPhantomJSBinary, getUniqueKey(), extractModificationDate(response));
+        //        } else {
+        //            latestPhantomJSBinary = getCache().load(getUniqueKey(), ExternalBinary.class);
+        //        }
 
-        if (response.hasPayload()) {
-            JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
-            if (releaseTags.size() == 0) {
-                return null;
-            }
-            String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
-            latestPhantomJSBinary = new ExternalBinary(version);
+        ExternalBinary lastPhantomJSVersion = new ExternalBinary(lastPhantomJSRelease);
+        lastPhantomJSVersion.setUrl(getUrlForVersion(lastPhantomJSRelease));
 
-            latestPhantomJSBinary.setUrl(getUrlForVersion(version));
-            getCache().store(latestPhantomJSBinary, getUniqueKey(), extractModificationDate(response));
-        } else {
-            latestPhantomJSBinary = getCache().load(getUniqueKey(), ExternalBinary.class);
-        }
-
-        return latestPhantomJSBinary;
+        return lastPhantomJSVersion;
     }
 
     @Override

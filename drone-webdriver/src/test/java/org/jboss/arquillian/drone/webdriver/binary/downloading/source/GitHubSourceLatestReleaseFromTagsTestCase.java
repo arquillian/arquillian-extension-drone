@@ -4,11 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import io.specto.hoverfly.junit.dsl.ResponseBuilder;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.JUnitSoftAssertions;
@@ -17,9 +12,16 @@ import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -30,6 +32,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@Ignore("For the evaluation the PhantomJSGitHubBitbucketSource is used. But it doesn't use this logic any more."
+    + "For more information see the javadoc of PhantomJSGitHubBitbucketSource#getLatestRelease")
 public class GitHubSourceLatestReleaseFromTagsTestCase {
 
     private static final String CACHED_CONTENT = "{\"lastModified\":\"Tue, 28 Mar 2017 05:23:15 GMT\"," +

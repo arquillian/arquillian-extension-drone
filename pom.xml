@@ -41,9 +41,6 @@
     <version.htmlunit.driver>2.26</version.htmlunit.driver>
     <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
 
-    <!-- This is for tests purposes - to test with one specific PhantomJS version -->
-    <default.supported.phantomjs.binary.version>2.1.1</default.supported.phantomjs.binary.version>
-
     <!-- Test bits versions -->
     <version.junit>4.12</version.junit>
     <version.assertj>3.6.2</version.assertj>
