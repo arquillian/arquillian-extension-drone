@@ -13,9 +13,6 @@ import static org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDrive
  */
 public class PhantomJSGitHubBitbucketSource extends GitHubSource {
 
-    private static String TAGS_URL = "/tags";
-    private static String TAG_NAME = "name";
-
     private static String BASE_DOWNLOAD_URL = "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-";
 
     private static String lastPhantomJSRelease = "2.1.1";
@@ -29,28 +26,11 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
      * https://groups.google.com/forum/#!msg/phantomjs/9aI5d-LDuNE/5Z3SMZrqAQAJ
      * it is not necessary to check the latest release - it is expected that there won't be any newer than the last
      * one: 2.1.1
-     * If the development of PhantomJS is resurrected, then the logic will be uncommented.
+     * If the development of PhantomJS is resurrected, then the original logic will be brought back. In this case
+     * as a reference use this commit: 5f4f64146dfbb42b641464dfb89aaa811b008a31
+     * or The class that is currently used for testing purposes: GitHubSourceLatestReleaseFromTagsTestCase.PhantomJSSourceForLatestRelease
      */
     public ExternalBinary getLatestRelease() throws Exception {
-        // See the javadoc of this method for explanation why this code is commented out
-
-        //        final HttpClient.Response response =
-        //            sentGetRequestWithPagination(getProjectUrl() + TAGS_URL, 1, lastModificationHeader());
-        //        final ExternalBinary latestPhantomJSBinary;
-        //
-        //        if (response.hasPayload()) {
-        //            JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
-        //            if (releaseTags.size() == 0) {
-        //                return null;
-        //            }
-        //            String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
-        //            latestPhantomJSBinary = new ExternalBinary(version);
-        //
-        //            latestPhantomJSBinary.setUrl(getUrlForVersion(version));
-        //            getCache().store(latestPhantomJSBinary, getUniqueKey(), extractModificationDate(response));
-        //        } else {
-        //            latestPhantomJSBinary = getCache().load(getUniqueKey(), ExternalBinary.class);
-        //        }
 
         ExternalBinary lastPhantomJSVersion = new ExternalBinary(lastPhantomJSRelease);
         lastPhantomJSVersion.setUrl(getUrlForVersion(lastPhantomJSRelease));
@@ -65,7 +45,7 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
         return phantomJSBinary;
     }
 
-    private String getUrlForVersion(String version) {
+    protected String getUrlForVersion(String version) {
         StringBuilder phantomJsUrl = new StringBuilder(BASE_DOWNLOAD_URL);
         phantomJsUrl.append(version).append("-");
 
