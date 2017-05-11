@@ -27,7 +27,8 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
      * it is not necessary to check the latest release - it is expected that there won't be any newer than the last
      * one: 2.1.1
      * If the development of PhantomJS is resurrected, then the original logic will be brought back. In this case
-     * as a reference use this commit: 5f4f64146dfbb42b641464dfb89aaa811b008a31
+     * as a reference use this logic:
+     * https://github.com/arquillian/arquillian-extension-drone/blob/5f4f64146dfbb42b641464dfb89aaa811b008a31/drone-webdriver/src/main/java/org/jboss/arquillian/drone/webdriver/binary/downloading/source/PhantomJSGitHubBitbucketSource.java#L30-L51
      * or The class that is currently used for testing purposes: GitHubSourceLatestReleaseFromTagsTestCase.PhantomJSSourceForLatestRelease
      */
     public ExternalBinary getLatestRelease() throws Exception {
