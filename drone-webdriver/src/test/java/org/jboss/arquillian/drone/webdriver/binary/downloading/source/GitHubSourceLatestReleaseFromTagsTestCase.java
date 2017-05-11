@@ -2,13 +2,10 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import io.specto.hoverfly.junit.dsl.ResponseBuilder;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.JUnitSoftAssertions;
@@ -20,6 +17,12 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -49,7 +52,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
 
     private final String RESPONSE_BODY;
     private File tmpFolder;
-    private PhantomJSGitHubBitbucketSource phantomJSSource;
+    private PhantomJSSourceForLatestRelease phantomJSSource;
     private HttpClient httpClientSpy;
     private GitHubLastUpdateCache cacheSpy;
 
@@ -62,7 +65,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
         this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
-        this.phantomJSSource = new PhantomJSGitHubBitbucketSource(httpClientSpy, cacheSpy);
+        this.phantomJSSource = new PhantomJSSourceForLatestRelease(httpClientSpy, cacheSpy);
     }
 
     @Test
@@ -171,6 +174,37 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
         try (final PrintWriter printWriter = new PrintWriter(new File(tmpFolder.getAbsolutePath() + "/" + fileName))) {
             printWriter.print(content);
             printWriter.flush();
+        }
+    }
+
+    class PhantomJSSourceForLatestRelease extends PhantomJSGitHubBitbucketSource {
+        private String TAGS_URL = "/tags";
+        private String TAG_NAME = "name";
+
+        PhantomJSSourceForLatestRelease(HttpClient httpClient,
+            GitHubLastUpdateCache gitHubLastUpdateCache) {
+            super(httpClient, gitHubLastUpdateCache);
+        }
+
+        public ExternalBinary getLatestRelease() throws Exception {
+            final HttpClient.Response response =
+                sentGetRequestWithPagination(getProjectUrl() + TAGS_URL, 1, lastModificationHeader());
+            final ExternalBinary latestPhantomJSBinary;
+
+            if (response.hasPayload()) {
+                JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
+                if (releaseTags.size() == 0) {
+                    return null;
+                }
+                String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
+                latestPhantomJSBinary = new ExternalBinary(version);
+
+                latestPhantomJSBinary.setUrl(getUrlForVersion(version));
+                getCache().store(latestPhantomJSBinary, getUniqueKey(), extractModificationDate(response));
+            } else {
+                latestPhantomJSBinary = getCache().load(getUniqueKey(), ExternalBinary.class);
+            }
+            return latestPhantomJSBinary;
         }
     }
 }

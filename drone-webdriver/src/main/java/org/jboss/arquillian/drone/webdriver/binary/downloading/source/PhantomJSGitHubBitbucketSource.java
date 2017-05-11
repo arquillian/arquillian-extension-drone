@@ -1,7 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
@@ -15,37 +13,30 @@ import static org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDrive
  */
 public class PhantomJSGitHubBitbucketSource extends GitHubSource {
 
-    private static String TAGS_URL = "/tags";
-    private static String TAG_NAME = "name";
-
     private static String BASE_DOWNLOAD_URL = "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-";
+
+    private static String lastPhantomJSRelease = "2.1.1";
 
     public PhantomJSGitHubBitbucketSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
         super("ariya", "phantomjs", httpClient, gitHubLastUpdateCache);
     }
 
-    @Override
+    /**
+     * As there was announced the end of the development of PhantomJS:
+     * https://groups.google.com/forum/#!msg/phantomjs/9aI5d-LDuNE/5Z3SMZrqAQAJ
+     * it is not necessary to check the latest release - it is expected that there won't be any newer than the last
+     * one: 2.1.1
+     * If the development of PhantomJS is resurrected, then the original logic will be brought back. In this case
+     * as a reference use this logic:
+     * https://github.com/arquillian/arquillian-extension-drone/blob/5f4f64146dfbb42b641464dfb89aaa811b008a31/drone-webdriver/src/main/java/org/jboss/arquillian/drone/webdriver/binary/downloading/source/PhantomJSGitHubBitbucketSource.java#L30-L51
+     * or The class that is currently used for testing purposes: GitHubSourceLatestReleaseFromTagsTestCase.PhantomJSSourceForLatestRelease
+     */
     public ExternalBinary getLatestRelease() throws Exception {
 
-        final HttpClient.Response response =
-            sentGetRequestWithPagination(getProjectUrl() + TAGS_URL, 1, lastModificationHeader());
-        final ExternalBinary latestPhantomJSBinary;
+        ExternalBinary lastPhantomJSVersion = new ExternalBinary(lastPhantomJSRelease);
+        lastPhantomJSVersion.setUrl(getUrlForVersion(lastPhantomJSRelease));
 
-        if (response.hasPayload()) {
-            JsonArray releaseTags = getGson().fromJson(response.getPayload(), JsonElement.class).getAsJsonArray();
-            if (releaseTags.size() == 0) {
-                return null;
-            }
-            String version = releaseTags.get(0).getAsJsonObject().get(TAG_NAME).getAsString();
-            latestPhantomJSBinary = new ExternalBinary(version);
-
-            latestPhantomJSBinary.setUrl(getUrlForVersion(version));
-            getCache().store(latestPhantomJSBinary, getUniqueKey(), extractModificationDate(response));
-        } else {
-            latestPhantomJSBinary = getCache().load(getUniqueKey(), ExternalBinary.class);
-        }
-
-        return latestPhantomJSBinary;
+        return lastPhantomJSVersion;
     }
 
     @Override
@@ -55,7 +46,7 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
         return phantomJSBinary;
     }
 
-    private String getUrlForVersion(String version) {
+    protected String getUrlForVersion(String version) {
         StringBuilder phantomJsUrl = new StringBuilder(BASE_DOWNLOAD_URL);
         phantomJsUrl.append(version).append("-");
 

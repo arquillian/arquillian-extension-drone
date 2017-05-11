@@ -6,7 +6,6 @@
     <!-- browser is set externally -->
     <property name="browser">${browser}</property>
     <property name="htmlUnitWebClientOptions">Timeout=300; throwExceptionOnScriptError=false</property>
-    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
     <property name="seleniumServerVersion">${version.selenium}</property>
 
@@ -24,8 +23,6 @@
   <extension qualifier="webdriver-reusable">
     <!-- browser is set externally -->
     <property name="browser">${browser}</property>
-
-    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
     <property name="seleniumServerVersion">${version.selenium}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
@@ -45,8 +42,6 @@
   <extension qualifier="webdriver-reusecookies">
     <!-- browser is set externally -->
     <property name="browser">${browser}</property>
-
-    <property name="phantomjsBinaryVersion">${default.supported.phantomjs.binary.version}</property>
 
     <property name="seleniumServerVersion">${version.selenium}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
