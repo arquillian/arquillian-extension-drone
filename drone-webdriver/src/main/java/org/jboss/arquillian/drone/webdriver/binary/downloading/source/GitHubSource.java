@@ -99,23 +99,38 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
-        final JsonArray releases =
-            sentGetRequest(projectUrl + RELEASES_URL, Collections.emptyMap(), true).getAsJsonArray();
+        String url = projectUrl + RELEASES_URL;
+        int pageNumber = 1;
 
-        if (releases != null) {
+        while (true) {
+            HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber++, Collections.emptyMap());
+            JsonElement releases = gson.fromJson(response.getPayload(), JsonElement.class);
 
-            for (JsonElement release : releases) {
-                JsonObject releaseObject = release.getAsJsonObject();
-                String releaseTagName = releaseObject.get(tagNameKey).getAsString();
+            if (releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0) {
+                ExternalBinary releaseForVersion = getReleaseForVersion(version, releases.getAsJsonArray());
 
-                if (version.equals(releaseTagName)) {
-                    final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
-                    binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
-                    return binaryRelease;
+                if (releaseForVersion != null) {
+                    return releaseForVersion;
                 }
+            } else {
+                break;
             }
-            log.warning(
-                "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+        }
+        log.warning(
+            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+        return null;
+    }
+
+    private ExternalBinary getReleaseForVersion(String version, JsonArray releases) throws Exception {
+        for (JsonElement release : releases) {
+            JsonObject releaseObject = release.getAsJsonObject();
+            String releaseTagName = releaseObject.get(tagNameKey).getAsString();
+
+            if (version.equals(releaseTagName)) {
+                final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
+                binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
+                return binaryRelease;
+            }
         }
         return null;
     }
@@ -130,31 +145,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
             }
         }
         return null;
-    }
-
-    private JsonElement sentGetRequest(String url, Map<String, String> headers, boolean withPagination) throws Exception {
-
-        final HttpClient.Response response = sentGetRequestWithPagination(url, 1, headers);
-        JsonElement result = gson.fromJson(response.getPayload(), JsonElement.class);
-
-        if (result != null && result.isJsonArray()) {
-            JsonArray resultArray = result.getAsJsonArray();
-            int i = 2;
-            while (true) {
-                final HttpClient.Response nextResponse = sentGetRequestWithPagination(url, i, headers);
-                JsonArray page = gson.fromJson(nextResponse.getPayload(), JsonArray.class);
-                if (page.size() == 0) {
-                    break;
-                }
-                resultArray.addAll(page);
-                if (!withPagination) {
-                    break;
-                }
-                i++;
-            }
-            return resultArray;
-        }
-        return result;
     }
 
     protected HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers)
