@@ -7,7 +7,6 @@
           "method": "GET",
           "destination": "api.github.com",
           "scheme": "https",
-          "query": "page=1",
           "body": "",
           "headers": {
             "Accept-Encoding": [

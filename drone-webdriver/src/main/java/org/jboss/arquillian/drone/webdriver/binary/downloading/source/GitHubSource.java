@@ -4,7 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.net.URI;
+import org.apache.http.client.utils.URIBuilder;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,11 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.apache.http.client.utils.URIBuilder;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -159,8 +159,11 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     protected HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers)
         throws Exception {
-        final URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
-        return httpClient.get(uri.toString(), headers);
+        final URIBuilder uriBuilder = new URIBuilder(url);
+        if (pageNumber != 1) {
+            uriBuilder.setParameter("page", String.valueOf(pageNumber));
+        }
+        return httpClient.get(uriBuilder.build().toString(), headers);
     }
 
     protected String getProjectUrl() {
