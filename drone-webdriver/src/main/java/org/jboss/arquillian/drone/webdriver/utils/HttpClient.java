@@ -1,9 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,7 +8,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 public class HttpClient {
+
+    private final Logger log = Logger.getLogger(HttpClient.class.getName());
 
     public Response get(String url) throws IOException {
         return get(url, Collections.emptyMap());
@@ -22,6 +27,7 @@ public class HttpClient {
         try (CloseableHttpClient client = createHttpClient()) {
             final HttpGet request = new HttpGet(url);
             addHeaders(headers, request);
+            log.info("Sending request: " + request + " with headers: " + Arrays.asList(request.getAllHeaders()));
             final HttpResponse response = client.execute(request);
             return Response.from(response);
         }
