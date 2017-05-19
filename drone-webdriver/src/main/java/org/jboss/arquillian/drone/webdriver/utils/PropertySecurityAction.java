@@ -79,4 +79,8 @@ public class PropertySecurityAction {
             }
         }
     }
+
+    public static boolean isArquillianDebug(){
+        return Boolean.valueOf(PropertySecurityAction.getProperty("arquillian.debug"));
+    }
 }

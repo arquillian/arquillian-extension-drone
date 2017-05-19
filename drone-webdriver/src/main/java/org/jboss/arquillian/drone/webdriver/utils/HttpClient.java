@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class HttpClient {
@@ -27,7 +28,8 @@ public class HttpClient {
         try (CloseableHttpClient client = createHttpClient()) {
             final HttpGet request = new HttpGet(url);
             addHeaders(headers, request);
-            log.info("Sending request: " + request + " with headers: " + Arrays.asList(request.getAllHeaders()));
+            String message = "Sending request: " + request + " with headers: " + Arrays.asList(request.getAllHeaders());
+            log.log(PropertySecurityAction.isArquillianDebug() ? Level.INFO : Level.FINE, message);
             final HttpResponse response = client.execute(request);
             return Response.from(response);
         }
