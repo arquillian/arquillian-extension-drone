@@ -4,7 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.net.URI;
+import org.apache.http.client.utils.URIBuilder;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,11 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.apache.http.client.utils.URIBuilder;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -99,23 +99,38 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
-        final JsonArray releases =
-            sentGetRequest(projectUrl + RELEASES_URL, Collections.emptyMap(), true).getAsJsonArray();
+        String url = projectUrl + RELEASES_URL;
+        int pageNumber = 1;
 
-        if (releases != null) {
+        while (true) {
+            HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber++, Collections.emptyMap());
+            JsonElement releases = gson.fromJson(response.getPayload(), JsonElement.class);
 
-            for (JsonElement release : releases) {
-                JsonObject releaseObject = release.getAsJsonObject();
-                String releaseTagName = releaseObject.get(tagNameKey).getAsString();
+            if (releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0) {
+                ExternalBinary releaseForVersion = getReleaseForVersion(version, releases.getAsJsonArray());
 
-                if (version.equals(releaseTagName)) {
-                    final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
-                    binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
-                    return binaryRelease;
+                if (releaseForVersion != null) {
+                    return releaseForVersion;
                 }
+            } else {
+                break;
             }
-            log.warning(
-                "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+        }
+        log.warning(
+            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+        return null;
+    }
+
+    private ExternalBinary getReleaseForVersion(String version, JsonArray releases) throws Exception {
+        for (JsonElement release : releases) {
+            JsonObject releaseObject = release.getAsJsonObject();
+            String releaseTagName = releaseObject.get(tagNameKey).getAsString();
+
+            if (version.equals(releaseTagName)) {
+                final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
+                binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
+                return binaryRelease;
+            }
         }
         return null;
     }
@@ -132,35 +147,13 @@ public abstract class GitHubSource implements ExternalBinarySource {
         return null;
     }
 
-    private JsonElement sentGetRequest(String url, Map<String, String> headers, boolean withPagination) throws Exception {
-
-        final HttpClient.Response response = sentGetRequestWithPagination(url, 1, headers);
-        JsonElement result = gson.fromJson(response.getPayload(), JsonElement.class);
-
-        if (result != null && result.isJsonArray()) {
-            JsonArray resultArray = result.getAsJsonArray();
-            int i = 2;
-            while (true) {
-                final HttpClient.Response nextResponse = sentGetRequestWithPagination(url, i, headers);
-                JsonArray page = gson.fromJson(nextResponse.getPayload(), JsonArray.class);
-                if (page.size() == 0) {
-                    break;
-                }
-                resultArray.addAll(page);
-                if (!withPagination) {
-                    break;
-                }
-                i++;
-            }
-            return resultArray;
-        }
-        return result;
-    }
-
     protected HttpClient.Response sentGetRequestWithPagination(String url, int pageNumber, Map<String, String> headers)
         throws Exception {
-        final URI uri = new URIBuilder(url).setParameter("page", String.valueOf(pageNumber)).build();
-        return httpClient.get(uri.toString(), headers);
+        final URIBuilder uriBuilder = new URIBuilder(url);
+        if (pageNumber != 1) {
+            uriBuilder.setParameter("page", String.valueOf(pageNumber));
+        }
+        return httpClient.get(uriBuilder.build().toString(), headers);
     }
 
     protected String getProjectUrl() {

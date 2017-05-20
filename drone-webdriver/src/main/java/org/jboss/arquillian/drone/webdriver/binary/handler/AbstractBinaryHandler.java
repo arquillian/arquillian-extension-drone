@@ -1,8 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.File;
-import java.net.URL;
-import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -11,6 +8,10 @@ import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Class that handles system properties, properties stored in capabilities, downloading, extracting and setting binaries
@@ -158,12 +159,20 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         }
         ExternalBinary release = null;
         if (Validate.nonEmpty(desiredVersion)) {
+
+            File versionDirectory = createAndGetCacheDirectory(desiredVersion);
+            File[] files = versionDirectory.listFiles(File::isFile);
+
+            if (files != null && files.length == 1) {
+                return prepare(files[0]);
+            }
             release = getExternalBinarySource().getReleaseForVersion(desiredVersion);
+            return downloadAndPrepare(versionDirectory, release.getUrl());
+
         } else {
             release = getExternalBinarySource().getLatestRelease();
+            return downloadAndPrepare(createAndGetCacheDirectory(release.getVersion()), release.getUrl());
         }
-
-        return downloadAndPrepare(createAndGetCacheDirectory(release.getVersion()), release.getUrl());
     }
 
     /**
@@ -198,6 +207,17 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      */
     protected File downloadAndPrepare(File targetDir, URL from) throws Exception {
         File downloaded = Downloader.download(targetDir, from);
+        return prepare(downloaded);
+    }
+
+    /**
+     * Takes care of the preparation - extraction/move of downloaded file & marking as executable
+     *
+     * @param downloaded The downloaded file to prepare
+     * @return An executable binary that was extracted/copied from the downloaded file
+     * @throws Exception If anything bad happens
+     */
+    protected File prepare(File downloaded) throws Exception {
         File extraction = BinaryFilesUtils.extract(downloaded);
         File[] files = extraction.listFiles(file -> file.isFile());
         if (files == null || files.length == 0) {

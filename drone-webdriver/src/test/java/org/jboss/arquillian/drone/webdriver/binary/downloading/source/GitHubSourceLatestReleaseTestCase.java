@@ -4,11 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import io.specto.hoverfly.junit.dsl.ResponseBuilder;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.JUnitSoftAssertions;
@@ -20,6 +15,12 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -74,7 +75,6 @@ public class GitHubSourceLatestReleaseTestCase {
         // given
         hoverflyRule.simulate(dsl(service("https://api.github.com")
             .get("/repos/mozilla/geckodriver/releases/latest")
-            .queryParam("page", 1)
             .willReturn(
                 ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
             )));
@@ -99,7 +99,6 @@ public class GitHubSourceLatestReleaseTestCase {
         hoverflyRule.simulate(dsl(service("https://api.github.com")
             .get("/repos/mozilla/geckodriver/releases/latest")
             .header(HttpHeaders.IF_MODIFIED_SINCE, "Tue, 31 Jan 2017 17:16:07 GMT")
-            .queryParam("page", 1)
             .willReturn(
                 ResponseBuilder.response().status(HttpStatus.SC_NOT_MODIFIED)
             )));
@@ -140,7 +139,6 @@ public class GitHubSourceLatestReleaseTestCase {
             .get("/repos/mozilla/geckodriver/releases/latest")
             .header(HttpHeaders.IF_MODIFIED_SINCE,
                 "Sun, 01 Jan 2017 17:16:07 GMT") // But we expect it to be sent in GMT, as this is how we match the request
-            .queryParam("page", 1)
             .willReturn(
                 ResponseBuilder.response().header("Last-Modified", "Tue, 31 Jan 2017 17:16:07 GMT").body(RESPONSE_BODY)
             )));
