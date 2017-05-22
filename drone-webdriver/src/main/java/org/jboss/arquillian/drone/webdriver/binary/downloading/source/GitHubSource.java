@@ -56,15 +56,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
         this.cache = gitHubLastUpdateCache;
     }
 
-    /**
-     * It is expected that this abstract method should return a regex that represents an expected file name
-     * of the release asset. These names are visible on pages of some specific release or accessible
-     * via api.github request.
-     *
-     * @return A regex that represents an expected file name of an asset associated with the required release.
-     */
-    protected abstract String getExpectedFileNameRegex(String version);
-
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
         final HttpClient.Response response =
@@ -140,7 +131,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         for (JsonElement asset : assets) {
             JsonObject assetJson = asset.getAsJsonObject();
             String name = assetJson.get(assetNameKey).getAsString();
-            if (name.matches(getExpectedFileNameRegex(version))) {
+            if (name.matches(getFileNameRegexToDownload(version))) {
                 return assetJson.get(browserDownloadUrlKey).getAsString();
             }
         }

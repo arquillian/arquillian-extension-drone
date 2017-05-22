@@ -1,9 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.File;
-import java.net.URL;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.PhantomJSGitHubBitbucketSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
@@ -11,6 +8,8 @@ import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
 
 import static org.openqa.selenium.phantomjs.PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
@@ -34,20 +33,13 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     /**
-     * Takes care of all steps but the first one of the method {@link AbstractBinaryHandler#downloadAndPrepare()}
+     * Takes care of the preparation (extraction/move of downloaded file & marking as executable) of the PhantomJS binary
      *
-     * @param targetDir
-     *     A directory where a downloaded binary should be stored
-     * @param from
-     *     A url a binary should be downloaded from
-     *
+     * @param downloaded The downloaded file to prepare
      * @return An executable binary that was extracted/copied from the downloaded file
-     *
-     * @throws Exception
-     *     If anything bad happens
+     * @throws Exception If anything bad happens
      */
-    protected File downloadAndPrepare(File targetDir, URL from) throws Exception {
-        File downloaded = Downloader.download(targetDir, from);
+    protected File prepare(File downloaded) throws Exception {
         File extraction = BinaryFilesUtils.extract(downloaded);
 
         File[] phantomJSDirectory = extraction.listFiles(file -> file.isDirectory());

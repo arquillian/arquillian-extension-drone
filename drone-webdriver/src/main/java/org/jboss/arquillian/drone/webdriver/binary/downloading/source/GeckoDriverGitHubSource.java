@@ -11,7 +11,7 @@ public class GeckoDriverGitHubSource extends GitHubSource {
     }
 
     @Override
-    protected String getExpectedFileNameRegex(String version) {
+    public String getFileNameRegexToDownload(String version) {
         StringBuilder fileNameRegex = new StringBuilder("geckodriver-");
         fileNameRegex.append(version).append("-");
         if (PlatformUtils.isMac()) {

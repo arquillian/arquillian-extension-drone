@@ -1,10 +1,11 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.logging.Logger;
 
 /**
  * A class for handling selenium server binaries. It also runs the selenium server with properties that are
@@ -72,16 +73,16 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
-            StringBuffer regexBuffer = new StringBuffer("%s/selenium-server-standalone-");
-            regexBuffer.append("%s.jar");
-
-            String regex;
             if (version == null) {
-                regex = String.format(regexBuffer.toString(), directory, directory + ".*");
+                return directory + "/" + getFileNameRegexToDownload(directory + ".*");
             } else {
-                regex = String.format(regexBuffer.toString(), getDirectoryFromFullVersion(version), version);
+                return getDirectoryFromFullVersion(version) + "/" + getFileNameRegexToDownload(version);
             }
-            return regex;
+        }
+
+        @Override
+        public String getFileNameRegexToDownload(String version) {
+            return String.format("selenium-server-standalone-%s.jar", version);
         }
     }
 }

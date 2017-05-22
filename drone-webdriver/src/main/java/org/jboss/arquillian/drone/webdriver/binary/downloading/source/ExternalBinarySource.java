@@ -31,4 +31,11 @@ public interface ExternalBinarySource {
      * @throws Exception
      */
     ExternalBinary getReleaseForVersion(String version) throws Exception;
+
+    /**
+     * This method should returns a regex that represents a file name of the release asset that should be downloaded.
+     *
+     * @return A regex that represents a file name of an asset to be downloaded.
+     */
+    String getFileNameRegexToDownload(String version);
 }

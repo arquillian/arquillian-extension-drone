@@ -1,12 +1,13 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.File;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
 
 /**
  * A class for handling driver binaries for internet explorer
@@ -74,21 +75,24 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
-            StringBuffer regexBuffer = new StringBuffer("%s/IEDriverServer_");
+            if (version == null) {
+                return directory + "/" +  getFileNameRegexToDownload(directory + ".*");
+            } else {
+                return getDirectoryFromFullVersion(version) + "/" +  getFileNameRegexToDownload(version);
+            }
+        }
+
+        @Override
+        public String getFileNameRegexToDownload(String version) {
+            StringBuffer regexBuffer = new StringBuffer("IEDriverServer_");
             if (PlatformUtils.is32()) {
                 regexBuffer.append("Win32");
             } else {
                 regexBuffer.append("x64");
             }
-            regexBuffer.append("_%s.zip");
+            regexBuffer.append("_").append(version).append(".zip");
 
-            String regex;
-            if (version == null) {
-                regex = String.format(regexBuffer.toString(), directory, directory + ".*");
-            } else {
-                regex = String.format(regexBuffer.toString(), getDirectoryFromFullVersion(version), version);
-            }
-            return regex;
+            return regexBuffer.toString();
         }
     }
 }

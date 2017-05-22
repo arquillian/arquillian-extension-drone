@@ -1,8 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import java.io.File;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,5 +40,10 @@ public class LocalBinarySource implements ExternalBinarySource {
         } else {
             return getLatestRelease();
         }
+    }
+
+    @Override
+    public String getFileNameRegexToDownload(String version) {
+        return null;
     }
 }

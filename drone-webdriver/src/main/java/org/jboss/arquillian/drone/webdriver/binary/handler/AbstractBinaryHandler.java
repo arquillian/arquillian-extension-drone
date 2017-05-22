@@ -159,20 +159,36 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         }
         ExternalBinary release = null;
         if (Validate.nonEmpty(desiredVersion)) {
-
             File versionDirectory = createAndGetCacheDirectory(desiredVersion);
-            File[] files = versionDirectory.listFiles(File::isFile);
 
-            if (files != null && files.length == 1) {
-                return prepare(files[0]);
+            File alreadyDownloaded = checkAndGetIfDownloaded(desiredVersion, versionDirectory);
+            if (alreadyDownloaded != null) {
+                return prepare(alreadyDownloaded);
+
+            } else {
+                release = getExternalBinarySource().getReleaseForVersion(desiredVersion);
+                return downloadAndPrepare(versionDirectory, release.getUrl());
             }
-            release = getExternalBinarySource().getReleaseForVersion(desiredVersion);
-            return downloadAndPrepare(versionDirectory, release.getUrl());
 
         } else {
             release = getExternalBinarySource().getLatestRelease();
             return downloadAndPrepare(createAndGetCacheDirectory(release.getVersion()), release.getUrl());
         }
+    }
+
+    private File checkAndGetIfDownloaded(String desiredVersion, File versionDirectory) {
+        String fileNameRegexToDownload = getExternalBinarySource().getFileNameRegexToDownload(desiredVersion);
+        if (fileNameRegexToDownload == null) {
+            return null;
+        }
+
+        File[] files = versionDirectory.listFiles(
+            file -> file.isFile() && file.getName().matches(fileNameRegexToDownload));
+
+        if (files != null && files.length == 1) {
+            return files[0];
+        }
+        return null;
     }
 
     /**
