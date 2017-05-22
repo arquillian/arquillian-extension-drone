@@ -13,8 +13,10 @@ import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -92,13 +94,15 @@ public abstract class GitHubSource implements ExternalBinarySource {
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
         String url = projectUrl + RELEASES_URL;
         int pageNumber = 1;
+        List<String> availableVersions = new ArrayList<>();
 
         while (true) {
             HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber++, Collections.emptyMap());
             JsonElement releases = gson.fromJson(response.getPayload(), JsonElement.class);
 
             if (releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0) {
-                ExternalBinary releaseForVersion = getReleaseForVersion(version, releases.getAsJsonArray());
+                ExternalBinary releaseForVersion =
+                    getReleaseForVersion(version, releases.getAsJsonArray(), availableVersions);
 
                 if (releaseForVersion != null) {
                     return releaseForVersion;
@@ -108,10 +112,12 @@ public abstract class GitHubSource implements ExternalBinarySource {
             }
         }
         throw new IllegalArgumentException(
-            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
+            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl
+                + " Available versions are: " + availableVersions);
     }
 
-    private ExternalBinary getReleaseForVersion(String version, JsonArray releases) throws Exception {
+    private ExternalBinary getReleaseForVersion(String version, JsonArray releases, List<String> availableVersions)
+        throws Exception {
         for (JsonElement release : releases) {
             JsonObject releaseObject = release.getAsJsonObject();
             String releaseTagName = releaseObject.get(tagNameKey).getAsString();
@@ -120,6 +126,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
                 final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
                 binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
                 return binaryRelease;
+            } else {
+                availableVersions.add(releaseTagName);
             }
         }
         return null;
