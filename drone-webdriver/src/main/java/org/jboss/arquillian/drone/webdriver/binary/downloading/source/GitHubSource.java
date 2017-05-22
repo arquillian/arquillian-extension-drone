@@ -107,9 +107,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
                 break;
             }
         }
-        log.warning(
+        throw new IllegalArgumentException(
             "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
-        return null;
     }
 
     private ExternalBinary getReleaseForVersion(String version, JsonArray releases) throws Exception {
