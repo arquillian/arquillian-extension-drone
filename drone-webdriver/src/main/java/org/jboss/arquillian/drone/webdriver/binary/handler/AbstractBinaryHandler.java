@@ -264,7 +264,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         return binaryFile;
     }
 
-    private File createAndGetCacheDirectory(String subdirectory) {
+    protected File createAndGetCacheDirectory(String subdirectory) {
         String dirPath = Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY
             + getArquillianCacheSubdirectory()
             + (subdirectory == null ? "" : File.separator + subdirectory);
