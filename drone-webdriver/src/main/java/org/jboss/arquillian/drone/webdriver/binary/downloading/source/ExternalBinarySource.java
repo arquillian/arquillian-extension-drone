@@ -34,6 +34,8 @@ public interface ExternalBinarySource {
 
     /**
      * This method should returns a regex that represents a file name of the release asset that should be downloaded.
+     * If this method returns null, the AbstractBinaryHandler won't be looking for any file in the cache directory
+     * and will jump to downloading phase.
      *
      * @return A regex that represents a file name of an asset to be downloaded.
      */

@@ -109,7 +109,11 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
             return new ExternalBinary(driverVersion, webDriverUrl);
         }
 
-        @Override
+        /**
+         * This method returns only null as in the case of Edge webdriver, we don't know what will be the name of the file
+         * that will be downloaded. As this method returns null, the AbstractBinaryHandler won't be looking for any file
+         * in the cache directory and will jump to downloading phase.
+         */
         public String getFileNameRegexToDownload(String version) {
             return null;
         }

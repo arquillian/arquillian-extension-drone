@@ -1,11 +1,14 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -14,7 +17,12 @@ import java.io.RandomAccessFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.handler.LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BinaryHandlerDesiredVersionTestCase {
 
     @Rule
@@ -23,6 +31,21 @@ public class BinaryHandlerDesiredVersionTestCase {
     private static final String FILE_VERSION_SHOULD_EXIST = "should_exist";
     private static final String FILE_VERSION_SHOULD_NOT_EXIST = "should_not_exist";
     private static final String FILE_NAME_TO_DOWNLOAD = "file_to_download";
+
+    @Mock
+    private ExternalBinarySource binarySource;
+
+    @Before
+    public void setMock() throws Exception {
+        verify(binarySource, never()).getReleaseForVersion(FILE_VERSION_SHOULD_EXIST);
+        when(binarySource.getReleaseForVersion(FILE_VERSION_SHOULD_NOT_EXIST)).thenAnswer(invocation -> {
+            File toDownload = tmpFolder.newFile(FILE_NAME_TO_DOWNLOAD);
+            fillFile(toDownload.getAbsolutePath(), FILE_VERSION_SHOULD_NOT_EXIST.length());
+            return new ExternalBinary(FILE_VERSION_SHOULD_NOT_EXIST, toDownload.toURI().toString());
+        });
+        when(binarySource.getFileNameRegexToDownload(anyString()))
+            .thenAnswer(invocation -> invocation.getArguments()[0]);
+    }
 
     @Test
     public void test_when_directory_contains_downloaded_file_binary_source_should_not_be_invoked() throws Exception {
@@ -68,7 +91,6 @@ public class BinaryHandlerDesiredVersionTestCase {
         f.setLength(length);
     }
 
-
     class HandlerWithTmpFolder extends  LocalBinaryHandler {
 
         HandlerWithTmpFolder(DesiredCapabilities capabilities) {
@@ -81,35 +103,7 @@ public class BinaryHandlerDesiredVersionTestCase {
 
         @Override
         protected ExternalBinarySource getExternalBinarySource() {
-            return new ReleaseForVersionBinarySource();
-        }
-    }
-
-    class ReleaseForVersionBinarySource implements ExternalBinarySource {
-
-        @Override
-        public ExternalBinary getLatestRelease() throws Exception {
-            return null;
-        }
-
-        @Override
-        public ExternalBinary getReleaseForVersion(String version) throws Exception {
-            if (version.equals(FILE_VERSION_SHOULD_EXIST)){
-                Assertions.fail("The method ExternalBinarySource#getReleaseForVersion should not have been called"
-                                    + " as the file should be present in the downloaded directory and should be matched");
-
-            } else if (version.equals(FILE_VERSION_SHOULD_NOT_EXIST)) {
-                File toDownload = tmpFolder.newFile(FILE_NAME_TO_DOWNLOAD);
-                fillFile(toDownload.getAbsolutePath(), FILE_VERSION_SHOULD_NOT_EXIST.length());
-
-                return new ExternalBinary(FILE_VERSION_SHOULD_NOT_EXIST, toDownload.toURI().toString());
-            }
-            return null;
-        }
-
-        @Override
-        public String getFileNameRegexToDownload(String version) {
-            return version;
+            return binarySource;
         }
     }
 }

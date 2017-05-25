@@ -44,6 +44,10 @@ public class LocalBinarySource implements ExternalBinarySource {
 
     @Override
     public String getFileNameRegexToDownload(String version) {
-        return null;
+        if (version.equals(FIRST_VERSION)) {
+            return FIRST_FILE.getName();
+        } else {
+            return LATEST_FILE.getName();
+        }
     }
 }

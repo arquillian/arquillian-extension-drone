@@ -43,7 +43,7 @@ public class GitHubSourceReleaseForVersionTestCase {
 
         //expected
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("There wasn't found any release for the version: v0.24.0");
+        exception.expectMessage("No release matching version v0.24.0 has been found in the repository");
 
         // when
         final ExternalBinary release = geckoDriverGitHubSource.getReleaseForVersion(expectedVersion);

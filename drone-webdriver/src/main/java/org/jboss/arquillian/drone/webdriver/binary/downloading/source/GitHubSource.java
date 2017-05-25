@@ -95,25 +95,31 @@ public abstract class GitHubSource implements ExternalBinarySource {
         String url = projectUrl + RELEASES_URL;
         int pageNumber = 1;
         List<String> availableVersions = new ArrayList<>();
+        JsonElement releases = getReleasesJson(url, pageNumber);
 
-        while (true) {
-            HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber++, Collections.emptyMap());
-            JsonElement releases = gson.fromJson(response.getPayload(), JsonElement.class);
+        while (containsSubElements(releases)) {
 
-            if (releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0) {
-                ExternalBinary releaseForVersion =
-                    getReleaseForVersion(version, releases.getAsJsonArray(), availableVersions);
+            ExternalBinary releaseForVersion =
+                getReleaseForVersion(version, releases.getAsJsonArray(), availableVersions);
 
-                if (releaseForVersion != null) {
-                    return releaseForVersion;
-                }
-            } else {
-                break;
+            if (releaseForVersion != null) {
+                return releaseForVersion;
             }
+            releases = getReleasesJson(url, ++pageNumber);
         }
+
         throw new IllegalArgumentException(
-            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl
+            "No release matching version " + version + " has been found in the repository" + projectUrl
                 + " Available versions are: " + availableVersions);
+    }
+
+    private boolean containsSubElements(JsonElement releases) {
+        return releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0;
+    }
+
+    private JsonElement getReleasesJson(String url, int pageNumber) throws Exception {
+        HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber, Collections.emptyMap());
+        return gson.fromJson(response.getPayload(), JsonElement.class);
     }
 
     private ExternalBinary getReleaseForVersion(String version, JsonArray releases, List<String> availableVersions)
