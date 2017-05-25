@@ -6,9 +6,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -18,11 +15,11 @@ import java.io.RandomAccessFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.handler.LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class BinaryHandlerDesiredVersionTestCase {
 
     @Rule
@@ -32,11 +29,11 @@ public class BinaryHandlerDesiredVersionTestCase {
     private static final String FILE_VERSION_SHOULD_NOT_EXIST = "should_not_exist";
     private static final String FILE_NAME_TO_DOWNLOAD = "file_to_download";
 
-    @Mock
     private ExternalBinarySource binarySource;
 
     @Before
     public void setMock() throws Exception {
+        binarySource = mock(ExternalBinarySource.class);
         verify(binarySource, never()).getReleaseForVersion(FILE_VERSION_SHOULD_EXIST);
         when(binarySource.getReleaseForVersion(FILE_VERSION_SHOULD_NOT_EXIST)).thenAnswer(invocation -> {
             File toDownload = tmpFolder.newFile(FILE_NAME_TO_DOWNLOAD);
