@@ -5,7 +5,9 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +20,9 @@ public class GitHubSourceReleaseForVersionTestCase {
 
     GeckoDriverGitHubSource geckoDriverGitHubSource =
         new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void should_load_release_information_from_gh_for_given_version() throws Exception {
@@ -36,10 +41,12 @@ public class GitHubSourceReleaseForVersionTestCase {
         // given
         final String expectedVersion = "v0.24.0";
 
+        //expected
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("No release matching version v0.24.0 has been found in the repository");
+
         // when
         final ExternalBinary release = geckoDriverGitHubSource.getReleaseForVersion(expectedVersion);
 
-        // then
-        assertThat(release).isNull();
     }
 }

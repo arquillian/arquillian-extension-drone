@@ -1,7 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.IOException;
-import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
@@ -10,6 +8,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * A class for handling binaries for Edge
@@ -106,6 +107,15 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
             }
 
             return new ExternalBinary(driverVersion, webDriverUrl);
+        }
+
+        /**
+         * This method returns only null as in the case of Edge webdriver, we don't know what will be the name of the file
+         * that will be downloaded. As this method returns null, the AbstractBinaryHandler won't be looking for any file
+         * in the cache directory and will jump to downloading phase.
+         */
+        public String getFileNameRegexToDownload(String version) {
+            return null;
         }
 
         private Elements getDriversList() throws IOException {

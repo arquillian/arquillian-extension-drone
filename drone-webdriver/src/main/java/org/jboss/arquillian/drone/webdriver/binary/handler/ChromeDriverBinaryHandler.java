@@ -1,12 +1,13 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.util.regex.Pattern;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GoogleStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.regex.Pattern;
 
 /**
  * A class for handling chromeDriver binaries
@@ -66,7 +67,12 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         }
 
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
-            StringBuilder fileName = new StringBuilder(requiredVersion).append("/chromedriver_");
+            return Pattern.quote(requiredVersion + "/" + getFileNameRegexToDownload(requiredVersion));
+        }
+
+        @Override
+        public String getFileNameRegexToDownload(String version) {
+            StringBuilder fileName = new StringBuilder("chromedriver_");
             if (PlatformUtils.isMac()) {
                 fileName.append("mac64");
             } else if (PlatformUtils.isWindows()) {
@@ -79,7 +85,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
                     fileName.append("64");
                 }
             }
-            return Pattern.quote(fileName.append(".zip").toString());
+            return fileName.append(".zip").toString();
         }
     }
 }

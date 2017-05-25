@@ -13,8 +13,10 @@ import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -56,15 +58,6 @@ public abstract class GitHubSource implements ExternalBinarySource {
         this.cache = gitHubLastUpdateCache;
     }
 
-    /**
-     * It is expected that this abstract method should return a regex that represents an expected file name
-     * of the release asset. These names are visible on pages of some specific release or accessible
-     * via api.github request.
-     *
-     * @return A regex that represents an expected file name of an asset associated with the required release.
-     */
-    protected abstract String getExpectedFileNameRegex(String version);
-
     @Override
     public ExternalBinary getLatestRelease() throws Exception {
         final HttpClient.Response response =
@@ -101,27 +94,36 @@ public abstract class GitHubSource implements ExternalBinarySource {
     public ExternalBinary getReleaseForVersion(String version) throws Exception {
         String url = projectUrl + RELEASES_URL;
         int pageNumber = 1;
+        List<String> availableVersions = new ArrayList<>();
+        JsonElement releases = getReleasesJson(url, pageNumber);
 
-        while (true) {
-            HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber++, Collections.emptyMap());
-            JsonElement releases = gson.fromJson(response.getPayload(), JsonElement.class);
+        while (containsSubElements(releases)) {
 
-            if (releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0) {
-                ExternalBinary releaseForVersion = getReleaseForVersion(version, releases.getAsJsonArray());
+            ExternalBinary releaseForVersion =
+                getReleaseForVersion(version, releases.getAsJsonArray(), availableVersions);
 
-                if (releaseForVersion != null) {
-                    return releaseForVersion;
-                }
-            } else {
-                break;
+            if (releaseForVersion != null) {
+                return releaseForVersion;
             }
+            releases = getReleasesJson(url, ++pageNumber);
         }
-        log.warning(
-            "There wasn't found any release for the version: " + version + " in the repository: " + projectUrl);
-        return null;
+
+        throw new IllegalArgumentException(
+            "No release matching version " + version + " has been found in the repository" + projectUrl
+                + " Available versions are: " + availableVersions);
     }
 
-    private ExternalBinary getReleaseForVersion(String version, JsonArray releases) throws Exception {
+    private boolean containsSubElements(JsonElement releases) {
+        return releases != null && releases.isJsonArray() && releases.getAsJsonArray().size() > 0;
+    }
+
+    private JsonElement getReleasesJson(String url, int pageNumber) throws Exception {
+        HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber, Collections.emptyMap());
+        return gson.fromJson(response.getPayload(), JsonElement.class);
+    }
+
+    private ExternalBinary getReleaseForVersion(String version, JsonArray releases, List<String> availableVersions)
+        throws Exception {
         for (JsonElement release : releases) {
             JsonObject releaseObject = release.getAsJsonObject();
             String releaseTagName = releaseObject.get(tagNameKey).getAsString();
@@ -130,6 +132,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
                 final ExternalBinary binaryRelease = new ExternalBinary(releaseTagName);
                 binaryRelease.setUrl(findReleaseBinaryUrl(releaseObject, binaryRelease.getVersion()));
                 return binaryRelease;
+            } else {
+                availableVersions.add(releaseTagName);
             }
         }
         return null;
@@ -140,7 +144,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         for (JsonElement asset : assets) {
             JsonObject assetJson = asset.getAsJsonObject();
             String name = assetJson.get(assetNameKey).getAsString();
-            if (name.matches(getExpectedFileNameRegex(version))) {
+            if (name.matches(getFileNameRegexToDownload(version))) {
                 return assetJson.get(browserDownloadUrlKey).getAsString();
             }
         }

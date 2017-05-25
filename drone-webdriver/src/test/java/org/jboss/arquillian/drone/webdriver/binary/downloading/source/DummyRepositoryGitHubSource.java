@@ -1,11 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +40,7 @@ public class DummyRepositoryGitHubSource extends GitHubSource {
     }
 
     @Override
-    protected String getExpectedFileNameRegex(String version) {
+    public String getFileNameRegexToDownload(String version) {
         return "release.zip";
     }
 }
