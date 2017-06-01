@@ -20,9 +20,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -62,6 +65,11 @@ public class DroneTestEnricher implements TestEnricher {
     @ApplicationScoped
     private InstanceProducer<DeploymentDronePointsRegistry> deploymentDronePointsRegistry;
 
+    public static final String ARQUILLIAN_DRONE_CREATION_PROPERTY = "arquillian.drone.skip.creation";
+    private static final String ARQUILLIAN_DRONE_CREATION_PROPERTY_MSG = "The property "
+        + ARQUILLIAN_DRONE_CREATION_PROPERTY
+        + " is set to true - the Drone injection point won't be instantiated for the ";
+
     @Override
     public void enrich(Object testCase) {
         enrichTestClass(testCase.getClass(), testCase, false);
@@ -72,28 +80,38 @@ public class DroneTestEnricher implements TestEnricher {
         DroneContext context = droneContext.get();
         DronePoint<?>[] dronePoints = InjectionPoints.parametersInMethod(droneContext.get(), method);
         Object[] resolution = new Object[dronePoints.length];
-        for (int i = 0; i < dronePoints.length; i++) {
-            DronePoint<?> dronePoint = dronePoints[i];
-            if (dronePoint == null) {
-                resolution[i] = null;
-                continue;
-            }
 
-            if (!ensureInjectionPointPrepared(dronePoint, true)) {
-                // in case of deployment-scoped drone point tied to a deployment that isn't deployed, only register
-                // it - it will be injected when the deployment is finished
-                registerDeploymentDronePoint(dronePoint, method);
-                continue;
+        if (droneInstantiationShouldBeSkipped()) {
+            List<DronePoint<?>> points =
+                Arrays.stream(dronePoints).filter(dronePoint -> dronePoint != null).collect(Collectors.toList());
+            if (points.size() > 0) {
+                log.info(ARQUILLIAN_DRONE_CREATION_PROPERTY_MSG + "method: " + method);
             }
-            log.log(Level.FINE, "Injecting @Drone for method {0}, injection point {1}",
-                new Object[] {method.getName(), dronePoint}
-            );
+        } else {
+            for (int i = 0; i < dronePoints.length; i++) {
+                DronePoint<?> dronePoint = dronePoints[i];
+                if (dronePoint == null) {
+                    resolution[i] = null;
+                    continue;
+                }
 
-            Object drone = context.get(dronePoint).getInstance();
-            Validate.stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser " +
-                "object" +
-                ".\nMethod: {0}, injection point: {1},", method.getName(), dronePoint);
-            resolution[i] = drone;
+                if (!ensureInjectionPointPrepared(dronePoint, true)) {
+                    // in case of deployment-scoped drone point tied to a deployment that isn't deployed, only register
+                    // it - it will be injected when the deployment is finished
+                    registerDeploymentDronePoint(dronePoint, method);
+                    continue;
+                }
+                log.log(Level.FINE, "Injecting @Drone for method {0}, injection point {1}",
+                    new Object[] {method.getName(), dronePoint}
+                );
+
+                Object drone = context.get(dronePoint).getInstance();
+                Validate
+                    .stateNotNull(drone, "Retrieved a null from Drone Context, which is not a valid Drone browser " +
+                        "object" +
+                        ".\nMethod: {0}, injection point: {1},", method.getName(), dronePoint);
+                resolution[i] = drone;
+            }
         }
 
         return resolution;
@@ -115,6 +133,11 @@ public class DroneTestEnricher implements TestEnricher {
         DroneContext context = droneContext.get();
         Map<Field, DronePoint<?>> injectionPoints = InjectionPoints.fieldsInClass(droneContext.get(),
             testClass);
+
+        if (injectionPoints.size() > 0 && droneInstantiationShouldBeSkipped()) {
+            log.info(ARQUILLIAN_DRONE_CREATION_PROPERTY_MSG + "field(s): " + injectionPoints.keySet());
+            return;
+        }
 
         for (Field field : injectionPoints.keySet()) {
             if (onlyStatic && !Modifier.isStatic(field.getModifiers())) {
@@ -146,6 +169,10 @@ public class DroneTestEnricher implements TestEnricher {
             );
             SecurityActions.setFieldValue(testCase, field, drone);
         }
+    }
+
+    private boolean droneInstantiationShouldBeSkipped() {
+        return Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DRONE_CREATION_PROPERTY));
     }
 
     private void registerDeploymentDronePoint(DronePoint dronePoint, Object testCase) {

@@ -218,3 +218,7 @@ performed.
 
 Then System property are applied in the same fashion.
 
+== Skipping creation of @Drone instances
+
+In case you want to skip a creation/injection of `@Drone` instances you can use a system property `arquillian.drone.skip.creation` with a value `true`. This property is checked in a phase `@Before` so you can modify the property during the test execution.
+
