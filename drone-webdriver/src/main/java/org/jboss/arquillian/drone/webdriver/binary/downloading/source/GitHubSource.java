@@ -4,21 +4,21 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.http.client.utils.URIBuilder;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.http.client.utils.URIBuilder;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -62,18 +62,61 @@ public abstract class GitHubSource implements ExternalBinarySource {
     public ExternalBinary getLatestRelease() throws Exception {
         final HttpClient.Response response =
             sentGetRequestWithPagination(projectUrl + LATEST_URL, 1, lastModificationHeader());
-        final ExternalBinary binaryRelease;
 
         if (response.hasPayload()) {
-            final JsonObject latestRelease = gson.fromJson(response.getPayload(), JsonElement.class).getAsJsonObject();
-            String tagName = latestRelease.get(tagNameKey).getAsString();
+            return processResponsePayload(response);
+        } else {
+            return cache.load(uniqueKey, ExternalBinary.class);
+        }
+    }
+
+    private ExternalBinary processResponsePayload(HttpClient.Response response) throws Exception {
+        final ExternalBinary binaryRelease;
+        JsonElement jsonElement = gson.fromJson(response.getPayload(), JsonElement.class);
+        final JsonObject latestRelease = jsonElement.getAsJsonObject();
+        JsonElement tagNameElement = latestRelease.get(tagNameKey);
+
+        if (tagNameElement == null) {
+            binaryRelease = processEmptyResponse(response);
+        } else {
+            String tagName = tagNameElement.getAsString();
             binaryRelease = new ExternalBinary(tagName);
             binaryRelease.setUrl(findReleaseBinaryUrl(latestRelease, binaryRelease.getVersion()));
             cache.store(binaryRelease, uniqueKey, extractModificationDate(response));
-        } else {
-            binaryRelease = cache.load(uniqueKey, ExternalBinary.class);
         }
         return binaryRelease;
+    }
+
+    private ExternalBinary processEmptyResponse(HttpClient.Response response) throws Exception {
+        StringBuffer msg = createErrorMessage(response, true);
+        if (cache.cacheFileExists(uniqueKey)) {
+            ExternalBinary binaryRelease = cache.load(uniqueKey, ExternalBinary.class);
+            msg.append(" It will be used the cached version as the latest one: " + binaryRelease.getVersion());
+            log.warning(msg.toString());
+            return binaryRelease;
+        } else {
+            throw new IllegalStateException(msg.toString());
+        }
+    }
+
+    private StringBuffer createErrorMessage(HttpClient.Response response, boolean latest) {
+        StringBuffer msg = new StringBuffer();
+        if ("0".equals(response.getHeader(getRateLimitRemainingHeaderKey()))) {
+            msg.append("GitHub API rate limit exceeded. To get the information about the ");
+            if (latest) {
+                msg.append("latest ");
+            }
+            msg.append("release you need to wait till the rate limit is reset");
+            try {
+                Date resetTime = new Date(Long.valueOf(response.getHeader(getRateLimitResetHeaderKey())) * 1000L);
+                msg.append(" which will be: " + resetTime);
+            } catch (NumberFormatException e) {
+            }
+            msg.append(".");
+        } else {
+            msg.append("There is some problem on GitHub server. It responded with: " + response.getPayload() + "\n");
+        }
+        return msg;
     }
 
     protected Map<String, String> lastModificationHeader() {
@@ -107,10 +150,14 @@ public abstract class GitHubSource implements ExternalBinarySource {
             }
             releases = getReleasesJson(url, ++pageNumber);
         }
-
-        throw new IllegalArgumentException(
-            "No release matching version " + version + " has been found in the repository" + projectUrl
-                + " Available versions are: " + availableVersions);
+        if (availableVersions.isEmpty()) {
+            throw new IllegalStateException(
+                createErrorMessage(sentGetRequestWithPagination(url, 1, Collections.emptyMap()), false).toString());
+        } else {
+            throw new IllegalArgumentException(
+                "No release matching version " + version + " has been found in the repository " + projectUrl
+                    + " Available versions are: " + availableVersions + ".");
+        }
     }
 
     private boolean containsSubElements(JsonElement releases) {
@@ -174,5 +221,15 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     protected GitHubLastUpdateCache getCache() {
         return cache;
+    }
+
+    // workaround for https://github.com/SpectoLabs/hoverfly/issues/573
+    protected String getRateLimitRemainingHeaderKey() {
+        return "X-RateLimit-Remaining";
+    }
+
+    // workaround for https://github.com/SpectoLabs/hoverfly/issues/573
+    protected String getRateLimitResetHeaderKey() {
+        return "X-RateLimit-Reset";
     }
 }

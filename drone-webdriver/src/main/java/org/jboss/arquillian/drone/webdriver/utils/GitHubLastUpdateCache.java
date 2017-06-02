@@ -56,7 +56,7 @@ public class GitHubLastUpdateCache {
 
     public ZonedDateTime lastModificationOf(String uniqueKey) {
         final ZonedDateTime lastModification;
-        if (Files.exists(Paths.get(createCachedFilePath(uniqueKey)))) {
+        if (cacheFileExists(uniqueKey)) {
             final JsonElement lastModificationDate = deserializeCachedFile(uniqueKey).get(LAST_MODIFIED_PROPERTY);
             lastModification = gson.fromJson(lastModificationDate, ZonedDateTime.class);
         } else {
@@ -68,6 +68,10 @@ public class GitHubLastUpdateCache {
     public <T> T load(String uniqueKey, Class<T> type) {
         final JsonObject asset = deserializeCachedFile(uniqueKey).getAsJsonObject(ASSET_PROPERTY);
         return gson.fromJson(asset, type);
+    }
+
+    public boolean cacheFileExists(String uniqueKey){
+        return Files.exists(Paths.get(createCachedFilePath(uniqueKey)));
     }
 
     public <T> void store(T asset, String uniqueKey, ZonedDateTime dateTime) {
