@@ -538,16 +538,17 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#extended-configuration-configuring-qualifierd-drone-instances">8. Extended Configuration: Configuring @Qualifier&#8217;d Drone Instances</a></li>
-<li><a href="#arquillian-drone-spi">9. Arquillian Drone SPI</a>
+<li><a href="#_skipping_creation_of_drone_instances">9. Skipping creation of @Drone instances</a></li>
+<li><a href="#arquillian-drone-spi">10. Arquillian Drone SPI</a>
 <ul class="sectlevel2">
-<li><a href="#event-model">9.1. Event Model</a></li>
-<li><a href="#working-with-drone-instances">9.2. Working with Drone Instances</a></li>
+<li><a href="#event-model">10.1. Event Model</a></li>
+<li><a href="#working-with-drone-instances">10.2. Working with Drone Instances</a></li>
 </ul>
 </li>
-<li><a href="#_building_the_project">10. Building the project</a>
+<li><a href="#_building_the_project">11. Building the project</a>
 <ul class="sectlevel2">
-<li><a href="#_running_test_suite">10.1. Running test suite</a></li>
-<li><a href="#_releasing_new_version">10.2. Releasing new version</a></li>
+<li><a href="#_running_test_suite">11.1. Running test suite</a></li>
+<li><a href="#_releasing_new_version">11.2. Releasing new version</a></li>
 </ul>
 </li>
 </ul>
@@ -1939,7 +1940,15 @@ performed.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="arquillian-drone-spi"><a class="anchor" href="#arquillian-drone-spi"></a>9. Arquillian Drone SPI</h2>
+<h2 id="_skipping_creation_of_drone_instances"><a class="anchor" href="#_skipping_creation_of_drone_instances"></a>9. Skipping creation of @Drone instances</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In case you want to skip a creation/injection of <code>@Drone</code> instances you can use a system property <code>arquillian.drone.skip.creation</code> with a value <code>true</code>. This property is checked in a <code>@Before</code> phase, so you can modify the property during the test execution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="arquillian-drone-spi"><a class="anchor" href="#arquillian-drone-spi"></a>10. Arquillian Drone SPI</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The big advantage of Arquillian Drone extension is its flexibility. We
@@ -1959,7 +1968,7 @@ testing framework as well.</p>
 </ul>
 </div>
 <div class="sect2">
-<h3 id="event-model"><a class="anchor" href="#event-model"></a>9.1. Event Model</h3>
+<h3 id="event-model"><a class="anchor" href="#event-model"></a>10.1. Event Model</h3>
 <div class="paragraph">
 <p>Drone itself is not using Arquillian Container related event, which
 means that it is able to work with Arquillian Standalone test runners.
@@ -2111,7 +2120,7 @@ if you want.
 </div>
 </div>
 <div class="sect2">
-<h3 id="working-with-drone-instances"><a class="anchor" href="#working-with-drone-instances"></a>9.2. Working with Drone Instances</h3>
+<h3 id="working-with-drone-instances"><a class="anchor" href="#working-with-drone-instances"></a>10.2. Working with Drone Instances</h3>
 <div class="paragraph">
 <p>If you want to support another testing framework and manage it&#8217;s
 lifecycle, you should implement following interfaces and register them
@@ -2218,7 +2227,7 @@ arbitrary web testing framework.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building_the_project"><a class="anchor" href="#_building_the_project"></a>10. Building the project</h2>
+<h2 id="_building_the_project"><a class="anchor" href="#_building_the_project"></a>11. Building the project</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Prerequisites:</p>
@@ -2234,7 +2243,7 @@ arbitrary web testing framework.
 </ul>
 </div>
 <div class="sect2">
-<h3 id="_running_test_suite"><a class="anchor" href="#_running_test_suite"></a>10.1. Running test suite</h3>
+<h3 id="_running_test_suite"><a class="anchor" href="#_running_test_suite"></a>11.1. Running test suite</h3>
 <div class="paragraph">
 <p>You can use Arquillian Spacelift to gather all the required binaries. Just run:</p>
 </div>
@@ -2262,7 +2271,7 @@ your changes there first.
 </table>
 </div>
 <div class="sect3">
-<h4 id="_manual_way_to_run_test_suite"><a class="anchor" href="#_manual_way_to_run_test_suite"></a>10.1.1. Manual way to run test suite</h4>
+<h4 id="_manual_way_to_run_test_suite"><a class="anchor" href="#_manual_way_to_run_test_suite"></a>11.1.1. Manual way to run test suite</h4>
 <div class="paragraph">
 <p>Prerequisites:</p>
 </div>
@@ -2333,7 +2342,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 </div>
 <div class="sect2">
-<h3 id="_releasing_new_version"><a class="anchor" href="#_releasing_new_version"></a>10.2. Releasing new version</h3>
+<h3 id="_releasing_new_version"><a class="anchor" href="#_releasing_new_version"></a>11.2. Releasing new version</h3>
 <div class="paragraph">
 <p>Run following commands:</p>
 </div>
@@ -2351,7 +2360,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-05-10 14:09:31 UTC
+Last updated 2017-06-02 13:29:54 UTC
 </div>
 </div>
 </body>
