@@ -49,6 +49,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -81,6 +82,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
     @Mock
     private ServiceLoader serviceLoader;
 
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DroneLifecycleManager.class);
@@ -111,11 +115,6 @@ public class EnricherTestCase extends AbstractTestTestBase {
         // These two stubbings are used in DeploymentTestCase -> hence Silent runner
         Mockito.when(deploymentDescription1.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_1);
         Mockito.when(deploymentDescription2.getName()).thenReturn(AnnotationMocks.DEPLOYMENT_2);
-    }
-
-    @org.junit.After
-    public void resetProperty(){
-        System.clearProperty(ARQUILLIAN_DRONE_CREATION_PROPERTY);
     }
 
     @Test
