@@ -49,11 +49,14 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.jboss.arquillian.drone.impl.DroneTestEnricher.ARQUILLIAN_DRONE_CREATION_PROPERTY;
 
 /**
  * Tests Configurator precedence and its retrieval chain, uses qualifier as well.
@@ -78,6 +81,9 @@ public class EnricherTestCase extends AbstractTestTestBase {
     DeployableContainer deployableContainer;
     @Mock
     private ServiceLoader serviceLoader;
+
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -185,6 +191,22 @@ public class EnricherTestCase extends AbstractTestTestBase {
 
     @Test
     public void testClassWithoutArquillianLifecycle() throws Exception {
+        verifyTestClassWithoutArquillianLifecycle(true);
+    }
+
+    @Test
+    public void testClassWithoutArquillianLifecycleWithSkipDroneCreationTrue() throws Exception {
+        System.setProperty(ARQUILLIAN_DRONE_CREATION_PROPERTY, "true");
+        verifyTestClassWithoutArquillianLifecycle(false);
+    }
+
+    @Test
+    public void testClassWithoutArquillianLifecycleWithSkipDroneCreationFalse() throws Exception {
+        System.setProperty(ARQUILLIAN_DRONE_CREATION_PROPERTY, "false");
+        verifyTestClassWithoutArquillianLifecycle(true);
+    }
+
+    private void verifyTestClassWithoutArquillianLifecycle(boolean shouldBeInstantiated) throws Exception {
         Object instance = new NonArquillianClass();
         Method testMethod = NonArquillianClass.class.getMethod("someMethod", MockDrone.class);
 
@@ -201,12 +223,12 @@ public class EnricherTestCase extends AbstractTestTestBase {
         DronePoint<MockDrone> classDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
             DronePoint.Lifecycle.CLASS,
             AnnotationMocks.drone());
-        verifyDronePointInstantiated(true, context, classDronePoint);
+        verifyDronePointInstantiated(shouldBeInstantiated, context, classDronePoint);
 
         DronePoint<MockDrone> methodDronePoint = new DronePointImpl<MockDrone>(MockDrone.class,
             DronePoint.Lifecycle.METHOD,
             AnnotationMocks.drone());
-        verifyDronePointInstantiated(true, context, methodDronePoint);
+        verifyDronePointInstantiated(shouldBeInstantiated, context, methodDronePoint);
 
         testMethod.invoke(instance, parameters);
     }
