@@ -1,9 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
@@ -12,7 +10,9 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.DummyRepos
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinarySource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +25,9 @@ public class DownloaderTestCase {
     public static final String TEST_DOWNLOAD_DIRECTORY =
         TEST_DRONE_TARGET_DIRECTORY + "test-downloads" + File.separator;
     private File downloadDir = new File(TEST_DOWNLOAD_DIRECTORY);
+
+    @Rule
+    public final SystemOutRule outContent = new SystemOutRule().enableLog();
 
     @Before
     public void deleteDirectory() throws IOException {
@@ -55,16 +58,11 @@ public class DownloaderTestCase {
 
     @Test
     public void testDoubleDownloadFromLocalSource() throws MalformedURLException {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream stdOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
         File downloaded = Downloader.download(downloadDir, LocalBinarySource.LATEST_FILE.toURI().toURL());
         LocalBinarySource.assertThatCorrectFileWasDownloaded(true, downloaded);
 
         Downloader.download(downloadDir, LocalBinarySource.LATEST_FILE.toURI().toURL());
-        System.setOut(stdOut);
-        assertThat(outContent.toString()).containsOnlyOnce("Drone: downloading");
+        assertThat(outContent.getLog()).containsOnlyOnce("Drone: downloading");
     }
 
     @After
