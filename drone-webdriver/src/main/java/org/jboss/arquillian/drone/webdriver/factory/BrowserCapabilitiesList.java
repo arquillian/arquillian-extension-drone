@@ -130,8 +130,6 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    ;
-
     public static class Opera implements BrowserCapabilities {
 
         @Override
@@ -154,8 +152,6 @@ public class BrowserCapabilitiesList {
             return 0;
         }
     }
-
-    ;
 
     public static class Remote implements BrowserCapabilities {
 
@@ -180,8 +176,6 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    ;
-
     public static class Safari implements BrowserCapabilities {
 
         @Override
@@ -204,8 +198,6 @@ public class BrowserCapabilitiesList {
             return 0;
         }
     }
-
-    ;
 
     public static class PhantomJS implements BrowserCapabilities {
 
@@ -230,5 +222,25 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    ;
+    public static class chromeHeadless implements BrowserCapabilities {
+        @Override
+        public String getReadableName() {
+            return "chromeHeadless";
+        }
+
+        @Override
+        public String getImplementationClassName() {
+            return "org.openqa.selenium.chrome.ChromeDriver";
+        }
+
+        @Override
+        public Map<String, ?> getRawCapabilities() {
+            return DesiredCapabilities.chrome().asMap();
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+    }
 }

@@ -75,8 +75,9 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     private InitializationParameter initializationParameter;
 
     @BeforeClass
-    public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
+    public static void skipIfEdgeOrChromeHeadlessBrowser() {
+        String browser = System.getProperty("browser", "phantomjs");
+        Assume.assumeFalse(browser.equals("edge") || browser.equals("chromeHeadless") || browser.equals("chromeheadless"));
     }
 
     @Override

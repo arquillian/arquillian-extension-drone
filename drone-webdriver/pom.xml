@@ -308,11 +308,11 @@
                       <property>browser</property>
                       <message>browser property must be specified!</message>
                       <regex>
-                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|phantomjs|iphone|internetExplorer|internetexplorer|edge
+                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|phantomjs|iphone|internetExplorer|internetexplorer|edge|chromeHeadless|chromeheadless
                       </regex>
                       <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit/htmlunit, safari, chrome,
                         opera,
-                        phantomjs, iphone, internetExplorer/internetexplorer, edge but was ${browser}
+                        phantomjs, iphone, internetExplorer/internetexplorer, edge, chromeHeadless/chromeheadless but was ${browser}
                       </regexMessage>
                     </requireProperty>
                   </rules>
@@ -406,6 +406,36 @@
 
       <properties>
         <browser>chrome</browser>
+        <selenium.chrome.driver>dummy</selenium.chrome.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>chromeheadless</id>
+
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>chromeheadless</value>
+        </property>
+      </activation>
+
+      <properties>
+        <browser>chromeheadless</browser>
+        <selenium.chrome.driver>dummy</selenium.chrome.driver>
+      </properties>
+    </profile>
+    <profile>
+      <id>chromeHeadless</id>
+
+      <activation>
+        <property>
+          <name>browser</name>
+          <value>chromeHeadless</value>
+        </property>
+      </activation>
+
+      <properties>
+        <browser>chromeHeadless</browser>
         <selenium.chrome.driver>dummy</selenium.chrome.driver>
       </properties>
     </profile>

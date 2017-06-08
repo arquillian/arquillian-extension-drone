@@ -103,6 +103,12 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         new ChromeDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         ChromeOptions chromeOptions = new ChromeOptions();
+
+        String browser = configuration.getBrowser();
+        if (browser.equals("chromeHeadless") || browser.equals("chromeheadless")) {
+            chromeOptions.addArguments("--headless");
+        }
+
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
 
         // verify binary capabilities

@@ -114,6 +114,8 @@ public class SeleniumServerExecutor {
             return new InternetExplorerBinaryHandler(capabilities);
         } else if (new BrowserCapabilitiesList.PhantomJS().getReadableName().equals(browser)) {
             return new PhantomJSDriverBinaryHandler(capabilities);
+        } else if (new BrowserCapabilitiesList.chromeHeadless().getReadableName().equals(browser)) {
+            return new ChromeDriverBinaryHandler(capabilities);
         }
         return null;
     }

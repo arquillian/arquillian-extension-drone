@@ -69,18 +69,19 @@ WebDriver uses `webdriver` qualifier.
 
 |browser
 |htmlUnit
-|Determines which browser instance is created for WebDriver testing.
+a|Determines which browser instance is created for WebDriver testing.
 
 Following values are valid:
 
-. chrome +
-. firefox +
-. htmlUnit  or htmlunit +
-. internetExplorer or internetexplorer +
-. opera +
-. phantomjs +
-. safari +
-. edge +
+* chrome
+* chromeHeadless or chromeheadless
+* firefox
+* htmlUnit  or htmlunit
+* internetExplorer or internetexplorer
+* opera
+* phantomjs
+* safari
+* edge
 
 |iePort
 |-
