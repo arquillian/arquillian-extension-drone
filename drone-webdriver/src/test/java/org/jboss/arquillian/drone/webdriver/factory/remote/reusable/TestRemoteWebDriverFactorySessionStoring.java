@@ -32,6 +32,7 @@ import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryH
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
@@ -75,9 +76,8 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     private InitializationParameter initializationParameter;
 
     @BeforeClass
-    public static void skipIfEdgeOrChromeHeadlessBrowser() {
-        String browser = System.getProperty("browser", "phantomjs");
-        Assume.assumeFalse(browser.equals("edge") || browser.equals("chromeHeadless") || browser.equals("chromeheadless"));
+    public static void skipIfEdgeBrowser() {
+        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
     }
 
     @Override
@@ -107,6 +107,12 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         runSeleniumServer();
 
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
+
+        String browser = System.getProperty("browser", "phantomjs").toLowerCase();
+        if (browser.equals("chromeheadless")) {
+            when(configuration.getBrowser()).thenReturn("chromeheadless");
+            ChromeDriverFactory.setChromeOptions(configuration, (DesiredCapabilities) desiredCapabilities);
+        }
 
         when(configuration.getBrowser()).thenReturn("xyz");
         when(configuration.isRemoteReusable()).thenReturn(true);

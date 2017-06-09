@@ -102,21 +102,30 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
         new ChromeDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
-        ChromeOptions chromeOptions = new ChromeOptions();
-
-        String browser = configuration.getBrowser();
-        if (browser.equals("chromeHeadless") || browser.equals("chromeheadless")) {
-            chromeOptions.addArguments("--headless");
-        }
-
-        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
-
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
             if (performValidations) {
                 Validate.isExecutable(binary, "Chrome binary must point to an executable file, " + binary);
             }
+        }
 
+        setChromeOptions(configuration, capabilities);
+
+        return capabilities;
+    }
+
+    public static void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
+        ChromeOptions chromeOptions = new ChromeOptions();
+
+        String browser = configuration.getBrowser().toLowerCase();
+        if (browser.equals("chromeheadless")) {
+            chromeOptions.addArguments("--headless");
+        }
+
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
+
+        String binary = (String) capabilities.getCapability("chrome.binary");
+        if (Validate.nonEmpty(binary)) {
             // ARQ-1823 - setting chrome binary path through ChromeOptions
             chromeOptions.setBinary(binary);
         }
@@ -136,8 +145,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
                 log.warning(e.getMessage());
             }
         }
-
-        return capabilities;
     }
 
     @Override

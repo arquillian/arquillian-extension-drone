@@ -43,7 +43,6 @@ import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -93,7 +92,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
 
-        String browser = configuration.getBrowser();
+        String browser = configuration.getBrowser().toLowerCase();
         if (Validate.empty(browser)) {
             configuration.setBrowser(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             log.log(Level.INFO, "Property \"browser\" was not specified, using default value of {0}",
@@ -104,8 +103,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
-        if (browser.equals("chromeHeadless") || browser.equals("chromeheadless")) {
-            getChromeHeadlessCapabilities(configuration, desiredCapabilities);
+        if (browser.equals("chrome") || browser.equals("chromeheadless")) {
+            ChromeDriverFactory.setChromeOptions(configuration, desiredCapabilities);
         }
 
         if (!UrlUtils.isReachable(remoteAddress)) {
@@ -144,14 +143,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         }
 
         return driver;
-    }
-
-    private void getChromeHeadlessCapabilities(WebDriverConfiguration configuration, DesiredCapabilities desiredCapabilities) {
-        ChromeDriverFactory chromeDriverFactory = new ChromeDriverFactory();
-        Capabilities capabilities = chromeDriverFactory.getCapabilities(configuration, true);
-        ChromeOptions chromeOptions = (ChromeOptions) capabilities.getCapability(ChromeOptions.CAPABILITY);
-        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, desiredCapabilities, BROWSER_CAPABILITIES);
-        desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
     }
 
     private void downloadAndStartSeleniumServer(WebDriverConfiguration configuration, String browser,
