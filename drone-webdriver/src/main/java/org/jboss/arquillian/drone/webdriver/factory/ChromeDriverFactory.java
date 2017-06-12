@@ -114,7 +114,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         return capabilities;
     }
 
-    public static void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
+    public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
         ChromeOptions chromeOptions = new ChromeOptions();
 
         String browser = configuration.getBrowser().toLowerCase();

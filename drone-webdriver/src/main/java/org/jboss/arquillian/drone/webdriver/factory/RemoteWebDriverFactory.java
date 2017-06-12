@@ -104,7 +104,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         // construct capabilities
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
         if (browser.equals("chrome") || browser.equals("chromeheadless")) {
-            ChromeDriverFactory.setChromeOptions(configuration, desiredCapabilities);
+            new ChromeDriverFactory().setChromeOptions(configuration, desiredCapabilities);
         }
 
         if (!UrlUtils.isReachable(remoteAddress)) {

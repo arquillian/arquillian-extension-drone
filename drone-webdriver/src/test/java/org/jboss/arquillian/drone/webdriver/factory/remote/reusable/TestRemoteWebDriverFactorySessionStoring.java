@@ -108,10 +108,10 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
-        String browser = System.getProperty("browser", "phantomjs").toLowerCase();
+        String browser = System.getProperty("browser").toLowerCase();
         if (browser.equals("chromeheadless")) {
             when(configuration.getBrowser()).thenReturn("chromeheadless");
-            ChromeDriverFactory.setChromeOptions(configuration, (DesiredCapabilities) desiredCapabilities);
+            new ChromeDriverFactory().setChromeOptions(configuration, (DesiredCapabilities) desiredCapabilities);
         }
 
         when(configuration.getBrowser()).thenReturn("xyz");
