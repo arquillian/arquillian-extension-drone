@@ -37,6 +37,8 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());
         } else if ("safari".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Safari());
+        } else if ("chromeHeadless".equals(browser) || "chromeheadless".equals(browser)) {
+            registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.chromeHeadless());
         } else {
             Assert.fail("MockBrowserCapabilitiesRegistry does not implement " + browser);
         }

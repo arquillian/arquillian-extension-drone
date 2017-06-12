@@ -86,6 +86,7 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Remote.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Safari.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.PhantomJS.class);
+        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.chromeHeadless.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
         builder.service(ReusedSessionPermanentStorage.class, ReusedSessionPermanentFileStorage.class);

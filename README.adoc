@@ -114,7 +114,7 @@ Once Selenium Server is running, you can run the tests by:
 [source,bash]
 mvn clean verify -Dbrowser=${browser}
 
-Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, edge, etc.)
+Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, edge, chromeHeadless etc.)
 
 TIP: VNC server instance can be used to let all the browsers pop out in separate display. Just prepend both commands with +DISPLAY=:${display.number}+
 
