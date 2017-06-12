@@ -1,16 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.binary.process;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
@@ -21,20 +14,20 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SeleniumServerTestCase extends AbstractTestTestBase {
 
-    private static Logger log = Logger.getLogger(SeleniumServerExecutor.class.toString());
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private OutputStream logCapturingStream;
-    private StreamHandler customLogHandler;
-    private String seleniumServerBinary;
     private DesiredCapabilities capabilities;
     private URL url;
+    @Rule
+    public final SystemOutRule outContent = new SystemOutRule().enableLog();
+    private String seleniumServerBinary;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -55,8 +48,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         url = new URL("http://localhost:5555/wd/hub/");
 
-        attachLogCapture();
-        setUpStreams();
     }
 
     @Test
@@ -67,10 +58,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
 
-        final String command = parseLogger();
-
-        assertThat(command).contains(seleniumServerArgs);
-        assertThat(outContent.toString()).contains("DEBUG");
+        verifyLogContainsRegex("^\\[Selenium server\\].+DEBUG - .+4444$");
     }
 
     @Test
@@ -80,10 +68,8 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, null));
 
-        final String command = parseLogger();
-
-        assertThat(command).endsWith(String.valueOf(url.getPort()));
-        assertThat(outContent.toString()).contains("Selenium Server is up and running");
+        verifyLogContainsRegex("^\\[Selenium server\\].+ServerConnector.+5555.+$");
+        assertThat(outContent.getLog()).contains("Selenium Server is up and running");
     }
 
     @Test
@@ -95,15 +81,12 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
 
-        String hubCommand = parseLogger();
-
-        assertThat(hubCommand).contains(seleniumServerArgs);
-        assertThat(outContent.toString()).contains("Selenium Grid hub is up and running");
+        verifyLogContainsRegex("^\\[Selenium server\\].+Nodes should register to .+5555.+$");
+        assertThat(outContent.getLog()).contains("Selenium Grid hub is up and running");
     }
 
     @After
     public void stopSeleniumServer() {
-        cleanUpStreams();
         fire(new AfterSuite());
     }
 
@@ -113,38 +96,11 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         return props.get("seleniumServerVersion");
     }
 
-    private String parseLogger() throws IOException {
+    private void verifyLogContainsRegex(String regex) throws IOException {
 
-        final String capturedLog = getTestCapturedLog();
-        final String expectedLogPart = "Running Selenium server process: java .*$";
-
-        final Pattern pattern = Pattern.compile(expectedLogPart);
-        final Matcher matcher = pattern.matcher(capturedLog);
-        String command = "";
-
-        if (matcher.find()) {
-            command = matcher.group();
-        }
-        return command;
-    }
-
-    private void attachLogCapture() {
-        logCapturingStream = new ByteArrayOutputStream();
-        Handler[] handlers = log.getParent().getHandlers();
-        customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
-        log.addHandler(customLogHandler);
-    }
-
-    private String getTestCapturedLog() throws IOException {
-        customLogHandler.flush();
-        return logCapturingStream.toString();
-    }
-
-    private void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-    }
-
-    private void cleanUpStreams() {
-        System.setOut(System.out);
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        assertThat(pattern.matcher(outContent.getLog()).find())
+            .as("The log should contains part that matches regex: " + regex)
+            .isTrue();
     }
 }

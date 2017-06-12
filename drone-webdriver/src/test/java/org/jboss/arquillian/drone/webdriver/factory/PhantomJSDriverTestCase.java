@@ -1,9 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import java.io.IOException;
+import java.net.URL;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -12,16 +15,14 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PhantomJSDriverTestCase {
+
+    @Rule
+    public final SystemErrRule errContent = new SystemErrRule().enableLog();
 
     @Test
     public void testOpenSimplePage() throws IOException {
@@ -40,9 +41,6 @@ public class PhantomJSDriverTestCase {
 
     @Test
     public void testReformatCLIArgumentsInCapToArray() throws IOException {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(outContent));
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, "--debug true");
@@ -53,14 +51,9 @@ public class PhantomJSDriverTestCase {
         PhantomJSDriver instance = phantomJSDriverFactory.createInstance(configuration);
         phantomJSDriverFactory.destroyInstance(instance);
 
-        assertThat(outContent.toString()).as("The log output should contain [DEBUG] string").contains("[DEBUG]");
+        assertThat(errContent.getLog()).as("The log output should contain [DEBUG] string").contains("[DEBUG]");
     }
 
-    @After
-    public void resetOutputStreams() {
-        System.setOut(System.out);
-        System.setErr(System.out);
-    }
 
     private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {
         WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);

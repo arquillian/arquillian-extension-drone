@@ -1,9 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +21,9 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +39,9 @@ public class BinaryHandlerTestCase {
     private static final String originalTargetDirectory = DRONE_TARGET_DIRECTORY;
     private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
     private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
+
+    @Rule
+    public final SystemOutRule outContent = new SystemOutRule().enableLog();
 
     @BeforeClass
     public static void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
@@ -262,9 +265,6 @@ public class BinaryHandlerTestCase {
     }
 
     private void runScriptAndCheck(String script, String expected) {
-        PrintStream stdOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
         Spacelift
             .task(CommandTool.class)
             .command(new CommandBuilder(script))
@@ -274,8 +274,7 @@ public class BinaryHandlerTestCase {
                 .printToOut(".*")
                 .build())
             .execute().awaitAtMost(5, TimeUnit.SECONDS);
-        System.setOut(stdOut);
-        assertThat(outContent.toString().trim()).isEqualTo("[Local Source] " + expected);
+        assertThat(outContent.getLog().trim()).endsWith("[Local Source] " + expected);
     }
 
     private String getDownloadedPath(String version, String fileName) {
