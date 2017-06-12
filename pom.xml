@@ -46,6 +46,7 @@
     <version.assertj>3.6.2</version.assertj>
     <version.mockito>2.3.11</version.mockito>
     <version.system.rules>1.16.1</version.system.rules>
+    <version.hoverfly.java>0.6.1</version.hoverfly.java>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
     <version.org.eclipse.jetty>9.4.3.v20170317</version.org.eclipse.jetty>

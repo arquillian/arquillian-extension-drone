@@ -63,7 +63,7 @@ public class GitHubSourceRateLimitAndErrorTestCase {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
         this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
-        this.geckoDriverGitHubSource = new GeckoDriverWithChangedHeadersSource(httpClientSpy, cacheSpy);
+        this.geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
     }
 
     private void simulate(String requestPath, boolean rateLimit) {
@@ -164,23 +164,6 @@ public class GitHubSourceRateLimitAndErrorTestCase {
         try (final PrintWriter printWriter = new PrintWriter(new File(tmpFolder.getAbsolutePath() + "/" + fileName))) {
             printWriter.print(content);
             printWriter.flush();
-        }
-    }
-
-    // workaround for https://github.com/SpectoLabs/hoverfly/issues/573
-    class GeckoDriverWithChangedHeadersSource extends GeckoDriverGitHubSource {
-
-        GeckoDriverWithChangedHeadersSource(HttpClient httpClient,
-            GitHubLastUpdateCache gitHubLastUpdateCache) {
-            super(httpClient, gitHubLastUpdateCache);
-        }
-
-        protected String getRateLimitRemainingHeaderKey() {
-            return "X-Ratelimit-Remaining";
-        }
-
-        protected String getRateLimitResetHeaderKey() {
-            return "X-Ratelimit-Reset";
         }
     }
 }

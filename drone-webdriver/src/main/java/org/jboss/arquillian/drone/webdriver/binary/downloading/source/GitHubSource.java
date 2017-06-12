@@ -34,6 +34,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private static final Logger log = Logger.getLogger(GitHubSource.class.toString());
     private static final Gson gson = new Gson();
+    private static final String HEADER_X_RATELIMIT_RESET = "X-RateLimit-Reset";
+    private static final String HEADER_X_RATELIMIT_REMAINING = "X-RateLimit-Remaining";
     private final HttpClient httpClient;
     private final GitHubLastUpdateCache cache;
     private final String projectUrl;
@@ -101,14 +103,14 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     private StringBuffer createErrorMessage(HttpClient.Response response, boolean latest) {
         StringBuffer msg = new StringBuffer();
-        if ("0".equals(response.getHeader(getRateLimitRemainingHeaderKey()))) {
+        if ("0".equals(response.getHeader(HEADER_X_RATELIMIT_REMAINING))) {
             msg.append("GitHub API rate limit exceeded. To get the information about the ");
             if (latest) {
                 msg.append("latest ");
             }
             msg.append("release you need to wait till the rate limit is reset");
             try {
-                Date resetTime = new Date(Long.valueOf(response.getHeader(getRateLimitResetHeaderKey())) * 1000L);
+                Date resetTime = new Date(Long.valueOf(response.getHeader(HEADER_X_RATELIMIT_RESET)) * 1000L);
                 msg.append(" which will be: " + resetTime);
             } catch (NumberFormatException e) {
             }
@@ -221,15 +223,5 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     protected GitHubLastUpdateCache getCache() {
         return cache;
-    }
-
-    // workaround for https://github.com/SpectoLabs/hoverfly/issues/573
-    protected String getRateLimitRemainingHeaderKey() {
-        return "X-RateLimit-Remaining";
-    }
-
-    // workaround for https://github.com/SpectoLabs/hoverfly/issues/573
-    protected String getRateLimitResetHeaderKey() {
-        return "X-RateLimit-Reset";
     }
 }
