@@ -20,7 +20,7 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
     public MockBrowserCapabilitiesRegistry() {
         this.cache = new HashMap<String, BrowserCapabilities>();
 
-        String browser = getBrowser(getArquillianDescriptor());
+        String browser = getBrowser(getArquillianDescriptor()).toLowerCase();
         if ("phantomjs".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
         } else if ("chrome".equals(browser)) {
@@ -29,15 +29,15 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Edge());
         } else if ("firefox".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Firefox());
-        } else if ("htmlUnit".equals(browser) || "htmlunit".equals(browser)) {
+        } else if ("htmlunit".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.HtmlUnit());
-        } else if ("internetExplorer".equals(browser) || "internetexplorer".equals(browser)) {
+        } else if ("internetexplorer".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.InternetExplorer());
         } else if ("opera".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());
         } else if ("safari".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Safari());
-        } else if ("chromeHeadless".equals(browser) || "chromeheadless".equals(browser)) {
+        } else if ("chromeheadless".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.chromeHeadless());
         } else {
             Assert.fail("MockBrowserCapabilitiesRegistry does not implement " + browser);
