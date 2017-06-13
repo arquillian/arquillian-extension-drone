@@ -26,7 +26,6 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest.AbstractInBrowserTest;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +34,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
 
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
 import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
@@ -42,8 +42,8 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
     @BeforeClass
     public static void skipIfEdgeOrHtmlUnitBrowser() {
-        final String browser = System.getProperty("browser");
-        Assume.assumeFalse(browser.equals("edge") || browser.equals("htmlunit") || browser.equals("htmlUnit"));
+        assumeBrowserNotEqual("edge");
+        assumeBrowserNotEqual("htmlunit");
     }
 
     @Test

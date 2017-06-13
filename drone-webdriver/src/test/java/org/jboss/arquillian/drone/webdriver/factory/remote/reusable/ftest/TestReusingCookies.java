@@ -21,7 +21,6 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +28,8 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import qualifier.Reusable;
 import qualifier.ReuseCookies;
+
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
 
 /**
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
@@ -38,7 +39,7 @@ public class TestReusingCookies extends AbstractInBrowserTest {
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+        assumeBrowserNotEqual("edge");
     }
 
     @Test

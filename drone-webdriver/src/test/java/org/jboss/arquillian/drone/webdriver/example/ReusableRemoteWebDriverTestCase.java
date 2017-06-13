@@ -22,7 +22,6 @@ import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +29,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
+
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
 
 /**
  * Tests Arquillian Selenium extension against Weld Login example.
@@ -50,7 +51,7 @@ public class ReusableRemoteWebDriverTestCase {
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+        assumeBrowserNotEqual("edge");
     }
 
     private void checkIfWebdriverHubIsRunning() {

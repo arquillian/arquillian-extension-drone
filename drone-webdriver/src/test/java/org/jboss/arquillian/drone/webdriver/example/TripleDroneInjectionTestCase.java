@@ -19,11 +19,12 @@ package org.jboss.arquillian.drone.webdriver.example;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
 
 /**
  * Test for ARQ-1543. Checks that everything works fine if user misconfigures Drone by injecting same instance twice in a
@@ -40,7 +41,7 @@ public class TripleDroneInjectionTestCase extends DoubleDroneInjectionTestCase {
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+        assumeBrowserNotEqual("edge");
     }
 
     @Test

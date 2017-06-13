@@ -3,12 +3,9 @@ package org.jboss.arquillian.drone.webdriver.binary.process;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
-import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.MockBrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -38,7 +35,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     public void initialise() throws Exception {
         capabilities = new DesiredCapabilities();
         // use selenium server version defined in arquillian.xml
-        String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
+        String selSerVersion = ArqDescPropertyUtil.getSeleniumServerVersionProperty();
         if (!Validate.empty(selSerVersion)) {
             capabilities
                 .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
@@ -88,12 +85,6 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     @After
     public void stopSeleniumServer() {
         fire(new AfterSuite());
-    }
-
-    private String getSeleniumServerVersion(ArquillianDescriptor arquillian) {
-        ExtensionDef webdriver = arquillian.extension("webdriver");
-        Map<String, String> props = webdriver.getExtensionProperties();
-        return props.get("seleniumServerVersion");
     }
 
     private void verifyLogContainsRegex(String regex) throws IOException {

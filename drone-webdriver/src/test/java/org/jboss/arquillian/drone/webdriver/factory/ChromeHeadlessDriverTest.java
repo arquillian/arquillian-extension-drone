@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserEqual;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,8 +20,7 @@ public class ChromeHeadlessDriverTest {
 
     @BeforeClass
     public static void executeOnlyIfChromeHeadlessBrowser() {
-        String browser = System.getProperty("browser").toLowerCase();
-        Assume.assumeTrue(browser.equals("chromeheadless"));
+        assumeBrowserEqual("chromeheadless");
     }
 
     @Test

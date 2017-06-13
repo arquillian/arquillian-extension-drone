@@ -1,17 +1,16 @@
 package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
+
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.WEBDRIVER_REUSABLE_EXT;
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.getBrowserProperty;
 
 public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegistry {
 
@@ -20,7 +19,7 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
     public MockBrowserCapabilitiesRegistry() {
         this.cache = new HashMap<String, BrowserCapabilities>();
 
-        String browser = getBrowser(getArquillianDescriptor()).toLowerCase();
+        String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
         if ("phantomjs".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
         } else if ("chrome".equals(browser)) {
@@ -42,11 +41,6 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
         } else {
             Assert.fail("MockBrowserCapabilitiesRegistry does not implement " + browser);
         }
-    }
-
-    public static ArquillianDescriptor getArquillianDescriptor() {
-        return Descriptors.importAs(ArquillianDescriptor.class).fromStream(
-            URLClassLoader.getSystemResourceAsStream("arquillian.xml"), true);
     }
 
     public static MockBrowserCapabilitiesRegistry createSingletonRegistry() {
@@ -78,13 +72,5 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
         Assert.assertEquals("There is only one BrowserCapability defined", 1, cache.size());
 
         return Collections.unmodifiableCollection(cache.values());
-    }
-
-    private String getBrowser(ArquillianDescriptor arquillian) {
-        ExtensionDef webdriver = arquillian.extension("webdriver-reusable");
-        Assert.assertNotNull("webdriver-reusable extension should be defined in arquillian.xml", webdriver);
-        Map<String, String> props = webdriver.getExtensionProperties();
-
-        return props.get("browser");
     }
 }

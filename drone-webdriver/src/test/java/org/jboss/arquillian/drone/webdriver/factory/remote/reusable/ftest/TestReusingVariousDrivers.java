@@ -18,7 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ftest;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +26,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
 
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
@@ -36,7 +36,7 @@ public class TestReusingVariousDrivers extends AbstractInBrowserTest {
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser").equals("edge"));
+        assumeBrowserNotEqual("edge");
     }
 
     @Test

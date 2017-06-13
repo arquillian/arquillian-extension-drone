@@ -19,9 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -34,11 +31,11 @@ import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
+import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,6 +46,9 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.WEBDRIVER_REUSABLE_EXT;
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserNotEqual;
+import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.getBrowserProperty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
@@ -77,7 +77,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
-        Assume.assumeFalse(System.getProperty("browser", "phantomjs").equals("edge"));
+        assumeBrowserNotEqual("edge");
     }
 
     @Override
@@ -108,7 +108,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
 
-        String browser = System.getProperty("browser").toLowerCase();
+        String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
         if (browser.equals("chromeheadless")) {
             when(configuration.getBrowser()).thenReturn("chromeheadless");
             new ChromeDriverFactory().setChromeOptions(configuration, (DesiredCapabilities) desiredCapabilities);
@@ -128,7 +128,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
             String seleniumServerArgs = System.getProperty("seleniumServerArgs");
 
             // use selenium server version defined in arquillian.xml
-            String selSerVersion = getSeleniumServerVersion(MockBrowserCapabilitiesRegistry.getArquillianDescriptor());
+            String selSerVersion = ArqDescPropertyUtil.getSeleniumServerVersionProperty(WEBDRIVER_REUSABLE_EXT);
             if (!Validate.empty(selSerVersion)) {
                 selServerCaps
                     .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
@@ -140,12 +140,6 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private String getSeleniumServerVersion(ArquillianDescriptor arquillian) {
-        ExtensionDef webdriver = arquillian.extension("webdriver-reusable");
-        Map<String, String> props = webdriver.getExtensionProperties();
-        return props.get("seleniumServerVersion");
     }
 
     @After

@@ -4,10 +4,10 @@
 
   <extension qualifier="webdriver">
     <!-- browser is set externally -->
-    <property name="browser">${browser}</property>
+    <property name="browser">${browser:htmlunit}</property>
     <property name="htmlUnitWebClientOptions">Timeout=300; throwExceptionOnScriptError=false</property>
 
-    <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.4.0}</property>
 
     <property name="dimensions">1300x500</property>
 
@@ -22,9 +22,9 @@
   <!-- Set a different remote address then default for RemoteReusableTesting -->
   <extension qualifier="webdriver-reusable">
     <!-- browser is set externally -->
-    <property name="browser">${browser}</property>
+    <property name="browser">${browser:htmlunit}</property>
 
-    <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.4.0}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     <property name="remoteReusable">true</property>
 
@@ -41,9 +41,9 @@
   <!-- Set a different remote address then default for RemoteReusableTesting -->
   <extension qualifier="webdriver-reusecookies">
     <!-- browser is set externally -->
-    <property name="browser">${browser}</property>
+    <property name="browser">${browser:htmlunit}</property>
 
-    <property name="seleniumServerVersion">${version.selenium}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.4.0}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     <property name="remoteReusable">true</property>
 
