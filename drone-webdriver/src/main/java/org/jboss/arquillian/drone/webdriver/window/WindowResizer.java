@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  */
 public class WindowResizer {
 
-    static final Pattern DIMENSIONS_PATTERN = Pattern.compile("([0-9]+)x([0-9]+)");
+    public static final Pattern DIMENSIONS_PATTERN = Pattern.compile("([0-9]+)x([0-9]+)");
     private static final Logger log = Logger.getLogger(WindowResizer.class.getName());
     @Inject
     Instance<DroneContext> droneContext;
@@ -70,17 +70,19 @@ public class WindowResizer {
         WebDriverConfiguration configuration = context.get(dronePoint).getConfigurationAs(WebDriverConfiguration.class);
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
-        if (configuration.getDimensions() != null) {
-            String dimensions = configuration.getDimensions().toLowerCase().trim();
-            Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
+        String browser = configuration.getBrowser().toLowerCase();
+        if(!browser.equals("chromeheadless")) {
+            if (configuration.getDimensions() != null) {
+                String dimensions = configuration.getDimensions().toLowerCase().trim();
+                Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
 
-            if (m.matches()) {
-                int width = Integer.valueOf(m.group(1));
-                int height = Integer.valueOf(m.group(2));
-                safelyResizeWindow(driver, width, height, dronePoint);
-
-            } else if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
-                safelyMaximizeWindow(driver, dronePoint);
+                if (m.matches()) {
+                    int width = Integer.valueOf(m.group(1));
+                    int height = Integer.valueOf(m.group(2));
+                    safelyResizeWindow(driver, width, height, dronePoint);
+                } else if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
+                    safelyMaximizeWindow(driver, dronePoint);
+                }
             }
         }
     }
