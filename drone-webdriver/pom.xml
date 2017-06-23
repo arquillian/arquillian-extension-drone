@@ -188,11 +188,18 @@
       <version>${version.hoverfly.java}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>com.github.stefanbirkner</groupId>
       <artifactId>system-rules</artifactId>
       <version>${version.system.rules}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${version.awaitility}</version>
     </dependency>
   </dependencies>
 

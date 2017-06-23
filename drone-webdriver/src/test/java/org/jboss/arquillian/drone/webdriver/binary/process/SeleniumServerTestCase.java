@@ -3,7 +3,9 @@ package org.jboss.arquillian.drone.webdriver.binary.process;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import org.awaitility.Awaitility;
 import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
@@ -15,8 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SeleniumServerTestCase extends AbstractTestTestBase {
 
@@ -66,7 +66,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, null));
 
         verifyLogContainsRegex("^\\[Selenium server\\].+ServerConnector.+5555.+$");
-        assertThat(outContent.getLog()).contains("Selenium Server is up and running");
+        verifyLogContainsRegex("^\\[Selenium server\\].+Selenium Server is up and running$");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
 
         verifyLogContainsRegex("^\\[Selenium server\\].+Nodes should register to .+5555.+$");
-        assertThat(outContent.getLog()).contains("Selenium Grid hub is up and running");
+        verifyLogContainsRegex("^\\[Selenium server\\].+Selenium Grid hub is up and running$");
     }
 
     @After
@@ -90,8 +90,9 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     private void verifyLogContainsRegex(String regex) throws IOException {
 
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        assertThat(pattern.matcher(outContent.getLog()).find())
-            .as("The log should contains part that matches regex: " + regex)
-            .isTrue();
+
+        Awaitility.await("The log should contains part that matches regex: " + regex)
+            .atMost(2, TimeUnit.SECONDS)
+            .until(() -> pattern.matcher(outContent.getLog()).find());
     }
 }
