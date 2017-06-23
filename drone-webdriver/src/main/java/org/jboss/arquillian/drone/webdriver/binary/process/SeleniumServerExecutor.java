@@ -136,7 +136,7 @@ public class SeleniumServerExecutor {
                 .interaction(new BinaryInteraction()
                     .outputPrefix("[Selenium server] ")
                     .printToOut(".*")
-                    .when(".*Selenium Server is up and running")
+                    .when(".+Selenium.+is up and running$")
                     .thenCountDown(countDownLatch)
                     .build())
                 .execute();
