@@ -131,6 +131,7 @@
     <!-- Drone extensions -->
     <module>extension/arquillian-drone-saucelabs-extension</module>
     <module>extension/arquillian-drone-browserstack-extension</module>
+    <module>extension/arquillian-drone-appium-extension</module>
   </modules>
 
 </project>

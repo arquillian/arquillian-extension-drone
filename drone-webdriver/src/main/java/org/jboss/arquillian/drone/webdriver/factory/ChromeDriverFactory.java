@@ -43,7 +43,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     private static final Logger log = Logger.getLogger(ChromeDriverFactory.class.getName());
 
-    private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
+    public static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
     private static final String CHROME_PRINT_OPTIONS = "chromePrintOptions";
 
     /*
