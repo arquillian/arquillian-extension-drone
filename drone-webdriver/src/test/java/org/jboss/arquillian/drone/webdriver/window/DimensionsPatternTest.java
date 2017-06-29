@@ -16,23 +16,42 @@
  */
 package org.jboss.arquillian.drone.webdriver.window;
 
-import java.util.regex.Matcher;
+import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import static org.mockito.Mockito.when;
 
 public class DimensionsPatternTest {
 
     @Test
     public void validSample() {
-        Matcher m = WindowResizer.DIMENSIONS_PATTERN.matcher("100x200");
-        Assert.assertTrue(m.matches());
-        Assert.assertEquals("100", m.group(1));
-        Assert.assertEquals("200", m.group(2));
+        WebDriverConfiguration mockedConfiguration = getMockedConfiguration("100x200");
+        Dimensions dimensions = new Dimensions(mockedConfiguration);
+        Assert.assertEquals(100, dimensions.getWidth());
+        Assert.assertEquals(200, dimensions.getHeight());
     }
 
     @Test
     public void invalidSample() {
-        Matcher m = WindowResizer.DIMENSIONS_PATTERN.matcher("100,200");
-        Assert.assertFalse(m.matches());
+        WebDriverConfiguration mockedConfiguration = getMockedConfiguration("100,200");
+        Dimensions dimensions = new Dimensions(mockedConfiguration);
+        Assert.assertEquals(0, dimensions.getWidth());
+        Assert.assertEquals(0, dimensions.getHeight());
+    }
+
+    @Test
+    public void validSampleWithFullscreen() {
+        WebDriverConfiguration mockedConfiguration = getMockedConfiguration("fullscreen");
+        Dimensions dimensions = new Dimensions(mockedConfiguration);
+        Assert.assertEquals(1366, dimensions.getWidth());
+        Assert.assertEquals(768, dimensions.getHeight());
+    }
+
+    private WebDriverConfiguration getMockedConfiguration(String dimension) {
+        WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);
+        when(configuration.getDimensions()).thenReturn(dimension);
+        return configuration;
     }
 }

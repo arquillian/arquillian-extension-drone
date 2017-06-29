@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.window;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -29,11 +31,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Support for resizing WebDriver windows to value defined in capabilities via {@code dimensions}.
  *
@@ -41,8 +38,8 @@ import java.util.regex.Pattern;
  */
 public class WindowResizer {
 
-    public static final Pattern DIMENSIONS_PATTERN = Pattern.compile("([0-9]+)x([0-9]+)");
     private static final Logger log = Logger.getLogger(WindowResizer.class.getName());
+
     @Inject
     Instance<DroneContext> droneContext;
 
@@ -71,18 +68,12 @@ public class WindowResizer {
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
         String browser = configuration.getBrowser().toLowerCase();
-        if(!browser.equals("chromeheadless")) {
-            if (configuration.getDimensions() != null) {
-                String dimensions = configuration.getDimensions().toLowerCase().trim();
-                Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
-
-                if (m.matches()) {
-                    int width = Integer.valueOf(m.group(1));
-                    int height = Integer.valueOf(m.group(2));
-                    safelyResizeWindow(driver, width, height, dronePoint);
-                } else if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
-                    safelyMaximizeWindow(driver, dronePoint);
-                }
+        if (!browser.equals("chromeheadless")) {
+            Dimensions dimensions = new Dimensions(configuration);
+            if (dimensions.hasFullscreenEnabled()) {
+                safelyMaximizeWindow(driver, dronePoint);
+            } else {
+                safelyResizeWindow(driver, dimensions.getWidth(), dimensions.getHeight(), dronePoint);
             }
         }
     }

@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -28,12 +27,11 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.drone.webdriver.window.Dimensions;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import static org.jboss.arquillian.drone.webdriver.window.WindowResizer.DIMENSIONS_PATTERN;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -119,21 +117,18 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
         ChromeOptions chromeOptions = new ChromeOptions();
+        Dimensions dimensions = new Dimensions(configuration);
 
         String browser = configuration.getBrowser().toLowerCase();
         if (browser.equals("chromeheadless")) {
             chromeOptions.addArguments("--headless");
-            if (configuration.getDimensions() != null) {
-                String dimensions = configuration.getDimensions().toLowerCase().trim();
-                Matcher m = DIMENSIONS_PATTERN.matcher(dimensions);
-                if (m.matches()) {
-                    String width = m.group(1);
-                    String height = m.group(2);
-                    chromeOptions.addArguments(String.format("--window-size=%s,%s", width, height));
-                } else if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
-                    chromeOptions.addArguments("--window-size=1920,1080"); // workaround till a better way is found.
-                }
+            if (dimensions.hasFullscreenEnabled()) {
+                log.info(
+                    String.format("Chrome Headless does not support fullscreen. Setting default window-size to %dx%d",
+                        dimensions.getWidth(), dimensions.getHeight()));
             }
+            chromeOptions.addArguments(
+                String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
         }
 
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
