@@ -45,7 +45,7 @@ For more info please see the complete list of supported capabilities: https://gi
 
 ==== Using remote Appium server
 
-By default, Appium Driver starts the local Appium server by itself (or if running already, it connects to it.
+By default, Appium Driver starts the local Appium server by itself (or if running already), it connects to it.
 To override this, you can also specify a remote address where is Appium server listening:
 [source,xml]
 ----

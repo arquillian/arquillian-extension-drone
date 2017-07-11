@@ -48,12 +48,7 @@
     <dependency>
       <groupId>io.appium</groupId>
       <artifactId>java-client</artifactId>
-      <version>5.0.0-BETA9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.6</version>
+      <version>${version.appium.java.client}</version>
     </dependency>
 
     <!-- test dependencies -->

@@ -45,9 +45,11 @@ public class DefaultValuesModifier {
      */
     public void modifyDefaultTimeout(@Observes(precedence = -100) BeforeSuite event) {
         if (arquillianDescriptor.get()
-            .extension("drone")
+            .extension(GlobalDroneConfiguration.CONFIGURATION_NAME)
             .getExtensionProperties()
-            .get("instantiationTimeoutInSeconds") != null) return;
+            .get("instantiationTimeoutInSeconds") != null) {
+            return;
+        }
 
         GlobalDroneConfiguration globalDroneConfiguration =
             droneContext.get().getGlobalDroneConfiguration(GlobalDroneConfiguration.class);

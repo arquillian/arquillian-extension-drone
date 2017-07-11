@@ -25,7 +25,6 @@ import io.appium.java_client.remote.MobileBrowserType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
 import io.appium.java_client.windows.WindowsDriver;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -38,6 +37,7 @@ import org.jboss.arquillian.drone.webdriver.factory.CapabilitiesOptionsMapper;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -89,23 +89,33 @@ public class AppiumDriverFactory implements
         Capabilities capabilities = getCapabilities(configuration);
 
         String platform = (String)capabilities.getCapability(MobileCapabilityType.PLATFORM_NAME);
-        if (StringUtils.isBlank(platform)) {
+        if (Validate.empty(platform)) {
             throw new IllegalArgumentException("You have to specify " + MobileCapabilityType.PLATFORM_NAME);
         }
         platform = platform.toLowerCase();
 
         Class<? extends AppiumDriver> driverClass;
-             if (MobilePlatform.ANDROID.toLowerCase().equals(platform)) driverClass = AndroidDriver.class;
-        else if (MobilePlatform.IOS.toLowerCase().equals(platform))     driverClass = IOSDriver.class;
-        else if (MobilePlatform.WINDOWS.toLowerCase().equals(platform)) driverClass = WindowsDriver.class;
-        else                                                            driverClass = AppiumDriver.class;
+        if (MobilePlatform.ANDROID.toLowerCase().equals(platform)) {
+            driverClass = AndroidDriver.class;
+        }
+        else if (MobilePlatform.IOS.toLowerCase().equals(platform)) {
+            driverClass = IOSDriver.class;
+        }
+        else if (MobilePlatform.WINDOWS.toLowerCase().equals(platform)) {
+            driverClass = WindowsDriver.class;
+        }
+        else {
+            driverClass = AppiumDriver.class;
+        }
 
         URL remoteAddress = configuration.getRemoteAddress();
         try {
-            if (remoteAddress == null)
+            if (remoteAddress == null) {
                 return driverClass.getConstructor(Capabilities.class).newInstance(capabilities);
-            else
+            }
+            else {
                 return driverClass.getConstructor(URL.class, Capabilities.class).newInstance(remoteAddress, capabilities);
+            }
         }
         catch (Exception e) {
             throw new RuntimeException(e);
