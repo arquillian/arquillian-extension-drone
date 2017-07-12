@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.drone.spi.DroneContext;
 import org.jboss.arquillian.drone.spi.DronePoint;
-import org.jboss.arquillian.drone.spi.event.AfterDroneEnhanced;
 import org.jboss.arquillian.drone.spi.event.AfterDroneInstantiated;
 import org.jboss.arquillian.drone.spi.event.DroneEvent;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
@@ -43,11 +42,7 @@ public class WindowResizer {
     @Inject
     Instance<DroneContext> droneContext;
 
-    public void resizeBrowserWindow(@Observes AfterDroneInstantiated event) {
-        resizeWindow(event);
-    }
-
-    public void resizeBrowserWindow(@Observes AfterDroneEnhanced event) {
+    public void resizeBrowserWindow(@Observes(precedence = -100) AfterDroneInstantiated event) {
         resizeWindow(event);
     }
 
