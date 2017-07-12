@@ -56,7 +56,7 @@ public class CapabilitiesOptionsMapper {
      * @param browserPrefix
      *     A prefix the should the mapped parameters should start with
      */
-    static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
+    public static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
 
         Method[] methods = object.getClass().getMethods();
         List<String> processedMethods = new ArrayList<String>();

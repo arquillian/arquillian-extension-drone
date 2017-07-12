@@ -93,6 +93,11 @@
         <artifactId>arquillian-drone-browserstack-extension</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.extension</groupId>
+        <artifactId>arquillian-drone-appium-extension</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- Selenium BOM -->
       <dependency>
