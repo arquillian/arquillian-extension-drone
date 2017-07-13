@@ -169,6 +169,53 @@ driver=$\{value1},profiler=$\{value2} where value is one of the
 following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST
 |===
 
+
+[[chrome-options]]
+=== Chrome options
+
+Drone provides you a possibility to set chrome options for a `chromeDriver` through your `arquillian.xml` file. You can find all possible options that can be set on this https://sites.google.com/a/chromium.org/chromedriver/capabilities[web page].
+
+The process of setting options uses a https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html[ChromeOptions class] which means that the parameter names (used in `arquillian.xml`) are tightly coupled with the names of the set/add methods defined in the class. Drone expects that the name of each parameter consists of:
+```
+“chrome” + (name of the set/add method of ChromeOption class without first three chars)
+```
+the whole string should be in camel case. For example, in case of an option *args* which is coupled with the method https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html#addArguments-java.util.List-[addArguments], the parameter should look like this:
+```xml
+<property name=“chromeArguments”>--first-argument --second-argument</property>
+```
+---
+**INFO**
+Please notice that there are two methods named `addArguments` in the `ChromeOptions` class, one with a parameter which is a list of strings and second one with an array of strings - Drone treats them as a one single method (for other methods it is applied analogically).
+
+---
+
+==== Value formats
+
+* In the cases, when the value can be an array or list of strings/files, you should specify all of them in one string separated by space (this is also applied for extensions as well as for encoded extensions).
+
+* It is a little bit different in the case of experimental options. These options should be provided as set of key-value pairs, so we decided to use JSON format for it (can be in multiline format) - for example:
+```xml
+<property name=“chromeExperimentalOption”>
+{
+  "perfLoggingPrefs": {
+    "traceCategories": ",blink.console,disabled-by-default-devtools.timeline,benchmark"
+  },
+  "prefs": {
+    "download.default_directory": "/usr/local/path/to/download/directory"
+  }
+}
+</property>
+```
+
+==== Debug
+
+If you struggle with passing required chrome options through the `arquillian.xml` file, you can use a parameter `chromePrintOptions` with a value `true`:
+```xml
+<property name=“chromePrintOptions”>true</property>
+```
+This ensures that Drone prints out the whole content of `ChromeOptions` in a JSON format to the standard output.
+
+
 [[graphene-2-configuration]]
 === Graphene 2 Configuration
 
