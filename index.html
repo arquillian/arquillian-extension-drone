@@ -533,8 +533,9 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#default-drone-configuration">7.1. Default Drone Configuration</a></li>
 <li><a href="#webdriver-configuration">7.2. WebDriver configuration</a></li>
-<li><a href="#graphene-2-configuration">7.3. Graphene 2 Configuration</a></li>
-<li><a href="#selenium-server-configuration">7.4. Selenium Server Configuration</a></li>
+<li><a href="#chrome-options">7.3. Chrome options</a></li>
+<li><a href="#graphene-2-configuration">7.4. Graphene 2 Configuration</a></li>
+<li><a href="#selenium-server-configuration">7.5. Selenium Server Configuration</a></li>
 </ul>
 </li>
 <li><a href="#extended-configuration-configuring-qualifierd-drone-instances">8. Extended Configuration: Configuring @Qualifier&#8217;d Drone Instances</a></li>
@@ -1898,7 +1899,76 @@ following: SEVERE, WARNING, INFO, CONFIG, FINE, FINER or FINEST</p></td>
 </table>
 </div>
 <div class="sect2">
-<h3 id="graphene-2-configuration"><a class="anchor" href="#graphene-2-configuration"></a>7.3. Graphene 2 Configuration</h3>
+<h3 id="chrome-options"><a class="anchor" href="#chrome-options"></a>7.3. Chrome options</h3>
+<div class="paragraph">
+<p>Drone provides you a possibility to set chrome options for a <code>chromeDriver</code> through your <code>arquillian.xml</code> file. You can find all possible options that can be set on this <a href="https://sites.google.com/a/chromium.org/chromedriver/capabilities">web page</a>.</p>
+</div>
+<div class="paragraph">
+<p>The process of setting options uses a <a href="https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html">ChromeOptions class</a> which means that the parameter names (used in <code>arquillian.xml</code>) are tightly coupled with the names of the set/add methods defined in the class. Drone expects that the name of each parameter consists of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="error">“</span>chrome<span class="error">”</span> + (name of the set/add method of ChromeOption <span class="type">class</span> <span class="class">without</span> first three chars)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the whole string should be in camel case. For example, in case of an option <strong>args</strong> which is coupled with the method <a href="https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html#addArguments-java.util.List-">addArguments</a>, the parameter should look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="error">“</span><span class="attribute-value">chromeArguments</span><span class="error">”</span><span class="tag">&gt;</span>--first-argument --second-argument<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p><strong>INFO</strong>
+Please notice that there are two methods named <code>addArguments</code> in the <code>ChromeOptions</code> class, one with a parameter which is a list of strings and second one with an array of strings - Drone treats them as a one single method (for other methods it is applied analogically).</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_value_formats"><a class="anchor" href="#_value_formats"></a>7.3.1. Value formats</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>In the cases, when the value can be an array or list of strings/files, you should specify all of them in one string separated by space (this is also applied for extensions as well as for encoded extensions).</p>
+</li>
+<li>
+<p>It is a little bit different in the case of experimental options. These options should be provided as set of key-value pairs, so we decided to use JSON format for it (can be in multiline format) - for example:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="error">“</span><span class="attribute-value">chromeExperimentalOption</span><span class="error">”</span><span class="tag">&gt;</span>
+{
+  &quot;perfLoggingPrefs&quot;: {
+    &quot;traceCategories&quot;: &quot;,blink.console,disabled-by-default-devtools.timeline,benchmark&quot;
+  },
+  &quot;prefs&quot;: {
+    &quot;download.default_directory&quot;: &quot;/usr/local/path/to/download/directory&quot;
+  }
+}
+<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_debug"><a class="anchor" href="#_debug"></a>7.3.2. Debug</h4>
+<div class="paragraph">
+<p>If you struggle with passing required chrome options through the <code>arquillian.xml</code> file, you can use a parameter <code>chromePrintOptions</code> with a value <code>true</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="error">“</span><span class="attribute-value">chromePrintOptions</span><span class="error">”</span><span class="tag">&gt;</span>true<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This ensures that Drone prints out the whole content of <code>ChromeOptions</code> in a JSON format to the standard output.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="graphene-2-configuration"><a class="anchor" href="#graphene-2-configuration"></a>7.4. Graphene 2 Configuration</h3>
 <div class="paragraph">
 <p>Graphene 2 reuses configuration specified for WebDriver, using
 <code>webdriver</code> qualifier. You can additionally use a
@@ -1908,7 +1978,7 @@ as default UI timeouts.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="selenium-server-configuration"><a class="anchor" href="#selenium-server-configuration"></a>7.4. Selenium Server Configuration</h3>
+<h3 id="selenium-server-configuration"><a class="anchor" href="#selenium-server-configuration"></a>7.5. Selenium Server Configuration</h3>
 <div class="paragraph">
 <p>Selenium server is automatically started with the parameter reflecting browser that is used (path to the webdriver). For example, in case that the browser Firefox is used and with default address, then the Selenium Server instance would be started using a command:</p>
 </div>
@@ -2387,7 +2457,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-12 07:25:10 UTC
+Last updated 2017-07-13 09:18:13 UTC
 </div>
 </div>
 </body>
