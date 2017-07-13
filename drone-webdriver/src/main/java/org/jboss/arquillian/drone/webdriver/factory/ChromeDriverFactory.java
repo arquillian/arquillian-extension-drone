@@ -27,6 +27,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.jboss.arquillian.drone.webdriver.window.Dimensions;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -116,10 +117,18 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
         ChromeOptions chromeOptions = new ChromeOptions();
+        Dimensions dimensions = new Dimensions(configuration);
 
         String browser = configuration.getBrowser().toLowerCase();
         if (browser.equals("chromeheadless")) {
             chromeOptions.addArguments("--headless");
+            if (dimensions.hasFullscreenEnabled()) {
+                log.info(
+                    String.format("Chrome Headless does not support fullscreen. Setting default window-size to %dx%d",
+                        dimensions.getWidth(), dimensions.getHeight()));
+            }
+            chromeOptions.addArguments(
+                String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
         }
 
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
