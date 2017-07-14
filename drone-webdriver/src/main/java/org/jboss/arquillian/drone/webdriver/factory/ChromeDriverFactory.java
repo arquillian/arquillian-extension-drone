@@ -45,6 +45,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     private static final Logger log = Logger.getLogger(ChromeDriverFactory.class.getName());
 
     public static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Chrome().getReadableName();
+    public static final String HEADLESS_BROWSER_CAPABILITIES = new BrowserCapabilitiesList.ChromeHeadless().getReadableName();
     private static final String CHROME_PRINT_OPTIONS = "chromePrintOptions";
 
     /*
@@ -117,24 +118,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
     public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
         ChromeOptions chromeOptions = new ChromeOptions();
-        Dimensions dimensions = new Dimensions(configuration);
-
-        String browser = configuration.getBrowser().toLowerCase();
-        if (browser.equals("chromeheadless")) {
-            chromeOptions.addArguments("--headless");
-
-            if (dimensions.isFullscreenSet()) {
-                dimensions.setWidth(1366);
-                dimensions.setHeight(768);
-                log.info(
-                    String.format("Chrome Headless does not support fullscreen. Setting default window-size to %dx%d",
-                        dimensions.getWidth(), dimensions.getHeight()));
-            }
-            if  (dimensions.areDimensionsPositive()) {
-                chromeOptions.addArguments(
-                    String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
-            }
-        }
+        manageChromeHeadless(configuration, chromeOptions);
 
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
 
@@ -157,6 +141,26 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
             } catch (IOException e) {
                 log.warning("Something bad happened during printing chrome options: ");
                 log.warning(e.getMessage());
+            }
+        }
+    }
+
+    public void manageChromeHeadless(WebDriverConfiguration configuration, ChromeOptions chromeOptions) {
+        String browser = configuration.getBrowser().toLowerCase();
+        if (browser.equals(HEADLESS_BROWSER_CAPABILITIES)) {
+            chromeOptions.addArguments("--headless");
+
+            Dimensions dimensions = new Dimensions(configuration);
+            if (dimensions.isFullscreenSet()) {
+                dimensions.setWidth(1366);
+                dimensions.setHeight(768);
+                log.info(
+                    String.format("Chrome Headless does not support fullscreen. Setting default window-size to %dx%d",
+                        dimensions.getWidth(), dimensions.getHeight()));
+            }
+            if  (dimensions.areDimensionsPositive()) {
+                chromeOptions.addArguments(
+                    String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
             }
         }
     }

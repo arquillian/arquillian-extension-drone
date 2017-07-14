@@ -18,7 +18,7 @@ public class HeadlessBrowserChromeOptionsTest {
         ChromeDriverFactory chromeDriverFactory = new ChromeDriverFactory();
 
         DesiredCapabilities chromeCaps =
-            new DesiredCapabilities(new BrowserCapabilitiesList.chromeHeadless().getRawCapabilities());
+            new DesiredCapabilities(new BrowserCapabilitiesList.ChromeHeadless().getRawCapabilities());
         WebDriverConfiguration configuration = getMockedConfiguration(chromeCaps);
 
         Capabilities capabilities = chromeDriverFactory.getCapabilities(configuration, true);

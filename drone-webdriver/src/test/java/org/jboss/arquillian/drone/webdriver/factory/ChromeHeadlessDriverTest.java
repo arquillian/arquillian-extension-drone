@@ -28,7 +28,7 @@ public class ChromeHeadlessDriverTest {
         ChromeDriverFactory chromeDriverFactory = new ChromeDriverFactory();
 
         DesiredCapabilities chromeCaps =
-            new DesiredCapabilities(new BrowserCapabilitiesList.chromeHeadless().getRawCapabilities());
+            new DesiredCapabilities(new BrowserCapabilitiesList.ChromeHeadless().getRawCapabilities());
         WebDriverConfiguration configuration = getMockedConfiguration(chromeCaps);
 
         WebDriver driver = chromeDriverFactory.createInstance(configuration);
@@ -44,7 +44,7 @@ public class ChromeHeadlessDriverTest {
         when(configuration.getCapabilities()).thenReturn(capabilities);
         when(configuration.getBrowser()).thenReturn("chromeheadless");
         when(configuration.getImplementationClass())
-            .thenReturn(new BrowserCapabilitiesList.chromeHeadless().getImplementationClassName());
+            .thenReturn(new BrowserCapabilitiesList.ChromeHeadless().getImplementationClassName());
         return configuration;
     }
 }

@@ -222,7 +222,7 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    public static class chromeHeadless implements BrowserCapabilities {
+    public static class ChromeHeadless implements BrowserCapabilities {
         @Override
         public String getReadableName() {
             return "chromeheadless";
