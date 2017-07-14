@@ -27,13 +27,25 @@ public class Dimensions {
         return height;
     }
 
-    public boolean hasFullscreenEnabled() {
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public boolean isFullscreenSet() {
         if (dimensions != null) {
             if (dimensions.equals("full") || dimensions.equals("fullscreen") || dimensions.equals("max")) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean areDimensionsPositive() {
+        return width > 0 && height > 0;
     }
 
     private String getDimensions(WebDriverConfiguration configuration) {
@@ -49,9 +61,6 @@ public class Dimensions {
         if (m.matches()) {
             width = Integer.valueOf(m.group(1));
             height = Integer.valueOf(m.group(2));
-        } else if (hasFullscreenEnabled()) {
-            width = 1366;
-            height = 768;
         }
     }
 }

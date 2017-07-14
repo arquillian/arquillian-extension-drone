@@ -45,8 +45,8 @@ public class DimensionsPatternTest {
     public void validSampleWithFullscreen() {
         WebDriverConfiguration mockedConfiguration = getMockedConfiguration("fullscreen");
         Dimensions dimensions = new Dimensions(mockedConfiguration);
-        Assert.assertEquals(1366, dimensions.getWidth());
-        Assert.assertEquals(768, dimensions.getHeight());
+        Assert.assertEquals(0, dimensions.getWidth());
+        Assert.assertEquals(0, dimensions.getHeight());
     }
 
     private WebDriverConfiguration getMockedConfiguration(String dimension) {

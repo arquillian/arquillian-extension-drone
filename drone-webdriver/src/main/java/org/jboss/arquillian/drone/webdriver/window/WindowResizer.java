@@ -64,10 +64,11 @@ public class WindowResizer {
 
         String browser = configuration.getBrowser().toLowerCase();
         if (!browser.equals("chromeheadless")) {
+
             Dimensions dimensions = new Dimensions(configuration);
-            if (dimensions.hasFullscreenEnabled()) {
+            if (dimensions.isFullscreenSet()) {
                 safelyMaximizeWindow(driver, dronePoint);
-            } else {
+            } else if (dimensions.areDimensionsPositive()) {
                 safelyResizeWindow(driver, dimensions.getWidth(), dimensions.getHeight(), dronePoint);
             }
         }

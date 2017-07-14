@@ -122,13 +122,18 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         String browser = configuration.getBrowser().toLowerCase();
         if (browser.equals("chromeheadless")) {
             chromeOptions.addArguments("--headless");
-            if (dimensions.hasFullscreenEnabled()) {
+
+            if (dimensions.isFullscreenSet()) {
+                dimensions.setWidth(1366);
+                dimensions.setHeight(768);
                 log.info(
                     String.format("Chrome Headless does not support fullscreen. Setting default window-size to %dx%d",
                         dimensions.getWidth(), dimensions.getHeight()));
             }
-            chromeOptions.addArguments(
-                String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
+            if  (dimensions.areDimensionsPositive()) {
+                chromeOptions.addArguments(
+                    String.format("--window-size=%d,%d", dimensions.getWidth(), dimensions.getHeight()));
+            }
         }
 
         CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
