@@ -23,7 +23,7 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * Capability property that sets downloading on or off. By default it is on
      */
     public static final String DOWNLOAD_BINARIES_PROPERTY = "downloadBinaries";
-    private Logger log = Logger.getLogger(this.getClass().toString());
+    private static final Logger log = Logger.getLogger(AbstractBinaryHandler.class.toString());
 
     /**
      * Checks system properties and capabilities, whether a path to binary is already set there
@@ -252,13 +252,15 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      * @return the given binary file set to be executable
      */
     protected File markAsExecutable(File binaryFile) {
-        if (!Validate.executable(binaryFile.getAbsolutePath())) {
-            log.info("marking binary file: " + binaryFile.getPath() + " as executable");
-            try {
-                binaryFile.setExecutable(true);
-            } catch (SecurityException se) {
-                log.severe("The downloaded binary: " + binaryFile
-                    + " could not be set as executable. This may cause additional problems.");
+        synchronized (log) {
+            if (!Validate.executable(binaryFile.getAbsolutePath())) {
+                log.info("marking binary file: " + binaryFile.getPath() + " as executable");
+                try {
+                    binaryFile.setExecutable(true);
+                } catch (SecurityException se) {
+                    log.severe("The downloaded binary: " + binaryFile
+                        + " could not be set as executable. This may cause additional problems.");
+                }
             }
         }
         return binaryFile;
