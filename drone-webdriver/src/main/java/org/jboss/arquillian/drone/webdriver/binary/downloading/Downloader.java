@@ -47,14 +47,13 @@ public class Downloader {
             }
 
             if (downloaded == null) {
-
-                for (int i = 0; i < 3; i++) {
+                for (int i = 2; i >= 0; i--) {
                     try {
                         downloaded = runDownloadExecution(from, target.getAbsolutePath(), fileName).await();
                     } catch (ExecutionException ee) {
                         System.err.print("ERROR: the downloading has failed. ");
-                        if (2 - i > 0) {
-                            System.err.println("Trying again - number of remaining attempts: " + (2 - i));
+                        if (i != 0) {
+                            System.err.println("Trying again - number of remaining attempts: " + i);
                             continue;
                         } else {
                             System.err.println("For more information see the stacktrace of an exception");

@@ -58,7 +58,7 @@ public class BinaryFilesUtils {
                     Spacelift.task(toExtract, UntarTool.class).bzip2(true).toDir(targetDir).execute().await();
                 } else {
                     log.info(
-                        "The file " + toExtract + " is not compressed by format by a format that is supported by Drone. "
+                        "The file " + toExtract + " is not compressed by a format that is supported by Drone. "
                             + "Drone supported formats are .zip, .tar.gz, .tar.bz2. The file will be only copied");
                     targetDir.mkdirs();
                     Files.copy(toExtract.toPath(), new File(targetDir + File.separator + toExtract.getName()).toPath(),
