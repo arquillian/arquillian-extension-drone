@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -106,13 +107,25 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
-        // set firefox profile from path if specified
+        // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
+        firefoxOptions.addCapabilities(capabilities);
+
         FirefoxProfile firefoxProfile;
+
+        // use the explicit profile only if absolutely necessary;
+        // the new GeckoDriver otherwise handles the profile itself and this e.g. enables manipulation with some User Preferences
+        // which are frozen if the profile is specified (e.g. extensions.logging.enabled)
+        boolean profileIsDirty = false;
+
+        // set firefox profile from path if specified
         if (Validate.nonEmpty(profile)) {
             if (performValidations) {
                 Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
             }
             firefoxProfile = new FirefoxProfile(new File(profile));
+            profileIsDirty = true;
         } else {
             firefoxProfile = new FirefoxProfile();
         }
@@ -121,14 +134,18 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         Boolean nativeEvents = (Boolean) configuration.getCapabilities().getCapability("nativeEvents");
         if (!Validate.empty(nativeEvents)) {
             firefoxProfile.setEnableNativeEvents(nativeEvents);
+            profileIsDirty = true;
         }
-
-        capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
 
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
         // no check is needed here, it will return empty array if null
         for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
             firefoxProfile.addExtension(new File(extensionPath));
+            profileIsDirty = true;
+        }
+
+        if (profileIsDirty) {
+            firefoxOptions.setProfile(firefoxProfile);
         }
 
         // add user preferences from file
@@ -141,16 +158,16 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 String key = preference.getKey();
                 Object value = preference.getValue();
                 if (value instanceof Boolean) {
-                    firefoxProfile.setPreference(key, (Boolean) value);
+                    firefoxOptions.addPreference(key, (Boolean) value);
                 } else if (value instanceof Integer) {
-                    firefoxProfile.setPreference(key, (Integer) value);
+                    firefoxOptions.addPreference(key, (Integer) value);
                 } else if (value instanceof String) {
-                    firefoxProfile.setPreference(key, (String) value);
+                    firefoxOptions.addPreference(key, (String) value);
                 }
             }
         }
 
-        return capabilities;
+        return firefoxOptions.toCapabilities();
     }
 
     @Override
