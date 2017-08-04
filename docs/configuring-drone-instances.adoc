@@ -215,6 +215,18 @@ If you struggle with passing required chrome options through the `arquillian.xml
 ```
 This ensures that Drone prints out the whole content of `ChromeOptions` in a JSON format to the standard output.
 
+=== Options for other drivers
+Similarly to Chrome options, you can also configure https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/firefox/FirefoxOptions.html[FirefoxOptions], https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/safari/SafariOptions.html[SafariOptions] and https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/opera/OperaOptions.html[OperaOptions] classes for Firefox, Safari and Opera, respectively.
+
+For example, to set GeckoDriver logger level, use:
+```xml
+<property name=“firefoxLogLevel”>SEVERE</property>
+```
+
+Or to use Safari Technology Preview, specify:
+```xml
+<property name=“safariUseTechnologyPreview”>false</property>
+```
 
 [[graphene-2-configuration]]
 === Graphene 2 Configuration
