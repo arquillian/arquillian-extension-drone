@@ -98,7 +98,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         String binary = (String) capabilities.getCapability(FirefoxDriver.BINARY);
-        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
@@ -112,12 +111,26 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
         firefoxOptions.addCapabilities(capabilities);
 
+        FirefoxProfile firefoxProfile = getFirefoxProfile(capabilities, performValidations);
+        if (firefoxProfile != null) {
+            firefoxOptions.setProfile(firefoxProfile);
+        }
+
+        // add user preferences from file
+        addUserPreferencesFromFile(capabilities, firefoxOptions);
+
+        return firefoxOptions.toCapabilities();
+    }
+
+    private FirefoxProfile getFirefoxProfile(DesiredCapabilities capabilities, boolean performValidations) {
+
+        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
         FirefoxProfile firefoxProfile;
 
         // use the explicit profile only if absolutely necessary;
         // the new GeckoDriver otherwise handles the profile itself and this e.g. enables manipulation with some User Preferences
         // which are frozen if the profile is specified (e.g. extensions.logging.enabled)
-        boolean profileIsDirty = false;
+        boolean profileShouldBeSet = false;
 
         // set firefox profile from path if specified
         if (Validate.nonEmpty(profile)) {
@@ -125,30 +138,30 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
             }
             firefoxProfile = new FirefoxProfile(new File(profile));
-            profileIsDirty = true;
+            profileShouldBeSet = true;
         } else {
             firefoxProfile = new FirefoxProfile();
         }
 
         // enable or disable the native events if specified
-        Boolean nativeEvents = (Boolean) configuration.getCapabilities().getCapability("nativeEvents");
+        Boolean nativeEvents = (Boolean) capabilities.getCapability("nativeEvents");
         if (!Validate.empty(nativeEvents)) {
             firefoxProfile.setEnableNativeEvents(nativeEvents);
-            profileIsDirty = true;
+            profileShouldBeSet = true;
         }
 
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
         // no check is needed here, it will return empty array if null
         for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
             firefoxProfile.addExtension(new File(extensionPath));
-            profileIsDirty = true;
+            profileShouldBeSet = true;
         }
 
-        if (profileIsDirty) {
-            firefoxOptions.setProfile(firefoxProfile);
-        }
+        return profileShouldBeSet ? firefoxProfile : null;
+    }
 
-        // add user preferences from file
+    private void addUserPreferencesFromFile(DesiredCapabilities capabilities, FirefoxOptions firefoxOptions) {
+
         final String userPreferences = (String) capabilities.getCapability("firefoxUserPreferences");
         if (Validate.nonEmpty(userPreferences)) {
             Validate.isValidPath(userPreferences, "User preferences does not point to a valid path " + userPreferences);
@@ -166,8 +179,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 }
             }
         }
-
-        return firefoxOptions.toCapabilities();
     }
 
     @Override
