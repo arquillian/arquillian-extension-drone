@@ -534,8 +534,9 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#default-drone-configuration">7.1. Default Drone Configuration</a></li>
 <li><a href="#webdriver-configuration">7.2. WebDriver configuration</a></li>
 <li><a href="#chrome-options">7.3. Chrome options</a></li>
-<li><a href="#graphene-2-configuration">7.4. Graphene 2 Configuration</a></li>
-<li><a href="#selenium-server-configuration">7.5. Selenium Server Configuration</a></li>
+<li><a href="#_options_for_other_drivers">7.4. Options for other drivers</a></li>
+<li><a href="#graphene-2-configuration">7.5. Graphene 2 Configuration</a></li>
+<li><a href="#selenium-server-configuration">7.6. Selenium Server Configuration</a></li>
 </ul>
 </li>
 <li><a href="#extended-configuration-configuring-qualifierd-drone-instances">8. Extended Configuration: Configuring @Qualifier&#8217;d Drone Instances</a></li>
@@ -1968,7 +1969,29 @@ Please notice that there are two methods named <code>addArguments</code> in the 
 </div>
 </div>
 <div class="sect2">
-<h3 id="graphene-2-configuration"><a class="anchor" href="#graphene-2-configuration"></a>7.4. Graphene 2 Configuration</h3>
+<h3 id="_options_for_other_drivers"><a class="anchor" href="#_options_for_other_drivers"></a>7.4. Options for other drivers</h3>
+<div class="paragraph">
+<p>Similarly to Chrome options, you can also configure <a href="https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/firefox/FirefoxOptions.html">FirefoxOptions</a>, <a href="https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/safari/SafariOptions.html">SafariOptions</a> and <a href="https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/opera/OperaOptions.html">OperaOptions</a> classes for Firefox, Safari and Opera, respectively.</p>
+</div>
+<div class="paragraph">
+<p>For example, to set GeckoDriver logger level, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="error">“</span><span class="attribute-value">firefoxLogLevel</span><span class="error">”</span><span class="tag">&gt;</span>SEVERE<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or to use Safari Technology Preview, specify:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="error">“</span><span class="attribute-value">safariUseTechnologyPreview</span><span class="error">”</span><span class="tag">&gt;</span>false<span class="tag">&lt;/property&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="graphene-2-configuration"><a class="anchor" href="#graphene-2-configuration"></a>7.5. Graphene 2 Configuration</h3>
 <div class="paragraph">
 <p>Graphene 2 reuses configuration specified for WebDriver, using
 <code>webdriver</code> qualifier. You can additionally use a
@@ -1978,7 +2001,7 @@ as default UI timeouts.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="selenium-server-configuration"><a class="anchor" href="#selenium-server-configuration"></a>7.5. Selenium Server Configuration</h3>
+<h3 id="selenium-server-configuration"><a class="anchor" href="#selenium-server-configuration"></a>7.6. Selenium Server Configuration</h3>
 <div class="paragraph">
 <p>Selenium server is automatically started with the parameter reflecting browser that is used (path to the webdriver). For example, in case that the browser Firefox is used and with default address, then the Selenium Server instance would be started using a command:</p>
 </div>
@@ -2457,7 +2480,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:18:13 UTC
+Last updated 2017-08-14 12:24:50 UTC
 </div>
 </div>
 </body>
