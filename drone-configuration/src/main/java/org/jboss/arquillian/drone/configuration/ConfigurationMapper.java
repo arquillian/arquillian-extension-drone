@@ -33,6 +33,7 @@ import org.jboss.arquillian.drone.configuration.mapping.BooleanValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.DoubleValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.FileValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.IntegerValueMapper;
+import org.jboss.arquillian.drone.configuration.mapping.LogLevelMapper;
 import org.jboss.arquillian.drone.configuration.mapping.LongValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.StringValueMapper;
 import org.jboss.arquillian.drone.configuration.mapping.URIValueMapper;
@@ -68,6 +69,7 @@ public class ConfigurationMapper {
         VALUE_MAPPERS.add(URIValueMapper.INSTANCE);
         VALUE_MAPPERS.add(URLValueMapper.INSTANCE);
         VALUE_MAPPERS.add(FileValueMapper.INSTANCE);
+        VALUE_MAPPERS.add(LogLevelMapper.INSTANCE);
     }
 
     // FIXME this should not be a static helper class but a proper observer on ArquillianDescriptor

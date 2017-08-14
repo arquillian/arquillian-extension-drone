@@ -28,6 +28,7 @@ import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -97,7 +98,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
         String binary = (String) capabilities.getCapability(FirefoxDriver.BINARY);
-        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
@@ -106,32 +106,62 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
-        // set firefox profile from path if specified
+        // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
+        firefoxOptions.addCapabilities(capabilities);
+
+        FirefoxProfile firefoxProfile = getFirefoxProfile(capabilities, performValidations);
+        if (firefoxProfile != null) {
+            firefoxOptions.setProfile(firefoxProfile);
+        }
+
+        // add user preferences from file
+        addUserPreferencesFromFile(capabilities, firefoxOptions);
+
+        return firefoxOptions.toCapabilities();
+    }
+
+    private FirefoxProfile getFirefoxProfile(DesiredCapabilities capabilities, boolean performValidations) {
+
+        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
         FirefoxProfile firefoxProfile;
+
+        // use the explicit profile only if absolutely necessary;
+        // the new GeckoDriver otherwise handles the profile itself and this e.g. enables manipulation with some User Preferences
+        // which are frozen if the profile is specified (e.g. extensions.logging.enabled)
+        boolean profileShouldBeSet = false;
+
+        // set firefox profile from path if specified
         if (Validate.nonEmpty(profile)) {
             if (performValidations) {
                 Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
             }
             firefoxProfile = new FirefoxProfile(new File(profile));
+            profileShouldBeSet = true;
         } else {
             firefoxProfile = new FirefoxProfile();
         }
 
         // enable or disable the native events if specified
-        Boolean nativeEvents = (Boolean) configuration.getCapabilities().getCapability("nativeEvents");
+        Boolean nativeEvents = (Boolean) capabilities.getCapability("nativeEvents");
         if (!Validate.empty(nativeEvents)) {
             firefoxProfile.setEnableNativeEvents(nativeEvents);
+            profileShouldBeSet = true;
         }
-
-        capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
 
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
         // no check is needed here, it will return empty array if null
         for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
             firefoxProfile.addExtension(new File(extensionPath));
+            profileShouldBeSet = true;
         }
 
-        // add user preferences from file
+        return profileShouldBeSet ? firefoxProfile : null;
+    }
+
+    private void addUserPreferencesFromFile(DesiredCapabilities capabilities, FirefoxOptions firefoxOptions) {
+
         final String userPreferences = (String) capabilities.getCapability("firefoxUserPreferences");
         if (Validate.nonEmpty(userPreferences)) {
             Validate.isValidPath(userPreferences, "User preferences does not point to a valid path " + userPreferences);
@@ -141,16 +171,14 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 String key = preference.getKey();
                 Object value = preference.getValue();
                 if (value instanceof Boolean) {
-                    firefoxProfile.setPreference(key, (Boolean) value);
+                    firefoxOptions.addPreference(key, (Boolean) value);
                 } else if (value instanceof Integer) {
-                    firefoxProfile.setPreference(key, (Integer) value);
+                    firefoxOptions.addPreference(key, (Integer) value);
                 } else if (value instanceof String) {
-                    firefoxProfile.setPreference(key, (String) value);
+                    firefoxOptions.addPreference(key, (String) value);
                 }
             }
         }
-
-        return capabilities;
     }
 
     @Override

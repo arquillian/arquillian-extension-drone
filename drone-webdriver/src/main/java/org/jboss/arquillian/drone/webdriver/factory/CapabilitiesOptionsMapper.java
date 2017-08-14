@@ -182,7 +182,8 @@ public class CapabilitiesOptionsMapper {
     }
 
     private static boolean isSetter(Method candidate) {
-        return candidate.getName().matches("^(set|add)[A-Z].*") && candidate.getReturnType().equals(Void.TYPE)
+        return candidate.getName().matches("^(set|add)[A-Z].*")
+            && (candidate.getReturnType().equals(Void.TYPE) || candidate.getReturnType().equals(candidate.getDeclaringClass()))
             && candidate.getParameterTypes().length > 0;
     }
 }
