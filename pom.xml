@@ -37,7 +37,7 @@
   <properties>
     <!-- Versioning -->
     <version.arquillian.core>1.1.13.Final</version.arquillian.core>
-    <version.selenium>3.4.0</version.selenium>
+    <version.selenium>3.5.1</version.selenium>
     <version.htmlunit.driver>2.26</version.htmlunit.driver>
     <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
     <version.appium.java.client>5.0.0-BETA9</version.appium.java.client>
@@ -51,7 +51,7 @@
     <version.awaitility>3.0.0</version.awaitility>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-    <version.org.eclipse.jetty>9.4.3.v20170317</version.org.eclipse.jetty>
+    <version.org.eclipse.jetty>9.4.5.v20170502</version.org.eclipse.jetty>
     <version.arquillian.jetty>1.0.0.CR3</version.arquillian.jetty>
 
     <!-- override from parent -->

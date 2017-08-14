@@ -44,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -74,6 +75,7 @@ public class SerializationUtils {
         whitelist.enableClass(LinkedList.class.getName());
 
         // webdriver
+        whitelist.enableClass(MutableCapabilities.class.getName());
         whitelist.enableClass(DesiredCapabilities.class.getName());
         whitelist.enableClass(Capabilities.class.getName());
         whitelist.enableClass(Platform.class.getName());
