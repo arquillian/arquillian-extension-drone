@@ -19,7 +19,7 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_
  */
 public class BinaryFilesUtils {
 
-    private static Logger log = Logger.getLogger(BinaryFilesUtils.class.toString());
+    private static final Logger log = Logger.getLogger(BinaryFilesUtils.class.toString());
 
     /**
      * Extracts given archive into a directory <code>target/drone/md5hash(archive)/</code>
@@ -42,25 +42,28 @@ public class BinaryFilesUtils {
             dir = UUID.randomUUID().toString();
         }
         File targetDir = new File(DRONE_TARGET_DIRECTORY + File.separator + dir);
-        if (!targetDir.exists() || targetDir.listFiles().length == 0) {
 
-            targetDir.mkdirs();
-            String filePath = toExtract.getAbsolutePath();
+        synchronized (log) {
+            if (!targetDir.exists() || targetDir.listFiles().length == 0) {
 
-            log.info("Extracting zip file: " + toExtract + " to " + targetDir.getPath());
-            if (filePath.endsWith(".zip")) {
-                Spacelift.task(toExtract, UnzipTool.class).toDir(targetDir).execute().await();
-            } else if (filePath.endsWith(".tar.gz")) {
-                Spacelift.task(toExtract, UntarTool.class).gzip(true).toDir(targetDir).execute().await();
-            } else if (filePath.endsWith(".tar.bz2")) {
-                Spacelift.task(toExtract, UntarTool.class).bzip2(true).toDir(targetDir).execute().await();
-            } else {
-                log.info(
-                    "The file " + toExtract + " is not compressed by format by a format that is supported by Drone. "
-                        + "Drone supported formats are .zip, .tar.gz, .tar.bz2. The file will be only copied");
                 targetDir.mkdirs();
-                Files.copy(toExtract.toPath(), new File(targetDir + File.separator + toExtract.getName()).toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
+                String filePath = toExtract.getAbsolutePath();
+
+                log.info("Extracting zip file: " + toExtract + " to " + targetDir.getPath());
+                if (filePath.endsWith(".zip")) {
+                    Spacelift.task(toExtract, UnzipTool.class).toDir(targetDir).execute().await();
+                } else if (filePath.endsWith(".tar.gz")) {
+                    Spacelift.task(toExtract, UntarTool.class).gzip(true).toDir(targetDir).execute().await();
+                } else if (filePath.endsWith(".tar.bz2")) {
+                    Spacelift.task(toExtract, UntarTool.class).bzip2(true).toDir(targetDir).execute().await();
+                } else {
+                    log.info(
+                        "The file " + toExtract + " is not compressed by a format that is supported by Drone. "
+                            + "Drone supported formats are .zip, .tar.gz, .tar.bz2. The file will be only copied");
+                    targetDir.mkdirs();
+                    Files.copy(toExtract.toPath(), new File(targetDir + File.separator + toExtract.getName()).toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
+                }
             }
         }
         return targetDir;

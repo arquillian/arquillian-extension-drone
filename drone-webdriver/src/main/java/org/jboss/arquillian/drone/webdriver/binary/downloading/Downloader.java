@@ -17,7 +17,7 @@ public class Downloader {
 
     public static final String DRONE_TARGET_DOWNLOADED_DIRECTORY =
         DRONE_TARGET_DIRECTORY + "downloaded" + File.separator;
-    private static Logger log = Logger.getLogger(Downloader.class.toString());
+    private static final Logger log = Logger.getLogger(Downloader.class.toString());
 
     /**
      * Downloads file from the given url and stores it either in given directory or if the directory is null, then in
@@ -39,28 +39,29 @@ public class Downloader {
         File target = new File(targetDir + File.separator + fileName);
         File downloaded = null;
 
-        if (target.exists() && target.isFile()) {
-            downloaded = target;
-        } else if (!targetDir.exists()) {
-            targetDir.mkdirs();
-        }
+        synchronized (log) {
+            if (target.exists() && target.isFile()) {
+                downloaded = target;
+            } else if (!targetDir.exists()) {
+                targetDir.mkdirs();
+            }
 
-        if (downloaded == null) {
-
-            for (int i = 0; i < 3; i++) {
-                try {
-                    downloaded = runDownloadExecution(from, target.getAbsolutePath(), fileName).await();
-                } catch (ExecutionException ee) {
-                    System.err.print("ERROR: the downloading has failed. ");
-                    if (2 - i > 0) {
-                        System.err.println("Trying again - number of remaining attempts: " + (2 - i));
-                        continue;
-                    } else {
-                        System.err.println("For more information see the stacktrace of an exception");
-                        throw ee;
+            if (downloaded == null) {
+                for (int i = 2; i >= 0; i--) {
+                    try {
+                        downloaded = runDownloadExecution(from, target.getAbsolutePath(), fileName).await();
+                    } catch (ExecutionException ee) {
+                        System.err.print("ERROR: the downloading has failed. ");
+                        if (i != 0) {
+                            System.err.println("Trying again - number of remaining attempts: " + i);
+                            continue;
+                        } else {
+                            System.err.println("For more information see the stacktrace of an exception");
+                            throw ee;
+                        }
                     }
+                    break;
                 }
-                break;
             }
         }
         return downloaded;

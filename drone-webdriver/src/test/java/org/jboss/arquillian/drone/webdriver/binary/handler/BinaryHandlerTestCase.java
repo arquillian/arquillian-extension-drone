@@ -1,10 +1,17 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.process.CommandBuilder;
@@ -39,6 +46,8 @@ public class BinaryHandlerTestCase {
     private static final String originalTargetDirectory = DRONE_TARGET_DIRECTORY;
     private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
     private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
+
+    private StreamHandler customLogHandler;
 
     @Rule
     public final SystemOutRule outContent = new SystemOutRule().enableLog();
@@ -84,6 +93,9 @@ public class BinaryHandlerTestCase {
     @After
     public void cleanupAfter() throws IOException {
         cleanUp();
+        if (customLogHandler != null){
+            Logger.getLogger("").removeHandler(customLogHandler);
+        }
     }
 
     private void cleanUp() throws IOException {
@@ -238,6 +250,62 @@ public class BinaryHandlerTestCase {
                 Assert.fail("This test should have not failed on Windows");
             }
         }
+    }
+
+    @Test
+    public void testBinaryHandlerInMultipleThreads() throws Exception {
+
+        ByteArrayOutputStream logOutputStream = new ByteArrayOutputStream();
+        Logger parentLog = Logger.getLogger("");
+        Handler handler = parentLog.getHandlers()[0];
+        customLogHandler = new StreamHandler(logOutputStream, handler.getFormatter());
+        parentLog.addHandler(customLogHandler);
+
+
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(
+            LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
+            LocalBinarySource.FIRST_VERSION);
+
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch stopLatch = new CountDownLatch(3);
+
+        createThreadWithCheckAndSetBinary(capabilities, startLatch, stopLatch).start();
+        createThreadWithCheckAndSetBinary(capabilities, startLatch, stopLatch).start();
+        createThreadWithCheckAndSetBinary(capabilities, startLatch, stopLatch).start();
+
+        startLatch.countDown();
+        stopLatch.await(10, TimeUnit.SECONDS);
+
+        // verify
+        customLogHandler.flush();
+        verifyLogContainsOneOccurrence("Drone: downloading", outContent.getLog());
+        verifyLogContainsOneOccurrence("Extracting zip file", logOutputStream.toString());
+        verifyLogContainsOneOccurrence("marking binary file.+as executable", logOutputStream.toString());
+    }
+
+    private void verifyLogContainsOneOccurrence(String message, String log) {
+        Matcher matcher = Pattern.compile(message).matcher(log);
+        assertThat(matcher.find()).as(String.format(
+            "The log should contain one occurrence of message \"%s\" but none was found. For more information see the log",
+            message))
+            .isTrue();
+        assertThat(matcher.find()).as(String.format(
+            "The log should contain only one occurrence of message \"%s\" but more than one was found. For more information see the log",
+            message)).isFalse();
+    }
+
+    private Thread createThreadWithCheckAndSetBinary(DesiredCapabilities capabilities, final CountDownLatch startLatch,
+        final CountDownLatch stopLatch) {
+        return new Thread(() -> {
+            try {
+                startLatch.await();
+                new LocalBinaryHandler(capabilities).checkAndSetBinary(true);
+                stopLatch.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(DesiredCapabilities capabilities,
