@@ -16,17 +16,19 @@
  */
 package org.jboss.arquillian.drone.webdriver.utils;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Platform;
 
 import static org.openqa.selenium.Platform.WINDOWS;
@@ -39,8 +41,8 @@ public class Validate {
     private static final Logger log = Logger.getLogger(Validate.class.getName());
 
     private static final FileExecutableChecker fileExecutableChecker = new FileExecutableChecker();
-    private static final ImmutableSet<String> ENDINGS = Platform.getCurrent().is(WINDOWS) ?
-        ImmutableSet.of("", ".cmd", ".exe", ".com", ".bat") : ImmutableSet.of("");
+    private static final String[] ENDINGS = Platform.getCurrent().is(WINDOWS) ?
+        new String[]{"", ".cmd", ".exe", ".com", ".bat"} : new String[]{""};
 
     public static boolean empty(Object object) {
         return object == null;
@@ -120,13 +122,13 @@ public class Validate {
             }
         }
 
-        final ImmutableSet.Builder<String> pathSegmentBuilder = new ImmutableSet.Builder<>();
+        final List<String> pathSegmentBuilder = new ArrayList<>();
         addPathFromEnvironment(pathSegmentBuilder);
         if (Platform.getCurrent().is(Platform.MAC)) {
             addMacSpecificPath(pathSegmentBuilder);
         }
 
-        for (String pathSegment : pathSegmentBuilder.build()) {
+        for (String pathSegment : pathSegmentBuilder) {
             for (String ending : ENDINGS) {
                 file = new File(pathSegment, command + ending);
                 if (fileExecutableChecker.canExecute(file)) {
@@ -137,7 +139,7 @@ public class Validate {
         return false;
     }
 
-    private static void addPathFromEnvironment(final ImmutableSet.Builder<String> pathSegmentBuilder) {
+    private static void addPathFromEnvironment(final List<String> pathSegmentBuilder) {
         String pathName = "PATH";
         Map<String, String> env = System.getenv();
         if (!env.containsKey(pathName)) {
@@ -150,15 +152,15 @@ public class Validate {
         }
         String path = env.get(pathName);
         if (path != null) {
-            pathSegmentBuilder.add(path.split(File.pathSeparator));
+            pathSegmentBuilder.addAll(Arrays.asList(path.split(File.pathSeparator)));
         }
     }
 
-    private static void addMacSpecificPath(final ImmutableSet.Builder<String> pathSegmentBuilder) {
+    private static void addMacSpecificPath(final List<String> pathSegmentBuilder) {
         File pathFile = new File("/etc/paths");
         if (pathFile.exists()) {
             try {
-                pathSegmentBuilder.addAll(Files.readLines(pathFile, Charsets.UTF_8));
+                pathSegmentBuilder.addAll(FileUtils.readLines(pathFile, Charset.defaultCharset()));
             } catch (IOException e) {
                 log.warning(
                     String.format("There was an error when the file %s was being read: %s", pathFile, e.getMessage()));

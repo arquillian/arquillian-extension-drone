@@ -131,12 +131,6 @@
       <artifactId>jsoup</artifactId>
       <version>1.8.3</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>23.0</version>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- test dependencies -->
     <dependency>
