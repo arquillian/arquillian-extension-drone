@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -180,7 +181,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
 
         PhantomJSSourceForLatestRelease(HttpClient httpClient,
             GitHubLastUpdateCache gitHubLastUpdateCache) {
-            super(httpClient, gitHubLastUpdateCache);
+            super(httpClient, gitHubLastUpdateCache, new DesiredCapabilities());
         }
 
         public ExternalBinary getLatestRelease() throws Exception {
