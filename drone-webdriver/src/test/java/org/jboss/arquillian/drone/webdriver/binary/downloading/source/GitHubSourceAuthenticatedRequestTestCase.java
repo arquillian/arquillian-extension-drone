@@ -2,6 +2,7 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import io.specto.hoverfly.junit.rule.HoverflyRule;
 import java.util.Base64;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
@@ -12,6 +13,10 @@ import org.junit.rules.TemporaryFolder;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
+import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource.AUTHORIZATION_HEADER_KEY;
+import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource.BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX;
+import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource.GITHUB_TOKEN_PROPERTY;
+import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource.GITHUB_USERNAME_PROPERTY;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.spy;
@@ -35,36 +40,43 @@ public class GitHubSourceAuthenticatedRequestTestCase {
         HttpClient httpClientSpy = spy(new HttpClient());
         GitHubLastUpdateCache gitHubLastUpdateCache = new GitHubLastUpdateCache(folder.newFolder());
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(GitHubSource.GITHUB_USERNAME_PROPERTY, "my-username");
-        capabilities.setCapability(GitHubSource.GITHUB_TOKEN_PROPERTY, "my-token");
+        String username = "my-username";
+        String token = "my-token";
 
-        GeckoDriverGitHubSource geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, gitHubLastUpdateCache, capabilities);
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(GITHUB_USERNAME_PROPERTY, username);
+        capabilities.setCapability(GITHUB_TOKEN_PROPERTY, token);
+
+        GeckoDriverGitHubSource geckoDriverGitHubSource =
+            new GeckoDriverGitHubSource(httpClientSpy, gitHubLastUpdateCache, capabilities);
 
         // when
         geckoDriverGitHubSource.getReleaseForVersion("v0.14.0");
 
         // then
-        verify(httpClientSpy, times(1)).get(anyString(), argThat(headers -> {
-            if (headers.size() > 0) {
-                String authorization = headers.get("Authorization");
-                if (authorization != null && authorization.startsWith("Basic ")) {
-                    String tokens =
-                        new String(Base64.getDecoder().decode(authorization.substring(6, authorization.length() - 1)));
-                    if ("my-username:my-token".equals(tokens)) {
-                        return true;
-                    } else {
-                        log.severe(String.format(
-                            "The auth param value should contain: [my-username:my-token] but contains: [%s]",
-                            tokens));
-                    }
+        verify(httpClientSpy, times(1)).get(anyString(),
+            argThat(headers -> containsAuthHeaderParam(headers, username + ":" + token)));
+    }
+
+    private boolean containsAuthHeaderParam(Map<String, String> headers, String authPair) {
+        if (headers.size() > 0) {
+            String authorization = headers.get(AUTHORIZATION_HEADER_KEY);
+            if (authorization != null && authorization.startsWith(BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX)) {
+                String tokens =
+                    new String(Base64.getDecoder().decode(authorization.substring(6, authorization.length() - 1)));
+                if (authPair.equals(tokens)) {
+                    return true;
                 } else {
-                    log.severe("There is no header pair with key: 'Authorization' and value starting with 'Basic'");
+                    log.severe(String.format(
+                        "The auth param value should contain: [%s] but contains: [%s]", authPair, tokens));
                 }
             } else {
-                log.severe("The map doesn't contain any header param");
+                log.severe(String.format("There is no header pair with key: [%s] and value starting with [%s]",
+                    AUTHORIZATION_HEADER_KEY, BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX));
             }
-            return false;
-        }));
+        } else {
+            log.severe("The map doesn't contain any header param");
+        }
+        return false;
     }
 }

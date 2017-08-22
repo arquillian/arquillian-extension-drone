@@ -33,6 +33,8 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     public static final String GITHUB_USERNAME_PROPERTY = "githubUsername";
     public static final String GITHUB_TOKEN_PROPERTY = "githubToken";
+    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    public static final String BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX = "Basic ";
 
     private static final String LATEST_URL = "/releases/latest";
     private static final String RELEASES_URL = "/releases";
@@ -221,7 +223,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
     private void addAuthParams(Map<String, String> headers) {
         if (Validate.nonEmpty(username) && Validate.nonEmpty(token)) {
             String authParam = Base64.getEncoder().encodeToString((username + ":" + token).getBytes());
-            headers.put("Authorization", "Basic " + authParam);
+            headers.put(AUTHORIZATION_HEADER_KEY, BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX + authParam);
         }
     }
 
