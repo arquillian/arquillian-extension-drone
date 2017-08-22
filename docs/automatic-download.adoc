@@ -241,11 +241,19 @@ Starting with Selenium 2.48.0, you must manually install the SafariDriver browse
 Refer getting started section from https://github.com/SeleniumHQ/selenium/wiki/SafariDriver[SafariDiver]
 ====
 
-[NOTE]
-====
-GitHub release caching functionality caches GitHub responses based on the last modification date
-from the returned response header guarding against exceeding GitHub rate limit for unauthorized requests.
-====
+==== GitHub rate limit
+
+In case of downloading webdrivers from GitHub, you may reach rate limit for unauthenticated requests (60 per hour). To avoid this, there has been implemented GitHub release caching functionality that caches GitHub responses based on the last modification date from the returned response header.
+
+===== Authenticated requests
+
+In some cases (larger CI matrix jobs) this response caching doesn't have to suffice. To use authenticated requests (where the rate limit is much higher) you need to specify your GitHub username and secret token in your arquillian.xml file:
+
+[source,xml]
+----
+<property name="githubUsername">username</property>
+<property name="githubToken">secretToken</property>
+----
 
 === Activate / Deactivate
 
