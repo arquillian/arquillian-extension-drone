@@ -8,6 +8,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,7 @@ public class GitHubSourceReleaseForVersionTestCase {
         HoverflyRule.inSimulationMode(classpath("hoverfly/gh.simulation.mozilla@geckodriver.releases.json"));
 
     GeckoDriverGitHubSource geckoDriverGitHubSource =
-        new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache());
+        new GeckoDriverGitHubSource(new HttpClient(), new GitHubLastUpdateCache(), new DesiredCapabilities());
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

@@ -3,11 +3,13 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class GeckoDriverGitHubSource extends GitHubSource {
 
-    public GeckoDriverGitHubSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache) {
-        super("mozilla", "geckodriver", httpClient, gitHubLastUpdateCache);
+    public GeckoDriverGitHubSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache,
+        DesiredCapabilities capabilities) {
+        super("mozilla", "geckodriver", httpClient, gitHubLastUpdateCache, capabilities);
     }
 
     @Override

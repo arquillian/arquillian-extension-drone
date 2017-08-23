@@ -87,7 +87,7 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new PhantomJSGitHubBitbucketSource(new HttpClient(), new GitHubLastUpdateCache());
+        return new PhantomJSGitHubBitbucketSource(new HttpClient(), new GitHubLastUpdateCache(), capabilities);
     }
 
     @Override

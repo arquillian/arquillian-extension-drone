@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -63,7 +64,7 @@ public class GitHubSourceRateLimitAndErrorTestCase {
         this.tmpFolder = folder.newFolder();
         this.httpClientSpy = spy(new HttpClient());
         this.cacheSpy = spy(new GitHubLastUpdateCache(tmpFolder));
-        this.geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy);
+        this.geckoDriverGitHubSource = new GeckoDriverGitHubSource(httpClientSpy, cacheSpy, new DesiredCapabilities());
     }
 
     private void simulate(String requestPath, boolean rateLimit) {

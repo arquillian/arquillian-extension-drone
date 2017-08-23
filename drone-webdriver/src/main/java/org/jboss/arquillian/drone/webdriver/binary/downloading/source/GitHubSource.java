@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +19,8 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
+import org.jboss.arquillian.drone.webdriver.utils.Validate;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -28,6 +30,11 @@ import static org.apache.http.HttpHeaders.LAST_MODIFIED;
  * from some specific repository.
  */
 public abstract class GitHubSource implements ExternalBinarySource {
+
+    public static final String GITHUB_USERNAME_PROPERTY = "githubUsername";
+    public static final String GITHUB_TOKEN_PROPERTY = "githubToken";
+    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    public static final String BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX = "Basic ";
 
     private static final String LATEST_URL = "/releases/latest";
     private static final String RELEASES_URL = "/releases";
@@ -40,24 +47,27 @@ public abstract class GitHubSource implements ExternalBinarySource {
     private final GitHubLastUpdateCache cache;
     private final String projectUrl;
     private final String uniqueKey;
+    private String username;
+    private String token;
     // JSON keys
     private String tagNameKey = "tag_name";
     private String assetNameKey = "name";
     private String browserDownloadUrlKey = "browser_download_url";
     private String assetsKey = "assets";
 
-    /**
-     * @param organization
-     *     GitHub organization/user name the project belongs to
-     * @param project
-     *     GitHub project name
-     */
     public GitHubSource(String organization, String project, HttpClient httpClient,
         GitHubLastUpdateCache gitHubLastUpdateCache) {
         this.httpClient = httpClient;
         this.projectUrl = String.format("https://api.github.com/repos/%s/%s", organization, project);
         this.uniqueKey = organization + "@" + project;
         this.cache = gitHubLastUpdateCache;
+    }
+
+    public GitHubSource(String organization, String project, HttpClient httpClient,
+        GitHubLastUpdateCache gitHubLastUpdateCache, DesiredCapabilities capabilities) {
+        this(organization, project, httpClient, gitHubLastUpdateCache);
+        username = (String) capabilities.getCapability(GITHUB_USERNAME_PROPERTY);
+        token = (String) capabilities.getCapability(GITHUB_TOKEN_PROPERTY);
     }
 
     @Override
@@ -154,7 +164,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
         }
         if (availableVersions.isEmpty()) {
             throw new IllegalStateException(
-                createErrorMessage(sentGetRequestWithPagination(url, 1, Collections.emptyMap()), false).toString());
+                createErrorMessage(sentGetRequestWithPagination(url, 1, new HashMap<>()), false).toString());
         } else {
             throw new IllegalArgumentException(
                 "No release matching version " + version + " has been found in the repository " + projectUrl
@@ -167,7 +177,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
     }
 
     private JsonElement getReleasesJson(String url, int pageNumber) throws Exception {
-        HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber, Collections.emptyMap());
+        HttpClient.Response response = sentGetRequestWithPagination(url, pageNumber, new HashMap<>());
         return gson.fromJson(response.getPayload(), JsonElement.class);
     }
 
@@ -206,7 +216,15 @@ public abstract class GitHubSource implements ExternalBinarySource {
         if (pageNumber != 1) {
             uriBuilder.setParameter("page", String.valueOf(pageNumber));
         }
+        addAuthParams(headers);
         return httpClient.get(uriBuilder.build().toString(), headers);
+    }
+
+    private void addAuthParams(Map<String, String> headers) {
+        if (Validate.nonEmpty(username) && Validate.nonEmpty(token)) {
+            String authParam = Base64.getEncoder().encodeToString((username + ":" + token).getBytes());
+            headers.put(AUTHORIZATION_HEADER_KEY, BASIC_AUTHORIZATION_HEADER_VALUE_PREFIX + authParam);
+        }
     }
 
     protected String getProjectUrl() {
