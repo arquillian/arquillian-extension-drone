@@ -7,6 +7,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.logging.Logger;
 
+import static org.jboss.arquillian.drone.webdriver.utils.Validate.empty;
+
 /**
  * A class for handling selenium server binaries. It also runs the selenium server with properties that are
  * appropriately configured
@@ -73,7 +75,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
-            if (version == null) {
+            if (empty(version)) {
                 return directory + "/" + getFileNameRegexToDownload(directory + ".*");
             } else {
                 return getDirectoryFromFullVersion(version) + "/" + getFileNameRegexToDownload(version);

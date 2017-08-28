@@ -50,6 +50,8 @@ _Url driver property_ - use this arquillian.xml property to define an URL the bi
 
 _Cache subdirectory_ - name of the sub-directory (withing `$HOME/.arquillian/drone/`) the binaries are cached in
 
+_Architecture_ - in arquillian.xml file, you can explicitly specify the target architecture of the binary for selected webdrivers; if not specified it's then resolved from the host OS
+
 ===== Selenium Server
 |===
 
@@ -156,8 +158,13 @@ _Cache subdirectory_ - name of the sub-directory (withing `$HOME/.arquillian/dro
 
 |Cache subdirectory
 |internetExplorer
+
+|Architecture
+|ieDriverArch +
+Supported values: "Win32" and "x64"
 |===
 
+The architecture of the binary can be explicitly specified because the 64 bit version of the IE driver is having issues with `sendKeys` method at some specific conditions.
 
 ===== PhantomJS
 |===
