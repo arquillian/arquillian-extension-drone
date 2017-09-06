@@ -119,7 +119,7 @@
     <dependency>
       <groupId>org.arquillian.spacelift</groupId>
       <artifactId>arquillian-spacelift</artifactId>
-      <version>1.0.0.Alpha9</version>
+      <version>${version.arquillian.spacelift}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
