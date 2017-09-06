@@ -279,7 +279,7 @@ So, if you use `RemoteWebDriver` Drone checks the address specified using proper
 
 For example I'd like to use `RemoteWebDriver` with the browser Firefox and without specifying any custom remote address, then the Selenium Server would be started using command:
 
-`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.5.1.jar -port 4444`
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.5.3.jar -port 4444`
 
 In case you would like to add some additional selenium server arguments to the command, you can use parameter `seleniumServerArgs` in your arquillian.xml file.
 For example, if you used these properties:
@@ -292,5 +292,5 @@ For example, if you used these properties:
 
 then the command used for starting Selenium Server instance would look like:
 
-`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.5.1.jar -port 4444 -debug true -role node -browserTimeout 1000`
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.5.3.jar -port 4444 -debug true -role node -browserTimeout 1000`
 
