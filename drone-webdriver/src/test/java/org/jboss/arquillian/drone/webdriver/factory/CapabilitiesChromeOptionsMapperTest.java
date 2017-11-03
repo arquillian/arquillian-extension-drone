@@ -27,8 +27,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -91,7 +91,6 @@ public class CapabilitiesChromeOptionsMapperTest {
             expectedChromeOptions.setExperimentalOption(param, dicts.get(param));
         }
 
-        Assert.assertEquals(expectedChromeOptions, chromeOptions);
-        Assert.assertEquals(expectedChromeOptions.toJson(), chromeOptions.toJson());
+        Assertions.assertThat(expectedChromeOptions).isEqualToComparingFieldByFieldRecursively(chromeOptions);
     }
 }

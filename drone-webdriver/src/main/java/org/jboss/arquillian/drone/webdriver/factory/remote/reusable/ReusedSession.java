@@ -36,20 +36,26 @@ public class ReusedSession implements Serializable {
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
     private String opaqueKey;
-    private Capabilities capabilities;
+    private ReusableCapabilities capabilities;
 
     ReusedSession(SessionId sessionId, Capabilities capabilities) {
         this.opaqueKey = sessionId.toString();
         this.capabilities = createReusableCapabilities(capabilities);
     }
 
-    public static ReusedSession createInstance(SessionId sessionId, Capabilities capabilities) {
-        DesiredCapabilities reusableCapabilities = createReusableCapabilities(capabilities);
-        return new ReusedSession(sessionId, reusableCapabilities);
+    @SuppressWarnings("unused") // used for deserialization
+    ReusedSession(SessionId sessionId, ReusableCapabilities capabilities) {
+        this.opaqueKey = sessionId.toString();
+        this.capabilities = capabilities;
     }
 
-    static DesiredCapabilities createReusableCapabilities(Capabilities driverCapabilities) {
-        DesiredCapabilities capabilitiesForReuse = new DesiredCapabilities();
+    public static ReusedSession createInstance(SessionId sessionId, Capabilities capabilities) {
+        ReusableCapabilities reusableCapabilities = createReusableCapabilities(capabilities);
+        return new ReusedSession(sessionId, reusableCapabilities.getDesiredCapabilities());
+    }
+
+    static ReusableCapabilities createReusableCapabilities(Capabilities driverCapabilities) {
+        ReusableCapabilities capabilitiesForReuse = new ReusableCapabilities();
         for (Entry<String, ?> capability : driverCapabilities.asMap().entrySet()) {
             String key = capability.getKey();
             Object value = capability.getValue();
@@ -85,7 +91,7 @@ public class ReusedSession implements Serializable {
     }
 
     public Capabilities getCapabilities() {
-        return capabilities;
+        return new DesiredCapabilities(capabilities.getCapabilities());
     }
 
     @Override

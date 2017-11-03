@@ -42,6 +42,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseS
 import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -134,7 +135,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         // ARQ-1351
         // marks the driver instance for augmentation by AugmentingEnhancer
-        ((DesiredCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
+        ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
 
         // ARQ-1206
         // by default, we are clearing Cookies on reusable browsers

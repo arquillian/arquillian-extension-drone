@@ -143,13 +143,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
             firefoxProfile = new FirefoxProfile();
         }
 
-        // enable or disable the native events if specified
-        Boolean nativeEvents = (Boolean) capabilities.getCapability("nativeEvents");
-        if (!Validate.empty(nativeEvents)) {
-            firefoxProfile.setEnableNativeEvents(nativeEvents);
-            profileShouldBeSet = true;
-        }
-
         final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
         // no check is needed here, it will return empty array if null
         for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {

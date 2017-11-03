@@ -1,5 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
@@ -22,9 +23,9 @@ public class HeadlessBrowserChromeOptionsTest {
         WebDriverConfiguration configuration = getMockedConfiguration(chromeCaps);
 
         Capabilities capabilities = chromeDriverFactory.getCapabilities(configuration, true);
-        ChromeOptions chromeOptions = (ChromeOptions) capabilities.getCapability(ChromeOptions.CAPABILITY);
+        Object chromeOptions = capabilities.getCapability(ChromeOptions.CAPABILITY);
 
-        Assertions.assertThat(chromeOptions.toJson().toString()).contains("headless");
+        Assertions.assertThat(new Gson().toJson(chromeOptions)).contains("headless");
     }
 
     private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {

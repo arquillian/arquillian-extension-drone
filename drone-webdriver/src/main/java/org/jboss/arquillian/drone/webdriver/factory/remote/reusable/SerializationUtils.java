@@ -81,6 +81,7 @@ public class SerializationUtils {
         whitelist.enableClass(Platform.class.getName());
 
         // internal implementation
+        whitelist.enableClass(ReusableCapabilities.class.getName());
         whitelist.enableClass(ReusedSession.class.getName());
         whitelist.enableClass(ReusedSessionStore.class.getName());
         whitelist.enableClass(ReusedSessionStoreImpl.class.getName());

@@ -29,7 +29,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
@@ -54,11 +53,11 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
 
-        Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
+        ReusableCapabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
             .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
-        RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities,
+        RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities.getDesiredCapabilities(),
             reusedSessionId);
         reusedDriver.navigate().to(HUB_URL.toString());
     }
@@ -69,13 +68,13 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
 
         driver.navigate().to(SERVER_URL.toString());
         new AugmentingEnhancer().deenhance(driver, Reusable.class); // without deenhancing we can't serialize capabilities
-        Capabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
+        ReusableCapabilities reusedCapabilities = serializeDeserialize(ReusedSession.createReusableCapabilities(driver
             .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
         driver.quit();
 
         try {
-            ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities, reusedSessionId);
+            ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities.getDesiredCapabilities(), reusedSessionId);
             fail("Original driver had quited before, so session should not be reusable");
         } catch (UnableReuseSessionException e) {
             // exception should be thrown

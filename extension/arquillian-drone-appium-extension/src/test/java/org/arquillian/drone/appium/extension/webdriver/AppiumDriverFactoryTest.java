@@ -17,6 +17,7 @@
 
 package org.arquillian.drone.appium.extension.webdriver;
 
+import com.google.gson.Gson;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,8 +56,8 @@ public class AppiumDriverFactoryTest {
         assertEquals(originalCapabilities.getCapability(PLATFORM_NAME), newCapabilities.getCapability(PLATFORM_NAME));
         assertEquals(originalCapabilities.getCapability(BROWSER_NAME), newCapabilities.getCapability(BROWSER_NAME));
 
-        ChromeOptions chromeOptions = (ChromeOptions)newCapabilities.getCapability(ChromeOptions.CAPABILITY);
-        assertTrue(chromeOptions.toJson().toString().contains(CHROME_OPTIONS_VALUE));
+        Object chromeOptions = newCapabilities.getCapability(ChromeOptions.CAPABILITY);
+        assertTrue(new Gson().toJson(chromeOptions).contains(CHROME_OPTIONS_VALUE));
     }
 
     private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {

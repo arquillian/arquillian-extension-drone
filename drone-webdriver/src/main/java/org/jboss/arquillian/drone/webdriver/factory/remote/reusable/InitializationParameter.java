@@ -25,7 +25,7 @@ public class InitializationParameter implements Serializable {
 
     private final URL url;
 
-    private final Capabilities desiredCapabilities;
+    private final ReusableCapabilities desiredCapabilities;
 
     public InitializationParameter(URL url, Capabilities desiredCapabilities) {
         this.url = url;
@@ -38,7 +38,7 @@ public class InitializationParameter implements Serializable {
     }
 
     public Capabilities getDesiredCapabilities() {
-        return desiredCapabilities;
+        return desiredCapabilities.getDesiredCapabilities();
     }
 
     @Override

@@ -26,7 +26,7 @@ public class ArqDescPropertyUtil {
     }
 
     public static String getSeleniumServerVersionProperty(String extensionName) {
-        return getProperty("seleniumServerVersion", extensionName, "3.5.3");
+        return getProperty("seleniumServerVersion", extensionName, "3.7.0");
     }
 
     public static String getBrowserProperty(String extensionName) {

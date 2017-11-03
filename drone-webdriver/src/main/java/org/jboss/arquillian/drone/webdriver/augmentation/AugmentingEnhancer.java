@@ -25,10 +25,10 @@ import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.AugmenterProvider;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.ExecuteMethod;
 import org.openqa.selenium.remote.InterfaceImplementation;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -126,7 +126,7 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
             Capabilities capabilities = enhancedInstance.getCapabilities();
 
             if (capabilities != null) {
-                ((DesiredCapabilities) enhancedInstance.getCapabilities()).setCapability(DRONE_AUGMENTED, Boolean.FALSE);
+                ((MutableCapabilities) enhancedInstance.getCapabilities()).setCapability(DRONE_AUGMENTED, Boolean.FALSE);
             }
 
             return original;

@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
@@ -132,16 +133,12 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
 
         String printChromeOptions = (String) capabilities.getCapability(CHROME_PRINT_OPTIONS);
         if (Validate.nonEmpty(printChromeOptions) && Boolean.valueOf(printChromeOptions.trim())) {
-            try {
-                StringBuffer chromeOptionsLog = new StringBuffer("\n");
-                chromeOptionsLog.append("======== Chrome options =========").append("\n");
-                chromeOptionsLog.append(chromeOptions.toJson().toString()).append("\n");
-                chromeOptionsLog.append("===== End of Chrome options =====");
-                log.info(chromeOptionsLog.toString());
-            } catch (IOException e) {
-                log.warning("Something bad happened during printing chrome options: ");
-                log.warning(e.getMessage());
-            }
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            StringBuffer chromeOptionsLog = new StringBuffer("\n");
+            chromeOptionsLog.append("======== Chrome options =========").append("\n");
+            chromeOptionsLog.append(gson.toJson(chromeOptions)).append("\n");
+            chromeOptionsLog.append("===== End of Chrome options =====");
+            log.info(chromeOptionsLog.toString());
         }
     }
 

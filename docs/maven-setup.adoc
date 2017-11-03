@@ -74,7 +74,7 @@ Example of Selenium BOM for Selenium 3.0.0-beta3
         <dependency>
             <groupId>org.jboss.arquillian.selenium</groupId>
             <artifactId>selenium-bom</artifactId>
-            <version>3.5.3</version>
+            <version>3.7.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
