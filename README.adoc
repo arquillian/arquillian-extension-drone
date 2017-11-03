@@ -70,51 +70,22 @@ Prerequisites:
 
 === Running test suite
 
-You can use Arquillian Spacelift to gather all the required binaries. Just run:
+To run only unit tests:
 
 [source]
 ----
-./gradlew test
+mvn clean test
 ----
 
-This will run tests using multiple Arquillian Core versions and _phantomjs_ browser. In case you want to modify 
-the behavior, you can specify +-ParquillianCoreVersions=1.1.12+ and +-Pbrowser=phantomjs,firefox+ for instance.
-This will run integration test using a cross product of Arquillian Core and browsers defined.
 
-WARNING: Running testsuite this way will modify all _pom.xml_ files in the project. Make sure you have committed all
-your changes there first.
+To run the whole test suite including functional tests using `phantomjs` browser.
 
-==== Manual way to run test suite
+[source]
+----
+mvn clean verify -Dbrowser=phantomjs
+----
 
-Prerequisites:
-
-* running Selenium Server at port 4444, with paths to binaries required for remote browser execution. If you don't do it by yourself, Drone will run an instance of Selenium Server automatically. However in this case the server is started and stopped for each test class separately and only in a standalone mode with only one parameter `-port` that is taken from defined remoteAddress.
-+
-In case you want to specify other arguments to the selenium server, you can do so using the property,
-+
-`<property name="seleniumServerArgs">-debug -role hub -browserTimeout 1000</property>`
-+
-So, if you are fine with this automatic behavior you can skip this step, otherwise run your Selenium Server.
-
-* installed web browsers you want to test
-* you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in _drone-webdriver_ module. Alternatively, you can override properties with 
- +-Darq.extension.${extensionQualifier}.${propertyName}+
-
-Limitations:
-
-* reusable sessions are not supported by Edge browser therefore related tests are skipped
-
-In order to start Selenium Server, execute:
-
-[source,bash]
-java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.7.0.jar
-
-Once Selenium Server is running, you can run the tests by:
-
-[source,bash]
-mvn clean verify -Dbrowser=${browser}
-
-Where browser has the same value as browser property from _arquillian.xml_ you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, edge, chromeHeadless etc.)
+In case you want to modify the browser, you can specify `-Dbrowser=firefox` for instance. This will run the test suite using firefox defined. Similarly, you can use Chrome, Safari, etc...
 
 TIP: VNC server instance can be used to let all the browsers pop out in separate display. Just prepend both commands with +DISPLAY=:${display.number}+
 
