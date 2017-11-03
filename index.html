@@ -2388,87 +2388,23 @@ arbitrary web testing framework.
 <div class="sect2">
 <h3 id="_running_test_suite"><a class="anchor" href="#_running_test_suite"></a>11.1. Running test suite</h3>
 <div class="paragraph">
-<p>You can use Arquillian Spacelift to gather all the required binaries. Just run:</p>
+<p>To run only unit tests:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">./gradlew test</code></pre>
+<pre class="CodeRay highlight"><code data-lang="java">mvn clean test</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This will run tests using multiple Arquillian Core versions and <em>phantomjs</em> browser. In case you want to modify
-the behavior, you can specify -ParquillianCoreVersions=1.1.12 and -Pbrowser=phantomjs,firefox for instance.
-This will run integration test using a cross product of Arquillian Core and browsers defined.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Running testsuite this way will modify all <em>pom.xml</em> files in the project. Make sure you have committed all
-your changes there first.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_manual_way_to_run_test_suite"><a class="anchor" href="#_manual_way_to_run_test_suite"></a>11.1.1. Manual way to run test suite</h4>
-<div class="paragraph">
-<p>Prerequisites:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>running Selenium Server at port 4444, with paths to binaries required for remote browser execution. If you don&#8217;t do it by yourself, Drone will run an instance of Selenium Server automatically. However in this case the server is started and stopped for each test class separately and only in a standalone mode with only one parameter <code>-port</code> that is taken from defined remoteAddress.</p>
-<div class="paragraph">
-<p>In case you want to specify other arguments to the selenium server, you can do so using the property,</p>
-</div>
-<div class="paragraph">
-<p><code>&lt;property name="seleniumServerArgs"&gt;-debug -role hub -browserTimeout 1000&lt;/property&gt;</code></p>
-</div>
-<div class="paragraph">
-<p>So, if you are fine with this automatic behavior you can skip this step, otherwise run your Selenium Server.</p>
-</div>
-</li>
-<li>
-<p>installed web browsers you want to test</p>
-</li>
-<li>
-<p>you might want to align your layout to be the same as paths to binaries specified within arquillian.xml in <em>drone-webdriver</em> module. Alternatively, you can override properties with
--Darq.extension.${extensionQualifier}.${propertyName}</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Limitations:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>reusable sessions are not supported by Edge browser therefore related tests are skipped</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>In order to start Selenium Server, execute:</p>
+<p>To run the whole test suite including functional tests using <code>phantomjs</code> browser.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">java -Dphantomjs.binary.path=/path/to/phantomjs.binary -Dwebdriver.ie.driver=/path/to/iedriverserver.binary -jar selenium-server-standalone-3.7.0.jar</code></pre>
+<pre class="CodeRay highlight"><code data-lang="java">mvn clean verify -Dbrowser=phantomjs</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Once Selenium Server is running, you can run the tests by:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">mvn clean verify -Dbrowser=${browser}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Where browser has the same value as browser property from <em>arquillian.xml</em> you want to tests (e.g. firefox, chrome, phantomjs, internetExplorer, opera, edge, chromeHeadless etc.)</p>
+<p>In case you want to modify the browser, you can specify <code>-Dbrowser=firefox</code> for instance. This will run the test suite using firefox defined. Similarly, you can use Chrome, Safari, etc&#8230;&#8203;</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -2481,7 +2417,6 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -2503,7 +2438,7 @@ VNC server instance can be used to let all the browsers pop out in separate disp
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-03 12:45:28 UTC
+Last updated 2017-11-03 13:00:08 UTC
 </div>
 </div>
 </body>
