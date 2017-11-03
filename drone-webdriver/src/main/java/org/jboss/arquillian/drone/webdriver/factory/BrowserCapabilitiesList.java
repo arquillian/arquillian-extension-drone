@@ -139,7 +139,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.opera().asMap();
+            return DesiredCapabilities.operaBlink().asMap();
         }
 
         @Override
