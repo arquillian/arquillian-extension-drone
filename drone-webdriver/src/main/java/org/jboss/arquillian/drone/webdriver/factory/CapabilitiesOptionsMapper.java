@@ -105,9 +105,14 @@ public class CapabilitiesOptionsMapper {
 
         for (Map.Entry<String, JsonElement> entry : entries) {
             String key = entry.getKey();
-            Map<String, String> values = GSON.fromJson(entry.getValue(), type);
+            Object value = null;
+            if (entry.getValue().isJsonObject()) {
+                value = GSON.fromJson(entry.getValue(), type);
 
-            method.invoke(object, key, values);
+            } else if (entry.getValue().isJsonPrimitive()) {
+                value = entry.getValue().getAsString();
+            }
+            method.invoke(object, key, value);
         }
     }
 
