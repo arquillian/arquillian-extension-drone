@@ -93,4 +93,23 @@ public class CapabilitiesChromeOptionsMapperTest {
 
         Assertions.assertThat(expectedChromeOptions).isEqualToComparingFieldByFieldRecursively(chromeOptions);
     }
+
+    // reproducer for https://github.com/arquillian/arquillian-extension-drone/issues/114
+    @Test
+    public void testParseChromeOptionsWithSimpleJsonAsExperimentalOption() throws IOException {
+        // given
+        ChromeOptions chromeOptions = new ChromeOptions();
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+
+        String experimentalOptionJson = "{\"useAutomationExtension\": \"false\"}";
+        desiredCapabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
+
+        // when
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, desiredCapabilities, "chrome");
+
+        //then
+        ChromeOptions expectedChromeOptions = new ChromeOptions();
+        expectedChromeOptions.setExperimentalOption("useAutomationExtension", "false");
+        Assertions.assertThat(chromeOptions).isEqualToComparingFieldByFieldRecursively(expectedChromeOptions);
+    }
 }
