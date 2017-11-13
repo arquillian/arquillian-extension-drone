@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.internal.LazilyParsedNumber;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +104,8 @@ public class CapabilitiesChromeOptionsMapperTest {
 
         String experimentalOptionJson = "{" +
             "\"booleanOption\": false," +
-            "\"stringOption\": \"hello\"" +
+            "\"stringOption\": \"hello\"," +
+            "\"numberOption\": 12345" +
             "}";
         desiredCapabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
 
@@ -114,6 +116,7 @@ public class CapabilitiesChromeOptionsMapperTest {
         ChromeOptions expectedChromeOptions = new ChromeOptions();
         expectedChromeOptions.setExperimentalOption("booleanOption", false);
         expectedChromeOptions.setExperimentalOption("stringOption", "hello");
+        expectedChromeOptions.setExperimentalOption("numberOption", new LazilyParsedNumber("12345"));
         Assertions.assertThat(chromeOptions).isEqualToComparingFieldByFieldRecursively(expectedChromeOptions);
     }
 }
