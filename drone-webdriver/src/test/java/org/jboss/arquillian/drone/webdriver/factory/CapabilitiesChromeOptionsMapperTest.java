@@ -101,7 +101,10 @@ public class CapabilitiesChromeOptionsMapperTest {
         ChromeOptions chromeOptions = new ChromeOptions();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-        String experimentalOptionJson = "{\"useAutomationExtension\": \"false\"}";
+        String experimentalOptionJson = "{" +
+            "\"booleanOption\": false," +
+            "\"stringOption\": \"hello\"" +
+            "}";
         desiredCapabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
 
         // when
@@ -109,7 +112,8 @@ public class CapabilitiesChromeOptionsMapperTest {
 
         //then
         ChromeOptions expectedChromeOptions = new ChromeOptions();
-        expectedChromeOptions.setExperimentalOption("useAutomationExtension", "false");
+        expectedChromeOptions.setExperimentalOption("booleanOption", false);
+        expectedChromeOptions.setExperimentalOption("stringOption", "hello");
         Assertions.assertThat(chromeOptions).isEqualToComparingFieldByFieldRecursively(expectedChromeOptions);
     }
 }

@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -110,10 +111,21 @@ public class CapabilitiesOptionsMapper {
                 value = GSON.fromJson(entry.getValue(), type);
 
             } else if (entry.getValue().isJsonPrimitive()) {
-                value = entry.getValue().getAsString();
+                value = convertJsonPrimitive2Java((JsonPrimitive) entry.getValue());
             }
             method.invoke(object, key, value);
         }
+    }
+
+    private static Object convertJsonPrimitive2Java(JsonPrimitive primitive) {
+        if (primitive.isBoolean()) {
+            return primitive.getAsBoolean();
+        } else if (primitive.isNumber()) {
+            return primitive.getAsNumber();
+        } else if (primitive.isString()) {
+            return primitive.getAsString();
+        }
+        throw new RuntimeException("Unhandled json primitive " + primitive);
     }
 
     private static boolean shouldContainDictionaries(Method method) {
