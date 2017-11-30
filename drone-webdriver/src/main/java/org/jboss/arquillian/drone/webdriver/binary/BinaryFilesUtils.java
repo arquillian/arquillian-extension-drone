@@ -41,7 +41,7 @@ public class BinaryFilesUtils {
         if (dir == null) {
             dir = UUID.randomUUID().toString();
         }
-        File targetDir = new File(DRONE_TARGET_DIRECTORY + File.separator + dir);
+        File targetDir = DRONE_TARGET_DIRECTORY.resolve(dir).toFile();
 
         synchronized (log) {
             if (!targetDir.exists() || targetDir.listFiles().length == 0) {
@@ -61,7 +61,7 @@ public class BinaryFilesUtils {
                         "The file " + toExtract + " is not compressed by a format that is supported by Drone. "
                             + "Drone supported formats are .zip, .tar.gz, .tar.bz2. The file will be only copied");
                     targetDir.mkdirs();
-                    Files.copy(toExtract.toPath(), new File(targetDir + File.separator + toExtract.getName()).toPath(),
+                    Files.copy(toExtract.toPath(), targetDir.toPath().resolve(toExtract.getName()),
                         StandardCopyOption.REPLACE_EXISTING);
                 }
             }

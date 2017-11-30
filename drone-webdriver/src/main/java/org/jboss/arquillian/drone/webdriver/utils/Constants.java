@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.drone.webdriver.utils;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  *
@@ -39,12 +40,10 @@ public class Constants {
     public static final String SAFARI_DRIVER = "org.openqa.selenium.safari.SafariDriver";
     public static final String PHANTOMJS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
 
-    public static final String ARQUILLIAN_DRONE_CACHE_DIRECTORY =
-        System.getProperty("user.home") + File.separator
-            + ".arquillian" + File.separator
-            + "drone" + File.separator;
+    public static final Path ARQUILLIAN_DRONE_CACHE_DIRECTORY =
+        Paths.get(System.getProperty("user.home"), ".arquillian", "drone");
 
-    public static final String DRONE_TARGET_DIRECTORY =
-        "target" + File.separator + "drone" + File.separator;
+    public static final Path DRONE_TARGET_DIRECTORY =
+        Paths.get(System.getProperty("user.dir"), "target" , "drone");
 }
 

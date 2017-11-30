@@ -17,7 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,15 +28,18 @@ public class GitHubLastUpdateCache {
 
     private static final String ASSET_PROPERTY = "asset";
     private static final String LAST_MODIFIED_PROPERTY = "lastModified";
-    private static final File DEFAULT_CACHE_DIRECTORY =
-        new File(ARQUILLIAN_DRONE_CACHE_DIRECTORY + File.separator + "gh_cache" + File.separator);
+    private static final Path DEFAULT_CACHE_DIRECTORY = ARQUILLIAN_DRONE_CACHE_DIRECTORY.resolve("gh_cache");
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>() {
     }.getType(), new ZonedDateTimeConverter()).create();
-    private final File cacheDirectory;
+    private final Path cacheDirectory;
+
+    public GitHubLastUpdateCache(final Path cacheDirectory) {
+        this.cacheDirectory = createCacheDirectory(cacheDirectory.toFile()).toPath();
+    }
 
     public GitHubLastUpdateCache(final File cacheDirectory) {
-        this.cacheDirectory = createCacheDirectory(cacheDirectory);
+        this.cacheDirectory = createCacheDirectory(cacheDirectory).toPath();
     }
 
     public GitHubLastUpdateCache() {
@@ -71,11 +74,11 @@ public class GitHubLastUpdateCache {
     }
 
     public boolean cacheFileExists(String uniqueKey){
-        return Files.exists(Paths.get(createCachedFilePath(uniqueKey)));
+        return Files.exists(createCachedFilePath(uniqueKey));
     }
 
     public <T> void store(T asset, String uniqueKey, ZonedDateTime dateTime) {
-        final String cachedFilePath = createCachedFilePath(uniqueKey);
+        final File cachedFilePath = createCachedFilePath(uniqueKey).toFile();
         final JsonObject jsonObject = combineAsJson(asset, dateTime);
         try (FileOutputStream fileOutputStream = new FileOutputStream(cachedFilePath, false)) {
             fileOutputStream.write(jsonObject.toString().getBytes());
@@ -84,12 +87,12 @@ public class GitHubLastUpdateCache {
         }
     }
 
-    private String createCachedFilePath(String uniqueKey) {
-        return cacheDirectory.getAbsolutePath() + "/gh.cache." + uniqueKey + ".json";
+    private Path createCachedFilePath(String uniqueKey) {
+        return cacheDirectory.toAbsolutePath().resolve("gh.cache." + uniqueKey + ".json");
     }
 
     private JsonObject deserializeCachedFile(String uniqueKey) {
-        final String cachedFilePath = createCachedFilePath(uniqueKey);
+        final File cachedFilePath = createCachedFilePath(uniqueKey).toFile();
         try (FileReader reader = new FileReader(cachedFilePath)) {
             return gson.fromJson(reader, JsonObject.class);
         } catch (IOException e) {

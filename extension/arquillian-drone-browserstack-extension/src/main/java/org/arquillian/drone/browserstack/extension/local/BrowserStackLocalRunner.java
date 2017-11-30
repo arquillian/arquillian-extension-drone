@@ -19,6 +19,9 @@ package org.arquillian.drone.browserstack.extension.local;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,10 +46,10 @@ public class BrowserStackLocalRunner {
 
     private static BrowserStackLocalRunner browserStackLocalRunner = null;
 
-    private final File browserStackLocalDirectory = new File("target" + File.separator + "browserstacklocal");
-    private final File browserStackLocalFile =
-        new File(browserStackLocalDirectory.getPath() + File.separator + "BrowserStackLocal"
-            + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+    private final Path browserStackLocalDirectory =
+        Paths.get(System.getProperty("user.dir"), "target", "browserstacklocal");
+    private final Path browserStackLocalFile =
+        browserStackLocalDirectory.resolve("BrowserStackLocal" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
     private final String basicUrl = "https://www.browserstack.com/browserstack-local/";
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -88,12 +91,12 @@ public class BrowserStackLocalRunner {
             return;
         }
         if (Utils.isNullOrEmpty(localBinary)) {
-            if (!browserStackLocalFile.exists()) {
+            if (!Files.exists(browserStackLocalFile)) {
                 prepareBrowserStackLocal();
             }
             runBrowserStackLocal(browserStackLocalFile, accessKey, additionalArgs);
         } else {
-            runBrowserStackLocal(new File(localBinary), accessKey, additionalArgs);
+            runBrowserStackLocal(Paths.get(localBinary), accessKey, additionalArgs);
         }
     }
 
@@ -110,10 +113,10 @@ public class BrowserStackLocalRunner {
      * @throws BrowserStackLocalException
      *     when something bad happens during running BrowserStackLocal binary
      */
-    private void runBrowserStackLocal(File binaryFile, String accessKey, String additionalArgs)
+    private void runBrowserStackLocal(Path binaryFile, String accessKey, String additionalArgs)
         throws BrowserStackLocalException {
         List<String> args = new ArrayList<String>();
-        args.add(binaryFile.getAbsolutePath());
+        args.add(binaryFile.toAbsolutePath().toString());
         args.add(accessKey);
         if (!Utils.isNullOrEmpty(additionalArgs)) {
             args.addAll(Arrays.asList(additionalArgs.split(" ")));
@@ -138,27 +141,26 @@ public class BrowserStackLocalRunner {
      */
     private void prepareBrowserStackLocal() {
         String platformBinaryNameUrl = getPlatformBinaryNameUrl();
-        File browserStackLocalZipFile =
-            new File(browserStackLocalDirectory.getPath() + File.separator + platformBinaryNameUrl);
+        File browserStackLocalZipFile = browserStackLocalDirectory.resolve(platformBinaryNameUrl).toFile();
         String url = basicUrl + platformBinaryNameUrl;
 
         log.info("Creating directory: " + browserStackLocalDirectory);
-        browserStackLocalDirectory.mkdir();
+        browserStackLocalDirectory.toFile().mkdir();
 
-        log.info("downloading zip file from: " + url + " to " + browserStackLocalZipFile.getPath());
+        log.info("downloading zip file from: " + url + " to " + browserStackLocalZipFile);
         Spacelift.task(DownloadTool.class)
             .from(url)
-            .to(browserStackLocalZipFile.getPath())
+            .to(browserStackLocalZipFile)
             .execute().await();
 
-        log.info("extracting zip file: " + browserStackLocalZipFile + " to " + browserStackLocalDirectory.getPath());
+        log.info("extracting zip file: " + browserStackLocalZipFile + " to " + browserStackLocalDirectory);
         Spacelift.task(browserStackLocalZipFile, UnzipTool.class)
-            .toDir(browserStackLocalDirectory.getPath())
+            .toDir(browserStackLocalDirectory.toFile())
             .execute().await();
 
-        log.info("marking binary file: " + browserStackLocalFile.getPath() + " as executable");
+        log.info("marking binary file: " + browserStackLocalFile + " as executable");
         try {
-            browserStackLocalFile.setExecutable(true);
+            browserStackLocalFile.toFile().setExecutable(true);
         } catch (SecurityException se) {
             log.severe("The downloaded BrowserStackLocal binary: " + browserStackLocalFile
                 + " could not be set as executable. This may cause additional problems.");
