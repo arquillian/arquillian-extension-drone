@@ -36,7 +36,7 @@
 
   <properties>
     <!-- Versioning -->
-    <version.arquillian.core>1.1.13.Final</version.arquillian.core>
+    <version.arquillian.core>1.1.15.Final</version.arquillian.core>
     <version.selenium>3.7.1</version.selenium>
     <version.htmlunit.driver>2.27</version.htmlunit.driver>
     <phantomjs.driver.version>1.4.3</phantomjs.driver.version>
