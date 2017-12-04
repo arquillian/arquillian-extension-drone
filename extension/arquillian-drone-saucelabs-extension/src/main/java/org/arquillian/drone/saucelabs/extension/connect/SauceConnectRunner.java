@@ -19,6 +19,9 @@ package org.arquillian.drone.saucelabs.extension.connect;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,9 +50,9 @@ public class SauceConnectRunner {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-    private final File sauceConnectDirectory = new File("target" + File.separator + "sauceconnect");
-    private final File sauceConnectFile = new File(
-        sauceConnectDirectory.getPath() + File.separator + "sc/bin/sc" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+    private final Path sauceConnectDirectory = Paths.get(System.getProperty("user.dir"), "target", "sauceconnect");
+    private final Path sauceConnectFile =
+        sauceConnectDirectory.resolve("sc").resolve("bin").resolve("sc" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
     private Process sauceConnectBinary = null;
 
     private SauceConnectRunner() {
@@ -89,12 +92,12 @@ public class SauceConnectRunner {
             return;
         }
         if (Utils.isNullOrEmpty(localBinary)) {
-            if (!sauceConnectFile.exists()) {
+            if (!Files.exists(sauceConnectFile)) {
                 prepareSauceConnect();
             }
             runSauceConnect(sauceConnectFile, username, accessKey, additionalArgs);
         } else {
-            runSauceConnect(new File(localBinary), username, accessKey, additionalArgs);
+            runSauceConnect(Paths.get(localBinary), username, accessKey, additionalArgs);
         }
     }
 
@@ -113,10 +116,10 @@ public class SauceConnectRunner {
      * @throws SauceConnectException
      *     when something bad happens during running BrowserStackLocal binary
      */
-    private void runSauceConnect(File binaryFile, String username, String accessKey, String additionalArgs)
+    private void runSauceConnect(Path binaryFile, String username, String accessKey, String additionalArgs)
         throws SauceConnectException {
         List<String> args = new ArrayList<String>();
-        args.add(binaryFile.getAbsolutePath());
+        args.add(binaryFile.toAbsolutePath().toString());
         args.add("-u");
         args.add(username);
         args.add("-k");
@@ -145,10 +148,10 @@ public class SauceConnectRunner {
     private void prepareSauceConnect() {
         String url = BinaryUrlUtils.getPlatformBinaryNameUrl();
         String archiveName = url.substring(url.lastIndexOf("/") + 1);
-        File sauceConnectArchiveFile = new File(sauceConnectDirectory.getPath() + File.separator + archiveName);
+        File sauceConnectArchiveFile = sauceConnectDirectory.resolve(archiveName).toFile();
 
         log.info("Creating directory: " + sauceConnectDirectory);
-        sauceConnectDirectory.mkdir();
+        sauceConnectDirectory.toFile().mkdir();
 
         log.info("downloading zip file from: " + url + " into " + sauceConnectArchiveFile.getPath());
         Spacelift.task(DownloadTool.class)
@@ -157,27 +160,27 @@ public class SauceConnectRunner {
             .execute().await();
 
         if (archiveName.endsWith(".tar.gz")) {
-            log.info("extracting tar file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory.getPath());
+            log.info("extracting tar file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory);
             Spacelift.task(sauceConnectArchiveFile, UntarTool.class)
-                .toDir(sauceConnectDirectory.getPath())
+                .toDir(sauceConnectDirectory.toString())
                 .execute().await();
         } else {
-            log.info("extracting zip file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory.getPath());
+            log.info("extracting zip file: " + sauceConnectArchiveFile + " into " + sauceConnectDirectory);
             Spacelift.task(sauceConnectArchiveFile, UnzipTool.class)
-                .toDir(sauceConnectDirectory.getPath())
+                .toDir(sauceConnectDirectory.toString())
                 .execute().await();
         }
 
-        String fromDirectory =
-            sauceConnectDirectory + File.separator + archiveName.replace(".zip", "").replace(".tar.gz", "");
-        String toDirectory = sauceConnectDirectory + File.separator + "sc";
+        File fromDirectory =
+            sauceConnectDirectory.resolve(archiveName.replace(".zip", "").replace(".tar.gz", "")).toFile();
+        File toDirectory = sauceConnectDirectory.resolve("sc").toFile();
 
         log.info("renaming extracted directory: " + fromDirectory + " to: " + toDirectory);
-        new File(fromDirectory).renameTo(new File(toDirectory));
+        fromDirectory.renameTo(toDirectory);
 
-        log.info("marking binary file: " + sauceConnectFile.getPath() + " as executable");
+        log.info("marking binary file: " + sauceConnectFile + " as executable");
         try {
-            sauceConnectFile.setExecutable(true);
+            sauceConnectFile.toFile().setExecutable(true);
         } catch (SecurityException se) {
             log.severe("The downloaded SauceConnect binary: " + sauceConnectFile
                 + " could not be set as executable. This may cause additional problems.");

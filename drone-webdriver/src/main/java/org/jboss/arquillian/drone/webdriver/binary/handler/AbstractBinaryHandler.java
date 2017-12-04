@@ -1,5 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.nio.file.Path;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -267,10 +268,9 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
     }
 
     protected File createAndGetCacheDirectory(String subdirectory) {
-        String dirPath = Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY
-            + getArquillianCacheSubdirectory()
-            + (subdirectory == null ? "" : File.separator + subdirectory);
-        File dir = new File(dirPath);
+        Path dirPath = Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY.resolve(getArquillianCacheSubdirectory())
+            .resolve(subdirectory == null ? "" : subdirectory);
+        File dir = dirPath.toFile();
         dir.mkdirs();
         return dir;
     }

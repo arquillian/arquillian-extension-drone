@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
@@ -12,7 +13,6 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.io.FileUtils;
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.process.CommandBuilder;
 import org.arquillian.spacelift.task.os.CommandTool;
@@ -24,13 +24,13 @@ import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.rules.TemporaryFolder;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,37 +42,46 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_
  */
 public class BinaryHandlerTestCase {
 
-    private static final String originalCacheDirectory = ARQUILLIAN_DRONE_CACHE_DIRECTORY;
-    private static final String originalTargetDirectory = DRONE_TARGET_DIRECTORY;
-    private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;
-    private static String TEST_DRONE_CACHE_DIRECTORY = TEST_DRONE_TARGET_DIRECTORY + "cache" + File.separator;
+    private static final Path originalCacheDirectory = ARQUILLIAN_DRONE_CACHE_DIRECTORY;
+    private static final Path originalTargetDirectory = DRONE_TARGET_DIRECTORY;
 
-    private StreamHandler customLogHandler;
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Rule
     public final SystemOutRule outContent = new SystemOutRule().enableLog();
 
-    @BeforeClass
-    public static void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
-        setTargetDirectory(TEST_DRONE_TARGET_DIRECTORY);
-        setCacheDirectory(TEST_DRONE_CACHE_DIRECTORY);
+    @Rule
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    private Path testDroneCacheDir;
+    private StreamHandler customLogHandler;
+
+    @Before
+    public void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException, IOException {
+        setTargetDirectory(temporaryFolder.newFolder("drone-test").toPath());
+        testDroneCacheDir = temporaryFolder.newFolder("cache").toPath();
+        setCacheDirectory(testDroneCacheDir);
     }
 
-    @AfterClass
-    public static void setOriginalCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
+    @After
+    public void setOriginalCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
         setTargetDirectory(originalTargetDirectory);
         setCacheDirectory(originalCacheDirectory);
+        if (customLogHandler != null) {
+            Logger.getLogger("").removeHandler(customLogHandler);
+        }
     }
 
-    private static void setCacheDirectory(String dirToSet) throws NoSuchFieldException, IllegalAccessException {
+    private void setCacheDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException {
         setConstantProperty("ARQUILLIAN_DRONE_CACHE_DIRECTORY", dirToSet);
     }
 
-    private static void setTargetDirectory(String dirToSet) throws NoSuchFieldException, IllegalAccessException {
+    private void setTargetDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException {
         setConstantProperty("DRONE_TARGET_DIRECTORY", dirToSet);
     }
 
-    private static void setConstantProperty(String propertyVariable, String value)
+    private void setConstantProperty(String propertyVariable, Path value)
         throws NoSuchFieldException, IllegalAccessException {
         Field constantField = Constants.class.getField(propertyVariable);
         constantField.setAccessible(true);
@@ -83,28 +92,6 @@ public class BinaryHandlerTestCase {
         modifiersField.setInt(constantField, constantField.getModifiers() & ~Modifier.FINAL);
 
         constantField.set(null, value);
-    }
-
-    @Before
-    public void cleanupBefore() throws IOException {
-        cleanUp();
-    }
-
-    @After
-    public void cleanupAfter() throws IOException {
-        cleanUp();
-        if (customLogHandler != null){
-            Logger.getLogger("").removeHandler(customLogHandler);
-        }
-    }
-
-    private void cleanUp() throws IOException {
-        File targetDroneDir = new File(TEST_DRONE_TARGET_DIRECTORY);
-        if (targetDroneDir.exists()) {
-            FileUtils.deleteDirectory(targetDroneDir);
-        }
-        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY, "");
-        System.setProperty(LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY, "");
     }
 
     @Test
@@ -147,7 +134,7 @@ public class BinaryHandlerTestCase {
         // the 1.0.0.Final release should be downloaded to target/drone/downloaded directory
         verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(
             capabilities,
-            Downloader.DRONE_TARGET_DOWNLOADED_DIRECTORY + LocalBinarySource.FIRST_FILE.getName(),
+            Downloader.DRONE_TARGET_DOWNLOADED_DIRECTORY.resolve(LocalBinarySource.FIRST_FILE.getName()),
             getExtractedPath(LocalBinarySource.FIRST_FILE),
             LocalBinarySource.ECHO_FIRST_SCRIPT,
             false);
@@ -309,26 +296,27 @@ public class BinaryHandlerTestCase {
     }
 
     private void verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(DesiredCapabilities capabilities,
-        String downloaded, String extracted, String echo, boolean latest) throws Exception {
+        Path downloaded, Path extracted, String echo, boolean latest) throws Exception {
         LocalBinaryHandler localBinaryHandler = new LocalBinaryHandler(capabilities);
 
         File resultingFile = new File(localBinaryHandler.checkAndSetBinary(true));
 
         // verify downloaded file - should be only one
-        File zip = new File(downloaded);
+        File zip = downloaded.toFile();
         assertThat(zip).exists().isFile();
         assertThat(zip.getParentFile().listFiles()).hasSize(1);
         LocalBinarySource.assertThatCorrectFileWasDownloaded(latest, zip);
 
-        assertThat(resultingFile).isEqualTo(new File(extracted));
+        assertThat(resultingFile).isEqualTo(extracted.toFile());
         assertThat(resultingFile.getParentFile().listFiles()).hasSize(1);
 
         Validate.isExecutable(resultingFile.getAbsolutePath(),
             "The file has to be an executable file, " + resultingFile);
-        assertThat(System.getProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY)).isEqualTo(extracted);
+        assertThat(System.getProperty(LocalBinaryHandler.LOCAL_SOURCE_SYSTEM_BINARY_PROPERTY)).isEqualTo(
+            extracted.toString());
 
         if (!PlatformUtils.isWindows()) {
-            runScriptAndCheck(extracted, echo);
+            runScriptAndCheck(extracted.toString(), echo);
         }
     }
 
@@ -345,14 +333,15 @@ public class BinaryHandlerTestCase {
         assertThat(outContent.getLog().trim()).endsWith("[Local Source] " + expected);
     }
 
-    private String getDownloadedPath(String version, String fileName) {
-        return TEST_DRONE_CACHE_DIRECTORY + File.separator + LocalBinaryHandler.LOCAL_SOURCE_CACHE_SUBDIR
-            + File.separator + version + File.separator
-            + fileName;
+    private Path getDownloadedPath(String version, String fileName) {
+        return testDroneCacheDir.resolve(LocalBinaryHandler.LOCAL_SOURCE_CACHE_SUBDIR)
+            .resolve(version)
+            .resolve(fileName)
+            .toAbsolutePath();
     }
 
-    private String getExtractedPath(File originalFile) {
-        return Constants.DRONE_TARGET_DIRECTORY + BinaryFilesUtils.getMd5hash(originalFile) + File.separator
-            + LocalBinarySource.FILE_NAME;
+    private Path getExtractedPath(File originalFile) {
+        return Constants.DRONE_TARGET_DIRECTORY.resolve(BinaryFilesUtils.getMd5hash(originalFile))
+            .resolve(LocalBinarySource.FILE_NAME);
     }
 }
