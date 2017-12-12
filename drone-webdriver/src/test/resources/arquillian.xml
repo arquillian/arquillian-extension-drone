@@ -7,7 +7,7 @@
     <property name="browser">${browser:htmlunit}</property>
     <property name="htmlUnitWebClientOptions">Timeout=300; throwExceptionOnScriptError=false</property>
 
-    <property name="seleniumServerVersion">${version.selenium:3.8.0}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.8.1}</property>
 
     <property name="dimensions">1300x500</property>
 
@@ -24,7 +24,7 @@
     <!-- browser is set externally -->
     <property name="browser">${browser:htmlunit}</property>
 
-    <property name="seleniumServerVersion">${version.selenium:3.8.0}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.8.1}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     <property name="remoteReusable">true</property>
 
@@ -43,7 +43,7 @@
     <!-- browser is set externally -->
     <property name="browser">${browser:htmlunit}</property>
 
-    <property name="seleniumServerVersion">${version.selenium:3.8.0}</property>
+    <property name="seleniumServerVersion">${version.selenium:3.8.1}</property>
     <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
     <property name="remoteReusable">true</property>
 

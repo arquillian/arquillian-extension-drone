@@ -114,7 +114,7 @@ public class SeleniumServerExecutor {
             return new InternetExplorerBinaryHandler(capabilities);
         } else if (new BrowserCapabilitiesList.PhantomJS().getReadableName().equals(browser)) {
             log.warning("Make sure that you are using Selenium server compatible with PhantomJS."
-                + " PhantomJS is not supported in remote webdriver since Selenium 3.8.0 - see this commit for reference"
+                + " PhantomJS is not supported in remote webdriver since Selenium 3.8.1 - see this commit for reference"
                 + " https://github.com/SeleniumHQ/selenium/commit/de5c81fd86a3228195d2f6d5d9526bbc4b3c3534"
                 + " To use Selenium server 3.7.1 add <property name=\"seleniumServerVersion\">3.7.1</property> to your arquillian.xml file."
                 + " You can also execute Selenium server on command line by adding PhantomJS driver jar on classpath.");
