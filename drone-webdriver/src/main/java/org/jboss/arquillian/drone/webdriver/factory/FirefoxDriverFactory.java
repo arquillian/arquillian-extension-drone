@@ -71,9 +71,9 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     @Override
     public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
 
-        Capabilities capabilities = getCapabilities(configuration, true);
+        FirefoxOptions capabilities = (FirefoxOptions) getCapabilities(configuration, true);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {FirefoxOptions.class},
             new Object[] {capabilities}, FirefoxDriver.class);
     }
 
@@ -107,9 +107,8 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        FirefoxOptions firefoxOptions = new FirefoxOptions(capabilities);
         CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
-        firefoxOptions.addCapabilities(capabilities);
 
         FirefoxProfile firefoxProfile = getFirefoxProfile(capabilities, performValidations);
         if (firefoxProfile != null) {
@@ -119,7 +118,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         // add user preferences from file
         addUserPreferencesFromFile(capabilities, firefoxOptions);
 
-        return firefoxOptions.toCapabilities();
+        return firefoxOptions;
     }
 
     private FirefoxProfile getFirefoxProfile(DesiredCapabilities capabilities, boolean performValidations) {
