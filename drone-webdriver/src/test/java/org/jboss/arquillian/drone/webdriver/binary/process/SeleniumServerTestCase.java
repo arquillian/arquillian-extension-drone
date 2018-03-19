@@ -51,11 +51,11 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     public void should_start_selenium_server_with_serverArgs_debug() throws Exception {
 
         final String browser = "chrome";
-        final String seleniumServerArgs = "-debug -role node";
+        final String seleniumServerArgs = "-debug -role node -browserTimeout 1000";
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, seleniumServerArgs));
 
-        verifyLogContainsRegex("^\\[Selenium server\\].+DEBUG - .+4444$");
+        verifyLogContainsRegex("^\\[Selenium server\\].+DEBUG");
     }
 
     @Test
@@ -65,8 +65,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
         fire(new StartSeleniumServer(seleniumServerBinary, browser, capabilities, url, null));
 
-        verifyLogContainsRegex("^\\[Selenium server\\].+ServerConnector.+5555.+$");
-        verifyLogContainsRegex("^\\[Selenium server\\].+Selenium Server is up and running$");
+        verifyLogContainsRegex("^\\[Selenium server.*\\].+Selenium Server is up and running");
     }
 
     @Test

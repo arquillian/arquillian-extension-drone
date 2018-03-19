@@ -242,7 +242,7 @@ as default UI timeouts.
 
 Selenium server is automatically started with the parameter reflecting browser that is used (path to the webdriver). For example, in case that the browser Firefox is used and with default address, then the Selenium Server instance would be started using a command:
 
-`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.8.1.jar -port 4444`
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.11.0.jar -port 4444`
 
 In case you would like to add some additional selenium server arguments to the command, you can use parameter `seleniumServerArgs` in your arquillian.xml file.
 For example, if you used these properties:
@@ -255,7 +255,7 @@ For example, if you used these properties:
 
 then the command used for starting Selenium Server instance would look like:
 
-`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.8.1.jar -port 4444 -debug true -role node -browserTimeout 1000`
+`java -Dwebdriver.gecko.driver=target/.../geckodriver -jar target/.../selenium-server-standalone-3.11.0.jar -port 4444 -debug true -role node -browserTimeout 1000`
 
 
 [[extended-configuration-configuring-qualifierd-drone-instances]]
