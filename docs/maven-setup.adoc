@@ -63,7 +63,7 @@ well.
 IMPORTANT: If you use `selenium-bom` make sure that it is specified
 before the `arquillian-drone-bom` (or also before other BOMs that manage
 Selenium version) to make the change effective. +
-Example of Selenium BOM for Selenium 3.8.1
+Example of Selenium BOM for Selenium 3.11.0
 
 [source,xml]
 ----
@@ -74,7 +74,7 @@ Example of Selenium BOM for Selenium 3.8.1
         <dependency>
             <groupId>org.jboss.arquillian.selenium</groupId>
             <artifactId>selenium-bom</artifactId>
-            <version>3.8.1</version>
+            <version>3.11.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
