@@ -73,11 +73,6 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-drone-selenium-server</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian.extension</groupId>
         <artifactId>arquillian-drone-webdriver</artifactId>
         <version>${project.version}</version>
       </dependency>
