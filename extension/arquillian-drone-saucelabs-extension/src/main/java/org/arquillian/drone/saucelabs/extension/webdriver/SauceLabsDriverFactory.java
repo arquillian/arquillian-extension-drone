@@ -101,8 +101,9 @@ public class SauceLabsDriverFactory implements
 
             if (isSetSauceConnectManaged) {
                 if (Utils.isNullOrEmpty(accessKey)) {
-                    username = url.substring(url.lastIndexOf("://") + 3, url.indexOf(":"));
-                    accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
+                    int protEndsAt = url.lastIndexOf("://") + 3;
+                    username = url.substring(protEndsAt, url.indexOf(":", protEndsAt));
+                    accessKey = url.substring(url.indexOf(":",protEndsAt) + 1, url.indexOf("@"));
                 }
 
                 String additionalArgs = (String) capabilities.getCapability(SAUCE_CONNECT_ARGS);
