@@ -96,13 +96,14 @@ public class SauceLabsDriverFactory implements
         }
 
         try {
-            URL sauceConnectUrl = new URL(url);
+            final URL sauceConnectUrl = new URL(url);
             boolean isSetSauceConnectManaged = capabilities.is(SAUCE_CONNECT_MANAGED);
 
             if (isSetSauceConnectManaged) {
-                if (Utils.isNullOrEmpty(accessKey)) {
-                    username = url.substring(url.lastIndexOf("://") + 3, url.indexOf(":"));
-                    accessKey = url.substring(url.lastIndexOf(":") + 1, url.indexOf("@"));
+                if (Utils.isNullOrEmpty(accessKey) && sauceConnectUrl.getUserInfo() != null) {
+                    final String[] userInfo = sauceConnectUrl.getUserInfo().trim().split(":", 2);
+                    username = userInfo[0];
+                    accessKey = userInfo[1];
                 }
 
                 String additionalArgs = (String) capabilities.getCapability(SAUCE_CONNECT_ARGS);
