@@ -16,6 +16,7 @@
     <property name="platform">OS X 10.9</property>
     <property name="version">40</property>
     <property name="sauce.connect.managed">true</property>
+    <property name="url">https://user:pass@@ondemand.saucelabs.com:80/wd/hub</property>
     <!--<property name="sauce.connect.args">&#45;&#45;logfile mylog &#45;&#45;shared-tunnel</property>&ndash;&gt;-->
     <!--<property name="sauce.connect.binary">/path/to/my/saucelabs/sc-4.3.13-linux/bin/sc</property>-->
   </extension>

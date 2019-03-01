@@ -103,7 +103,7 @@ public class SauceLabsDriverFactory implements
                 if (Utils.isNullOrEmpty(accessKey)) {
                     int protEndsAt = url.lastIndexOf("://") + 3;
                     username = url.substring(protEndsAt, url.indexOf(":", protEndsAt));
-                    accessKey = url.substring(url.indexOf(":",protEndsAt) + 1, url.indexOf("@"));
+                    accessKey = url.substring(url.indexOf(":", protEndsAt) + 1, url.indexOf("@"));
                 }
 
                 String additionalArgs = (String) capabilities.getCapability(SAUCE_CONNECT_ARGS);
