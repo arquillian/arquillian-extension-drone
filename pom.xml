@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>25</version>
+    <version>35</version>
     <relativePath />
   </parent>
 
@@ -44,10 +44,10 @@
 
     <!-- Test bits versions -->
     <version.junit>4.12</version.junit>
-    <version.assertj>3.6.2</version.assertj>
+    <version.assertj>3.13.2</version.assertj>
     <version.mockito>2.3.11</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
-    <version.hoverfly.java>0.8.1</version.hoverfly.java>
+    <version.hoverfly.java>0.12.1</version.hoverfly.java>
     <version.awaitility>3.0.0</version.awaitility>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
