@@ -16,15 +16,29 @@
  */
 package org.jboss.arquillian.drone.configuration;
 
+import java.util.Collections;
 import java.util.List;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.impl.extension.ConfigurationRegistrar;
+import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
+import org.jboss.arquillian.core.spi.Manager;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.drone.api.annotation.Default;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test for verification that Arquillian Core property parser is a proper replacement for legacy Drone property parser
@@ -32,6 +46,15 @@ import org.junit.Test;
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  */
 public class ArquillianCorePropertyParserEquivalenceTestCase extends AbstractTestTestBase {
+
+    @Override
+    protected void beforeStartManager(Manager manager) {
+        startContexts(manager);
+        final ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
+        Mockito.when(serviceLoader.all(ConfigurationPlaceholderResolver.class))
+            .thenReturn(Collections.emptyList());
+        bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
+    }
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
