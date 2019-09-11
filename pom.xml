@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>25</version>
+    <version>35</version>
     <relativePath />
   </parent>
 
@@ -36,19 +36,19 @@
 
   <properties>
     <!-- Versioning -->
-    <version.arquillian.core>1.1.15.Final</version.arquillian.core>
+    <version.arquillian.core>1.4.1.Final</version.arquillian.core>
     <version.selenium>3.11.0</version.selenium>
     <version.htmlunit.driver>2.28</version.htmlunit.driver>
-    <phantomjs.driver.version>1.4.3</phantomjs.driver.version>
+    <phantomjs.driver.version>1.4.4</phantomjs.driver.version>
     <version.appium.java.client>5.0.0-BETA9</version.appium.java.client>
 
     <!-- Test bits versions -->
     <version.junit>4.12</version.junit>
-    <version.assertj>3.6.2</version.assertj>
+    <version.assertj>3.13.2</version.assertj>
     <version.mockito>2.3.11</version.mockito>
-    <version.system.rules>1.16.1</version.system.rules>
-    <version.hoverfly.java>0.8.1</version.hoverfly.java>
-    <version.awaitility>3.0.0</version.awaitility>
+    <version.system.rules>1.19.0</version.system.rules>
+    <version.hoverfly.java>0.12.1</version.hoverfly.java>
+    <version.awaitility>3.1.6</version.awaitility>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
@@ -79,7 +79,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.15</version>
+        <version>1.18</version>
         <executions>
           <execution>
             <id>signature-check</id>

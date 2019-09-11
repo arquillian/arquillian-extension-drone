@@ -41,7 +41,7 @@
   <properties>
     <version.org.jboss.arquillian.selenium>3.11.0</version.org.jboss.arquillian.selenium>
     <version.htmlunit.driver>2.28</version.htmlunit.driver>
-    <phantomjs.driver.version>1.4.1</phantomjs.driver.version>
+    <phantomjs.driver.version>1.4.4</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
@@ -133,7 +133,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.5.3</version>
           <configuration>
             <pushChanges>false</pushChanges>
             <localCheckout>true</localCheckout>
