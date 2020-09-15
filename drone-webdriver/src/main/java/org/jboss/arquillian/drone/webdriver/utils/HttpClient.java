@@ -66,7 +66,8 @@ public class HttpClient {
             }
             final Map<String, String> headers = new HashMap<>();
             for (Header header : response.getAllHeaders()) {
-                headers.put(header.getName(), header.getValue());
+                // Names should be case-insensitive
+                headers.put(header.getName().toLowerCase(), header.getValue());
             }
             return new Response(payload, headers);
         }
@@ -80,7 +81,7 @@ public class HttpClient {
         }
 
         public String getHeader(String header) {
-            return headers.get(header);
+            return headers.get(header.toLowerCase());
         }
     }
 }
