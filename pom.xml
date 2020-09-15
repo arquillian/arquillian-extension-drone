@@ -47,7 +47,7 @@
     <version.assertj>3.13.2</version.assertj>
     <version.mockito>2.3.11</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
-    <version.hoverfly.java>0.12.1</version.hoverfly.java>
+    <version.hoverfly.java>0.13.1</version.hoverfly.java>
     <version.awaitility>3.1.6</version.awaitility>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
