@@ -38,7 +38,7 @@
     <!-- Versioning -->
     <version.arquillian.core>1.4.1.Final</version.arquillian.core>
     <version.selenium>3.11.0</version.selenium>
-    <version.htmlunit.driver>2.28</version.htmlunit.driver>
+    <version.htmlunit.driver>2.43.1</version.htmlunit.driver>
     <phantomjs.driver.version>1.4.4</phantomjs.driver.version>
     <version.appium.java.client>5.0.0-BETA9</version.appium.java.client>
 
