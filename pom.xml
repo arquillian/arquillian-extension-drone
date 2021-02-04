@@ -43,7 +43,7 @@
     <version.appium.java.client>5.0.0-BETA9</version.appium.java.client>
 
     <!-- Test bits versions -->
-    <version.junit>4.12</version.junit>
+    <version.junit>4.13.1</version.junit>
     <version.assertj>3.17.2</version.assertj>
     <version.mockito>2.3.11</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
