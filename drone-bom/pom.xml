@@ -40,7 +40,7 @@
 
   <properties>
     <version.org.jboss.arquillian.selenium>3.11.0</version.org.jboss.arquillian.selenium>
-    <version.htmlunit.driver>2.28</version.htmlunit.driver>
+    <version.htmlunit.driver>2.43.1</version.htmlunit.driver>
     <phantomjs.driver.version>1.4.4</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
