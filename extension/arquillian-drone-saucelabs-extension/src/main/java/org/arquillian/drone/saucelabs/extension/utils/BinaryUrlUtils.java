@@ -49,6 +49,15 @@ public class BinaryUrlUtils {
             parsedUrl = getUrl("win32");
             return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "win32.zip" : parsedUrl;
         } else if (SystemUtils.IS_OS_UNIX) {
+
+            /**
+             * For OSX. It is also a variation of Unix so both IS_OS_UNIX and IS_OS_MAC are 'true'
+             * Handle OSX here.
+             */
+            if (SystemUtils.IS_OS_MAC) {
+                parsedUrl = getUrl("osx");
+                return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "osx.zip" : parsedUrl;
+            }
             if (Utils.is64()) {
                 parsedUrl = getUrl("linux");
                 return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "linux.tar.gz" : parsedUrl;
@@ -56,9 +65,6 @@ public class BinaryUrlUtils {
                 parsedUrl = getUrl("linux32");
                 return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "linux32.tar.gz" : parsedUrl;
             }
-        } else if (SystemUtils.IS_OS_MAC) {
-            parsedUrl = getUrl("osx");
-            return Utils.isNullOrEmpty(parsedUrl) ? basicStaticUrl + "osx.zip" : parsedUrl;
         } else {
             throw new IllegalStateException("The current platform is not supported."
                 + "Supported platforms are windows, linux and macosx."
