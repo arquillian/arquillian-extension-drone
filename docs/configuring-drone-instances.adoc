@@ -189,6 +189,13 @@ Please notice that there are two methods named `addArguments` in the `ChromeOpti
 
 ---
 
+The next sub-section provides an <<loggingPrefs-chrome-example, example>> of how JSON notation can
+be used to pass a
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences]
+configuration object to
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/MutableCapabilities.html#setCapability(java.lang.String,java.lang.Object)[setCapability]
+method.
+
 ==== Value formats
 
 * In the cases, when the value can be an array or list of strings/files, you should specify all of them in one string separated by space (this is also applied for extensions as well as for encoded extensions).
@@ -204,6 +211,26 @@ Please notice that there are two methods named `addArguments` in the `ChromeOpti
     "download.default_directory": "/usr/local/path/to/download/directory"
   }
 }
+</property>
+```
+
+* [#loggingPrefs-chrome-example]#JSON should also be used for methods taking as a parameter a
+configuration object which wraps key-value pair(s).# E.g., below is an example of how (using JSON
+notation for
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences])
+a logging level can be enabled for browser console log on Chrome (here
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[ChromeDriverLogLevel]'s
+DEBUG corresponds to
+https://docs.oracle.com/en/java/javase/15/docs/api/java.logging/java/util/logging/Level.html[FINE]
+in Java logging API):
+```xml
+<property name="chromeCapability">
+	{
+		"goog:loggingPrefs": {
+			"browser": "DEBUG",
+			"driver": "INFO"
+		}
+	}
 </property>
 ```
 
