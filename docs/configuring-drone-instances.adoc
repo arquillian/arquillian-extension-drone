@@ -219,8 +219,8 @@ configuration object which wraps key-value pair(s).# E.g., below is an example o
 notation for
 https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences])
 a logging level can be enabled for browser console log on Chrome (here
-https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[ChromeDriverLogLevel]'s
-DEBUG corresponds to
+ChromeDriverLogLevel's
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[DEBUG] corresponds to
 https://docs.oracle.com/en/java/javase/15/docs/api/java.logging/java/util/logging/Level.html[FINE]
 in Java logging API):
 ```xml
