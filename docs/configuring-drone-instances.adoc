@@ -220,7 +220,8 @@ notation for
 https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences])
 a logging level can be enabled for browser console log on Chrome (here
 ChromeDriverLogLevel's
-https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[DEBUG] corresponds to
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[DEBUG]
+corresponds to
 https://docs.oracle.com/en/java/javase/15/docs/api/java.logging/java/util/logging/Level.html[FINE]
 in Java logging API):
 ```xml
