@@ -17,30 +17,48 @@ package org.jboss.arquillian.drone.webdriver.utils;
 
 public class PlatformUtils {
 
-    public static String OS = System.getProperty("os.name").toLowerCase();
-    public static String ARCH = System.getProperty("os.arch").toLowerCase();
-
     private PlatformUtils() {
     }
 
+    public static String getOS() {
+        return System.getProperty("os.name").toLowerCase();
+    }
+
+    public static String getARCH() {
+        return System.getProperty("os.arch").toLowerCase();
+    }
+
     public static boolean isWindows() {
-        return OS.contains("win");
+        return getOS().contains("win");
     }
 
     public static boolean isMac() {
-        return OS.contains("mac");
+        return getOS().contains("mac");
+    }
+
+    public static boolean isMacIntel() {
+        return isMac() && getARCH().contains("x86_64");
+    }
+
+    public static boolean isMacAppleSilicon() {
+        return isMac() && getARCH().contains("aarch64");
+    }
+
+    public static boolean isLinux() {
+        return getOS().contains("linux");
     }
 
     public static boolean isUnix() {
-        return OS.contains("nix") || OS.contains("nux") || OS.contains("aix");
+        String os = getOS();
+        return os.contains("nix") || os.contains("nux") || os.contains("aix");
     }
 
     public static boolean isSolaris() {
-        return OS.contains("sunos");
+        return getOS().contains("sunos");
     }
 
     public static boolean is64() {
-        return System.getProperty("os.arch").contains("64");
+        return getARCH().contains("64");
     }
 
     public static boolean is32() {
