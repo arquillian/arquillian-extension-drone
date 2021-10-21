@@ -1,7 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumXmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
@@ -74,7 +74,7 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
         return super.downloadAndPrepare();
     }
 
-    static class IeStorageSource extends SeleniumGoogleStorageSource {
+    static class IeStorageSource extends SeleniumXmlStorageSource {
 
         private String version;
         private String architecture;

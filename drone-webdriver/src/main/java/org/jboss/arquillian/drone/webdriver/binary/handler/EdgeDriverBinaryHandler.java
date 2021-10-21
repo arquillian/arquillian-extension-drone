@@ -1,16 +1,17 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.util.regex.Pattern;
+
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.XmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.io.IOException;
-import java.util.logging.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * A class for handling binaries for Edge
@@ -55,7 +56,7 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
 
     @Override
     protected ExternalBinarySource getExternalBinarySource() {
-        return new EdgeStorageSources();
+        return new EdgeDriverBinaryHandler.EdgeStorageSources("https://msedgedriver.azureedge.net/");
     }
 
     @Override
@@ -63,72 +64,56 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
         return capabilities;
     }
 
-    private class EdgeStorageSources implements ExternalBinarySource {
+    private class EdgeStorageSources extends XmlStorageSource {
 
-        private static final String EDGE_WEB_DRIVERS_URL =
-            "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/";
-        private static final String DRIVERS_LIST = ".driver-downloads li";
-        private static final String INFO_PARAGRAPH = "p";
-        private static final String LINK = "a";
-        private static final String URL = "href";
-        private static final int VERSION_POSITION = 1;
-        private static final int LATEST_DRIVER = 0;
-        private Logger log = Logger.getLogger(EdgeStorageSources.class.toString());
+        EdgeStorageSources(String baseUrl) {
+            super("Blob", "Name", baseUrl, "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/LATEST_STABLE", new HttpClient());
+        }
 
-        @Override
+        protected String getExpectedKeyRegex(String requiredVersion, String directory) {
+            return Pattern.quote(requiredVersion + "/" + getFileNameRegexToDownload(requiredVersion));
+        }
+
         public ExternalBinary getLatestRelease() throws Exception {
-            Element driver = getDriversList().get(LATEST_DRIVER);
-            String driverVersion = getDriverVersion(driver);
-            String webDriverUrl = getDriverUrl(driver);
-
-            return new ExternalBinary(driverVersion, webDriverUrl);
+            return getLatestRelease("UTF-16");
         }
 
         @Override
-        public ExternalBinary getReleaseForVersion(String version) throws Exception {
+        protected NodeList getDriverEntries(Document doc) {
+            return ((Element) doc.getFirstChild().getFirstChild()).getElementsByTagName(this.nodeName);
+        }
 
-            String webDriverUrl = "";
-            String driverVersion = "";
+        @Override
+        protected String getLastModified(Element item) {
+            return getContentOfFirstElement((Element) item.getElementsByTagName("Properties").item(0), "Last-Modified");
+        }
 
-            Elements driversList = getDriversList();
+        @Override
+        protected String getLocation(String key, Element item) {
+            return getContentOfFirstElement(item, "Url");
+        }
 
-            for (int driverItemNumber = 0; driverItemNumber < driversList.size(); driverItemNumber++) {
-                Element driver = driversList.get(driverItemNumber);
-                driverVersion = getDriverVersion(driver);
-
-                if (driverVersion.equals(version)) {
-                    webDriverUrl = getDriverUrl(driver);
-                    break;
+        @Override
+        public String getFileNameRegexToDownload(String version) {
+            StringBuilder fileName = new StringBuilder("edgedriver_");
+            if (PlatformUtils.isMac()) {
+                fileName.append("mac64");
+            } else if (PlatformUtils.isWindows()) {
+                fileName.append("win");
+                if (PlatformUtils.is32()) {
+                    fileName.append("32");
+                } else {
+                    fileName.append("64");
+                }
+            } else if (PlatformUtils.isUnix()) {
+                fileName.append("linux");
+                if (PlatformUtils.is32()) {
+                    fileName.append("32");
+                } else {
+                    fileName.append("64");
                 }
             }
-
-            if (webDriverUrl.isEmpty()) {
-                log.warning("WebDriver with specified version was not found.");
-            }
-
-            return new ExternalBinary(driverVersion, webDriverUrl);
-        }
-
-        /**
-         * This method returns only null as in the case of Edge webdriver, we don't know what will be the name of the file
-         * that will be downloaded. As this method returns null, the AbstractBinaryHandler won't be looking for any file
-         * in the cache directory and will jump to downloading phase.
-         */
-        public String getFileNameRegexToDownload(String version) {
-            return null;
-        }
-
-        private Elements getDriversList() throws IOException {
-            Document edgeWebDriversPage = Jsoup.connect(EDGE_WEB_DRIVERS_URL).get();
-            return edgeWebDriversPage.select(DRIVERS_LIST);
-        }
-
-        private String getDriverVersion(Element driver) {
-            return driver.select(INFO_PARAGRAPH).text().split(" ")[VERSION_POSITION];
-        }
-
-        private String getDriverUrl(Element driver) {
-            return driver.select(LINK).attr(URL);
+            return fileName.append(".zip").toString();
         }
     }
 }

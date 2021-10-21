@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource.SELENIUM_BASE_STORAGE_URL;
+import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumXmlStorageSource.SELENIUM_BASE_STORAGE_URL;
 import static org.mockito.ArgumentMatchers.startsWith;
 
 /**

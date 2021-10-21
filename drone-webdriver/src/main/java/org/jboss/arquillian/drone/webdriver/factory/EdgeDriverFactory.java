@@ -6,6 +6,7 @@ import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.binary.handler.EdgeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -60,8 +61,9 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
 
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
-        capabilities.setPlatform(DesiredCapabilities.edge().getPlatform());
+        capabilities.setPlatform(Platform.ANY);
         capabilities.setBrowserName(DesiredCapabilities.edge().getBrowserName());
+//        capabilities.setCapability("useChromium", "true");
 
         new EdgeDriverBinaryHandler(capabilities).checkAndSetBinary(true);
 

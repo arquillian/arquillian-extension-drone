@@ -1,9 +1,10 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import io.specto.hoverfly.junit.rule.HoverflyRule;
 import java.util.Base64;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import io.specto.hoverfly.junit.rule.HoverflyRule;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.ClassRule;
@@ -55,7 +56,7 @@ public class GitHubSourceAuthenticatedRequestTestCase {
 
         // then
         verify(httpClientSpy, times(1)).get(anyString(),
-            argThat(headers -> containsAuthHeaderParam(headers, username + ":" + token)));
+                                            (Map<String, String>) argThat(headers -> containsAuthHeaderParam((Map<String, String>) headers, username + ":" + token)));
     }
 
     private boolean containsAuthHeaderParam(Map<String, String> headers, String authPair) {
