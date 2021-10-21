@@ -3,13 +3,19 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -66,38 +72,35 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
     private class EdgeStorageSources implements ExternalBinarySource {
 
         private static final String EDGE_WEB_DRIVERS_URL =
-            "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/";
-        private static final String DRIVERS_LIST = ".driver-downloads li";
-        private static final String INFO_PARAGRAPH = "p";
-        private static final String LINK = "a";
-        private static final String URL = "href";
-        private static final int VERSION_POSITION = 1;
-        private static final int LATEST_DRIVER = 0;
+            "https://msedgedriver.azureedge.net/";
+        private static final String DRIVERS_REGEX = "https:(.*)";
         private Logger log = Logger.getLogger(EdgeStorageSources.class.toString());
 
         @Override
         public ExternalBinary getLatestRelease() throws Exception {
-            Element driver = getDriversList().get(LATEST_DRIVER);
-            String driverVersion = getDriverVersion(driver);
-            String webDriverUrl = getDriverUrl(driver);
+            List<String> urlsList = getDriversList();
+            String webDriverUrl = urlsList.get(urlsList.size() - 1);
+            String driverVersion = getDriverVersion(webDriverUrl);
+
+            if (webDriverUrl.isEmpty()) {
+                log.warning("Could not find the latest release.");
+            }
 
             return new ExternalBinary(driverVersion, webDriverUrl);
         }
 
         @Override
         public ExternalBinary getReleaseForVersion(String version) throws Exception {
-
             String webDriverUrl = "";
             String driverVersion = "";
+            List<String> urls = getDriversList();
 
-            Elements driversList = getDriversList();
-
-            for (int driverItemNumber = 0; driverItemNumber < driversList.size(); driverItemNumber++) {
-                Element driver = driversList.get(driverItemNumber);
-                driverVersion = getDriverVersion(driver);
+            for (int driverItemNumber = urls.size() - 1; driverItemNumber > 0; driverItemNumber--) {
+                String url = urls.get(driverItemNumber);
+                driverVersion = getDriverVersion(url);
 
                 if (driverVersion.equals(version)) {
-                    webDriverUrl = getDriverUrl(driver);
+                    webDriverUrl = url;
                     break;
                 }
             }
@@ -118,17 +121,36 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
             return null;
         }
 
-        private Elements getDriversList() throws IOException {
-            Document edgeWebDriversPage = Jsoup.connect(EDGE_WEB_DRIVERS_URL).get();
-            return edgeWebDriversPage.select(DRIVERS_LIST);
+        private List<String> getDriversList() throws Exception {
+            List<String> urls = new ArrayList<>();
+            String responseString = new HttpClient().get(EDGE_WEB_DRIVERS_URL).getPayload().trim();
+
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(responseString.substring(responseString.indexOf("<"))));
+            Document doc = db.parse(is);
+            NodeList contentNodes = ((Element) doc.getFirstChild()).getElementsByTagName("Url");
+
+            for (int i = 0; i < contentNodes.getLength(); i++) {
+                String url = contentNodes.item(i).getTextContent();
+                String file = url.split("/")[url.split("/").length - 1];
+
+                if ((PlatformUtils.isMac() && (file.contains("mac64") || file.contains("macos")))
+                    || (PlatformUtils.isWindows() && file.contains("win")
+                    && ((PlatformUtils.is32() && file.contains("win32"))
+                    || (PlatformUtils.is64() && (file.contains("win64") || file.contains("windows")))))
+                    || (PlatformUtils.isUnix() && file.contains("arm64"))) {
+                    urls.add(url);
+                }
+            }
+
+            return urls;
         }
 
-        private String getDriverVersion(Element driver) {
-            return driver.select(INFO_PARAGRAPH).text().split(" ")[VERSION_POSITION];
-        }
+        private String getDriverVersion(String driver) {
+            String[] urlParts = driver.split("/");
 
-        private String getDriverUrl(Element driver) {
-            return driver.select(LINK).attr(URL);
+            return urlParts[urlParts.length - (driver.toLowerCase().contains("latest") ? 1 : 2)];
         }
     }
 }
