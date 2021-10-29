@@ -8,8 +8,9 @@ jobs:
         type: string
     working_directory: ~/circleci-arquillian-core
     docker:
-      - image: circleci/openjdk:<< parameters.jdk-version >>
+      - image: cimg/openjdk-browsers:<< parameters.jdk-version >>
     steps:
+      - browser-tools/install-browser-tools
       - checkout
       - restore_cache:
           key: circleci-arquillian-extension-drone-{{ checksum "pom.xml" }}
@@ -27,8 +28,9 @@ workflows:
   circleci_build:
     jobs:
       - build:
+          name: build-jdk-<< matrix.jdk-version >>-<< matrix.browser >>
           matrix:
             parameters:
-              jdk-version: ["8", "11"]
+              jdk-version: ["8.0"]
               browser: ["chromeHeadless", "htmlunit" ]
 
