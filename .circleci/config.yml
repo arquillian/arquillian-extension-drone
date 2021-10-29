@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.2.3
 jobs:
   build:
     parameters:
@@ -6,7 +8,7 @@ jobs:
         type: string
       browser:
         type: string
-    working_directory: ~/circleci-arquillian-core
+    working_directory: ~/circleci-arquillian
     docker:
       - image: cimg/openjdk-browsers:<< parameters.jdk-version >>
     steps:
