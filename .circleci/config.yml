@@ -16,7 +16,7 @@ jobs:
       - checkout
       - restore_cache:
           key: circleci-arquillian-extension-drone-{{ checksum "pom.xml" }}
-      - run: ./mvnw verify -q -U -DskipTests # pre-fetch dependencies (dependency:resolve fails)
+      - run: ./mvnw verify -q -U -DskipTests
       - run: ./mvnw verify -Dbrowser=<< parameters.browser >>
       - store_test_results:
           path: target/surefire-reports
