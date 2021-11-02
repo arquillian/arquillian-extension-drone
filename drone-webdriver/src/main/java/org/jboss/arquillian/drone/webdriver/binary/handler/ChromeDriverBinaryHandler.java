@@ -74,16 +74,16 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         public String getFileNameRegexToDownload(String version) {
             StringBuilder fileName = new StringBuilder("chromedriver_");
             if (PlatformUtils.isMac()) {
-                fileName.append("mac64");
+                fileName.append("mac");
             } else if (PlatformUtils.isWindows()) {
                 fileName.append("win");
             } else if (PlatformUtils.isUnix()) {
                 fileName.append("linux");
-                if (PlatformUtils.is32()) {
-                    fileName.append("32");
-                } else {
-                    fileName.append("64");
-                }
+            }
+            if (PlatformUtils.is32()) {
+                fileName.append("32");
+            } else {
+                fileName.append("64");
             }
             return fileName.append(".zip").toString();
         }
