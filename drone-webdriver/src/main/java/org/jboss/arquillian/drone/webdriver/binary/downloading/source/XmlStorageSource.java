@@ -42,8 +42,6 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     private String urlToLatestRelease;
 
-    private List<DriverEntry> driverEntries;
-
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String latestVersion;
@@ -137,7 +135,7 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getReleaseForVersion(String requiredVersion) throws Exception {
-        this.driverEntries = retrieveAllDriversEntries();
+        final List<DriverEntry> driverEntries = retrieveAllDriversEntries();
         final List<DriverEntry> matched = driverEntries
             .stream()
             .filter(driverEntry -> {
@@ -173,7 +171,7 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     /**
      * It is expected that this abstract method should return a regex that represents a key of an expected binary/file
-     * stored in the xml storage. Commonly, key consists of <code>directory_name + / + file_name</code>. 
+     * stored in the xml storage. Commonly, key consists of <code>directory_name + / + file_name</code>.
      *
      * @param requiredVersion The required version set using method {@link XmlStorageSource#getReleaseForVersion},
      *                        or otherwise null
