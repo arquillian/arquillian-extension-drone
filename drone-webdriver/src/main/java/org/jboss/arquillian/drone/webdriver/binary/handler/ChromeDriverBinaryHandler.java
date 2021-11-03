@@ -72,7 +72,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         public String getFileNameRegexToDownload(String version) {
-            StringBuilder fileName = new StringBuilder("chromedriver_");
+            final StringBuilder fileName = new StringBuilder("chromedriver_");
             if (PlatformUtils.isMac()) {
                 fileName.append("mac");
             } else if (PlatformUtils.isWindows()) {

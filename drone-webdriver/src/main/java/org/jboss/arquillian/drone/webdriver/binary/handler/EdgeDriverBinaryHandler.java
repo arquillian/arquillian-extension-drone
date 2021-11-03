@@ -95,7 +95,7 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         public String getFileNameRegexToDownload(String version) {
-            StringBuilder fileName = new StringBuilder("edgedriver_");
+            final StringBuilder fileName = new StringBuilder("edgedriver_");
             if (PlatformUtils.isMac()) {
                 fileName.append("mac64");
             } else if (PlatformUtils.isWindows()) {
