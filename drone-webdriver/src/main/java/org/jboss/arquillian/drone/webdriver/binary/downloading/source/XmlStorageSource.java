@@ -173,13 +173,12 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     /**
      * It is expected that this abstract method should return a regex that represents a key of an expected binary/file
-     * stored in the google storage. Key consist of <code>directory_name + / + file_name</code>. Keys are visible on
-     * the root of the google storage url (without index.html suffix)
+     * stored in the xml storage. Commonly, key consists of <code>directory_name + / + file_name</code>. 
      *
      * @param requiredVersion The required version set using method {@link XmlStorageSource#getReleaseForVersion},
      *                        or otherwise null
      * @param directory       The directory for the current binary the regex is being matched against
-     * @return A regex that represents a key of an expected binary/file stored in the google storage.
+     * @return A regex that represents a key of an expected binary/file.
      */
     protected abstract String getExpectedKeyRegex(String requiredVersion, String directory);
 

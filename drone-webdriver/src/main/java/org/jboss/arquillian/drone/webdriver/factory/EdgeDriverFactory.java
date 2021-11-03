@@ -63,7 +63,6 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
         capabilities.setPlatform(Platform.ANY);
         capabilities.setBrowserName(DesiredCapabilities.edge().getBrowserName());
-//        capabilities.setCapability("useChromium", "true");
 
         new EdgeDriverBinaryHandler(capabilities).checkAndSetBinary(true);
 
