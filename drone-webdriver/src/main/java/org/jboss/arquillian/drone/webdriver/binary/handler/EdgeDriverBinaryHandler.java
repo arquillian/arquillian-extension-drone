@@ -84,13 +84,13 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
         }
 
         @Override
-        protected String getLastModified(Element item) {
-            return getContentOfFirstElement((Element) item.getElementsByTagName("Properties").item(0), "Last-Modified");
+        protected String getLastModified(Element element) {
+            return getContentOfFirstElement((Element) element.getElementsByTagName("Properties").item(0), "Last-Modified");
         }
 
         @Override
-        protected String getLocation(String key, Element item) {
-            return getContentOfFirstElement(item, "Url");
+        protected String getLocation(Element element) {
+            return getContentOfFirstElement(element, "Url");
         }
 
         @Override

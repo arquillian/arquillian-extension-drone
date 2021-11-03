@@ -89,29 +89,30 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
         final Document doc = db.parse(is);
         final NodeList contentNodes = getDriverEntries(doc);
         for (int i = 0; i < contentNodes.getLength(); i++) {
-            final Element item = (Element) contentNodes.item(i);
+            final Element driverNode = (Element) contentNodes.item(i);
             final DriverEntry driverEntry = new DriverEntry();
-            final String key = getContentOfFirstElement(item, this.fileName);
+            final String key = getContentOfFirstElement(driverNode, this.fileName);
             if (key.contains("/")) {
                 driverEntry.setKey(key);
-                driverEntry.setLastModified(getLastModified(item));
-                driverEntry.setLocation(getLocation(key, item));
+                driverEntry.setLastModified(getLastModified(driverNode));
+                driverEntry.setLocation(getLocation(driverNode));
                 results.add(driverEntry);
             }
         }
         return results;
     }
 
-    protected String getLocation(String key, Element item) {
-        return key.substring(0, key.indexOf("/"));
-    }
-
-    protected String getLastModified(Element item) {
-        return getContentOfFirstElement(item, "LastModified");
-    }
-
     protected NodeList getDriverEntries(Document doc) {
         return ((Element) doc.getFirstChild()).getElementsByTagName(this.nodeName);
+    }
+
+    protected String getLastModified(Element element) {
+        return getContentOfFirstElement(element, "LastModified");
+    }
+
+    protected String getLocation(Element element) {
+        final String key = getContentOfFirstElement(element, this.fileName);
+        return key.substring(0, key.indexOf("/"));
     }
 
     private Date parseDate(String date, String key) {
