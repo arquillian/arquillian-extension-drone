@@ -1,7 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumXmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -64,7 +64,7 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
         return SELENIUM_SERVER_SYSTEM_DRIVER_BINARY_PROPERTY;
     }
 
-    static class SeleniumServerStorage extends SeleniumGoogleStorageSource {
+    static class SeleniumServerStorage extends SeleniumXmlStorageSource {
 
         private String version;
 
