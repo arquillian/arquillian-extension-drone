@@ -1,6 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.Map;
@@ -15,6 +17,17 @@ import java.util.Map;
  */
 public class BrowserCapabilitiesList {
 
+    public static class Capabilities {
+        public static DesiredCapabilities CHROME = new DesiredCapabilities(Browser.CHROME.browserName(), "", Platform.ANY);
+        public static DesiredCapabilities EDGE = new DesiredCapabilities(Browser.EDGE.browserName(), "", Platform.WINDOWS);
+        public static DesiredCapabilities FIREFOX = new DesiredCapabilities(Browser.FIREFOX.browserName(), "", Platform.ANY);
+        public static DesiredCapabilities HTML_UNIT = new DesiredCapabilities(Browser.HTMLUNIT.browserName(), "", Platform.ANY);
+        public static DesiredCapabilities IE = new DesiredCapabilities(Browser.IE.browserName(), "", Platform.WINDOWS);
+        public static DesiredCapabilities OPERA = new DesiredCapabilities(Browser.OPERA.browserName(), "", Platform.ANY);
+        public static DesiredCapabilities SAFARI = new DesiredCapabilities(Browser.SAFARI.browserName(), "", Platform.MAC);
+        public static DesiredCapabilities PHANTOM_JS = new DesiredCapabilities("phantomjs", "", Platform.ANY);
+    }
+
     public static class Chrome implements BrowserCapabilities {
 
         @Override
@@ -24,7 +37,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.chrome().asMap();
+            return Capabilities.CHROME.asMap();
         }
 
         @Override
@@ -47,7 +60,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.edge().asMap();
+            return Capabilities.EDGE.asMap();
         }
 
         @Override
@@ -70,7 +83,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.firefox().asMap();
+            return Capabilities.FIREFOX.asMap();
         }
 
         @Override
@@ -93,7 +106,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.htmlUnit().asMap();
+            return Capabilities.HTML_UNIT.asMap();
         }
 
         @Override
@@ -116,7 +129,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.internetExplorer().asMap();
+            return Capabilities.IE.asMap();
         }
 
         @Override
@@ -139,7 +152,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.operaBlink().asMap();
+            return Capabilities.OPERA.asMap();
         }
 
         @Override
@@ -190,7 +203,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.safari().asMap();
+            return Capabilities.SAFARI.asMap();
         }
 
         @Override
@@ -213,7 +226,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.phantomjs().asMap();
+            return Capabilities.PHANTOM_JS.asMap();
         }
 
         @Override
@@ -235,7 +248,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return DesiredCapabilities.chrome().asMap();
+            return Capabilities.CHROME.asMap();
         }
 
         @Override

@@ -17,8 +17,6 @@
 package org.jboss.arquillian.drone.webdriver.augmentation;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jboss.arquillian.drone.spi.DroneInstanceEnhancer;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
@@ -26,11 +24,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
-import org.openqa.selenium.remote.AugmenterProvider;
-import org.openqa.selenium.remote.ExecuteMethod;
-import org.openqa.selenium.remote.InterfaceImplementation;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -45,40 +39,8 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
     /**
      * Augmenter instance which is able to handle invocations of {@link DroneAugmented} interface
      */
-    private final Augmenter augmenter = new Augmenter() {
-        {
-            addDriverAugmentation(DRONE_AUGMENTED, new AugmenterProvider() {
-
-                @Override
-                public Class<?> getDescribedInterface() {
-                    return DroneAugmented.class;
-                }
-
-                @Override
-                public InterfaceImplementation getImplementation(Object value) {
-                    return new DroneAugmentedImpl((RemoteWebDriver) value);
-                }
-            });
-        }
-
-        // This changes Augmenter behavior to support ReusableRemoteWebDriver
-        // see http://code.google.com/p/selenium/issues/detail?id=7089
-        @Override
-        protected RemoteWebDriver extractRemoteWebDriver(WebDriver driver) {
-            if (driver.getClass() == RemoteWebDriver.class
-                // here we allow enhancing by both CGLib and Mockito
-                || driver.getClass().getName().startsWith("org.openqa.selenium.remote.RemoteWebDriver$$Enhancer")
-                || driver instanceof ReusableRemoteWebDriver) {
-
-                return (RemoteWebDriver) driver;
-            } else {
-                logger.log(Level.WARNING,
-                    "Augmenter should be applied to (Reusable)RemoteWebDriver instances or previously augmented instances only, but it was {0}",
-                    driver.getClass().getName());
-                return null;
-            }
-        }
-    };
+    private static final Augmenter augmenter = new Augmenter().addDriverAugmentation(DRONE_AUGMENTED, DroneAugmented.class,
+        (c, exe) -> () -> c.getCapability(AugmentingEnhancer.DRONE_AUGMENTED));
 
     @Override
     public int getPrecedence() {
@@ -95,12 +57,8 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
 
         Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
 
-        if (RemoteWebDriver.class == realInstanceClass || ReusableRemoteWebDriver.class == realInstanceClass
-            || DroneAugmented.class.isAssignableFrom(realInstanceClass)) {
-            return true;
-        }
-
-        return false;
+        return RemoteWebDriver.class == realInstanceClass || ReusableRemoteWebDriver.class == realInstanceClass
+            || DroneAugmented.class.isAssignableFrom(realInstanceClass);
     }
 
     /**
@@ -108,9 +66,7 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
      */
     @Override
     public RemoteWebDriver enhance(RemoteWebDriver instance, Class<? extends Annotation> qualifier) {
-
-        RemoteWebDriver enhanced = (RemoteWebDriver) augmenter.augment(instance);
-        return enhanced;
+        return (RemoteWebDriver) augmenter.augment(instance);
     }
 
     /**
@@ -132,22 +88,5 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
             return original;
         }
         return enhancedInstance;
-    }
-
-    /**
-     * Implements {@link DroneAugmented} interfaces which allows unwrapping of an augmented instance
-     */
-    private class DroneAugmentedImpl implements InterfaceImplementation {
-
-        private transient RemoteWebDriver original;
-
-        DroneAugmentedImpl(RemoteWebDriver original) {
-            this.original = original;
-        }
-
-        @Override
-        public Object invoke(ExecuteMethod executeMethod, Object self, Method method, Object... args) {
-            return original;
-        }
     }
 }

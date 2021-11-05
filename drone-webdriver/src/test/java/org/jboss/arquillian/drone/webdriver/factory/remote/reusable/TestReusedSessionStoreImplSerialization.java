@@ -20,10 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
+import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.remote.SessionId;
 
 import static org.junit.Assert.assertEquals;
@@ -48,8 +48,8 @@ public class TestReusedSessionStoreImplSerialization {
         fileStore = new ReusedSessionPermanentFileStorage();
         ReusedSessionStoreImpl store = new ReusedSessionStoreImpl();
         URL url = new URL("http://localhost/");
-        InitializationParameter key = new InitializationParameter(url, DesiredCapabilities.firefox());
-        ReusedSession session = new ReusedSession(new SessionId("opaqueKey"), DesiredCapabilities.firefox());
+        InitializationParameter key = new InitializationParameter(url, BrowserCapabilitiesList.Capabilities.FIREFOX);
+        ReusedSession session = new ReusedSession(new SessionId("opaqueKey"), BrowserCapabilitiesList.Capabilities.FIREFOX);
 
         try {
             // when
