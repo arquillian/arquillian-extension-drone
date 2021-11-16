@@ -38,23 +38,10 @@
     </developer>
   </developers>
 
-  <repositories>
-    <repository>
-      <id>sonatype-nexus-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
   <properties>
     <version.selenium>4.0.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>3.54.0-SNAPSHOT</version.htmlunit.driver>
+    <version.htmlunit.driver>3.55.0</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
