@@ -14,6 +14,7 @@ ifndef::generated-doc[]
 To read complete documentation visit http://arquillian.org/arquillian-extension-drone/
 endif::generated-doc[]
 
+This PR is only for testing purposes. We want to execute CI tests for PRs.
 The Arquillian Drone 2 extension for Arquillian provides a simple way
 to include functional tests for an application with a web-based
 user interface.
