@@ -19,7 +19,7 @@ public class BrowserCapabilitiesList {
 
     public static class Capabilities {
         public static DesiredCapabilities CHROME = new DesiredCapabilities(Browser.CHROME.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities EDGE = new DesiredCapabilities(Browser.EDGE.browserName(), "", Platform.WINDOWS);
+        public static DesiredCapabilities EDGE = new DesiredCapabilities(Browser.EDGE.browserName(), "", Platform.ANY);
         public static DesiredCapabilities FIREFOX = new DesiredCapabilities(Browser.FIREFOX.browserName(), "", Platform.ANY);
         public static DesiredCapabilities HTML_UNIT = new DesiredCapabilities(Browser.HTMLUNIT.browserName(), "", Platform.ANY);
         public static DesiredCapabilities IE = new DesiredCapabilities(Browser.IE.browserName(), "", Platform.WINDOWS);
