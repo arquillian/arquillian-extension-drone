@@ -3,6 +3,7 @@ package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.handler.GoogleSeleniumStorageProvider;
@@ -10,30 +11,27 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumXmlStorageSource.SELENIUM_BASE_STORAGE_URL;
 import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.BDDMockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class LocalGoogleSeleniumStorageTestCase {
 
     public static final String FILE_PATH =
-        "src/test/resources/files/downloading/local-selenium-storage-2016-12-21".replace("/", File.separator);
+        "src/test/resources/files/downloading/local-selenium-storage-2016-12-21.xml".replace("/", File.separator);
 
     @Mock
     private HttpClient httpClient;
 
     @Before
     public void setMock() throws IOException {
-        BDDMockito.when(httpClient.get(startsWith(SELENIUM_BASE_STORAGE_URL))).thenReturn(new HttpClient.Response(
-            FileUtils.readFileToString(new File(FILE_PATH), "utf-8"), Collections.emptyMap()));
+        when(httpClient.get(startsWith(SELENIUM_BASE_STORAGE_URL))).thenReturn(new HttpClient.Response(
+            FileUtils.readFileToString(new File(FILE_PATH), "utf-8").replaceAll("(?:>)(\\s*)<", "><"), Collections.emptyMap()));
     }
 
     @Test
@@ -70,7 +68,7 @@ public class LocalGoogleSeleniumStorageTestCase {
         testSeleniumServerVersion("3.0", "3.0.0");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MissingBinaryException.class)
     public void testGetNonExistingIERelease() throws Exception {
         GoogleSeleniumStorageProvider.getIeStorageSource("1.2.3", httpClient).getLatestRelease();
     }

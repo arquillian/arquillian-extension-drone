@@ -4,9 +4,6 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
-/**
- *
- */
 public class PropertySecurityAction {
 
     // TODO: make the class protected

@@ -18,9 +18,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 
 import java.io.File;
 
-/**
- *
- */
 class Validate {
 
     static boolean empty(Object object) {
