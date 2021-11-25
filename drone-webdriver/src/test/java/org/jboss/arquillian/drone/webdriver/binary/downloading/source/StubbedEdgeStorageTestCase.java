@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StubbedEdgeStorageTestCase {
 
-    public static final String FILE_PATH =
+    private static final String FILE_PATH =
         "src/test/resources/files/downloading/edge-driver/edge_drivers.xml".replace("/", File.separator);
 
     public static final String NON_EXISTING_VERSION = "96.0.1028.123";
