@@ -70,7 +70,7 @@ public class LocalGoogleSeleniumStorageTestCase {
         testSeleniumServerVersion("3.0", "3.0.0");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = MissingBinaryException.class)
     public void testGetNonExistingIERelease() throws Exception {
         GoogleSeleniumStorageProvider.getIeStorageSource("1.2.3", httpClient).getLatestRelease();
     }

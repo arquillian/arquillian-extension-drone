@@ -1,6 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,9 +39,9 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     protected String fileName;
 
-    private String storageUrl;
+    protected String urlToLatestRelease;
 
-    private String urlToLatestRelease;
+    private String storageUrl;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -76,9 +77,13 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     protected ExternalBinary getLatestRelease(String charset) throws Exception {
         if (urlToLatestRelease != null) {
-            latestVersion = StringUtils.trimMultiline(httpClient.get(urlToLatestRelease, charset).getPayload());
+            latestVersion = getVersion(urlToLatestRelease, charset);
         }
         return getReleaseForVersion(latestVersion);
+    }
+
+    protected String getVersion(String urlToLatestRelease, String charset) throws IOException {
+        return StringUtils.trimMultiline(httpClient.get(urlToLatestRelease, charset).getPayload());
     }
 
     private List<DriverEntry> retrieveAllDriversEntries() throws Exception {
@@ -147,7 +152,7 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
             .collect(Collectors.toList());
 
         if (matched.size() == 0) {
-            throw new IllegalStateException(
+            throw new MissingBinaryException(
                 "There wasn't found any binary with the key matching regex "
                     + getExpectedKeyRegex(requiredVersion, "directory") + " in the storage: " + storageUrl);
         }
