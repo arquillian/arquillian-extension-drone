@@ -71,10 +71,14 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
         return capabilities;
     }
 
-    private class EdgeStorageSources extends XmlStorageSource {
+    public static class EdgeStorageSources extends XmlStorageSource {
 
-        EdgeStorageSources(String baseUrl) {
-            super("Blob", "Name", baseUrl, "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/LATEST_STABLE", new HttpClient());
+        public EdgeStorageSources(String baseUrl) {
+            this(baseUrl, new HttpClient());
+        }
+
+        public EdgeStorageSources(String baseUrl, HttpClient client) {
+            super("Blob", "Name", baseUrl, "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/LATEST_STABLE", client);
         }
 
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
