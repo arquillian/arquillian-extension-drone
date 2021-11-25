@@ -16,9 +16,6 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- */
 public class DownloaderTestCase {
 
     private static String TEST_DRONE_TARGET_DIRECTORY = "target" + File.separator + "drone-test" + File.separator;

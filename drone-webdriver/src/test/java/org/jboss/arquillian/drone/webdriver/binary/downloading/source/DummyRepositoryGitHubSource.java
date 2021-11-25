@@ -1,18 +1,15 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
-import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
-import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
-import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 
+import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
+import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
+import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- */
 public class DummyRepositoryGitHubSource extends GitHubSource {
 
     public static final String LATEST_RELEASE = "8.0.0.Final";

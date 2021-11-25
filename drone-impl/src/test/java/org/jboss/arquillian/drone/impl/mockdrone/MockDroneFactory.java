@@ -22,9 +22,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
-/**
- *
- */
 public class MockDroneFactory implements Configurator<MockDrone, MockDroneConfiguration>,
     Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
     /*

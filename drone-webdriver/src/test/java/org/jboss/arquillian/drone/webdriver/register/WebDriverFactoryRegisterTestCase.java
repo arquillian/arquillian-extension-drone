@@ -8,9 +8,6 @@ import org.openqa.selenium.WebDriver;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- *
- */
 @RunWith(Arquillian.class)
 public class WebDriverFactoryRegisterTestCase {
 

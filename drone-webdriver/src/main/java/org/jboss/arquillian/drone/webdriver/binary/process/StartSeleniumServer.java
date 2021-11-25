@@ -4,9 +4,6 @@ import java.net.URL;
 import org.jboss.arquillian.core.spi.event.Event;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-/**
- *
- */
 public class StartSeleniumServer implements Event {
 
     private String pathToSeleniumServerBinary;

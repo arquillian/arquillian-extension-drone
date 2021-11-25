@@ -1,15 +1,12 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
+import java.io.File;
+
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 
-import java.io.File;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- */
 public class LocalBinarySource implements ExternalBinarySource {
 
     public static final String LATEST_VERSION = "latest";
