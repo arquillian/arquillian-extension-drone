@@ -3,9 +3,6 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 
-/**
- *
- */
 public class GoogleSeleniumStorageProvider {
 
     public static ExternalBinarySource getIeStorageSource(String version, HttpClient httpClient) {
