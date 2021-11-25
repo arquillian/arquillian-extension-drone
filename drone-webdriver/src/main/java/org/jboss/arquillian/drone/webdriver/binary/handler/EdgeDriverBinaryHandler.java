@@ -1,6 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -8,6 +10,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBi
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.MissingBinaryException;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.XmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
+import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverToDestroy;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,6 +22,8 @@ import org.w3c.dom.NodeList;
  * A class for handling binaries for Edge
  */
 public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
+
+    private static final Logger log = Logger.getLogger(ReusableRemoteWebDriverToDestroy.class.getName());
 
     private static final String EDGE_SYSTEM_DRIVER_BINARY_PROPERTY = "webdriver.edge.driver";
     private static final String EDGE_DRIVER_BINARY_PROPERTY = "edgeDriverBinary";
@@ -87,6 +92,8 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
              latestRelease = super.getLatestRelease(charset);
             } catch (MissingBinaryException e) {
                 final String latestPlatformVersion = findLatestPlatformReleaseVersion(charset);
+                log.log(Level.WARNING, "Failed downloading latest stable release. Reason: ", e);
+                log.log(Level.WARNING, "Downloading version {0} instead.", latestPlatformVersion);
                 latestRelease = getReleaseForVersion(latestPlatformVersion);
             }
             return latestRelease;
