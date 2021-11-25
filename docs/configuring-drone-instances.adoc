@@ -177,11 +177,11 @@ Drone provides you a possibility to set chrome options for a `chromeDriver` thro
 
 The process of setting options uses a https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html[ChromeOptions class] which means that the parameter names (used in `arquillian.xml`) are tightly coupled with the names of the set/add methods defined in the class. Drone expects that the name of each parameter consists of:
 ```
-“chrome” + (name of the set/add method of ChromeOption class without first three chars)
+"chrome" + (name of the set/add method of ChromeOption class without first three chars)
 ```
 the whole string should be in camel case. For example, in case of an option *args* which is coupled with the method https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeOptions.html#addArguments-java.util.List-[addArguments], the parameter should look like this:
 ```xml
-<property name=“chromeArguments”>--first-argument --second-argument</property>
+<property name="chromeArguments">--first-argument --second-argument</property>
 ```
 ---
 **INFO**
@@ -189,13 +189,20 @@ Please notice that there are two methods named `addArguments` in the `ChromeOpti
 
 ---
 
+The next sub-section provides an <<loggingPrefs-chrome-example, example>> of how JSON notation can
+be used to pass a
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences]
+configuration object to
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/MutableCapabilities.html#setCapability(java.lang.String,java.lang.Object)[setCapability]
+method.
+
 ==== Value formats
 
 * In the cases, when the value can be an array or list of strings/files, you should specify all of them in one string separated by space (this is also applied for extensions as well as for encoded extensions).
 
 * It is a little bit different in the case of experimental options. These options should be provided as set of key-value pairs, so we decided to use JSON format for it (can be in multiline format) - for example:
 ```xml
-<property name=“chromeExperimentalOption”>
+<property name="chromeExperimentalOption">
 {
   "perfLoggingPrefs": {
     "traceCategories": ",blink.console,disabled-by-default-devtools.timeline,benchmark"
@@ -207,11 +214,32 @@ Please notice that there are two methods named `addArguments` in the `ChromeOpti
 </property>
 ```
 
+* [#loggingPrefs-chrome-example]#JSON should also be used for methods taking as a parameter a
+configuration object which wraps key-value pair(s).# E.g., below is an example of how (using JSON
+notation for
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/logging/LoggingPreferences.html[LoggingPreferences])
+a logging level can be enabled for browser console log on Chrome (here
+ChromeDriverLogLevel's
+https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/chrome/ChromeDriverLogLevel.html[DEBUG]
+corresponds to
+https://docs.oracle.com/en/java/javase/15/docs/api/java.logging/java/util/logging/Level.html[FINE]
+in Java logging API):
+```xml
+<property name="chromeCapability">
+{
+    "goog:loggingPrefs": {
+        "browser": "DEBUG",
+        "driver": "INFO"
+    }
+}
+</property>
+```
+
 ==== Debug
 
 If you struggle with passing required chrome options through the `arquillian.xml` file, you can use a parameter `chromePrintOptions` with a value `true`:
 ```xml
-<property name=“chromePrintOptions”>true</property>
+<property name="chromePrintOptions">true</property>
 ```
 This ensures that Drone prints out the whole content of `ChromeOptions` in a JSON format to the standard output.
 
@@ -220,12 +248,12 @@ Similarly to Chrome options, you can also configure https://seleniumhq.github.io
 
 For example, to set GeckoDriver logger level, use:
 ```xml
-<property name=“firefoxLogLevel”>SEVERE</property>
+<property name="firefoxLogLevel">SEVERE</property>
 ```
 
 Or to use Safari Technology Preview, specify:
 ```xml
-<property name=“safariUseTechnologyPreview”>false</property>
+<property name="safariUseTechnologyPreview">false</property>
 ```
 
 [[graphene-2-configuration]]

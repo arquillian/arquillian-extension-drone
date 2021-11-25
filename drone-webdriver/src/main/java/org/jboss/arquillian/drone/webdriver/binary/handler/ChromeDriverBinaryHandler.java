@@ -1,13 +1,13 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.util.regex.Pattern;
+
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GoogleStorageSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.XmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.util.regex.Pattern;
 
 /**
  * A class for handling chromeDriver binaries
@@ -60,7 +60,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         return CHROME_SYSTEM_DRIVER_BINARY_PROPERTY;
     }
 
-    private class ChromeStorageSources extends GoogleStorageSource {
+    private class ChromeStorageSources extends XmlStorageSource {
 
         ChromeStorageSources(String baseUrl) {
             super(baseUrl, baseUrl + "LATEST_RELEASE", new HttpClient());
@@ -72,18 +72,18 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         public String getFileNameRegexToDownload(String version) {
-            StringBuilder fileName = new StringBuilder("chromedriver_");
+            final StringBuilder fileName = new StringBuilder("chromedriver_");
             if (PlatformUtils.isMac()) {
-                fileName.append("mac64");
+                fileName.append("mac");
             } else if (PlatformUtils.isWindows()) {
-                fileName.append("win32");
+                fileName.append("win");
             } else if (PlatformUtils.isUnix()) {
                 fileName.append("linux");
-                if (PlatformUtils.is32()) {
-                    fileName.append("32");
-                } else {
-                    fileName.append("64");
-                }
+            }
+            if (PlatformUtils.is32()) {
+                fileName.append("32");
+            } else {
+                fileName.append("64");
             }
             return fileName.append(".zip").toString();
         }

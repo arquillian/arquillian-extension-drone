@@ -1,14 +1,14 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.io.File;
+
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumGoogleStorageSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.SeleniumXmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.InvalidArgumentException;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.io.File;
 
 import static org.jboss.arquillian.drone.webdriver.utils.Validate.empty;
 
@@ -74,7 +74,7 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
         return super.downloadAndPrepare();
     }
 
-    static class IeStorageSource extends SeleniumGoogleStorageSource {
+    static class IeStorageSource extends SeleniumXmlStorageSource {
 
         private String version;
         private String architecture;
@@ -106,9 +106,9 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         public String getFileNameRegexToDownload(String version) {
-            StringBuffer regexBuffer = new StringBuffer("IEDriverServer_");
-            regexBuffer.append(architecture).append("_").append(version).append(".zip");
-            return regexBuffer.toString();
+            final StringBuilder fileName = new StringBuilder("IEDriverServer_");
+            fileName.append(architecture).append("_").append(version).append(".zip");
+            return fileName.toString();
         }
     }
 }
