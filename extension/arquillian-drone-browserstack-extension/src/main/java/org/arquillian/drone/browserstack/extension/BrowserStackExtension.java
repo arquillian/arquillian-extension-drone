@@ -24,9 +24,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 
-/**
- *
- */
 public class BrowserStackExtension implements LoadableExtension {
 
     public void register(ExtensionBuilder extensionBuilder) {

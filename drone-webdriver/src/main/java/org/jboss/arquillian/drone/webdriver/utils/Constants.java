@@ -19,9 +19,6 @@ package org.jboss.arquillian.drone.webdriver.utils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- *
- */
 public class Constants {
 
     public static final String WEB_DRIVER_NOT_FOUND_ERROR_MESSAGE =

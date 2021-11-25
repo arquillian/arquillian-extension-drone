@@ -33,9 +33,6 @@ import org.openqa.selenium.Platform;
 
 import static org.openqa.selenium.Platform.WINDOWS;
 
-/**
- *
- */
 public class Validate {
 
     private static final Logger log = Logger.getLogger(Validate.class.getName());

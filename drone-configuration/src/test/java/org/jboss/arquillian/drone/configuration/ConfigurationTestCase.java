@@ -23,9 +23,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class ConfigurationTestCase {
 
     @Test

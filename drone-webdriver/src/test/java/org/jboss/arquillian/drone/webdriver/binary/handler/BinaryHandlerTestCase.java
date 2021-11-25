@@ -37,9 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.DRONE_TARGET_DIRECTORY;
 
-/**
- *
- */
 public class BinaryHandlerTestCase {
 
     private static final Path originalCacheDirectory = ARQUILLIAN_DRONE_CACHE_DIRECTORY;
