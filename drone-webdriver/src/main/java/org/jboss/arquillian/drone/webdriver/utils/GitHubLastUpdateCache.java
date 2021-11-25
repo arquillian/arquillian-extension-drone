@@ -1,16 +1,5 @@
 package org.jboss.arquillian.drone.webdriver.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -22,16 +11,31 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
 
 public class GitHubLastUpdateCache {
 
     private static final String ASSET_PROPERTY = "asset";
+
     private static final String LAST_MODIFIED_PROPERTY = "lastModified";
+
     private static final Path DEFAULT_CACHE_DIRECTORY = ARQUILLIAN_DRONE_CACHE_DIRECTORY.resolve("gh_cache");
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(new TypeToken<ZonedDateTime>() {
     }.getType(), new ZonedDateTimeConverter()).create();
+
     private final Path cacheDirectory;
 
     public GitHubLastUpdateCache(final Path cacheDirectory) {
@@ -73,7 +77,7 @@ public class GitHubLastUpdateCache {
         return gson.fromJson(asset, type);
     }
 
-    public boolean cacheFileExists(String uniqueKey){
+    public boolean cacheFileExists(String uniqueKey) {
         return Files.exists(createCachedFilePath(uniqueKey));
     }
 

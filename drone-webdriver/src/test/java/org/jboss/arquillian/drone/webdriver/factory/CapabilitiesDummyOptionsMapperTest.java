@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,13 +23,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-/**
- *
- */
 public class CapabilitiesDummyOptionsMapperTest {
 
     private static final Gson GSON = new Gson();

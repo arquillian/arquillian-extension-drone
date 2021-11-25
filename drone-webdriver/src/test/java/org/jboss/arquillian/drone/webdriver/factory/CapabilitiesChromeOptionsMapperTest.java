@@ -16,27 +16,25 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.internal.LazilyParsedNumber;
-import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.internal.LazilyParsedNumber;
+import com.google.gson.reflect.TypeToken;
 import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-/**
- *
- */
 public class CapabilitiesChromeOptionsMapperTest {
 
     private static final Gson GSON = new Gson();

@@ -22,9 +22,6 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
 
-/**
- *
- */
 public class MockDronePriorityFactory implements Configurator<MockDrone, MockDroneConfiguration>,
     Instantiator<MockDrone, MockDroneConfiguration>, Destructor<MockDrone> {
     public static final String MOCK_DRONE_PRIORITY_FACTORY_FIELD = "Set by MockDronePriorityFactory";

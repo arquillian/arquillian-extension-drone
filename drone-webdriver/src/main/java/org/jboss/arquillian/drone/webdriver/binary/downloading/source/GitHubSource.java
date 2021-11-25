@@ -141,8 +141,11 @@ public abstract class GitHubSource implements ExternalBinarySource {
 
     protected ZonedDateTime extractModificationDate(HttpClient.Response response) {
         final String modificationDate = response.getHeader(LAST_MODIFIED);
-        final DateTimeFormatter dateTimeFormatter = Rfc2126DateTimeFormatter.INSTANCE;
-        return ZonedDateTime.parse(modificationDate, dateTimeFormatter);
+        if (modificationDate != null) {
+            final DateTimeFormatter dateTimeFormatter = Rfc2126DateTimeFormatter.INSTANCE;
+            return ZonedDateTime.parse(modificationDate, dateTimeFormatter);
+        }
+        return ZonedDateTime.now();
     }
 
     @Override

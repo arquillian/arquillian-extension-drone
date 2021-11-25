@@ -4,9 +4,6 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBi
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinarySource;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-/**
- *
- */
 public class LocalBinaryHandler extends AbstractBinaryHandler {
 
     public static final String LOCAL_SOURCE_BINARY_PROPERTY = "localSourceBinary";

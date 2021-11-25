@@ -5,9 +5,6 @@ import java.util.logging.Logger;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-/**
- *
- */
 public class ReusableRemoteWebDriverToDestroy {
 
     private Logger log = Logger.getLogger(ReusableRemoteWebDriverToDestroy.class.getName());
