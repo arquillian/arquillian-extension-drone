@@ -82,15 +82,13 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
         return getReleaseForVersion(latestVersion);
     }
 
-    protected String getVersion(String urlToLatestRelease, String charset) throws IOException {
-        return StringUtils.trimMultiline(httpClient.get(urlToLatestRelease, charset).getPayload());
+    protected String getVersion(String versionUrl, String charset) throws IOException {
+        return StringUtils.trimMultiline(httpClient.get(versionUrl, charset).getPayload());
     }
 
     private List<DriverEntry> retrieveAllDriversEntries() throws Exception {
         final List<DriverEntry> results = new ArrayList<>();
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setIgnoringElementContentWhitespace(true);
-        final DocumentBuilder db = dbf.newDocumentBuilder();
+        final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         final InputSource is = new InputSource();
         is.setByteStream(new BOMInputStream(new ByteArrayInputStream(httpClient.get(storageUrl).getPayload().getBytes(StandardCharsets.UTF_8))));
         final Document doc = db.parse(is);
