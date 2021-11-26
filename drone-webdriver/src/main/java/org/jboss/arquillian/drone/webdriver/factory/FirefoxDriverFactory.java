@@ -97,7 +97,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        String binary = (String) capabilities.getCapability(FirefoxDriver.BINARY);
+        String binary = (String) capabilities.getCapability(FirefoxDriver.Capability.BINARY);
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
@@ -123,7 +123,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
     private FirefoxProfile getFirefoxProfile(DesiredCapabilities capabilities, boolean performValidations) {
 
-        String profile = (String) capabilities.getCapability(FirefoxDriver.PROFILE);
+        String profile = (String) capabilities.getCapability(FirefoxDriver.Capability.PROFILE);
         FirefoxProfile firefoxProfile;
 
         // use the explicit profile only if absolutely necessary;

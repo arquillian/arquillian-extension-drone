@@ -40,7 +40,7 @@ import org.openqa.selenium.remote.SessionId;
  */
 public class ReusableRemoteWebDriver extends RemoteWebDriver {
 
-    ReusableRemoteWebDriver() {
+    public ReusableRemoteWebDriver() {
         super();
     }
 

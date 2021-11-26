@@ -72,10 +72,8 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
 
-        SafariOptions safariOptions = new SafariOptions();
+        SafariOptions safariOptions = SafariOptions.fromCapabilities(capabilities);
         CapabilitiesOptionsMapper.mapCapabilities(safariOptions, capabilities, BROWSER_CAPABILITIES);
-
-        capabilities.setCapability(SafariOptions.CAPABILITY, safariOptions);
 
         return capabilities;
     }
