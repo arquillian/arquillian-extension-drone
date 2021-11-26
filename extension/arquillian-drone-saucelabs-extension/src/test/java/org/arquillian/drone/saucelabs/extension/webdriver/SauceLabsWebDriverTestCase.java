@@ -32,6 +32,7 @@ public class SauceLabsWebDriverTestCase {
 
     private static final By QUERY_FIELD = By.name("q");
     private static final By SEARCH_RESULTS = By.id("search");
+
     @Drone
     WebDriver driver;
 

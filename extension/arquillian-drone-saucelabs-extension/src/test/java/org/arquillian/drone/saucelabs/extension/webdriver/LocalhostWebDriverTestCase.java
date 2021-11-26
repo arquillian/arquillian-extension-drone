@@ -58,7 +58,7 @@ public class LocalhostWebDriverTestCase {
     @Test
     @InSequence(1)
     @Ignore("All the Sauce Labs tests are ignored, because of missing username and access key to some active account - see arquillian.xml.")
-    public void login() throws InterruptedException {
+    public void login() {
         LoginPage page = new LoginPage(driver, contextPath);
         page.login(USERNAME, PASSWORD);
     }
