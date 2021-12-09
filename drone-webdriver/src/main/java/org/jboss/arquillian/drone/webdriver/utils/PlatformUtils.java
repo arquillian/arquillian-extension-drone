@@ -95,11 +95,6 @@ public class PlatformUtils {
         UNKNOWN;
     }
 
-    public enum Architecture {
-        BIT64,
-        BIT32;
-    }
-
     public interface Platform {
         OperatingSystem os();
 
