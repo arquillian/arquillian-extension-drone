@@ -1,6 +1,7 @@
 package org.jboss.arquillian.drone.webdriver.binary.downloading.source;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 
 /**
  * A representation of an external source of some binarie.
@@ -32,6 +33,10 @@ public interface ExternalBinarySource {
      */
     ExternalBinary getReleaseForVersion(String version) throws Exception;
 
+    default ExternalBinary getReleaseForVersion(String version, Architecture architecture) throws Exception {
+        return getReleaseForVersion(version);
+    }
+
     /**
      * This method should returns a regex that represents a file name of the release asset that should be downloaded.
      * If this method returns null, the AbstractBinaryHandler won't be looking for any file in the cache directory
@@ -40,4 +45,8 @@ public interface ExternalBinarySource {
      * @return A regex that represents a file name of an asset to be downloaded.
      */
     String getFileNameRegexToDownload(String version);
+
+    default String getFileNameRegexToDownload(String version, Architecture architecture) {
+        return getFileNameRegexToDownload(version);
+    }
 }

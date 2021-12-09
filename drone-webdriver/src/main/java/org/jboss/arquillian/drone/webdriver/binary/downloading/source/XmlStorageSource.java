@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.input.BOMInputStream;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.w3c.dom.Document;
@@ -141,13 +142,17 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
 
     @Override
     public ExternalBinary getReleaseForVersion(String requiredVersion) throws Exception {
+        return getReleaseForVersion(requiredVersion, Architecture.AUTO_DETECT);
+    }
+
+    @Override
+    public ExternalBinary getReleaseForVersion(String requiredVersion, Architecture architecture) throws Exception {
         final List<DriverEntry> driverEntries = retrieveAllDriversEntries();
         final List<DriverEntry> matched = driverEntries
             .stream()
             .filter(driverEntry -> {
-                final String expectedKeyRegex = getExpectedKeyRegex(requiredVersion, driverEntry.getLocation());
-                final boolean matches = driverEntry.getKey().matches(expectedKeyRegex);
-                return matches;
+                final String expectedKeyRegex = getExpectedKeyRegex(requiredVersion, driverEntry.getLocation(), architecture);
+                return driverEntry.getKey().matches(expectedKeyRegex);
             })
             .collect(Collectors.toList());
 
@@ -185,6 +190,10 @@ public abstract class XmlStorageSource implements ExternalBinarySource {
      * @return A regex that represents a key of an expected binary/file.
      */
     protected abstract String getExpectedKeyRegex(String requiredVersion, String directory);
+
+    protected String getExpectedKeyRegex(String requiredVersion, String directory, Architecture architecture) {
+        return getExpectedKeyRegex(requiredVersion, directory);
+    }
 
     class DriverEntry {
         private String key;
