@@ -74,7 +74,7 @@ public class StubbedChromeStorageTestCase {
     }
 
     @Test
-    public void should_always_fallback_to_32_bit_version() throws Exception {
+    public void on_any_windows_should_download_32_bit_chromedriver() throws Exception {
         System.setProperty("os.name", "win");
 
         assertThat(PlatformUtils.isWindows(), is(true));
@@ -82,14 +82,28 @@ public class StubbedChromeStorageTestCase {
         final ExternalBinary releaseWithArchitectureDetected = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE);
         assertThat(releaseWithArchitectureDetected.getVersion(), is(ALL_OS_RELEASE));
         assertThat(releaseWithArchitectureDetected.getUrl(), CoreMatchers.endsWith("win32.zip"));
+    }
 
-        final ExternalBinary release32 = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT32);
-        assertThat(release32.getVersion(), is(ALL_OS_RELEASE));
-        assertThat(release32.getUrl(), CoreMatchers.endsWith("win32.zip"));
+    @Test
+    public void on_windowns32b_should_download_32_bit_chromedriver() throws Exception {
+        System.setProperty("os.name", "win");
 
-        final ExternalBinary release64 = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT64);
-        assertThat(release64.getVersion(), is(ALL_OS_RELEASE));
-        assertThat(release64.getUrl(), CoreMatchers.endsWith("win32.zip"));
+        assertThat(PlatformUtils.isWindows(), is(true));
+
+        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT32);
+        assertThat(release.getVersion(), is(ALL_OS_RELEASE));
+        assertThat(release.getUrl(), CoreMatchers.endsWith("win32.zip"));
+    }
+
+    @Test
+    public void on_windowns64b_should_download_32_bit_chromedriver() throws Exception {
+        System.setProperty("os.name", "win");
+
+        assertThat(PlatformUtils.isWindows(), is(true));
+
+        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT64);
+        assertThat(release.getVersion(), is(ALL_OS_RELEASE));
+        assertThat(release.getUrl(), CoreMatchers.endsWith("win32.zip"));
     }
 
     @Test(expected = MissingBinaryException.class)
