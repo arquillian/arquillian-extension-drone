@@ -32,10 +32,14 @@ public class StubbedChromeStorageTestCase {
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
+    /**
+     * Please be aware the file content correspond to situation reported as:
+     * https://github.com/arquillian/arquillian-extension-drone/issues/300
+     */
     private static final String FILE_PATH =
         "src/test/resources/files/downloading/chrome-driver/chrome_drivers.xml".replace("/", File.separator);
 
-    public static final String ALL_OS_RELEASE = "96.0.4664.45";
+    public static final String ALL_OS_BUT_WIN64_RELEASE = "96.0.4664.45";
     public static final String NON_EXISTING_RELEASE = "1.1.1.1";
 
     @Mock
@@ -48,7 +52,7 @@ public class StubbedChromeStorageTestCase {
         when(httpClient.get(startsWith("https://chromedriver.storage.googleapis.com/"))).thenReturn(new HttpClient.Response(
             readFileToString(new File(FILE_PATH), "utf-8").replaceAll("(?:>)(\\s*)<", "><"), emptyMap()));
 
-        when(httpClient.get(endsWith("/LATEST_RELEASE"), anyString())).thenReturn(new HttpClient.Response(ALL_OS_RELEASE, emptyMap()));
+        when(httpClient.get(endsWith("/LATEST_RELEASE"), anyString())).thenReturn(new HttpClient.Response(ALL_OS_BUT_WIN64_RELEASE, emptyMap()));
 
         chromeDrivers = new ChromeDriverBinaryHandler.ChromeStorageSources("https://chromedriver.storage.googleapis.com/", httpClient);
     }
@@ -59,7 +63,7 @@ public class StubbedChromeStorageTestCase {
         final ExternalBinary latestRelease = chromeDrivers.getLatestRelease();
 
         // then
-        assertThat(latestRelease.getVersion(), is(ALL_OS_RELEASE));
+        assertThat(latestRelease.getVersion(), is(ALL_OS_BUT_WIN64_RELEASE));
     }
 
     @Test
@@ -69,40 +73,40 @@ public class StubbedChromeStorageTestCase {
         assertThat(PlatformUtils.isWindows(), is(true));
 
         final ExternalBinary latestRelease = chromeDrivers.getLatestRelease();
-        assertThat(latestRelease.getVersion(), is(ALL_OS_RELEASE));
+        assertThat(latestRelease.getVersion(), is(ALL_OS_BUT_WIN64_RELEASE));
         assertThat(latestRelease.getUrl(), CoreMatchers.endsWith("win32.zip"));
     }
 
     @Test
-    public void on_any_windows_should_download_32_bit_chromedriver() throws Exception {
+    public void should_find_32_bit_version_on_windows_with_detected_architecture() throws Exception {
         System.setProperty("os.name", "win");
 
         assertThat(PlatformUtils.isWindows(), is(true));
 
-        final ExternalBinary releaseWithArchitectureDetected = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE);
-        assertThat(releaseWithArchitectureDetected.getVersion(), is(ALL_OS_RELEASE));
+        final ExternalBinary releaseWithArchitectureDetected = chromeDrivers.getReleaseForVersion(ALL_OS_BUT_WIN64_RELEASE);
+        assertThat(releaseWithArchitectureDetected.getVersion(), is(ALL_OS_BUT_WIN64_RELEASE));
         assertThat(releaseWithArchitectureDetected.getUrl(), CoreMatchers.endsWith("win32.zip"));
     }
 
     @Test
-    public void on_windowns32b_should_download_32_bit_chromedriver() throws Exception {
+    public void should_find_32_bit_version_on_windows_with_32_bit_architecture() throws Exception {
         System.setProperty("os.name", "win");
 
         assertThat(PlatformUtils.isWindows(), is(true));
 
-        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT32);
-        assertThat(release.getVersion(), is(ALL_OS_RELEASE));
+        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_BUT_WIN64_RELEASE, Architecture.BIT32);
+        assertThat(release.getVersion(), is(ALL_OS_BUT_WIN64_RELEASE));
         assertThat(release.getUrl(), CoreMatchers.endsWith("win32.zip"));
     }
 
     @Test
-    public void on_windowns64b_should_download_32_bit_chromedriver() throws Exception {
+    public void should_find_32_bit_version_on_windows_with_64_bit_architecture() throws Exception {
         System.setProperty("os.name", "win");
 
         assertThat(PlatformUtils.isWindows(), is(true));
 
-        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_RELEASE, Architecture.BIT64);
-        assertThat(release.getVersion(), is(ALL_OS_RELEASE));
+        final ExternalBinary release = chromeDrivers.getReleaseForVersion(ALL_OS_BUT_WIN64_RELEASE, Architecture.BIT64);
+        assertThat(release.getVersion(), is(ALL_OS_BUT_WIN64_RELEASE));
         assertThat(release.getUrl(), CoreMatchers.endsWith("win32.zip"));
     }
 
