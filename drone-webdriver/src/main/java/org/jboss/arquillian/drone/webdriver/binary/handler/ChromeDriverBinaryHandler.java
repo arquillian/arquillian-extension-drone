@@ -10,6 +10,7 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -85,6 +86,25 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         @Override
         protected String getExpectedKeyRegex(String requiredVersion, String directory) {
             return getExpectedKeyRegex(requiredVersion, directory, Architecture.AUTO_DETECT);
+        }
+
+        @Override
+        public ExternalBinary getReleaseForVersion(String requiredVersion, Architecture architecture) throws Exception {
+            ExternalBinary release;
+            try {
+                release = super.getReleaseForVersion(requiredVersion, architecture);
+            } catch (MissingBinaryException mbe) {
+                if (PlatformUtils.isWindows() && Objects.equals(architecture.getValue(), Architecture.BIT64.getValue())) {
+                    log.log(Level.WARNING, "Failed downloading 64-bit version of Chrome Driver. Reason: ", mbe);
+                    log.log(Level.WARNING, "This special case was reported as https://github.com/arquillian/arquillian-extension-drone/issues/300");
+                    log.log(Level.WARNING, "Downloading 32-bit version of Chrome Driver instead. ({0})", requiredVersion);
+
+                    release = getReleaseForVersion(requiredVersion, Architecture.BIT32);
+                } else {
+                    throw mbe;
+                }
+            }
+            return release;
         }
 
         @Override
