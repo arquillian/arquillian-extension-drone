@@ -31,7 +31,9 @@ public class LocalGoogleSeleniumStorageTestCase {
     @Before
     public void setMock() throws IOException {
         when(httpClient.get(startsWith(SELENIUM_BASE_STORAGE_URL))).thenReturn(new HttpClient.Response(
-            FileUtils.readFileToString(new File(FILE_PATH), "utf-8").replaceAll("(?:>)(\\s*)<", "><"), Collections.emptyMap()));
+            200,
+            FileUtils.readFileToString(new File(FILE_PATH), "utf-8").replaceAll("(?:>)(\\s*)<", "><"),
+            Collections.emptyMap()));
     }
 
     @Test
