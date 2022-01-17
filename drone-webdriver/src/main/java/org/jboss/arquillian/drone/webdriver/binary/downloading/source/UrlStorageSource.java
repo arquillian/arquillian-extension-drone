@@ -80,7 +80,7 @@ public abstract class UrlStorageSource implements ExternalBinarySource {
         final String externalBinaryUrl = storageUrl + getFileNameRegexToDownload(requiredVersion, architecture);
 
         final HttpClient.Response response = httpClient.get(externalBinaryUrl);
-        if (response.getStatusCode() == 404) {
+        if (response.getStatusCode() != 200) {
             log.warning("There wasn't found any binary on the url: " + externalBinaryUrl);
             throw new MissingBinaryException("There wasn't found any binary on the url: " + externalBinaryUrl);
         }
