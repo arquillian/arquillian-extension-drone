@@ -1,19 +1,18 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.MissingBinaryException;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.XmlStorageSource;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.UrlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * A class for handling chromeDriver binaries
@@ -68,7 +67,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         return CHROME_SYSTEM_DRIVER_BINARY_PROPERTY;
     }
 
-    public static class ChromeStorageSources extends XmlStorageSource {
+    public static class ChromeStorageSources extends UrlStorageSource {
 
         public ChromeStorageSources(String baseUrl) {
             this(baseUrl, new HttpClient());
@@ -76,16 +75,6 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
         public ChromeStorageSources(String baseUrl, HttpClient client) {
             super(baseUrl, baseUrl + "LATEST_RELEASE", client);
-        }
-
-        @Override
-        protected String getExpectedKeyRegex(String requiredVersion, String directory, Architecture architecture) {
-            return Pattern.quote(requiredVersion + "/" + getFileNameRegexToDownload(requiredVersion, architecture));
-        }
-
-        @Override
-        protected String getExpectedKeyRegex(String requiredVersion, String directory) {
-            return getExpectedKeyRegex(requiredVersion, directory, Architecture.AUTO_DETECT);
         }
 
         @Override
@@ -133,7 +122,9 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
         @Override
         public String getFileNameRegexToDownload(String version, Architecture architecture) {
-            final StringBuilder fileName = new StringBuilder("chromedriver_");
+            final StringBuilder fileName = new StringBuilder(version);
+            fileName.append("/");
+            fileName.append("chromedriver_");
             if (PlatformUtils.isMac()) {
                 fileName.append("mac");
             } else if (PlatformUtils.isWindows()) {

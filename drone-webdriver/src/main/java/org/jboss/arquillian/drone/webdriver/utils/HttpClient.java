@@ -58,10 +58,13 @@ public class HttpClient {
     }
 
     public static class Response {
+
+        private int statusCode;
         private final String payload;
         private final Map<String, String> headers;
 
-        public Response(String payload, Map<String, String> headers) {
+        public Response(int statusCode, String payload, Map<String, String> headers) {
+            this.statusCode = statusCode;
             this.payload = payload;
             this.headers = headers;
         }
@@ -83,7 +86,11 @@ public class HttpClient {
                 // Names should be case-insensitive
                 headers.put(header.getName().toLowerCase(), header.getValue());
             }
-            return new Response(payload, headers);
+            int statusCode = 0;
+            if (response.getStatusLine() != null) {
+                statusCode = response.getStatusLine().getStatusCode();
+            }
+            return new Response(statusCode, payload, headers);
         }
 
         public boolean hasPayload() {
@@ -96,6 +103,10 @@ public class HttpClient {
 
         public String getHeader(String header) {
             return headers.get(header.toLowerCase());
+        }
+
+        public int getStatusCode() {
+            return statusCode;
         }
     }
 }

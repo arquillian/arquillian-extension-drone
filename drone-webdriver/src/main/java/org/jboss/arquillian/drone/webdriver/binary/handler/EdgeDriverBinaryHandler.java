@@ -6,17 +6,15 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
+import org.jboss.arquillian.drone.webdriver.binary.downloading.source.UrlStorageSource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.MissingBinaryException;
-import org.jboss.arquillian.drone.webdriver.binary.downloading.source.XmlStorageSource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriverToDestroy;
+import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * A class for handling binaries for Edge
@@ -71,7 +69,7 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
         return capabilities;
     }
 
-    public static class EdgeStorageSources extends XmlStorageSource {
+    public static class EdgeStorageSources extends UrlStorageSource {
 
         public EdgeStorageSources(String baseUrl) {
             this(baseUrl, new HttpClient());
@@ -121,40 +119,25 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
         }
 
         @Override
-        protected NodeList getDriverEntries(Document doc) {
-            return ((Element) doc.getFirstChild().getFirstChild()).getElementsByTagName(this.nodeName);
-        }
-
-        @Override
-        protected String getLastModified(Element element) {
-            return getContentOfFirstElement((Element) element.getElementsByTagName("Properties").item(0), "Last-Modified");
-        }
-
-        @Override
-        protected String getLocation(Element element) {
-            return getContentOfFirstElement(element, "Url");
-        }
-
-        @Override
         public String getFileNameRegexToDownload(String version) {
-            final StringBuilder fileName = new StringBuilder("edgedriver_");
+            return getFileNameRegexToDownload(version, Architecture.AUTO_DETECT);
+        }
+
+        @Override
+        public String getFileNameRegexToDownload(String version, Architecture architecture) {
+            final StringBuilder fileName = new StringBuilder(version);
+            fileName.append("/");
+            fileName.append("edgedriver_");
             if (PlatformUtils.isMac()) {
                 fileName.append("mac64");
             } else if (PlatformUtils.isWindows()) {
                 fileName.append("win");
-                if (PlatformUtils.is32()) {
-                    fileName.append("32");
-                } else {
-                    fileName.append("64");
-                }
+                fileName.append(architecture.getValue());
             } else if (PlatformUtils.isUnix()) {
                 fileName.append("linux");
-                if (PlatformUtils.is32()) {
-                    fileName.append("32");
-                } else {
-                    fileName.append("64");
-                }
+                fileName.append(architecture.getValue());
             }
+
             return fileName.append(".zip").toString();
         }
     }
