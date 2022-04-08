@@ -135,6 +135,10 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
             fileName.append(architecture.getValue());
 
+            if (PlatformUtils.isMacAppleSilicon()) {
+                fileName.append("_m1");
+            }
+
             return fileName.append(".zip").toString();
         }
     }
