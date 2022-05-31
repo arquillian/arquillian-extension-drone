@@ -41,7 +41,7 @@
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
     <version.htmlunit.driver>3.58.0</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
-    <version.appium.java.client>7.6.0</version.appium.java.client>
+    <version.appium.java.client>8.1.0</version.appium.java.client>
 
     <!-- Test bits versions -->
     <version.junit>4.13.2</version.junit>
