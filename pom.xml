@@ -39,7 +39,7 @@
     <version.arquillian.core>1.6.0.Final</version.arquillian.core>
     <version.selenium>4.1.2</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>3.58.0</version.htmlunit.driver>
+    <version.htmlunit.driver>3.62.0</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <version.appium.java.client>7.6.0</version.appium.java.client>
 

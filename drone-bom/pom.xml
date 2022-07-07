@@ -41,7 +41,7 @@
   <properties>
     <version.selenium>4.1.2</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>3.58.0</version.htmlunit.driver>
+    <version.htmlunit.driver>3.62.0</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
