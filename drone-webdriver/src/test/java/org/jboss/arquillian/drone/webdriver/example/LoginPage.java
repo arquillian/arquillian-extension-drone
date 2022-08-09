@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.webdriver.example;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.function.Function;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -90,8 +91,12 @@ public class LoginPage {
 
         private String message;
 
+        public WebDriverWaitWithMessage(WebDriver driver, Duration time) {
+            super(driver, time);
+        }
+
         public WebDriverWaitWithMessage(WebDriver driver, long timeOutInSeconds) {
-            super(driver, timeOutInSeconds);
+            this(driver, Duration.ofSeconds(timeOutInSeconds));
         }
 
         public WebDriverWait failWith(String message) {

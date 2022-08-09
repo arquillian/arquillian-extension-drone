@@ -76,11 +76,10 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      */
     @Override
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
+        final ChromeOptions options = getChromeOptions(configuration);
 
-        Capabilities capabilities = getCapabilities(configuration, true);
-
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
-            new Object[] {capabilities}, ChromeDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[]{ChromeOptions.class},
+            new Object[]{options}, ChromeDriver.class);
     }
 
     /**
@@ -115,6 +114,14 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         setChromeOptions(configuration, capabilities);
 
         return capabilities;
+    }
+
+    public ChromeOptions getChromeOptions(WebDriverConfiguration configuration) {
+        return getChromeOptions(configuration, true);
+    }
+
+    public ChromeOptions getChromeOptions(WebDriverConfiguration configuration, boolean performValidations) {
+        return new ChromeOptions().merge(getCapabilities(configuration, performValidations));
     }
 
     public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {

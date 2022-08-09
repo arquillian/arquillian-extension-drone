@@ -18,13 +18,13 @@
 package org.arquillian.drone.appium.extension.webdriver;
 
 import com.google.gson.Gson;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class AppiumDriverFactoryTest {
         assertEquals(originalCapabilities.getCapability(PLATFORM_NAME), newCapabilities.getCapability(PLATFORM_NAME));
         assertEquals(originalCapabilities.getCapability(BROWSER_NAME), newCapabilities.getCapability(BROWSER_NAME));
 
-        Object chromeOptions = newCapabilities.getCapability(ChromeOptions.CAPABILITY);
+        Object chromeOptions = newCapabilities.getCapability(AndroidMobileCapabilityType.CHROME_OPTIONS);
         assertTrue(new Gson().toJson(chromeOptions).contains(CHROME_OPTIONS_VALUE));
     }
 
