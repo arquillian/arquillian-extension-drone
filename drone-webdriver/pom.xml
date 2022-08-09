@@ -27,7 +27,7 @@
   <properties>
     <!-- m2e settings -->
     <m2e.jpa.activation>false</m2e.jpa.activation>
-    <google.code.gson.version>2.9.0</google.code.gson.version>
+    <google.code.gson.version>2.9.1</google.code.gson.version>
   </properties>
 
   <!-- Dependencies -->
