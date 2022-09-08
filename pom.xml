@@ -46,7 +46,7 @@
     <!-- Test bits versions -->
     <version.junit>4.13.2</version.junit>
     <version.assertj>3.23.1</version.assertj>
-    <version.mockito>4.6.1</version.mockito>
+    <version.mockito>4.8.0</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
     <version.hoverfly.java>0.14.2</version.hoverfly.java>
     <version.awaitility>4.2.0</version.awaitility>
