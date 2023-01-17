@@ -39,13 +39,13 @@
     <version.arquillian.core>1.6.0.Final</version.arquillian.core>
     <version.selenium>4.3.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.5.2</version.htmlunit.driver>
+    <version.htmlunit.driver>4.7.2</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <version.appium.java.client>7.6.0</version.appium.java.client>
 
     <!-- Test bits versions -->
     <version.junit>4.13.2</version.junit>
-    <version.assertj>3.23.1</version.assertj>
+    <version.assertj>3.24.1</version.assertj>
     <version.mockito>4.8.1</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
     <version.hoverfly.java>0.14.3</version.hoverfly.java>
