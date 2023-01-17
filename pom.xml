@@ -39,7 +39,7 @@
     <version.arquillian.core>1.6.0.Final</version.arquillian.core>
     <version.selenium>4.3.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.5.2</version.htmlunit.driver>
+    <version.htmlunit.driver>4.7.2</version.htmlunit.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <version.appium.java.client>7.6.0</version.appium.java.client>
 
@@ -53,7 +53,7 @@
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-    <version.org.eclipse.jetty>11.0.12</version.org.eclipse.jetty>
+    <version.org.eclipse.jetty>11.0.13</version.org.eclipse.jetty>
     <version.arquillian.jetty>1.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
