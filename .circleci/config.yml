@@ -8,7 +8,7 @@ jobs:
         type: string
       browser:
         type: string
-    working_directory: $HOME/circleci-arquillian
+    working_directory: /home/circleci/circleci-arquillian
     docker:
       - image: cimg/openjdk:<< parameters.jdk-version >>-browsers
     resource_class: large
