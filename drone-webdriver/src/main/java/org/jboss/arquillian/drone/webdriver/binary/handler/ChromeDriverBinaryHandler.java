@@ -78,7 +78,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
         if (files == null || files.length != 1) {
             throw new IllegalStateException(
-                "Missing ChromeDriver executable (" + CHROME_DRIVER_BINARY_NAME + " in the directory " + extraction);
+                "Missing ChromeDriver executable (" + CHROME_DRIVER_BINARY_NAME + ") in the directory " + extraction);
         }
 
         return markAsExecutable(files[0]);
