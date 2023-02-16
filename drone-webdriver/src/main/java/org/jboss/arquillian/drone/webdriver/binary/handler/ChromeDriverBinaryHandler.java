@@ -1,5 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
+import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.MissingBinaryException;
@@ -10,6 +11,7 @@ import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -25,6 +27,8 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     public static final String CHROME_DRIVER_BINARY_PROPERTY = "chromeDriverBinary";
     private static final String CHROME_DRIVER_VERSION_PROPERTY = "chromeDriverVersion";
     private static final String CHROME_DRIVER_URL_PROPERTY = "chromeDriverUrl";
+
+    public static final String CHROME_DRIVER_BINARY_NAME = "chromedriver" + (PlatformUtils.isWindows() ? ".exe" : "");
 
     private final DesiredCapabilities capabilities;
 
@@ -65,6 +69,19 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     @Override
     public String getSystemBinaryProperty() {
         return CHROME_SYSTEM_DRIVER_BINARY_PROPERTY;
+    }
+
+    @Override
+    protected File prepare(File downloaded) throws Exception {
+        File extraction = BinaryFilesUtils.extract(downloaded);
+        File[] files = extraction.listFiles(file -> file.isFile() && file.getName().equals(CHROME_DRIVER_BINARY_NAME));
+
+        if (files == null || files.length != 1) {
+            throw new IllegalStateException(
+                "Missing ChromeDriver executable (" + CHROME_DRIVER_BINARY_NAME + ") in the directory " + extraction);
+        }
+
+        return markAsExecutable(files[0]);
     }
 
     public static class ChromeStorageSources extends XmlStorageSource {
