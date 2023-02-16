@@ -137,29 +137,170 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
             return getFileNameRegexToDownload(version, Architecture.AUTO_DETECT);
         }
 
+        private static final ChromeVersion LAST_LINUX_32BIT = new ChromeVersion(2, 33, 0, 0);
+        private static final ChromeVersion LAST_MAC_32BIT = new ChromeVersion(2, 22, 0, 0);
+        private static final ChromeVersion FIRST_MAC_64BIT = new ChromeVersion(2, 23, 0, 0);
+        private static final ChromeVersion FIRST_MAC_M1 = new ChromeVersion(88, 0, 0, 0);
+        private static final ChromeVersion LAST_MAC_M1 = new ChromeVersion(106, 0, 5249, 0);
+
         @Override
         public String getFileNameRegexToDownload(String version, Architecture architecture) {
+            // known formats:
+            // chromedriver_linux32.zip    v <= 2.33
+            // chromedriver_linux64.zip
+            // chromedriver_win32.zip
+            // chromedriver_mac32.zip      v <= 2.22
+            // chromedriver_mac64.zip      v >= 2.23
+            // chromedriver_mac64_m1.zip   88.0 <= v >= 106.0.5249
+            // chromedriver_mac_arm64.zip  v > 106.0.5249
+
+            ChromeVersion parsedVersion = new ChromeVersion(version);
+
             final StringBuilder fileName = new StringBuilder(version);
             fileName.append("/");
             fileName.append("chromedriver_");
+
             if (PlatformUtils.isMac()) {
                 fileName.append("mac");
-                if (PlatformUtils.isMacAppleSilicon()) {
-                    fileName.append("_arm");
-                }
+                fileName.append(getMacSuffix(parsedVersion, architecture));
             } else if (PlatformUtils.isWindows()) {
-                fileName.append("win");
+                // windows is currently only 32 bit
+                fileName.append("win32");
             } else if (PlatformUtils.isUnix()) {
+                if (architecture == Architecture.BIT32 && parsedVersion.isAfter(LAST_LINUX_32BIT)) {
+                    throw new MissingBinaryException("32bit Linux is not supported after version " + LAST_LINUX_32BIT);
+                }
+
                 fileName.append("linux");
-            }
-
-            fileName.append(architecture.getValue());
-
-            if (PlatformUtils.isMacAppleSilicon()) {
-                fileName.append("_m1");
+                fileName.append(architecture.getValue());
+            } else {
+                throw new MissingBinaryException("Unsupported OS: " + PlatformUtils.getOS());
             }
 
             return fileName.append(".zip").toString();
+        }
+
+        private String getMacSuffix(ChromeVersion version, Architecture architecture) {
+            if (architecture == Architecture.BIT32 && version.isAfter(LAST_MAC_32BIT)) {
+                throw new MissingBinaryException("32bit macOS is not supported after version " + LAST_MAC_32BIT);
+            }
+
+            if (architecture == Architecture.BIT64 && version.isBefore(FIRST_MAC_64BIT)) {
+                throw new MissingBinaryException("64bit macOS is not supported before version " + FIRST_MAC_64BIT);
+            }
+
+            if (PlatformUtils.isMacAppleSilicon()) {
+                if (version.isBefore(FIRST_MAC_M1)) {
+                    // before ARM builds for macOS - fallback to Intel: chromedriver_mac64.zip
+                    return "64";
+                }
+
+                if (version.isAfter(LAST_MAC_M1)) {
+                    // after switch to arm64: chromedriver_mac_arm64.zip
+                    return "_arm64";
+                }
+
+                // before switch to arm64 but after initial ARM builds: chromedriver_mac64_m1.zip
+                return "64_m1";
+            } else {
+                // Intel: chromedriver_mac64.zip or chromedriver_mac32.zip
+                return architecture.getValue();
+            }
+        }
+    }
+
+    static class ChromeVersion {
+        final int major;
+        final int minor;
+        final int patch;
+        final int build;
+
+        ChromeVersion(int major, int minor, int patch, int build) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+            this.build = build;
+        }
+
+        ChromeVersion(String raw) {
+            String[] versionParts = raw.split("\\.");
+
+            if (versionParts.length < 2) {
+                throw new IllegalArgumentException("Invalid Chrome version");
+            }
+
+            major = Integer.parseInt(versionParts[0]);
+            minor = Integer.parseInt(versionParts[1]);
+
+            if (versionParts.length >= 4) {
+                patch = Integer.parseInt(versionParts[2]);
+                build = Integer.parseInt(versionParts[3]);
+            } else {
+                patch = 0;
+                build = 0;
+            }
+        }
+
+        boolean isAfter(ChromeVersion version) {
+            if (major > version.major) {
+                return true;
+            }
+
+            if (major < version.major) {
+                return false;
+            }
+
+            if (minor > version.minor) {
+                return true;
+            }
+
+            if (minor < version.minor) {
+                return false;
+            }
+
+            if (patch > version.patch) {
+                return true;
+            }
+
+            if (patch < version.patch) {
+                return false;
+            }
+
+            return build > version.build;
+        }
+
+        boolean isBefore(ChromeVersion version) {
+            if (major > version.major) {
+                return false;
+            }
+
+            if (major < version.major) {
+                return true;
+            }
+
+            if (minor > version.minor) {
+                return false;
+            }
+
+            if (minor < version.minor) {
+                return true;
+            }
+
+            if (patch > version.patch) {
+                return false;
+            }
+
+            if (patch < version.patch) {
+                return true;
+            }
+
+            return build < version.build;
+        }
+
+
+        @Override
+        public String toString() {
+            return major + "." + minor + "." + patch + "." + build;
         }
     }
 }
