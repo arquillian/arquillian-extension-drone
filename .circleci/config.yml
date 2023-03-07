@@ -28,7 +28,11 @@ jobs:
       - restore_cache:
           key: circleci-arquillian-extension-drone-{{ checksum "pom.xml" }}
       - run: ./mvnw verify -q -U -DskipTests
-      - run: ./mvnw verify -Dbrowser=<< parameters.browser >>
+      - run: 
+          name: "Run tests"
+          command: ./mvnw verify -Dbrowser=<< parameters.browser >>
+          environment:
+            OPENSSL_CONF: /dev/null
       - store_test_results:
           path: target/surefire-reports
       - save_cache:
