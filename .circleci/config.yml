@@ -14,7 +14,8 @@ jobs:
     resource_class: large
     steps:
       - run: cd /tmp
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          replace-existing-chrome: true
       - run:
           name: "Install Microsoft Edge for Linux"
           command: |
