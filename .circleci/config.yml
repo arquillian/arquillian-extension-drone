@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.4.1
 jobs:
   build:
     parameters:
@@ -12,7 +12,9 @@ jobs:
     docker:
       - image: cimg/openjdk:<< parameters.jdk-version >>-browsers
     steps:
-      - browser-tools/install-browser-tools
+      - run: cd /tmp
+      - browser-tools/install-browser-tools:
+          replace-existing-chrome: true
       - run:
           name: "Install Microsoft Edge for Linux"
           command: |
