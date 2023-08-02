@@ -42,9 +42,10 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.UnableReuseS
 import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
@@ -103,9 +104,19 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
 
         // construct capabilities
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
-        if (browser.equals("chrome") || browser.equals("chromeheadless")) {
-            new ChromeDriverFactory().setChromeOptions(configuration, desiredCapabilities);
+        Capabilities options;
+        boolean augmentationSupported = true;
+        if (browser.equals(Browser.CHROME.browserName()) || browser.equals("chromeheadless")) {
+            options = new ChromeDriverFactory().getChromeOptions(configuration);
+        } else if(browser.equals(Browser.FIREFOX.browserName())) {
+            options = new FirefoxDriverFactory().getFirefoxOptions(configuration, true);
+            augmentationSupported = false;
+        } else if(browser.equals(Browser.SAFARI.browserName())) {
+            options = new SafariDriverFactory().getOptions(configuration, true);
+        } else if(browser.equals("edge")) {
+            options = new EdgeDriverFactory().getEdgeOptions(configuration);
+        } else {
+            options = new MutableCapabilities();
         }
 
         if (!UrlUtils.isReachable(remoteAddress)) {
@@ -128,14 +139,18 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         RemoteWebDriver driver = null;
 
         if (configuration.isRemoteReusable()) {
-            driver = createReusableDriver(remoteAddress, desiredCapabilities);
+            driver = createReusableDriver(remoteAddress, options);
         } else {
-            driver = createRemoteDriver(remoteAddress, desiredCapabilities);
+            driver = createRemoteDriver(remoteAddress, options);
         }
 
-        // ARQ-1351
-        // marks the driver instance for augmentation by AugmentingEnhancer
-        ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
+        if (augmentationSupported) {
+            // ARQ-1351
+            // marks the driver instance for augmentation by AugmentingEnhancer
+            ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
+        } else {
+            ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, Boolean.FALSE);
+        }
 
         // ARQ-1206
         // by default, we are clearing Cookies on reusable browsers
@@ -149,8 +164,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     private void downloadAndStartSeleniumServer(WebDriverConfiguration configuration, String browser,
         URL remoteAddress) throws Exception {
 
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(getCapabilities(configuration, true));
-        String seleniumServer = new SeleniumServerBinaryHandler(desiredCapabilities).downloadAndPrepare().toString();
+        Capabilities capabilities = new ImmutableCapabilities(getCapabilities(configuration, true));
+        String seleniumServer = new SeleniumServerBinaryHandler(capabilities).downloadAndPrepare().toString();
 
         if (!Validate.empty(seleniumServer)) {
             String seleniumServerArgs = configuration.getSeleniumServerArgs();
@@ -160,7 +175,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             }
 
             startSeleniumServerEvent.fire(
-                new StartSeleniumServer(seleniumServer, browser, desiredCapabilities, remoteAddress,
+                new StartSeleniumServer(seleniumServer, browser, capabilities, remoteAddress,
                     seleniumServerArgs));
         }
     }
@@ -216,13 +231,13 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         return BROWSER_CAPABILITIES;
     }
 
-    protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {
-        return new RemoteWebDriver(remoteAddress, desiredCapabilities);
+    protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities capabilities) {
+        return new RemoteWebDriver(remoteAddress, capabilities);
     }
 
-    private RemoteWebDriver createReusableDriver(URL remoteAddress, Capabilities desiredCapabilities) {
+    private RemoteWebDriver createReusableDriver(URL remoteAddress, Capabilities capabilities) {
         // construct init params
-        InitializationParameter initParam = new InitializationParameter(remoteAddress, desiredCapabilities);
+        InitializationParameter initParam = new InitializationParameter(remoteAddress, capabilities);
 
         RemoteWebDriver driver = null;
 
@@ -245,7 +260,7 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         if (driver == null) {
             // if either browser session isn't stored or can't be reused
-            RemoteWebDriver newdriver = createRemoteDriver(remoteAddress, desiredCapabilities);
+            RemoteWebDriver newdriver = createRemoteDriver(remoteAddress, capabilities);
             driver = ReusableRemoteWebDriver.fromRemoteWebDriver(newdriver);
         }
 

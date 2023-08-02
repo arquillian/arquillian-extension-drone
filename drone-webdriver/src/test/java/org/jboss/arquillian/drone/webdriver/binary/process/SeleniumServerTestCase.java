@@ -16,11 +16,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 public class SeleniumServerTestCase extends AbstractTestTestBase {
 
-    private DesiredCapabilities capabilities;
+    private MutableCapabilities capabilities;
     private URL url;
     @Rule
     public final SystemOutRule outContent = new SystemOutRule().enableLog();
@@ -33,7 +33,7 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
 
     @Before
     public void initialise() throws Exception {
-        capabilities = new DesiredCapabilities();
+        capabilities = new MutableCapabilities();
         // use selenium server version defined in arquillian.xml
         String selSerVersion = ArqDescPropertyUtil.getSeleniumServerVersionProperty();
         if (!Validate.empty(selSerVersion)) {

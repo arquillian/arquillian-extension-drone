@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,9 +72,9 @@ public class BinaryHandlerDesiredVersionTestCase {
     }
 
     private HandlerWithTmpFolder prepareHandler(String fileVersionToUse){
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setCapability(LOCAL_SOURCE_BINARY_VERSION_PROPERTY, fileVersionToUse);
-        return new HandlerWithTmpFolder(desiredCapabilities);
+        MutableCapabilities capabilities = new MutableCapabilities();
+        capabilities.setCapability(LOCAL_SOURCE_BINARY_VERSION_PROPERTY, fileVersionToUse);
+        return new HandlerWithTmpFolder(capabilities);
     }
 
     private File prepareExistingFile() throws IOException {
@@ -90,7 +90,7 @@ public class BinaryHandlerDesiredVersionTestCase {
 
     class HandlerWithTmpFolder extends  LocalBinaryHandler {
 
-        HandlerWithTmpFolder(DesiredCapabilities capabilities) {
+        HandlerWithTmpFolder(MutableCapabilities capabilities) {
             super(capabilities);
         }
 

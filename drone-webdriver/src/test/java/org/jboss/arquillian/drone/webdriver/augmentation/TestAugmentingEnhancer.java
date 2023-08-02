@@ -17,17 +17,17 @@
 package org.jboss.arquillian.drone.webdriver.augmentation;
 
 import java.lang.reflect.Field;
+
 import org.jboss.arquillian.drone.api.annotation.Default;
 import org.jboss.arquillian.drone.spi.InstanceOrCallableInstance;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemoteWebDriver;
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -84,11 +84,11 @@ public class TestAugmentingEnhancer {
     @Test
     public void testEnhancing() {
         // given
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         RemoteWebDriver driver = mock(RemoteWebDriver.class);
         when(driver.getCapabilities()).thenReturn(capabilities);
         capabilities.setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
-        capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, Boolean.TRUE);
+//        capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, Boolean.TRUE);
 
         // when
         RemoteWebDriver enhanced = enhancer.enhance(driver, Default.class);
@@ -102,7 +102,7 @@ public class TestAugmentingEnhancer {
     @Test
     public void testDeenhancing() {
         // given
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         RemoteWebDriver driver = mock(RemoteWebDriver.class);
         when(driver.getCapabilities()).thenReturn(capabilities);
         capabilities.setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);

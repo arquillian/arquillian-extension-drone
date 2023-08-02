@@ -17,13 +17,13 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.openqa.selenium.MutableCapabilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
 import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
@@ -181,7 +181,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
 
         PhantomJSSourceForLatestRelease(HttpClient httpClient,
             GitHubLastUpdateCache gitHubLastUpdateCache) {
-            super(httpClient, gitHubLastUpdateCache, new DesiredCapabilities());
+            super(httpClient, gitHubLastUpdateCache, new MutableCapabilities());
         }
 
         public ExternalBinary getLatestRelease() throws Exception {

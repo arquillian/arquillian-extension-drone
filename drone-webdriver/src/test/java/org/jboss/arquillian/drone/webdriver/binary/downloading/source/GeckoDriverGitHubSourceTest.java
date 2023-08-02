@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import java.nio.charset.StandardCharsets;
 
@@ -32,7 +32,7 @@ public class GeckoDriverGitHubSourceTest {
     GitHubLastUpdateCache gitHubLastUpdateCache;
 
     @Mock
-    DesiredCapabilities capabilities;
+    Capabilities capabilities;
 
     @InjectMocks
     GeckoDriverGitHubSource geckoDriverGitHubSource;

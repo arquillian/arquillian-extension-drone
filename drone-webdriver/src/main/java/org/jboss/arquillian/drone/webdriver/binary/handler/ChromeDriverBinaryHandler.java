@@ -14,7 +14,7 @@ import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * A class for handling chromeDriver binaries
@@ -30,9 +30,9 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
 
     public static final String CHROME_DRIVER_BINARY_NAME = "chromedriver" + (PlatformUtils.isWindows() ? ".exe" : "");
 
-    private final DesiredCapabilities capabilities;
+    private final Capabilities capabilities;
 
-    public ChromeDriverBinaryHandler(DesiredCapabilities capabilities) {
+    public ChromeDriverBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -57,7 +57,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 

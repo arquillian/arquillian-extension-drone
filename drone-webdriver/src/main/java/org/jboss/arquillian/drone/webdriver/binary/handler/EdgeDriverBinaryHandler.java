@@ -14,7 +14,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.utils.Architecture;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * A class for handling binaries for Edge
@@ -28,9 +28,9 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
     private static final String EDGE_DRIVER_VERSION_PROPERTY = "edgeDriverVersion";
     private static final String EDGE_DRIVER_URL_PROPERTY = "edgeDriverUrl";
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public EdgeDriverBinaryHandler(DesiredCapabilities capabilities) {
+    public EdgeDriverBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -65,7 +65,7 @@ public class EdgeDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 

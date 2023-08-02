@@ -105,7 +105,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-opera-driver</artifactId>
-      <version>${version.selenium}</version>
+      <version>${version.opera.driver}</version>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>

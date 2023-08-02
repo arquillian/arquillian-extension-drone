@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.rules.TemporaryFolder;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.ARQUILLIAN_DRONE_CACHE_DIRECTORY;
@@ -96,7 +96,7 @@ public class BinaryHandlerTestCase {
 
         // the latest release should be downloaded and prepared
         verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(
-            new DesiredCapabilities(),
+            new MutableCapabilities(),
             getDownloadedPath(LocalBinarySource.LATEST_VERSION, LocalBinarySource.LATEST_FILE.getName()),
             getExtractedPath(LocalBinarySource.LATEST_FILE),
             LocalBinarySource.ECHO_LATEST_SCRIPT,
@@ -105,7 +105,7 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithVersionCapabilitySet() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // set version property to 1.0.0.Final
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
@@ -122,7 +122,7 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithUrlCapabilitySet() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // set url the file should be downloaded from - without specifying version
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_URL_PROPERTY,
@@ -140,7 +140,7 @@ public class BinaryHandlerTestCase {
     @Test
     public void verifyWithUrlAndVersionCapabilitySet() throws Exception {
         String myCoolVersion = "my-cool-version";
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // set url the file should be downloaded from and also my own version
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
@@ -160,7 +160,7 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithDownloadBinariesSetFalse() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // set download feature to off
         capabilities.setCapability(
             AbstractBinaryHandler.DOWNLOAD_BINARIES_PROPERTY,
@@ -174,9 +174,9 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithSystemPropertySetToLatest() throws Exception {
-        String latest = new LocalBinaryHandler(new DesiredCapabilities()).checkAndSetBinary(true);
+        String latest = new LocalBinaryHandler(new MutableCapabilities()).checkAndSetBinary(true);
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // these settings shouldn't have any impact
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY,
@@ -192,7 +192,7 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithPropertySetInSystemToFirst() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // the 1.0.0.Final should be downloaded
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
@@ -214,7 +214,7 @@ public class BinaryHandlerTestCase {
 
     @Test
     public void verifyWithPropertySetToZip() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         // set binary to zip - test should throw an exception
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_PROPERTY,
@@ -246,7 +246,7 @@ public class BinaryHandlerTestCase {
         parentLog.addHandler(customLogHandler);
 
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         capabilities.setCapability(
             LocalBinaryHandler.LOCAL_SOURCE_BINARY_VERSION_PROPERTY,
             LocalBinarySource.FIRST_VERSION);
@@ -279,7 +279,7 @@ public class BinaryHandlerTestCase {
             message)).isFalse();
     }
 
-    private Thread createThreadWithCheckAndSetBinary(DesiredCapabilities capabilities, final CountDownLatch startLatch,
+    private Thread createThreadWithCheckAndSetBinary(MutableCapabilities capabilities, final CountDownLatch startLatch,
         final CountDownLatch stopLatch) {
         return new Thread(() -> {
             try {
@@ -292,7 +292,7 @@ public class BinaryHandlerTestCase {
         });
     }
 
-    private void verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(DesiredCapabilities capabilities,
+    private void verifyIsDownloadedExtractedSetExecutableSetInSystemProperty(MutableCapabilities capabilities,
         Path downloaded, Path extracted, String echo, boolean latest) throws Exception {
         LocalBinaryHandler localBinaryHandler = new LocalBinaryHandler(capabilities);
 

@@ -26,7 +26,6 @@ import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -70,7 +69,7 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
 
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        Capabilities capabilities = configuration.getCapabilities();
 
         new OperaDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
@@ -89,8 +88,6 @@ public class OperaDriverFactory extends AbstractWebDriverFactory<OperaDriver> im
             }
             operaOptions.setBinary(binary);
         }
-
-        capabilities.setCapability(OperaOptions.CAPABILITY, operaOptions);
 
         return capabilities;
     }

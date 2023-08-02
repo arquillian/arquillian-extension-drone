@@ -2,7 +2,7 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * A class for handling binaries for Opera
@@ -16,9 +16,9 @@ public class OperaDriverBinaryHandler extends AbstractBinaryHandler {
     private static final String OPERA_DRIVER_VERSION_PROPERTY = "operaDriverVersion";
     private static final String OPERA_DRIVER_URL_PROPERTY = "operaDriverUrl";
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public OperaDriverBinaryHandler(DesiredCapabilities capabilities) {
+    public OperaDriverBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -53,7 +53,7 @@ public class OperaDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 }

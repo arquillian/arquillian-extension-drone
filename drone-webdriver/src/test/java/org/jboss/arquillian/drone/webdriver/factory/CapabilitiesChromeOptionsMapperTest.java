@@ -32,8 +32,8 @@ import com.google.gson.reflect.TypeToken;
 import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.junit.Test;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class CapabilitiesChromeOptionsMapperTest {
 
@@ -59,24 +59,24 @@ public class CapabilitiesChromeOptionsMapperTest {
     @Test
     public void testParseChromeOptions() throws IOException {
         ChromeOptions chromeOptions = new ChromeOptions();
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
 
         String arguments = "--my-cool --arguments";
-        desiredCapabilities.setCapability("chromeArguments", arguments);
+        capabilities.setCapability("chromeArguments", arguments);
 
         String extensions =
             "src/test/resources/files/my-file src/test/resources/files/cool-file src/test/resources/files/cool-extension";
-        desiredCapabilities.setCapability("chromeExtensions", extensions);
+        capabilities.setCapability("chromeExtensions", extensions);
 
         String encodedExtensions = "src/test/resources/files/cool-file src/test/resources/files/cool-extension";
-        desiredCapabilities.setCapability("chromeEncodedExtensions", encodedExtensions);
+        capabilities.setCapability("chromeEncodedExtensions", encodedExtensions);
 
         String experimentalOptionJson = "{\"perfLoggingPrefs\": {\n"
             + "\"traceCategories\": \",blink.console,disabled-by-default-devtools.timeline,benchmark\"\n"
             + " }, \"prefs\": {\"download.default_directory\": \"/usr/local/path/to/download/directory\"} }";
-        desiredCapabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
+        capabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
 
-        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, desiredCapabilities, "chrome");
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, "chrome");
 
         ChromeOptions expectedChromeOptions = new ChromeOptions();
         expectedChromeOptions.addArguments(arguments.split(" "));
@@ -98,17 +98,17 @@ public class CapabilitiesChromeOptionsMapperTest {
     public void testParseChromeOptionsWithSimpleJsonAsExperimentalOption() throws IOException {
         // given
         ChromeOptions chromeOptions = new ChromeOptions();
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
 
         String experimentalOptionJson = "{" +
             "\"booleanOption\": false," +
             "\"stringOption\": \"hello\"," +
             "\"numberOption\": 12345" +
             "}";
-        desiredCapabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
+        capabilities.setCapability("chromeExperimentalOption", experimentalOptionJson);
 
         // when
-        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, desiredCapabilities, "chrome");
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, "chrome");
 
         //then
         ChromeOptions expectedChromeOptions = new ChromeOptions();

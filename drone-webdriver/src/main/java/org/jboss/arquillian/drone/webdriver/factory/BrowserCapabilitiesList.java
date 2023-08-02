@@ -1,31 +1,33 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.Browser;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.opera.OperaOptions;
+import org.openqa.selenium.safari.SafariOptions;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
- * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class
+ * An internal mapping between browser capabilities property, implementation class and Capabilities. This class
  * also
  * supports implemenationClass property which is now legacy configuration value.
  *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @see DesiredCapabilities
+ * @see Capabilities
  */
 public class BrowserCapabilitiesList {
 
     public static class Capabilities {
-        public static DesiredCapabilities CHROME = new DesiredCapabilities(Browser.CHROME.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities EDGE = new DesiredCapabilities(Browser.EDGE.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities FIREFOX = new DesiredCapabilities(Browser.FIREFOX.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities HTML_UNIT = new DesiredCapabilities(Browser.HTMLUNIT.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities IE = new DesiredCapabilities(Browser.IE.browserName(), "", Platform.WINDOWS);
-        public static DesiredCapabilities OPERA = new DesiredCapabilities(Browser.OPERA.browserName(), "", Platform.ANY);
-        public static DesiredCapabilities SAFARI = new DesiredCapabilities(Browser.SAFARI.browserName(), "", Platform.MAC);
-        public static DesiredCapabilities PHANTOM_JS = new DesiredCapabilities("phantomjs", "", Platform.ANY);
+        public static ChromeOptions CHROME = new ChromeOptions();
+        public static EdgeOptions EDGE = new EdgeOptions();
+        public static FirefoxOptions FIREFOX = new FirefoxOptions();
+        public static InternetExplorerOptions IE = new InternetExplorerOptions();
+        public static OperaOptions OPERA = new OperaOptions();
+        public static SafariOptions SAFARI = new SafariOptions();
     }
 
     public static class Chrome implements BrowserCapabilities {
@@ -106,7 +108,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return Capabilities.HTML_UNIT.asMap();
+            return Collections.emptyMap();
         }
 
         @Override
@@ -226,7 +228,7 @@ public class BrowserCapabilitiesList {
 
         @Override
         public Map<String, ?> getRawCapabilities() {
-            return Capabilities.PHANTOM_JS.asMap();
+            return Collections.emptyMap();
         }
 
         @Override

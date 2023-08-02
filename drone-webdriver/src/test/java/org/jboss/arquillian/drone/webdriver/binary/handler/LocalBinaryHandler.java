@@ -2,7 +2,7 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBinarySource;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.source.LocalBinarySource;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 public class LocalBinaryHandler extends AbstractBinaryHandler {
 
@@ -12,9 +12,9 @@ public class LocalBinaryHandler extends AbstractBinaryHandler {
     public static final String LOCAL_SOURCE_BINARY_URL_PROPERTY = "localSourceUrlBinary";
     public static final String LOCAL_SOURCE_CACHE_SUBDIR = "local-source";
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public LocalBinaryHandler(DesiredCapabilities capabilities) {
+    public LocalBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -49,7 +49,7 @@ public class LocalBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 }

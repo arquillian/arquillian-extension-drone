@@ -8,7 +8,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.ExternalBi
 import org.jboss.arquillian.drone.webdriver.utils.Constants;
 import org.jboss.arquillian.drone.webdriver.utils.PropertySecurityAction;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import java.io.File;
 import java.net.URL;
@@ -327,5 +327,5 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
      *
      * @return A desired capabilities with stored properties
      */
-    protected abstract DesiredCapabilities getCapabilities();
+    protected abstract Capabilities getCapabilities();
 }

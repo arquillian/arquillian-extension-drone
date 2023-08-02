@@ -10,10 +10,11 @@ import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -28,8 +29,8 @@ public class PhantomJSDriverTestCase {
     public void testOpenSimplePage() throws IOException {
         PhantomJSDriverFactory phantomJSDriverFactory = new PhantomJSDriverFactory();
 
-        DesiredCapabilities phantomJSCaps =
-            new DesiredCapabilities(new BrowserCapabilitiesList.PhantomJS().getRawCapabilities());
+        MutableCapabilities phantomJSCaps =
+            new MutableCapabilities(new BrowserCapabilitiesList.PhantomJS().getRawCapabilities());
         WebDriverConfiguration configuration = getMockedConfiguration(phantomJSCaps);
 
         WebDriver driver = phantomJSDriverFactory.createInstance(configuration);
@@ -42,7 +43,7 @@ public class PhantomJSDriverTestCase {
     @Test
     public void testReformatCLIArgumentsInCapToArray() throws IOException {
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, "--debug true");
 
         PhantomJSDriverFactory phantomJSDriverFactory = new PhantomJSDriverFactory();
@@ -55,7 +56,7 @@ public class PhantomJSDriverTestCase {
     }
 
 
-    private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {
+    private WebDriverConfiguration getMockedConfiguration(Capabilities capabilities) {
         WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);
 
         when(configuration.getCapabilities()).thenReturn(capabilities);

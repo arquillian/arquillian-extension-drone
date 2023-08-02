@@ -4,7 +4,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * A slightly changed {@link GitHubSource} implementation handling PhantomJS binaries. The latest version is retrieved
@@ -17,7 +17,7 @@ public class PhantomJSGitHubBitbucketSource extends GitHubSource {
     private static String lastPhantomJSRelease = "2.1.1";
 
     public PhantomJSGitHubBitbucketSource(HttpClient httpClient, GitHubLastUpdateCache gitHubLastUpdateCache,
-        DesiredCapabilities capabilities) {
+                                          Capabilities capabilities) {
         super("ariya", "phantomjs", httpClient, gitHubLastUpdateCache, capabilities);
     }
 

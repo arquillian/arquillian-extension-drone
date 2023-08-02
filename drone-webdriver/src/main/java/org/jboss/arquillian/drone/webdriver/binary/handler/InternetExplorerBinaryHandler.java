@@ -8,7 +8,7 @@ import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
 import org.openqa.selenium.InvalidArgumentException;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import static org.jboss.arquillian.drone.webdriver.utils.Validate.empty;
 
@@ -26,9 +26,9 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
     private static final String ARCH_32 = "Win32";
     private static final String ARCH_64 = "x64";
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public InternetExplorerBinaryHandler(DesiredCapabilities capabilities) {
+    public InternetExplorerBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -56,7 +56,7 @@ public class InternetExplorerBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 

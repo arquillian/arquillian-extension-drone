@@ -29,7 +29,8 @@ import org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -97,7 +98,9 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<DroneHtmlUni
      * @return A {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
-        return configuration.getCapabilities();
+        MutableCapabilities caps = new MutableCapabilities(configuration.getCapabilities());
+        caps.setCapability("browserName", BROWSER_NAME);
+        return new ImmutableCapabilities(caps);
     }
 
     @Override
@@ -126,7 +129,7 @@ public class HtmlUnitDriverFactory extends AbstractWebDriverFactory<DroneHtmlUni
                 }
             }
         }
-        final DesiredCapabilities webClientCapabilities = new DesiredCapabilities(clientOptions);
+        final Capabilities webClientCapabilities = new ImmutableCapabilities(clientOptions);
 
         logger.info("Setting HtmlDriver web client options: " + clientOptions);
         CapabilitiesOptionsMapper.mapCapabilities(webClientOptions, webClientCapabilities, BROWSER_NAME);

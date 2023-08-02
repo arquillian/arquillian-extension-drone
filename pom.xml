@@ -36,12 +36,13 @@
 
   <properties>
     <!-- Versioning -->
-    <version.arquillian.core>1.6.0.Final</version.arquillian.core>
-    <version.selenium>4.3.0</version.selenium>
+    <version.arquillian.core>1.7.0.Final</version.arquillian.core>
+    <version.selenium>4.11.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.8.0</version.htmlunit.driver>
+    <version.htmlunit.driver>4.10.0</version.htmlunit.driver>
+    <version.opera.driver>4.4.0</version.opera.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
-    <version.appium.java.client>7.6.0</version.appium.java.client>
+    <version.appium.java.client>8.5.1</version.appium.java.client>
 
     <!-- Test bits versions -->
     <version.junit>4.13.2</version.junit>
@@ -53,7 +54,7 @@
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-    <version.org.eclipse.jetty>11.0.13</version.org.eclipse.jetty>
+    <version.org.eclipse.jetty>9.4.50.v20221201</version.org.eclipse.jetty>
     <version.arquillian.jetty>1.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
@@ -62,6 +63,7 @@
 
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
+    <version.surefire.plugin>3.1.2</version.surefire.plugin>
 
     <additionalparam>-Xdoclint:none</additionalparam>
   </properties>

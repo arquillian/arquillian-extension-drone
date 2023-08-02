@@ -23,9 +23,9 @@ import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinary
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -92,7 +92,7 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
         // resolve capabilities
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        MutableCapabilities capabilities = new MutableCapabilities(configuration.getCapabilities());
         reformatCLIArgumentsInCapToArray(capabilities);
 
         if (!isDefaultExecutablePresent()) {
@@ -109,12 +109,12 @@ public class PhantomJSDriverFactory extends AbstractWebDriverFactory<PhantomJSDr
      * @param capabilities
      *     Capabilities
      */
-    public void reformatCLIArgumentsInCapToArray(DesiredCapabilities capabilities) {
+    public void reformatCLIArgumentsInCapToArray(MutableCapabilities capabilities) {
         reformatCapabilityToArray(capabilities, PhantomJSDriverService.PHANTOMJS_CLI_ARGS);
         reformatCapabilityToArray(capabilities, PhantomJSDriverService.PHANTOMJS_GHOSTDRIVER_CLI_ARGS);
     }
 
-    private void reformatCapabilityToArray(DesiredCapabilities capabilities, String capabilityName) {
+    private void reformatCapabilityToArray(MutableCapabilities capabilities, String capabilityName) {
         Object capability = capabilities.getCapability(capabilityName);
         if (capability != null) {
             if (capability instanceof String) {

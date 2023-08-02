@@ -6,7 +6,7 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 public class WebClientOptionsMapperTest {
 
@@ -19,7 +19,7 @@ public class WebClientOptionsMapperTest {
         map.put(browserName + "JavaScriptEnabled", "false");
         map.put(browserName + "ThrowExceptionOnScriptError", "false");
 
-        DesiredCapabilities capabilities = new DesiredCapabilities(map);
+        Capabilities capabilities = new MutableCapabilities(map);
         WebClientOptions webClientOptions = new WebClientOptions();
 
         //when

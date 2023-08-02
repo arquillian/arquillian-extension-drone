@@ -5,7 +5,7 @@ import org.jboss.arquillian.drone.webdriver.binary.downloading.source.GeckoDrive
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * A class for handling chromeDriver binaries
@@ -17,9 +17,9 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
     private static final String FIREFOX_DRIVER_VERSION_PROPERTY = "firefoxDriverVersion";
     private static final String FIREFOX_DRIVER_URL_PROPERTY = "firefoxDriverUrl";
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public FirefoxDriverBinaryHandler(DesiredCapabilities capabilities) {
+    public FirefoxDriverBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -44,7 +44,7 @@ public class FirefoxDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 

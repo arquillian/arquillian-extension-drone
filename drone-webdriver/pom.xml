@@ -339,6 +339,19 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <version.selenium>${version.selenium.server}</version.selenium>
+                <seleniumServerVersion>${version.selenium.server}</seleniumServerVersion>
+              </systemPropertyVariables>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-junit47</artifactId>
+                <version>${version.surefire.plugin}</version>
+              </dependency>
+            </dependencies>
             <executions>
               <execution>
                 <id>default-test</id>

@@ -26,7 +26,7 @@ import org.jboss.arquillian.drone.webdriver.binary.handler.PhantomJSDriverBinary
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 /**
  * Is responsible for launching and stopping selenium server binary
@@ -103,7 +103,7 @@ public class SeleniumServerExecutor {
      *
      * @return An instance of a {@link BinaryHandler} according to given browser
      */
-    private BinaryHandler getBrowserBinaryHandler(DesiredCapabilities capabilities, String browser) {
+    private BinaryHandler getBrowserBinaryHandler(Capabilities capabilities, String browser) {
         if (new BrowserCapabilitiesList.Firefox().getReadableName().equals(browser)) {
             return new FirefoxDriverBinaryHandler(capabilities);
         } else if (new BrowserCapabilitiesList.Edge().getReadableName().equals(browser)) {

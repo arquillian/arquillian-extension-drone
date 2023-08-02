@@ -7,7 +7,7 @@ import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.PlatformUtils;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import java.io.File;
 
@@ -26,9 +26,9 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
 
     public static final String PHANTOMJS_BINARY_NAME = "phantomjs" + (PlatformUtils.isWindows() ? ".exe" : "");
 
-    private DesiredCapabilities capabilities;
+    private Capabilities capabilities;
 
-    public PhantomJSDriverBinaryHandler(DesiredCapabilities capabilities) {
+    public PhantomJSDriverBinaryHandler(Capabilities capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -91,7 +91,7 @@ public class PhantomJSDriverBinaryHandler extends AbstractBinaryHandler {
     }
 
     @Override
-    protected DesiredCapabilities getCapabilities() {
+    protected Capabilities getCapabilities() {
         return capabilities;
     }
 }

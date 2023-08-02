@@ -39,9 +39,10 @@
   </developers>
 
   <properties>
-    <version.selenium>4.3.0</version.selenium>
+    <version.selenium>4.11.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.8.0</version.htmlunit.driver>
+    <version.htmlunit.driver>4.10.0</version.htmlunit.driver>
+    <version.opera.driver>4.4.0</version.opera.driver>
     <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
@@ -161,7 +162,7 @@
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-opera-driver</artifactId>
-        <version>${version.selenium}</version>
+        <version>${version.opera.driver}</version>
       </dependency>
 
       <!-- HtmlUnit is kept externally from Selenium BOM -->

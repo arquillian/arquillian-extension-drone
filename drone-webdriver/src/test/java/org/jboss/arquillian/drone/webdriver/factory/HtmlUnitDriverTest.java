@@ -13,9 +13,9 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 
@@ -64,7 +64,7 @@ public class HtmlUnitDriverTest {
 
     private WebDriverConfiguration getMockedConfiguration(String option) {
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         if (Validate.nonEmpty(option)) {
             capabilities.setCapability(webClientOptions, option);
         }

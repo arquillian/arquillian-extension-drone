@@ -11,7 +11,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 import static io.specto.hoverfly.junit.core.SimulationSource.classpath;
 import static org.jboss.arquillian.drone.webdriver.binary.downloading.source.GitHubSource.AUTHORIZATION_HEADER_KEY;
@@ -44,7 +44,7 @@ public class GitHubSourceAuthenticatedRequestTestCase {
         String username = "my-username";
         String token = "my-token";
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         capabilities.setCapability(GITHUB_USERNAME_PROPERTY, username);
         capabilities.setCapability(GITHUB_TOKEN_PROPERTY, token);
 

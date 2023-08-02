@@ -36,14 +36,14 @@ import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 public class CapabilitiesOptionsMapper {
 
     private static final Gson GSON = new Gson();
 
     /**
-     * Parses capabilities set in {@link DesiredCapabilities} and according to set-method names it sets the values into
+     * Parses capabilities set in {@link Capabilities} and according to set-method names it sets the values into
      * corresponding variables of the given Object instance. It is expected that the parameters defined in arquillian.xml
      * file have a specific browserPrefix; after this prefix then there is the parameter name itself
      * (whole string has to be in camelcase)
@@ -51,11 +51,11 @@ public class CapabilitiesOptionsMapper {
      * @param object
      *     An instance of an object the values should be set into
      * @param capabilities
-     *     A {@link DesiredCapabilities} that contains parameters and its values set in arquillian.xml
+     *     A {@link Capabilities} that contains parameters and its values set in arquillian.xml
      * @param browserPrefix
      *     A prefix the should the mapped parameters should start with
      */
-    public static void mapCapabilities(Object object, DesiredCapabilities capabilities, String browserPrefix) {
+    public static void mapCapabilities(Object object, Capabilities capabilities, String browserPrefix) {
 
         Method[] methods = object.getClass().getMethods();
         List<String> processedMethods = new ArrayList<String>();
@@ -69,9 +69,16 @@ public class CapabilitiesOptionsMapper {
                     continue;
                 }
 
-                String propertyName = browserPrefix + methodName.substring(3);
+                String propertyName = methodName.substring(3);
+                String prefixedPropertyName = browserPrefix + propertyName;
                 propertyName = Character.toLowerCase(propertyName.charAt(0)) + propertyName.substring(1);
-                String capability = (String) capabilities.getCapability(propertyName);
+                String capability = null;
+                try {
+                    capability = (String) capabilities.getCapability(propertyName);
+                    if (Validate.empty(capability)) {
+                        capability = (String) capabilities.getCapability(prefixedPropertyName);
+                    }
+                } catch (ClassCastException thr) { }
 
                 if (Validate.nonEmpty(capability)) {
                     try {

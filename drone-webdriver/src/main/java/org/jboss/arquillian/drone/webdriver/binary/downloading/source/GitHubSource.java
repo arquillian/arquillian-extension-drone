@@ -20,7 +20,7 @@ import org.jboss.arquillian.drone.webdriver.utils.GitHubLastUpdateCache;
 import org.jboss.arquillian.drone.webdriver.utils.HttpClient;
 import org.jboss.arquillian.drone.webdriver.utils.Rfc2126DateTimeFormatter;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import static org.apache.http.HttpHeaders.IF_MODIFIED_SINCE;
 import static org.apache.http.HttpHeaders.LAST_MODIFIED;
@@ -64,7 +64,7 @@ public abstract class GitHubSource implements ExternalBinarySource {
     }
 
     public GitHubSource(String organization, String project, HttpClient httpClient,
-        GitHubLastUpdateCache gitHubLastUpdateCache, DesiredCapabilities capabilities) {
+        GitHubLastUpdateCache gitHubLastUpdateCache, Capabilities capabilities) {
         this(organization, project, httpClient, gitHubLastUpdateCache);
         username = (String) capabilities.getCapability(GITHUB_USERNAME_PROPERTY);
         token = (String) capabilities.getCapability(GITHUB_TOKEN_PROPERTY);
