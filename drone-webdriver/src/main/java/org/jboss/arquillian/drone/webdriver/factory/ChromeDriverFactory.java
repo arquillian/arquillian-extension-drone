@@ -77,12 +77,13 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     @Override
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
         final ChromeOptions options = getChromeOptions(configuration);
-        ChromeDriverService chromeDriverService = new ChromeDriverService.Builder()
-            .withLogOutput(System.out).build();
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(),
-            new Class<?>[] { ChromeDriverService.class, ChromeOptions.class },
-            new Object[] { chromeDriverService, options }, ChromeDriver.class);
+        try (ChromeDriverService chromeDriverService = new ChromeDriverService.Builder().build()) {
+            chromeDriverService.sendOutputTo(System.out);
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{ChromeDriverService.class, ChromeOptions.class},
+                new Object[]{chromeDriverService, options}, ChromeDriver.class);
+        }
     }
 
     /**

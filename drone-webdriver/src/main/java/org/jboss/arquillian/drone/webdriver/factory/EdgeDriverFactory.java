@@ -49,10 +49,13 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
     @Override
     public EdgeDriver createInstance(WebDriverConfiguration configuration) {
         EdgeOptions edgeOptions = getEdgeOptions(configuration);
-        EdgeDriverService service = new EdgeDriverService.Builder().withLogOutput(System.out).build();
-        return SecurityActions.newInstance(configuration.getImplementationClass(),
-            new Class<?>[] { EdgeDriverService.class, EdgeOptions.class },
-            new Object[] { service, edgeOptions}, EdgeDriver.class);
+
+        try (EdgeDriverService service = new EdgeDriverService.Builder().build()) {
+            service.sendOutputTo(System.out);
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{EdgeDriverService.class, EdgeOptions.class},
+                new Object[]{service, edgeOptions}, EdgeDriver.class);
+        }
     }
 
     @Override

@@ -73,11 +73,13 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     @Override
     public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
         FirefoxOptions firefoxOptions = getFirefoxOptions(configuration, true);
-        FirefoxDriverService firefoxDriverService = new GeckoDriverService.Builder().withLogOutput(System.out).build();
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(),
-            new Class<?>[] { FirefoxDriverService.class, FirefoxOptions.class},
-            new Object[] { firefoxDriverService, firefoxOptions }, FirefoxDriver.class);
+        try (FirefoxDriverService firefoxDriverService = new GeckoDriverService.Builder().build()) {
+            firefoxDriverService.sendOutputTo(System.out);
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{FirefoxDriverService.class, FirefoxOptions.class},
+                new Object[]{firefoxDriverService, firefoxOptions}, FirefoxDriver.class);
+        }
     }
 
     /**
