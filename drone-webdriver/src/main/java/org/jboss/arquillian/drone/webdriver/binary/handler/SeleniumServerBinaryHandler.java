@@ -78,7 +78,9 @@ public class SeleniumServerBinaryHandler extends AbstractBinaryHandler {
             if (empty(version)) {
                 return directory + "/" + getFileNameRegexToDownload(directory + ".*");
             } else {
-                return getDirectoryFromFullVersion(version, false) + "/" + getFileNameRegexToDownload(version);
+                // The directory for versions 4.0.0-alpha-x is only 4.0 - do not include version name
+                final boolean isV4Alpha = version.startsWith("4.0.0-alpha");
+                return getDirectoryFromFullVersion(version, !isV4Alpha) + "/" + getFileNameRegexToDownload(version);
             }
         }
 
