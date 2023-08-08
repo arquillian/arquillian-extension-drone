@@ -112,7 +112,7 @@ public class WebDriverFactory extends AbstractWebDriverFactory<WebDriver> implem
             implementationClassName = configuration.getImplementationClass();
 
             Validate.isEmpty(implementationClassName,
-                "The combination of browser=" + configuration.getBrowser()
+                "The combination of browser=" + configuration.getBrowserName()
                     + ", implemenationClass=" + implementationClassName
                     + " does not represent a valid browser. Please specify supported browser.");
 

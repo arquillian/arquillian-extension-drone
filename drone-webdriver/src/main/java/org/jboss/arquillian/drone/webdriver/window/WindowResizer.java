@@ -62,7 +62,7 @@ public class WindowResizer {
         WebDriverConfiguration configuration = context.get(dronePoint).getConfigurationAs(WebDriverConfiguration.class);
         Validate.stateNotNull(configuration, "WebDriver configuration must not be null");
 
-        String browser = configuration.getBrowser().toLowerCase();
+        String browser = configuration.getBrowserName().toLowerCase();
         if (!browser.equals("chromeheadless")) {
 
             Dimensions dimensions = new Dimensions(configuration);

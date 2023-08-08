@@ -112,11 +112,11 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
         if (browser.equals("chromeheadless")) {
-            when(configuration.getBrowser()).thenReturn("chromeheadless");
+            when(configuration.getBrowserName()).thenReturn("chromeheadless");
             new ChromeDriverFactory().setChromeOptions(configuration, new ChromeOptions().merge(capabilities));
         }
 
-        when(configuration.getBrowser()).thenReturn("xyz");
+        when(configuration.getBrowserName()).thenReturn("xyz");
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(capabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);

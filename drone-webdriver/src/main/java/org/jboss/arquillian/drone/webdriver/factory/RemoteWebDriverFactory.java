@@ -94,14 +94,14 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         Validate.isValidUrl(remoteAddress, "Remote address must be a valid url, " + remoteAddress);
 
-        String browser = configuration.getBrowser().toLowerCase();
+        String browser = configuration.getBrowserName().toLowerCase();
         if (Validate.empty(browser)) {
-            configuration.setBrowser(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
+            configuration.setBrowserName(WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
             log.log(Level.INFO, "Property \"browser\" was not specified, using default value of {0}",
                 WebDriverConfiguration.DEFAULT_BROWSER_CAPABILITIES);
         }
 
-        Validate.isEmpty(configuration.getBrowser(), "The browser is not set.");
+        Validate.isEmpty(configuration.getBrowserName(), "The browser is not set.");
 
         // construct capabilities
         Capabilities options;

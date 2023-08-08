@@ -30,7 +30,7 @@ public class HeadlessBrowserChromeOptionsTest {
         WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);
 
         when(configuration.getCapabilities()).thenReturn(capabilities);
-        when(configuration.getBrowser()).thenReturn("chromeheadless");
+        when(configuration.getBrowserName()).thenReturn("chromeheadless");
         return configuration;
     }
 }

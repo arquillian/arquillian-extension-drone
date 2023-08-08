@@ -147,7 +147,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     }
 
     public void manageChromeHeadless(WebDriverConfiguration configuration, ChromeOptions chromeOptions) {
-        String browser = configuration.getBrowser().toLowerCase();
+        String browser = configuration.getBrowserName().toLowerCase();
         if (browser.equals(HEADLESS_BROWSER_CAPABILITIES)) {
             chromeOptions.addArguments("--headless=new");
 
