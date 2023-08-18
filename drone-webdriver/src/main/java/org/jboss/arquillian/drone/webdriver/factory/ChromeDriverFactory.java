@@ -66,6 +66,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      */
     @Override
     public void destroyInstance(ChromeDriver instance) {
+        instance.close();   // necessary to avoid "Connection Reset by peer" errors
         instance.quit();
     }
 
@@ -78,12 +79,11 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
         final ChromeOptions options = getChromeOptions(configuration);
 
-        try (ChromeDriverService chromeDriverService = new ChromeDriverService.Builder().build()) {
-            chromeDriverService.sendOutputTo(System.out);
-            return SecurityActions.newInstance(configuration.getImplementationClass(),
+        ChromeDriverService chromeDriverService = new ChromeDriverService.Builder()
+                .withLogOutput(System.out).build();
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
                 new Class<?>[]{ChromeDriverService.class, ChromeOptions.class},
                 new Object[]{chromeDriverService, options}, ChromeDriver.class);
-        }
     }
 
     /**

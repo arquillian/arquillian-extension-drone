@@ -71,22 +71,21 @@ public class InternetExplorerDriverFactory extends AbstractWebDriverFactory<Inte
 
         int port = configuration.getIePort();
 
-        try (InternetExplorerDriverService service = new InternetExplorerDriverService.Builder().build()) {
-            service.sendOutputTo(System.out);
+        InternetExplorerDriverService service = new InternetExplorerDriverService.Builder()
+                .withLogOutput(System.out).build();
 
-            // capabilities based
-            if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
-                return SecurityActions.newInstance(configuration.getImplementationClass(),
+        // capabilities based
+        if (port == DEFAULT_INTERNET_EXPLORER_PORT) {
+            return SecurityActions.newInstance(configuration.getImplementationClass(),
                     new Class<?>[]{InternetExplorerDriverService.class, InternetExplorerOptions.class},
                     new Object[]{service, getOptions(configuration, true)}, InternetExplorerDriver.class);
-            }
-            // port specified, we cannot use capabilities
-            else {
-                log.log(Level.FINE, "Creating InternetExplorerDriver bound to port {0}", port);
+        }
+        // port specified, we cannot use capabilities
+        else {
+            log.log(Level.FINE, "Creating InternetExplorerDriver bound to port {0}", port);
 
-                return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[]{int.class},
+            return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[]{int.class},
                     new Object[]{port}, InternetExplorerDriver.class);
-            }
         }
     }
 

@@ -51,14 +51,13 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
 
     @Override
     public SafariDriver createInstance(WebDriverConfiguration configuration) {
-        try (SafariDriverService service = new SafariDriverService.Builder().build()) {
-            service.sendOutputTo(System.out);
-            SafariOptions options = getOptions(configuration, true);
+        SafariDriverService service = new SafariDriverService.Builder()
+                .withLogOutput(System.out).build();
+        SafariOptions options = getOptions(configuration, true);
 
-            return SecurityActions.newInstance(configuration.getImplementationClass(),
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
                 new Class<?>[]{DriverService.class, SafariOptions.class},
                 new Object[]{service, options}, SafariDriver.class);
-        }
     }
 
     /**
