@@ -36,7 +36,7 @@
 
   <properties>
     <!-- Versioning -->
-    <version.arquillian.core>1.6.0.Final</version.arquillian.core>
+    <version.arquillian.core>1.7.1.Final</version.arquillian.core>
     <version.selenium>4.3.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
     <version.htmlunit.driver>4.8.0</version.htmlunit.driver>
