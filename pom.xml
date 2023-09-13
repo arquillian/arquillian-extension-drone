@@ -54,7 +54,7 @@
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
     <version.org.eclipse.jetty>11.0.13</version.org.eclipse.jetty>
-    <version.arquillian.jetty>1.0.0.Final</version.arquillian.jetty>
+    <version.arquillian.jetty>2.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
     <maven.compiler.target>1.8</maven.compiler.target>
