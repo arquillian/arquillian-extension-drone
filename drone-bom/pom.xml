@@ -42,7 +42,6 @@
     <version.selenium>4.3.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
     <version.htmlunit.driver>4.12.0</version.htmlunit.driver>
-    <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
@@ -169,13 +168,6 @@
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>htmlunit-driver</artifactId>
         <version>${version.htmlunit.driver}</version>
-      </dependency>
-
-      <!-- Ghost Driver is kept externally from Selenium BOM -->
-      <dependency>
-        <groupId>com.codeborne</groupId>
-        <artifactId>phantomjsdriver</artifactId>
-        <version>${phantomjs.driver.version}</version>
       </dependency>
 
       <!-- Dependency Chain -->

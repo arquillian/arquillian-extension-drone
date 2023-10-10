@@ -79,7 +79,6 @@ Following values are valid:
 * htmlUnit  or htmlunit
 * internetExplorer or internetexplorer
 * opera
-* phantomjs
 * safari
 * edge
 
@@ -127,8 +126,7 @@ timeout=10; javaScriptEnabled=true; throwExceptionOnScriptError=false; SSLClient
 |dimensions
 |-
 |Dimensions of browser window in `widthxheight` format. This will resize
-the window if supported by underlying browser. Useful for **phantomjs**,
-which by default defines a very small viewport.
+the window if supported by underlying browser.
 If you need the browser in fullscreen mode, use any of the following strings: "full" "fullscreen" "max"
 |===
 

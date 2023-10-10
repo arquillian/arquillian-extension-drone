@@ -32,7 +32,6 @@ import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
-import org.jboss.arquillian.drone.webdriver.factory.PhantomJSDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.SafariDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
@@ -49,7 +48,6 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.FIREFOX_DRIVE
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.HTMLUNIT_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.IE_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.OPERA_DRIVER;
-import static org.jboss.arquillian.drone.webdriver.utils.Constants.PHANTOMJS_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.REMOTE_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.SAFARI_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.WEB_DRIVER;
@@ -73,7 +71,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         registerFactoryService(builder, OperaDriverFactory.class, OPERA_DRIVER);
         registerFactoryService(builder, RemoteWebDriverFactory.class, REMOTE_DRIVER);
         registerFactoryService(builder, SafariDriverFactory.class, SAFARI_DRIVER);
-        registerFactoryService(builder, PhantomJSDriverFactory.class, PHANTOMJS_DRIVER);
 
         builder.observer(BrowserCapabilitiesRegistrar.class);
 
@@ -85,7 +82,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Opera.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Remote.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Safari.class);
-        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.PhantomJS.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.ChromeHeadless.class);
 
         builder.observer(ReusableRemoteWebDriverExtension.class);
