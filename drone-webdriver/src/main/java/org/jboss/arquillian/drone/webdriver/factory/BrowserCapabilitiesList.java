@@ -214,29 +214,6 @@ public class BrowserCapabilitiesList {
         }
     }
 
-    public static class PhantomJS implements BrowserCapabilities {
-
-        @Override
-        public String getReadableName() {
-            return "phantomjs";
-        }
-
-        @Override
-        public String getImplementationClassName() {
-            return "org.openqa.selenium.phantomjs.PhantomJSDriver";
-        }
-
-        @Override
-        public Map<String, ?> getRawCapabilities() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-    }
-
     public static class ChromeHeadless implements BrowserCapabilities {
         @Override
         public String getReadableName() {

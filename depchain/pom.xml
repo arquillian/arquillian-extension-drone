@@ -117,11 +117,6 @@
       <artifactId>selenium-edge-driver</artifactId>
       <version>${version.selenium}</version>
     </dependency>
-    <dependency>
-      <groupId>com.codeborne</groupId>
-      <artifactId>phantomjsdriver</artifactId>
-      <version>${phantomjs.driver.version}</version>
-    </dependency>
   </dependencies>
 
 </project>
