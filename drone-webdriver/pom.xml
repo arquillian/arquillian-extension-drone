@@ -110,11 +110,6 @@
       <artifactId>selenium-safari-driver</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.codeborne</groupId>
-      <artifactId>phantomjsdriver</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Utils -->
     <dependency>
@@ -256,7 +251,6 @@
         <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit-driver:jar</selenium.htmlunit.driver>
         <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
         <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
-        <codeborne.phantomjs.driver>com.codeborne:phantomjsdriver:jar</codeborne.phantomjs.driver>
         <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
       </properties>
 
@@ -323,11 +317,10 @@
                       <property>browser</property>
                       <message>browser property must be specified!</message>
                       <regex>
-                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|phantomjs|iphone|internetExplorer|internetexplorer|edge|chromeHeadless|chromeheadless
+                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|iphone|internetExplorer|internetexplorer|edge|chromeHeadless|chromeheadless
                       </regex>
                       <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit/htmlunit, safari, chrome,
-                        opera,
-                        phantomjs, iphone, internetExplorer/internetexplorer, edge, chromeHeadless/chromeheadless but was ${browser}
+                        opera, iphone, internetExplorer/internetexplorer, edge, chromeHeadless/chromeheadless but was ${browser}
                       </regexMessage>
                     </requireProperty>
                   </rules>
@@ -367,7 +360,6 @@
                     <dependencyExclude>${selenium.htmlunit.driver}</dependencyExclude>
                     <dependencyExclude>${selenium.ie.driver}</dependencyExclude>
                     <dependencyExclude>${selenium.safari.driver}</dependencyExclude>
-                    <dependencyExclude>${codeborne.phantomjs.driver}</dependencyExclude>
                     <dependencyExclude>${opera.opera.driver}</dependencyExclude>
                   </classpathDependencyExcludes>
                   <skipTests>false</skipTests>
@@ -512,21 +504,6 @@
       <properties>
         <browser>ie</browser>
         <selenium.ie.driver>dummy</selenium.ie.driver>
-      </properties>
-    </profile>
-    <profile>
-      <id>phantomjs</id>
-
-      <activation>
-        <property>
-          <name>browser</name>
-          <value>phantomjs</value>
-        </property>
-      </activation>
-
-      <properties>
-        <browser>phantomjs</browser>
-        <codeborne.phantomjs.driver>dummy</codeborne.phantomjs.driver>
       </properties>
     </profile>
     <profile>

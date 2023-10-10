@@ -231,11 +231,6 @@
         <artifactId>htmlunit-driver</artifactId>
         <version>${version.htmlunit.driver}</version>
       </dependency>
-      <dependency>
-        <groupId>com.codeborne</groupId>
-        <artifactId>phantomjsdriver</artifactId>
-        <version>${phantomjs.driver.version}</version>
-      </dependency>
 
       <!-- Testing dependencies -->
       <dependency>

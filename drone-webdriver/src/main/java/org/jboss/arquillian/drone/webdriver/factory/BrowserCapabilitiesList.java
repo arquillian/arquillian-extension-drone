@@ -25,7 +25,6 @@ public class BrowserCapabilitiesList {
         public static DesiredCapabilities IE = new DesiredCapabilities(Browser.IE.browserName(), "", Platform.WINDOWS);
         public static DesiredCapabilities OPERA = new DesiredCapabilities(Browser.OPERA.browserName(), "", Platform.ANY);
         public static DesiredCapabilities SAFARI = new DesiredCapabilities(Browser.SAFARI.browserName(), "", Platform.MAC);
-        public static DesiredCapabilities PHANTOM_JS = new DesiredCapabilities("phantomjs", "", Platform.ANY);
     }
 
     public static class Chrome implements BrowserCapabilities {
@@ -204,29 +203,6 @@ public class BrowserCapabilitiesList {
         @Override
         public Map<String, ?> getRawCapabilities() {
             return Capabilities.SAFARI.asMap();
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-    }
-
-    public static class PhantomJS implements BrowserCapabilities {
-
-        @Override
-        public String getReadableName() {
-            return "phantomjs";
-        }
-
-        @Override
-        public String getImplementationClassName() {
-            return "org.openqa.selenium.phantomjs.PhantomJSDriver";
-        }
-
-        @Override
-        public Map<String, ?> getRawCapabilities() {
-            return Capabilities.PHANTOM_JS.asMap();
         }
 
         @Override
