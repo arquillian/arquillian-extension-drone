@@ -37,7 +37,7 @@
   <properties>
     <!-- Versioning -->
     <version.arquillian.core>1.7.1.Final</version.arquillian.core>
-    <version.selenium>4.13.0</version.selenium>
+    <version.selenium>4.14.0</version.selenium>
     <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
     <version.htmlunit.driver>4.12.0</version.htmlunit.driver>
     <version.opera.driver>4.4.0</version.opera.driver>
