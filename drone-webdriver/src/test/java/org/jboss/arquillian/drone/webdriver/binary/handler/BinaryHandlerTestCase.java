@@ -4,8 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
@@ -13,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.process.CommandBuilder;
 import org.arquillian.spacelift.task.os.CommandTool;
@@ -55,14 +59,14 @@ public class BinaryHandlerTestCase {
     private StreamHandler customLogHandler;
 
     @Before
-    public void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException, IOException {
+    public void setTestCacheDirectory() throws NoSuchFieldException, IllegalAccessException, IOException, InvocationTargetException, NoSuchMethodException {
         setTargetDirectory(temporaryFolder.newFolder("drone-test").toPath());
         testDroneCacheDir = temporaryFolder.newFolder("cache").toPath();
         setCacheDirectory(testDroneCacheDir);
     }
 
     @After
-    public void setOriginalCacheDirectory() throws NoSuchFieldException, IllegalAccessException {
+    public void setOriginalCacheDirectory() throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setTargetDirectory(originalTargetDirectory);
         setCacheDirectory(originalCacheDirectory);
         if (customLogHandler != null) {
@@ -70,24 +74,26 @@ public class BinaryHandlerTestCase {
         }
     }
 
-    private void setCacheDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException {
+    private void setCacheDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setConstantProperty("ARQUILLIAN_DRONE_CACHE_DIRECTORY", dirToSet);
     }
 
-    private void setTargetDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException {
+    private void setTargetDirectory(Path dirToSet) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         setConstantProperty("DRONE_TARGET_DIRECTORY", dirToSet);
     }
 
     private void setConstantProperty(String propertyVariable, Path value)
-        throws NoSuchFieldException, IllegalAccessException {
+        throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Field constantField = Constants.class.getField(propertyVariable);
         constantField.setAccessible(true);
 
-        // remove final modifier from field
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        Method getDeclaredFields0 = Class.class.getDeclaredMethod("getDeclaredFields0", boolean.class);
+        getDeclaredFields0.setAccessible(true);
+        Field[] fields = (Field[]) getDeclaredFields0.invoke(Field.class, false);
+        Field modifiersField = Arrays.stream(fields).filter(f -> "modifiers".equals(f.getName())).findFirst().get();
+
         modifiersField.setAccessible(true);
         modifiersField.setInt(constantField, constantField.getModifiers() & ~Modifier.FINAL);
-
         constantField.set(null, value);
     }
 

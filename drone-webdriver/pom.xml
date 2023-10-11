@@ -534,6 +534,26 @@
         <opera.opera.driver>dummy</opera.opera.driver>
       </properties>
     </profile>
+
+    <profile>
+      <id>jdk12plus</id>
+      <activation>
+        <jdk>[12,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+                java.base/java.lang.reflect=ALL-UNNAMED
+              </argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
