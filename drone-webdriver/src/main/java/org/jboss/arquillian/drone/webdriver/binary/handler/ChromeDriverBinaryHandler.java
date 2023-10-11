@@ -91,7 +91,11 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
         }
 
         public ChromeStorageSources(String baseUrl, HttpClient client) {
-            super(baseUrl, baseUrl + "LATEST_RELEASE", client);
+            this(baseUrl, baseUrl + "LATEST_RELEASE", client);
+        }
+
+        public ChromeStorageSources(String baseUrl, String urlToLatestRelease, HttpClient client) {
+            super(baseUrl, urlToLatestRelease, client);
         }
 
         @Override
