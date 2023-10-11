@@ -366,15 +366,6 @@
                       **/WebDriverFactoryRegisterTestCase.java
                     </include>
                   </includes>
-                  <classpathDependencyExcludes>
-                    <dependencyExclude>${selenium.chrome.driver}</dependencyExclude>
-                    <dependencyExclude>${selenium.edge.driver}</dependencyExclude>
-                    <dependencyExclude>${selenium.firefox.driver}</dependencyExclude>
-                    <dependencyExclude>${selenium.htmlunit.driver}</dependencyExclude>
-                    <dependencyExclude>${selenium.ie.driver}</dependencyExclude>
-                    <dependencyExclude>${selenium.safari.driver}</dependencyExclude>
-                    <dependencyExclude>${opera.opera.driver}</dependencyExclude>
-                  </classpathDependencyExcludes>
                   <skipTests>false</skipTests>
                 </configuration>
               </execution>
