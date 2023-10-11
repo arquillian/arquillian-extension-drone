@@ -18,7 +18,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -182,7 +182,7 @@ public class GitHubSourceLatestReleaseFromTagsTestCase {
 
         GeckoSourceForLatestTag(HttpClient httpClient,
                                 GitHubLastUpdateCache gitHubLastUpdateCache) {
-            super(httpClient, gitHubLastUpdateCache, new DesiredCapabilities());
+            super(httpClient, gitHubLastUpdateCache, new MutableCapabilities());
         }
 
         public ExternalBinary getLatestRelease() throws Exception {
