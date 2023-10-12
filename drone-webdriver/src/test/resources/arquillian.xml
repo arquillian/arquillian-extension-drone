@@ -11,6 +11,8 @@
 
     <property name="dimensions">1300x500</property>
 
+    <property name="chromeDriverVersion">${chromeDriverVersion}</property>
+
     <!-- All these capabilities are related to Firefox only -->
     <property name="webdriver.firefox.profile">selenium</property>
     <property name="firefoxUserPreferences">target/test-classes/prefs.js</property>
@@ -29,6 +31,8 @@
     <property name="remoteReusable">true</property>
 
     <property name="dimensions">1300x500</property>
+
+    <property name="chromeDriverVersion">${chromeDriverVersion}</property>
 
     <!-- All these capabilities are related to Firefox only -->
     <property name="webdriver.firefox.profile">selenium</property>
@@ -49,6 +53,8 @@
 
     <property name="dimensions">1300x500</property>
     <property name="reuseCookies">true</property>
+
+    <property name="chromeDriverVersion">${chromeDriverVersion}</property>
 
     <!-- All these capabilities are related to Firefox only -->
     <property name="webdriver.firefox.profile">selenium</property>

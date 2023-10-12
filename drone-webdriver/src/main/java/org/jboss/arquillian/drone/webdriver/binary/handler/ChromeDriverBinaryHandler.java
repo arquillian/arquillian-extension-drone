@@ -2,6 +2,7 @@ package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +29,7 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     private static final String CHROME_DRIVER_VERSION_PROPERTY = "chromeDriverVersion";
     private static final String CHROME_DRIVER_URL_PROPERTY = "chromeDriverUrl";
 
-    public static final String CHROME_DRIVER_BINARY_NAME = "chromedriver" + (PlatformUtils.isWindows() ? ".exe" : "");
+    public static final Supplier<String> CHROME_DRIVER_BINARY_NAME = () -> "chromedriver" + (PlatformUtils.isWindows() ? ".exe" : "");
 
     private final Capabilities capabilities;
 
@@ -74,11 +75,12 @@ public class ChromeDriverBinaryHandler extends AbstractBinaryHandler {
     @Override
     protected File prepare(File downloaded) throws Exception {
         File extraction = BinaryFilesUtils.extract(downloaded);
-        File[] files = extraction.listFiles(file -> file.isFile() && file.getName().equals(CHROME_DRIVER_BINARY_NAME));
+        final String binaryName = CHROME_DRIVER_BINARY_NAME.get();
+        File[] files = extraction.listFiles(file -> file.isFile() && file.getName().equals(binaryName));
 
         if (files == null || files.length != 1) {
             throw new IllegalStateException(
-                "Missing ChromeDriver executable (" + CHROME_DRIVER_BINARY_NAME + ") in the directory " + extraction);
+                "Missing ChromeDriver executable (" + binaryName + ") in the directory " + extraction);
         }
 
         return markAsExecutable(files[0]);

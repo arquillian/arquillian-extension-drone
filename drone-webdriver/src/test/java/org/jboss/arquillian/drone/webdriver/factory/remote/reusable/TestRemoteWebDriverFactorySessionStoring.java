@@ -79,6 +79,8 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
     @BeforeClass
     public static void skipIfEdgeBrowser() {
+        System.err.println("VERSION123");
+        System.err.println(System.getProperty("chromeDriverVersion","nothing"));
         assumeBrowserNotEqual("edge");
     }
 
