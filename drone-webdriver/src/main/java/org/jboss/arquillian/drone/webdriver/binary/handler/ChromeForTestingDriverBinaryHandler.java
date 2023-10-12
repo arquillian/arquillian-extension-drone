@@ -30,17 +30,18 @@ public class ChromeForTestingDriverBinaryHandler extends ChromeDriverBinaryHandl
     protected File prepare(File downloaded) throws Exception {
         File extraction = BinaryFilesUtils.extract(downloaded);
         File[] dirs = extraction.listFiles(file -> file.isDirectory() && file.getName().startsWith("chromedriver"));
+        final String binaryName = CHROME_DRIVER_BINARY_NAME.get();
 
         if (dirs == null || dirs.length != 1) {
             throw new IllegalStateException(
-                "Missing ChromeDriver directory (chromedriver-*) containing executable (" + CHROME_DRIVER_BINARY_NAME + ") in the directory " + extraction);
+                "Missing ChromeDriver directory (chromedriver-*) containing executable (" + binaryName + ") in the directory " + extraction);
         }
 
-        File[] files = dirs[0].listFiles(file -> file.isFile() && file.getName().equals(CHROME_DRIVER_BINARY_NAME));
+        File[] files = dirs[0].listFiles(file -> file.isFile() && file.getName().equals(binaryName));
 
         if (files == null || files.length != 1) {
             throw new IllegalStateException(
-                "Missing ChromeDriver executable (" + CHROME_DRIVER_BINARY_NAME + ") in the directory " + dirs[0]);
+                "Missing ChromeDriver executable (" + binaryName + ") in the directory " + dirs[0]);
         }
 
         return markAsExecutable(files[0]);

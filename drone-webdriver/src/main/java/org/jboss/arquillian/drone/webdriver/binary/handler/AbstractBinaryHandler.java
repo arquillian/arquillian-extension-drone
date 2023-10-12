@@ -1,6 +1,8 @@
 package org.jboss.arquillian.drone.webdriver.binary.handler;
 
 import java.nio.file.Path;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.drone.webdriver.binary.BinaryFilesUtils;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.Downloader;
 import org.jboss.arquillian.drone.webdriver.binary.downloading.ExternalBinary;
@@ -145,6 +147,9 @@ public abstract class AbstractBinaryHandler implements BinaryHandler {
         String desiredVersion = null;
         if (!Validate.empty(getDesiredVersionProperty())) {
             desiredVersion = (String) getCapabilities().getCapability(getDesiredVersionProperty());
+            if (StringUtils.isBlank(desiredVersion)) {
+                desiredVersion = System.getProperty(getDesiredVersionProperty());
+            }
         }
 
         if (Validate.nonEmpty(url)) {
