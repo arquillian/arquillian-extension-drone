@@ -39,8 +39,7 @@
   </developers>
 
   <properties>
-    <version.selenium>4.14.0</version.selenium>
-    <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
+    <version.selenium>4.14.1</version.selenium>
     <version.htmlunit.driver>4.12.0</version.htmlunit.driver>
     <version.opera.driver>4.4.0</version.opera.driver>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
@@ -120,11 +119,6 @@
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>lift</artifactId>
         <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-server</artifactId>
-        <version>${version.selenium.server}</version>
       </dependency>
 
       <!-- Drivers -->

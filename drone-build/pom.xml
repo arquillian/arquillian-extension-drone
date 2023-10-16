@@ -182,11 +182,6 @@
         <artifactId>lift</artifactId>
         <version>${version.selenium}</version>
       </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-server</artifactId>
-        <version>${version.selenium.server}</version>
-      </dependency>
 
       <!-- Drivers -->
       <dependency>

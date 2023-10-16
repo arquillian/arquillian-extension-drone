@@ -334,8 +334,8 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <systemPropertyVariables>
-                <version.selenium>${version.selenium.server}</version.selenium>
-                <seleniumServerVersion>${version.selenium.server}</seleniumServerVersion>
+                <version.selenium>${version.selenium}</version.selenium>
+                <seleniumServerVersion>${version.selenium}</seleniumServerVersion>
               </systemPropertyVariables>
             </configuration>
             <dependencies>
