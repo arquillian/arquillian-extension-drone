@@ -1,6 +1,6 @@
 package org.jboss.arquillian.drone.webdriver.htmlunit;
 
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.WebClient;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 

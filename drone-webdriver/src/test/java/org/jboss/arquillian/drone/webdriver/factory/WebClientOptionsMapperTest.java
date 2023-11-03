@@ -1,9 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.gargoylesoftware.htmlunit.WebClientOptions;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
+import org.htmlunit.WebClientOptions;
 import org.junit.Test;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;

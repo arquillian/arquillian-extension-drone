@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebClientOptions;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebClientOptions;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
