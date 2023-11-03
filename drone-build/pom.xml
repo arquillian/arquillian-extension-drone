@@ -223,7 +223,7 @@
       <!-- Selenium dependencies not present in the Selenium BOM file -->
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>htmlunit-driver</artifactId>
+        <artifactId>htmlunit3-driver</artifactId>
         <version>${version.htmlunit.driver}</version>
       </dependency>
 
