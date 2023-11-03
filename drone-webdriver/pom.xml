@@ -92,7 +92,7 @@
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>htmlunit-driver</artifactId>
+      <artifactId>htmlunit3-driver</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -248,7 +248,7 @@
         <selenium.chrome.driver>org.seleniumhq.selenium:selenium-chrome-driver:jar</selenium.chrome.driver>
         <selenium.edge.driver>org.seleniumhq.selenium:selenium-edge-driver</selenium.edge.driver>
         <selenium.firefox.driver>org.seleniumhq.selenium:selenium-firefox-driver</selenium.firefox.driver>
-        <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit-driver:jar</selenium.htmlunit.driver>
+        <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit3-driver:jar</selenium.htmlunit.driver>
         <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
         <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
         <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
