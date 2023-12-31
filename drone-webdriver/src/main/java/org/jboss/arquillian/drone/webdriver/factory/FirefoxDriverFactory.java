@@ -21,7 +21,6 @@ import java.util.Map;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.FirefoxPrefsReader;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
@@ -32,7 +31,6 @@ import org.openqa.selenium.firefox.FirefoxDriverService;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
-import static org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHandler.FIREFOX_DRIVER_BINARY_PROPERTY;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -43,6 +41,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
     Destructor<FirefoxDriver> {
 
+    public static final String FIREFOX_DRIVER_BINARY_PROPERTY = "firefoxDriverBinary";
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
 
     /*
@@ -106,8 +105,6 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         if (Validate.nonEmpty(binary) && performValidations) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
         }
-
-        new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
 
         // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
         FirefoxOptions firefoxOptions = new FirefoxOptions();

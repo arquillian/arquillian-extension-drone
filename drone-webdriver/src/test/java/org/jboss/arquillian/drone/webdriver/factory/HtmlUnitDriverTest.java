@@ -43,7 +43,7 @@ public class HtmlUnitDriverTest {
 
         thrown.expect(WebDriverException.class);
         thrown.expectMessage(
-            "com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException: 503 Service Unavailable for http://foo.com/");
+            "org.htmlunit.FailingHttpStatusCodeException: 503 Service Unavailable for http://foo.com/");
 
         driver.get("http://foo.com");
         driver.quit();

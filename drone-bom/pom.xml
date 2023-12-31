@@ -39,9 +39,8 @@
   </developers>
 
   <properties>
-    <version.selenium>4.15.0</version.selenium>
-    <version.htmlunit.driver>4.14.1</version.htmlunit.driver>
-    <version.opera.driver>4.4.0</version.opera.driver>
+    <version.selenium>4.16.1</version.selenium>
+    <version.htmlunit.driver>4.16.0</version.htmlunit.driver>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
@@ -107,6 +106,11 @@
       </dependency>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-grid</artifactId>
+        <version>${version.selenium}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-support</artifactId>
         <version>${version.selenium}</version>
       </dependency>
@@ -151,11 +155,6 @@
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-remote-driver</artifactId>
         <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-opera-driver</artifactId>
-        <version>${version.opera.driver}</version>
       </dependency>
 
       <!-- HtmlUnit is kept externally from Selenium BOM -->

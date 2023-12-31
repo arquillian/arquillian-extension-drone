@@ -104,11 +104,6 @@
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-opera-driver</artifactId>
-      <version>${version.opera.driver}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-safari-driver</artifactId>
       <version>${version.selenium}</version>
     </dependency>

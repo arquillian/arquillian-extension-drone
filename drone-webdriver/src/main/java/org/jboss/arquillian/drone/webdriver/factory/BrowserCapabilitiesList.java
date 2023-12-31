@@ -5,7 +5,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerOptions;
-import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.safari.SafariOptions;
 
 import java.util.Collections;
@@ -26,7 +25,6 @@ public class BrowserCapabilitiesList {
         public static EdgeOptions EDGE = new EdgeOptions();
         public static FirefoxOptions FIREFOX = new FirefoxOptions();
         public static InternetExplorerOptions IE = new InternetExplorerOptions();
-        public static OperaOptions OPERA = new OperaOptions();
         public static SafariOptions SAFARI = new SafariOptions();
     }
 
@@ -137,29 +135,6 @@ public class BrowserCapabilitiesList {
         @Override
         public String getReadableName() {
             return "internetexplorer";
-        }
-
-        @Override
-        public int getPrecedence() {
-            return 0;
-        }
-    }
-
-    public static class Opera implements BrowserCapabilities {
-
-        @Override
-        public String getImplementationClassName() {
-            return "org.openqa.selenium.opera.OperaDriver";
-        }
-
-        @Override
-        public Map<String, ?> getRawCapabilities() {
-            return Capabilities.OPERA.asMap();
-        }
-
-        @Override
-        public String getReadableName() {
-            return "opera";
         }
 
         @Override

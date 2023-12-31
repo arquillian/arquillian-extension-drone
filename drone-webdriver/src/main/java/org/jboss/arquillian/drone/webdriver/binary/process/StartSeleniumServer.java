@@ -6,27 +6,16 @@ import org.openqa.selenium.Capabilities;
 
 public class StartSeleniumServer implements Event {
 
-    private String pathToSeleniumServerBinary;
     private String browser;
     private Capabilities capabilities;
     private URL url;
     private String seleniumServerArgs;
 
-    public StartSeleniumServer(String pathToSeleniumServerBinary, String browser,
-                               Capabilities capabilities, URL url, String seleniumServerArgs) {
-        this.pathToSeleniumServerBinary = pathToSeleniumServerBinary;
+    public StartSeleniumServer(String browser, Capabilities capabilities, URL url, String seleniumServerArgs) {
         this.browser = browser;
         this.capabilities = capabilities;
         this.url = url;
         this.seleniumServerArgs = seleniumServerArgs;
-    }
-
-    public String getPathToSeleniumServerBinary() {
-        return pathToSeleniumServerBinary;
-    }
-
-    public void setPathToSeleniumServerBinary(String pathToSeleniumServerBinary) {
-        this.pathToSeleniumServerBinary = pathToSeleniumServerBinary;
     }
 
     public String getSeleniumServerArgs() {

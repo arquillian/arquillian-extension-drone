@@ -3,7 +3,6 @@ package org.jboss.arquillian.drone.webdriver.factory;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.binary.handler.EdgeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -66,8 +65,6 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
         Capabilities capabilities = configuration.getCapabilities();
         EdgeOptions edgeOptions = new EdgeOptions();
         CapabilitiesOptionsMapper.mapCapabilities(edgeOptions, capabilities, BROWSER_CAPABILITIES);
-
-        new EdgeDriverBinaryHandler(edgeOptions).checkAndSetBinary(true);
 
         return edgeOptions;
     }

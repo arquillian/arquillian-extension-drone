@@ -28,7 +28,6 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.augmentation.AugmentingEnhancer;
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.InitializationParameter;
@@ -165,9 +164,6 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         URL remoteAddress) throws Exception {
 
         Capabilities capabilities = new ImmutableCapabilities(getCapabilities(configuration, true));
-        String seleniumServer = new SeleniumServerBinaryHandler(capabilities).downloadAndPrepare().toString();
-
-        if (!Validate.empty(seleniumServer)) {
             String seleniumServerArgs = configuration.getSeleniumServerArgs();
 
             if (Validate.empty(seleniumServerArgs)) {
@@ -175,9 +171,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             }
 
             startSeleniumServerEvent.fire(
-                new StartSeleniumServer(seleniumServer, browser, capabilities, remoteAddress,
+                new StartSeleniumServer(browser, capabilities, remoteAddress,
                     seleniumServerArgs));
-        }
     }
 
     /**

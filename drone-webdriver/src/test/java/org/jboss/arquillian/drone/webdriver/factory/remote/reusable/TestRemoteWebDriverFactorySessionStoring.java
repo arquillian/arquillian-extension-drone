@@ -19,19 +19,20 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import org.apache.http.client.utils.URIUtils;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
+import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -133,13 +134,11 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
             String selSerVersion = ArqDescPropertyUtil.getSeleniumServerVersionProperty(WEBDRIVER_REUSABLE_EXT);
             if (!Validate.empty(selSerVersion)) {
                 MutableCapabilities caps = new MutableCapabilities();
-                caps.setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
                 selServerCaps = selServerCaps.merge(caps);
             }
-            String seleniumServerBinary =
-                new SeleniumServerBinaryHandler(selServerCaps).downloadAndPrepare().toString();
-
-            fire(new StartSeleniumServer(seleniumServerBinary, browser, selServerCaps, hubUrl, seleniumServerArgs));
+            if(!UrlUtils.isReachable(hubUrl)) {
+                fire(new StartSeleniumServer(browser, selServerCaps, hubUrl, seleniumServerArgs));
+            }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

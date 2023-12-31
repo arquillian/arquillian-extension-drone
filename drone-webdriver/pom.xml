@@ -65,6 +65,11 @@
     <!-- Selenium dependencies -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-grid</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-support</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -93,11 +98,6 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>htmlunit3-driver</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-opera-driver</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -251,7 +251,6 @@
         <selenium.htmlunit.driver>org.seleniumhq.selenium:htmlunit3-driver:jar</selenium.htmlunit.driver>
         <selenium.ie.driver>org.seleniumhq.selenium:selenium-ie-driver:jar</selenium.ie.driver>
         <selenium.safari.driver>org.seleniumhq.selenium:selenium-safari-driver:jar</selenium.safari.driver>
-        <opera.opera.driver>com.opera:operadriver</opera.opera.driver>
       </properties>
 
       <dependencies>
@@ -317,10 +316,10 @@
                       <property>browser</property>
                       <message>browser property must be specified!</message>
                       <regex>
-                        firefox|android|htmlUnit|htmlunit|safari|chrome|opera|iphone|internetExplorer|internetexplorer|edge|chromeHeadless|chromeheadless
+                        firefox|android|htmlUnit|htmlunit|safari|chrome|iphone|internetExplorer|internetexplorer|edge|chromeHeadless|chromeheadless
                       </regex>
                       <regexMessage>-Dbrowser must be one of: firefox, android, htmlUnit/htmlunit, safari, chrome,
-                        opera, iphone, internetExplorer/internetexplorer, edge, chromeHeadless/chromeheadless but was ${browser}
+                        iphone, internetExplorer/internetexplorer, edge, chromeHeadless/chromeheadless but was ${browser}
                       </regexMessage>
                     </requireProperty>
                   </rules>
@@ -508,21 +507,6 @@
       <properties>
         <browser>ie</browser>
         <selenium.ie.driver>dummy</selenium.ie.driver>
-      </properties>
-    </profile>
-    <profile>
-      <id>opera</id>
-
-      <activation>
-        <property>
-          <name>browser</name>
-          <value>opera</value>
-        </property>
-      </activation>
-
-      <properties>
-        <browser>opera</browser>
-        <opera.opera.driver>dummy</opera.opera.driver>
       </properties>
     </profile>
 

@@ -169,6 +169,11 @@
       </dependency>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-grid</artifactId>
+        <version>${version.selenium}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-support</artifactId>
         <version>${version.selenium}</version>
       </dependency>
@@ -214,17 +219,18 @@
         <artifactId>selenium-remote-driver</artifactId>
         <version>${version.selenium}</version>
       </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-opera-driver</artifactId>
-        <version>${version.opera.driver}</version>
-      </dependency>
 
       <!-- Selenium dependencies not present in the Selenium BOM file -->
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>htmlunit3-driver</artifactId>
         <version>${version.htmlunit.driver}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>33.0.0-jre</version>
       </dependency>
 
       <!-- Testing dependencies -->

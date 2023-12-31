@@ -25,8 +25,6 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
-import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeForTestingDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.ChromeUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
@@ -107,12 +105,6 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
         Capabilities capabilities = configuration.getCapabilities();
         final String binary = (String) capabilities.getCapability("chrome.binary");
         final String version = ChromeUtils.getChromeVersion(capabilities);
-
-        final ChromeDriverBinaryHandler handler = ChromeUtils.isChromeForTesting(version) ?
-            new ChromeForTestingDriverBinaryHandler(capabilities) :
-            new ChromeDriverBinaryHandler(capabilities);
-
-        handler.checkAndSetBinary(performValidations);
 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {

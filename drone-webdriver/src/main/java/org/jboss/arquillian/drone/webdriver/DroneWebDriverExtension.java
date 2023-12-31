@@ -31,7 +31,6 @@ import org.jboss.arquillian.drone.webdriver.factory.EdgeDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.InternetExplorerDriverFactory;
-import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.SafariDriverFactory;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
@@ -47,7 +46,6 @@ import static org.jboss.arquillian.drone.webdriver.utils.Constants.EDGE_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.FIREFOX_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.HTMLUNIT_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.IE_DRIVER;
-import static org.jboss.arquillian.drone.webdriver.utils.Constants.OPERA_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.REMOTE_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.SAFARI_DRIVER;
 import static org.jboss.arquillian.drone.webdriver.utils.Constants.WEB_DRIVER;
@@ -68,7 +66,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         registerFactoryService(builder, HtmlUnitDriverFactory.class, HTMLUNIT_DRIVER);
         registerFactoryService(builder, InternetExplorerDriverFactory.class, IE_DRIVER);
         registerFactoryService(builder, WebDriverFactory.class, WEB_DRIVER);
-        registerFactoryService(builder, OperaDriverFactory.class, OPERA_DRIVER);
         registerFactoryService(builder, RemoteWebDriverFactory.class, REMOTE_DRIVER);
         registerFactoryService(builder, SafariDriverFactory.class, SAFARI_DRIVER);
 
@@ -79,7 +76,6 @@ public class DroneWebDriverExtension implements LoadableExtension {
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Firefox.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.HtmlUnit.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.InternetExplorer.class);
-        builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Opera.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Remote.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.Safari.class);
         builder.service(BrowserCapabilities.class, BrowserCapabilitiesList.ChromeHeadless.class);
