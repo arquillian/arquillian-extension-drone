@@ -61,8 +61,6 @@
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
     <version.surefire.plugin>3.2.3</version.surefire.plugin>
-
-    <additionalparam>-Xdoclint:none</additionalparam>
   </properties>
 
   <build>
@@ -111,6 +109,14 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>3.3.2</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <!-- Modules -->
   <modules>
