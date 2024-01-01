@@ -109,13 +109,13 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             options = new ChromeDriverFactory().getChromeOptions(configuration);
         } else if(browser.equals(Browser.FIREFOX.browserName())) {
             options = new FirefoxDriverFactory().getFirefoxOptions(configuration, true);
-            augmentationSupported = false;
+//            augmentationSupported = false;
         } else if(browser.equals(Browser.SAFARI.browserName())) {
             options = new SafariDriverFactory().getOptions(configuration, true);
-        } else if(browser.equals("edge")) {
+        } else if(browser.equals(Browser.EDGE.browserName())) {
             options = new EdgeDriverFactory().getEdgeOptions(configuration);
         } else {
-            options = new MutableCapabilities();
+            options = new FirefoxDriverFactory().getFirefoxOptions(configuration, true);
         }
 
         if (!UrlUtils.isReachable(remoteAddress)) {

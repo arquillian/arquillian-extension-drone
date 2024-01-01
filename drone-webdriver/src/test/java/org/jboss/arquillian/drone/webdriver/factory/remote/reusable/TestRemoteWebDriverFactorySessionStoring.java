@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import org.apache.http.client.utils.URIUtils;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -29,7 +28,7 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
 import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
@@ -46,7 +45,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.WEBDRIVER_REUSABLE_EXT;
@@ -109,19 +108,17 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         runSeleniumServer();
 
-        initializationParameter = new InitializationParameter(hubUrl, capabilities);
-
-        when(configuration.getBrowserName()).thenReturn("xyz");
+        String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
+        when(configuration.getBrowserName()).thenReturn(browser);
         when(configuration.isRemoteReusable()).thenReturn(true);
         when(configuration.getCapabilities()).thenReturn(capabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
         configuration.setSeleniumServerArgs("-debug true");
-
-        String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
-        if (browser.equals("chromeheadless")) {
-            when(configuration.getBrowserName()).thenReturn("chromeheadless");
-            new ChromeDriverFactory().setChromeOptions(configuration, new ChromeOptions().merge(capabilities));
+        if (browser.equals(Browser.HTMLUNIT.browserName())) {
+            capabilities = capabilities.merge(new ImmutableCapabilities(
+                new BrowserCapabilitiesList.Firefox().getRawCapabilities()));
         }
+        initializationParameter = new InitializationParameter(hubUrl, capabilities);
     }
 
     private void runSeleniumServer() {
