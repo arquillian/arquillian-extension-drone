@@ -104,12 +104,10 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         // construct capabilities
         Capabilities options;
-        boolean augmentationSupported = true;
         if (browser.equals(Browser.CHROME.browserName()) || browser.equals("chromeheadless")) {
             options = new ChromeDriverFactory().getChromeOptions(configuration);
         } else if(browser.equals(Browser.FIREFOX.browserName())) {
             options = new FirefoxDriverFactory().getFirefoxOptions(configuration, true);
-//            augmentationSupported = false;
         } else if(browser.equals(Browser.SAFARI.browserName())) {
             options = new SafariDriverFactory().getOptions(configuration, true);
         } else if(browser.equals(Browser.EDGE.browserName())) {
@@ -142,14 +140,9 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
         } else {
             driver = createRemoteDriver(remoteAddress, options);
         }
-
-        if (augmentationSupported) {
-            // ARQ-1351
-            // marks the driver instance for augmentation by AugmentingEnhancer
-            ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
-        } else {
-            ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, Boolean.FALSE);
-        }
+        // ARQ-1351
+        // marks the driver instance for augmentation by AugmentingEnhancer
+        ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
 
         // ARQ-1206
         // by default, we are clearing Cookies on reusable browsers
