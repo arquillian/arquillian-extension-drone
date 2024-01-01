@@ -14,7 +14,7 @@
 
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-webdriver-depchain</artifactId>
-  <name>Arquillian Drone WebDriver 2.x Dependency Chain</name>
+  <name>Arquillian Drone WebDriver 3.x Dependency Chain</name>
   <packaging>pom</packaging>
 
   <developers>

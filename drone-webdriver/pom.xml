@@ -27,7 +27,7 @@
   <properties>
     <!-- m2e settings -->
     <m2e.jpa.activation>false</m2e.jpa.activation>
-    <google.code.gson.version>2.9.1</google.code.gson.version>
+    <google.code.gson.version>2.10.1</google.code.gson.version>
   </properties>
 
   <!-- Dependencies -->
@@ -120,12 +120,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.11.0</version>
+      <version>2.15.1</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.15.4</version>
+      <version>1.17.2</version>
     </dependency>
 
     <!-- test dependencies -->
