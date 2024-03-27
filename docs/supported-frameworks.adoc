@@ -22,7 +22,6 @@ the `@Drone` annotation.
  FirefoxDriver +
  HtmlUnitDriver +
  InternetExplorerDriver +
- PhantomJSDriver +
  OperaDriver +
  RemoteDriver +
  WebDriver

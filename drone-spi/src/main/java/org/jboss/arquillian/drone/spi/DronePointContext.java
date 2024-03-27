@@ -144,6 +144,6 @@ public interface DronePointContext<DRONE> {
      * @param <VALUE>
      *     Type of the value to be stored in the {@link DronePointContext}.
      */
-    public interface MetadataKey<VALUE> {
+    interface MetadataKey<VALUE> {
     }
 }

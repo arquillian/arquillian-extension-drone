@@ -19,7 +19,6 @@ package org.jboss.arquillian.drone.webdriver.configuration;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +28,7 @@ import org.jboss.arquillian.drone.spi.DroneConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 
 /**
  * Generic configuration for WebDriver Driver. By default, it uses HtmlUnit Driver.
@@ -105,7 +104,7 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return this;
     }
 
-    public String getBrowser() {
+    public String getBrowserName() {
 
         if (_browser != null) {
             return _browser.getReadableName();
@@ -114,17 +113,22 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
         return browser;
     }
 
-    public void setBrowser(String browser) {
+    @Deprecated
+    public String getBrowser() {
+        return getBrowserName();
+    }
+
+    public void setBrowserName(String browser) {
         this.browser = browser;
     }
 
+    @Deprecated
+    public void setBrowser(String browser) {
+        setBrowserName(browser);
+    }
+
     public Capabilities getCapabilities() {
-        // return a merge of original capability plus capabilities user has specified in configuration
-        // safely ignore null value here
-        return new DesiredCapabilities(new DesiredCapabilities(
-            _browser.getRawCapabilities() == null ? new HashMap<String, Object>()
-                : _browser.getRawCapabilities()),
-            new DesiredCapabilities(this.capabilityMap));
+        return new ImmutableCapabilities(this.capabilityMap);
     }
 
     public String getSeleniumServerArgs() {

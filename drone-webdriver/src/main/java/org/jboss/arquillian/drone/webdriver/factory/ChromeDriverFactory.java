@@ -25,14 +25,14 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.DronePoint;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.binary.handler.ChromeDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
+import org.jboss.arquillian.drone.webdriver.utils.ChromeUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.jboss.arquillian.drone.webdriver.window.Dimensions;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -66,6 +66,7 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      */
     @Override
     public void destroyInstance(ChromeDriver instance) {
+        instance.close();   // necessary to avoid "Connection Reset by peer" errors
         instance.quit();
     }
 
@@ -78,12 +79,15 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     public ChromeDriver createInstance(WebDriverConfiguration configuration) {
         final ChromeOptions options = getChromeOptions(configuration);
 
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[]{ChromeOptions.class},
-            new Object[]{options}, ChromeDriver.class);
+        ChromeDriverService chromeDriverService = new ChromeDriverService.Builder()
+                .withLogOutput(System.out).build();
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{ChromeDriverService.class, ChromeOptions.class},
+                new Object[]{chromeDriverService, options}, ChromeDriver.class);
     }
 
     /**
-     * Returns a {@link Capabilities} instance with set all necessary properties.
+     * Returns a {@link ChromeOptions} instance with set all necessary properties.
      * It also validates if the defined chrome.binary and chromeDriverBinary are executable binaries.
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
@@ -96,13 +100,11 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      *
      * @return A {@link Capabilities} instance with set all necessary properties.
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
-        // set capabilities
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
-
-        String binary = (String) capabilities.getCapability("chrome.binary");
-
-        new ChromeDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
+    public ChromeOptions getChromeOptions(WebDriverConfiguration configuration, boolean performValidations) {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        Capabilities capabilities = configuration.getCapabilities();
+        final String binary = (String) capabilities.getCapability("chrome.binary");
+        final String version = ChromeUtils.getChromeVersion(capabilities);
 
         // verify binary capabilities
         if (Validate.nonEmpty(binary)) {
@@ -111,34 +113,29 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
             }
         }
 
-        setChromeOptions(configuration, capabilities);
+        setChromeOptions(configuration, chromeOptions);
 
-        return capabilities;
+        return chromeOptions;
     }
 
     public ChromeOptions getChromeOptions(WebDriverConfiguration configuration) {
         return getChromeOptions(configuration, true);
     }
 
-    public ChromeOptions getChromeOptions(WebDriverConfiguration configuration, boolean performValidations) {
-        return new ChromeOptions().merge(getCapabilities(configuration, performValidations));
-    }
-
-    public void setChromeOptions(WebDriverConfiguration configuration, DesiredCapabilities capabilities) {
-        ChromeOptions chromeOptions = new ChromeOptions();
+    public void setChromeOptions(WebDriverConfiguration configuration, ChromeOptions chromeOptions) {
         manageChromeHeadless(configuration, chromeOptions);
 
-        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, capabilities, BROWSER_CAPABILITIES);
+        CapabilitiesOptionsMapper.mapCapabilities(chromeOptions, configuration.getCapabilities(), BROWSER_CAPABILITIES);
 
-        String binary = (String) capabilities.getCapability("chrome.binary");
+        String binary = (String) configuration.getCapabilities().getCapability("chrome.binary");
         if (Validate.nonEmpty(binary)) {
             // ARQ-1823 - setting chrome binary path through ChromeOptions
             chromeOptions.setBinary(binary);
         }
 
-        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        chromeOptions.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
-        String printChromeOptions = (String) capabilities.getCapability(CHROME_PRINT_OPTIONS);
+        String printChromeOptions = (String) configuration.getCapabilities().getCapability(CHROME_PRINT_OPTIONS);
         if (Validate.nonEmpty(printChromeOptions) && Boolean.valueOf(printChromeOptions.trim())) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             StringBuffer chromeOptionsLog = new StringBuffer("\n");
@@ -150,9 +147,9 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
     }
 
     public void manageChromeHeadless(WebDriverConfiguration configuration, ChromeOptions chromeOptions) {
-        String browser = configuration.getBrowser().toLowerCase();
+        String browser = configuration.getBrowserName().toLowerCase();
         if (browser.equals(HEADLESS_BROWSER_CAPABILITIES)) {
-            chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--headless=new");
 
             Dimensions dimensions = new Dimensions(configuration);
             if (dimensions.isFullscreenSet()) {

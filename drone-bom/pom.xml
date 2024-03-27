@@ -39,10 +39,8 @@
   </developers>
 
   <properties>
-    <version.selenium>4.3.0</version.selenium>
-    <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.12.0</version.htmlunit.driver>
-    <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
+    <version.selenium>4.19.0</version.selenium>
+    <version.htmlunit.driver>4.18.1</version.htmlunit.driver>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
@@ -108,6 +106,11 @@
       </dependency>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-grid</artifactId>
+        <version>${version.selenium}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-support</artifactId>
         <version>${version.selenium}</version>
       </dependency>
@@ -120,11 +123,6 @@
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>lift</artifactId>
         <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-server</artifactId>
-        <version>${version.selenium.server}</version>
       </dependency>
 
       <!-- Drivers -->
@@ -158,24 +156,12 @@
         <artifactId>selenium-remote-driver</artifactId>
         <version>${version.selenium}</version>
       </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-opera-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
 
       <!-- HtmlUnit is kept externally from Selenium BOM -->
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>htmlunit-driver</artifactId>
+        <artifactId>htmlunit3-driver</artifactId>
         <version>${version.htmlunit.driver}</version>
-      </dependency>
-
-      <!-- Ghost Driver is kept externally from Selenium BOM -->
-      <dependency>
-        <groupId>com.codeborne</groupId>
-        <artifactId>phantomjsdriver</artifactId>
-        <version>${phantomjs.driver.version}</version>
       </dependency>
 
       <!-- Dependency Chain -->
@@ -194,7 +180,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.3</version>
+          <version>3.0.1</version>
           <configuration>
             <pushChanges>false</pushChanges>
             <localCheckout>true</localCheckout>
@@ -238,12 +224,12 @@
   
   <distributionManagement>
     <repository>
-      <id>jboss-releases-repository</id>
+      <id>${jboss.releases.repo.id}</id>
       <name>JBoss Releases Repository</name>
       <url>${jboss.releases.repo.url}</url>
     </repository>
     <snapshotRepository>
-      <id>jboss-snapshots-repository</id>
+      <id>${jboss.snapshots.repo.id}</id>
       <name>JBoss Snapshots Repository</name>
       <url>${jboss.snapshots.repo.url}</url>
     </snapshotRepository>

@@ -3,7 +3,6 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 class ReusableCapabilities implements Serializable {
 
@@ -19,10 +18,6 @@ class ReusableCapabilities implements Serializable {
 
     Map<String, Object> getCapabilities() {
         return capabilities;
-    }
-
-    DesiredCapabilities getDesiredCapabilities() {
-        return new DesiredCapabilities(capabilities);
     }
 
     @Override

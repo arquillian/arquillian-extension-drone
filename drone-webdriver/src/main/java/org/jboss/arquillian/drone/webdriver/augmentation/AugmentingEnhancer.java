@@ -52,13 +52,27 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
         Class<? extends Annotation> qualifier) {
 
         if (RemoteWebDriver.class == droneType || ReusableRemoteWebDriver.class == droneType) {
-            return true;
+            return checkEnhance(instance, true);
         }
 
         Class<?> realInstanceClass = instance.asInstance(droneType).getClass();
 
-        return RemoteWebDriver.class == realInstanceClass || ReusableRemoteWebDriver.class == realInstanceClass
-            || DroneAugmented.class.isAssignableFrom(realInstanceClass);
+        return checkEnhance(instance, RemoteWebDriver.class == realInstanceClass
+            || ReusableRemoteWebDriver.class == realInstanceClass
+            || DroneAugmented.class.isAssignableFrom(realInstanceClass));
+    }
+
+    private boolean checkEnhance(InstanceOrCallableInstance instance, boolean status) {
+        try {
+            RemoteWebDriver driver = instance.asInstance(RemoteWebDriver.class);
+            if (driver.getCapabilities().getCapability(DRONE_AUGMENTED) != driver) {
+                return false;
+            } else {
+                return status;
+            }
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     /**

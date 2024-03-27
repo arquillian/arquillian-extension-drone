@@ -1,9 +1,9 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
-import com.gargoylesoftware.htmlunit.MockWebConnection;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebClientOptions;
 import org.assertj.core.api.Assertions;
+import org.htmlunit.MockWebConnection;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebClientOptions;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.htmlunit.DroneHtmlUnitDriver;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
@@ -13,9 +13,9 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public class HtmlUnitDriverTest {
 
         thrown.expect(WebDriverException.class);
         thrown.expectMessage(
-            "com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException: 503 Service Unavailable for http://foo.com/");
+            "org.htmlunit.FailingHttpStatusCodeException: 503 Service Unavailable for http://foo.com/");
 
         driver.get("http://foo.com");
         driver.quit();
@@ -64,7 +64,7 @@ public class HtmlUnitDriverTest {
 
     private WebDriverConfiguration getMockedConfiguration(String option) {
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        MutableCapabilities capabilities = new MutableCapabilities();
         if (Validate.nonEmpty(option)) {
             capabilities.setCapability(webClientOptions, option);
         }

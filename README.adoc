@@ -78,11 +78,11 @@ mvn clean test
 ----
 
 
-To run the whole test suite including functional tests using `phantomjs` browser.
+To run the whole test suite including functional tests using `chrome` browser.
 
 [source]
 ----
-mvn clean verify -Dbrowser=phantomjs
+mvn clean verify -Dbrowser=chrome
 ----
 
 In case you want to modify the browser, you can specify `-Dbrowser=firefox` for instance. This will run the test suite using firefox defined. Similarly, you can use Chrome, Safari, etc...

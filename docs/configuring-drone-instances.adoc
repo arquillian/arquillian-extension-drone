@@ -79,7 +79,6 @@ Following values are valid:
 * htmlUnit  or htmlunit
 * internetExplorer or internetexplorer
 * opera
-* phantomjs
 * safari
 * edge
 
@@ -127,15 +126,14 @@ timeout=10; javaScriptEnabled=true; throwExceptionOnScriptError=false; SSLClient
 |dimensions
 |-
 |Dimensions of browser window in `widthxheight` format. This will resize
-the window if supported by underlying browser. Useful for **phantomjs**,
-which by default defines a very small viewport.
+the window if supported by underlying browser.
 If you need the browser in fullscreen mode, use any of the following strings: "full" "fullscreen" "max"
 |===
 
 Some additional configuration parameters related to binaries can be found in http://arquillian.org/arquillian-extension-drone/#_properties_directory_names_and_support_of_latest_versions[Properties, directory names and support of latest versions]
 
 If you need to enable any
-http://code.google.com/p/selenium/wiki/DesiredCapabilities[browser
+http://code.google.com/p/selenium/wiki/Capabilities[browser
 capability], simply specify it as a property in extension configuration.
 For instance, if you are running Firefox browser and you want to change
 the binary location, you can do it via following code:

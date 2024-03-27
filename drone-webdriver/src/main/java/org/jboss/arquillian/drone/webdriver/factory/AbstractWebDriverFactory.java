@@ -34,14 +34,14 @@ abstract class AbstractWebDriverFactory<T extends WebDriver> implements Configur
             dronePoint.getQualifier());
 
         // if not set, we hit a webdriver configuration and we want to use browser capabilities
-        if (browser == null && Validate.nonEmpty(configuration.getBrowser())) {
-            browser = registry.getEntryFor(configuration.getBrowser().toLowerCase());
+        if (browser == null && Validate.nonEmpty(configuration.getBrowserName())) {
+            browser = registry.getEntryFor(configuration.getBrowserName().toLowerCase());
             if (browser == null) {
                 throw new IllegalStateException(
                     MessageFormat
                         .format("Unable to initialize WebDriver instance. Please specify a valid browser " +
                                 "instead of {1}. Available options are: {0}",
-                            getAvailableBrowserCapabilities(), configuration.getBrowser()));
+                            getAvailableBrowserCapabilities(), configuration.getBrowserName()));
             }
             configuration.setBrowserInternal(browser);
         }

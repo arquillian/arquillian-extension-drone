@@ -35,7 +35,6 @@ public class Constants {
     public static final String OPERA_DRIVER = "org.openqa.selenium.opera.OperaDriver";
     public static final String REMOTE_DRIVER = "org.openqa.selenium.remote.RemoteWebDriver";
     public static final String SAFARI_DRIVER = "org.openqa.selenium.safari.SafariDriver";
-    public static final String PHANTOMJS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
 
     public static final Path ARQUILLIAN_DRONE_CACHE_DIRECTORY =
         Paths.get(System.getProperty("user.home"), ".arquillian", "drone");

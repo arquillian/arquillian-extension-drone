@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ public class AppiumDriverFactoryTest {
 
     @Test
     public void testCapabilities() throws IOException {
-        DesiredCapabilities originalCapabilities = new DesiredCapabilities();
+        MutableCapabilities originalCapabilities = new MutableCapabilities();
         originalCapabilities.setCapability(PLATFORM_NAME, "android");
         originalCapabilities.setCapability(BROWSER_NAME, "chrome");
         originalCapabilities.setCapability("chromeArguments", CHROME_OPTIONS_VALUE);
@@ -60,7 +60,7 @@ public class AppiumDriverFactoryTest {
         assertTrue(new Gson().toJson(chromeOptions).contains(CHROME_OPTIONS_VALUE));
     }
 
-    private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {
+    private WebDriverConfiguration getMockedConfiguration(MutableCapabilities capabilities) {
         WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);
 
         when(configuration.getCapabilities()).thenReturn(capabilities);

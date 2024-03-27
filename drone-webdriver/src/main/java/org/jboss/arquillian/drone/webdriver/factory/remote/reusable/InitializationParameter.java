@@ -19,33 +19,34 @@ package org.jboss.arquillian.drone.webdriver.factory.remote.reusable;
 import java.io.Serializable;
 import java.net.URL;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 
 public class InitializationParameter implements Serializable {
-    private static final long serialVersionUID = 7249154351129725604L;
+    private static final long serialVersionUID = 7249154351129725606L;
 
     private final URL url;
 
-    private final ReusableCapabilities desiredCapabilities;
+    private final ReusableCapabilities capabilities;
 
-    public InitializationParameter(URL url, Capabilities desiredCapabilities) {
+    public InitializationParameter(URL url, Capabilities Capabilities) {
         this.url = url;
         // we need to identify what capabilities cannot be serialized/deserialized and reject those from Initialization key
-        this.desiredCapabilities = ReusedSession.createReusableCapabilities(desiredCapabilities);
+        this.capabilities = ReusedSession.createReusableCapabilities(Capabilities);
     }
 
     public URL getUrl() {
         return url;
     }
 
-    public Capabilities getDesiredCapabilities() {
-        return desiredCapabilities.getDesiredCapabilities();
+    public Capabilities getCapabilities() {
+        return new ImmutableCapabilities(capabilities.getCapabilities());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((desiredCapabilities == null) ? 0 : desiredCapabilities.hashCode());
+        result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         return result;
     }
@@ -62,11 +63,11 @@ public class InitializationParameter implements Serializable {
             return false;
         }
         InitializationParameter other = (InitializationParameter) obj;
-        if (desiredCapabilities == null) {
-            if (other.desiredCapabilities != null) {
+        if (capabilities == null) {
+            if (other.capabilities != null) {
                 return false;
             }
-        } else if (!desiredCapabilities.equals(other.desiredCapabilities)) {
+        } else if (!capabilities.equals(other.capabilities)) {
             return false;
         }
         if (url == null) {
@@ -81,6 +82,6 @@ public class InitializationParameter implements Serializable {
 
     @Override
     public String toString() {
-        return url.toString() + "#" + desiredCapabilities.toString();
+        return url.toString() + "#" + capabilities.toString();
     }
 }

@@ -21,16 +21,16 @@ import java.util.Map;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
-import org.jboss.arquillian.drone.webdriver.binary.handler.FirefoxDriverBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.utils.FirefoxPrefsReader;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverService;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.firefox.GeckoDriverService;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -41,6 +41,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     Configurator<FirefoxDriver, WebDriverConfiguration>, Instantiator<FirefoxDriver, WebDriverConfiguration>,
     Destructor<FirefoxDriver> {
 
+    public static final String FIREFOX_DRIVER_BINARY_PROPERTY = "firefoxDriverBinary";
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
 
     /*
@@ -70,16 +71,18 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
      */
     @Override
     public FirefoxDriver createInstance(WebDriverConfiguration configuration) {
+        FirefoxOptions firefoxOptions = getFirefoxOptions(configuration, true);
 
-        FirefoxOptions capabilities = (FirefoxOptions) getCapabilities(configuration, true);
-
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {FirefoxOptions.class},
-            new Object[] {capabilities}, FirefoxDriver.class);
+        FirefoxDriverService firefoxDriverService = new GeckoDriverService.Builder()
+                .withLogOutput(System.out).build();
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{FirefoxDriverService.class, FirefoxOptions.class},
+                new Object[]{firefoxDriverService, firefoxOptions}, FirefoxDriver.class);
     }
 
     /**
-     * Returns a {@link Capabilities} instance with set all necessary properties.
-     * It also validates whether the defined firefox_binary or firefoxDriverBinary are executable binaries
+     * Returns a {@link FirefoxOptions} instance with set all necessary properties.
+     * It also validates whether the defined firefoxDriverBinary are executable binaries
      * and creates/sets a prospective firefox profile as well as a firefox extension.
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
@@ -90,24 +93,21 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
      *     Whether a potential validation should be performed;
      *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      *
-     * @return A {@link Capabilities} instance with set all necessary properties; if set to true the
+     * @return A {@link FirefoxOptions} instance with set all necessary properties; if set to true the
      * IllegalArgumentException
      * can be thrown in case when requirements are not met
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
-
-        String binary = (String) capabilities.getCapability(FirefoxDriver.Capability.BINARY);
+    public FirefoxOptions getFirefoxOptions(WebDriverConfiguration configuration, boolean performValidations) {
+        Capabilities capabilities = configuration.getCapabilities();
+        String binary = (String) capabilities.getCapability(FIREFOX_DRIVER_BINARY_PROPERTY);
 
         // verify firefox binary if set
         if (Validate.nonEmpty(binary) && performValidations) {
             Validate.isExecutable(binary, "Firefox binary does not point to a valid executable,  " + binary);
         }
 
-        new FirefoxDriverBinaryHandler(capabilities).checkAndSetBinary(performValidations);
-
         // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
-        FirefoxOptions firefoxOptions = new FirefoxOptions(capabilities);
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
         CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
 
         FirefoxProfile firefoxProfile = getFirefoxProfile(capabilities, performValidations);
@@ -121,9 +121,11 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         return firefoxOptions;
     }
 
-    private FirefoxProfile getFirefoxProfile(DesiredCapabilities capabilities, boolean performValidations) {
-
-        String profile = (String) capabilities.getCapability(FirefoxDriver.Capability.PROFILE);
+    private FirefoxProfile getFirefoxProfile(Capabilities capabilities, boolean performValidations) {
+        String profile = (String) capabilities.getCapability("firefox_profile");
+        if (profile == null) {
+            profile = (String) capabilities.getCapability("firefoxProfile");
+        }
         FirefoxProfile firefoxProfile;
 
         // use the explicit profile only if absolutely necessary;
@@ -152,7 +154,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         return profileShouldBeSet ? firefoxProfile : null;
     }
 
-    private void addUserPreferencesFromFile(DesiredCapabilities capabilities, FirefoxOptions firefoxOptions) {
+    private void addUserPreferencesFromFile(Capabilities capabilities, FirefoxOptions firefoxOptions) {
 
         final String userPreferences = (String) capabilities.getCapability("firefoxUserPreferences");
         if (Validate.nonEmpty(userPreferences)) {

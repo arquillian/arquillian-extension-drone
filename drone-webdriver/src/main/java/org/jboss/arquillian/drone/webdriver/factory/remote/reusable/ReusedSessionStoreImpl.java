@@ -99,7 +99,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             if (rawKey == null) {
                 log.log(Level.SEVERE,
                     "Unable to store browser initialization parameter in ReusedSessionStore for browser :{0}",
-                    key.getDesiredCapabilities().getBrowserName());
+                    key.getCapabilities().getBrowserName());
                 return;
             }
 
@@ -112,7 +112,7 @@ public class ReusedSessionStoreImpl implements ReusedSessionStore {
             if (rawSession == null) {
                 log.log(Level.SEVERE,
                     "Unable to store browser initialization parameter in ReusedSessionStore for browser :{0}",
-                    key.getDesiredCapabilities().getBrowserName());
+                    key.getCapabilities().getBrowserName());
                 return;
             }
             // add a timestamp to the session and store in the list
