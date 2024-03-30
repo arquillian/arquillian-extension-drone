@@ -43,7 +43,6 @@ public class SerializationWhitelist {
         whitelist.add(Character.UnicodeBlock.class.getName());
         whitelist.add(Class.class.getName());
         whitelist.add(ClassLoader.class.getName());
-        whitelist.add(Compiler.class.getName());
         whitelist.add(Double.class.getName());
         whitelist.add(Enum.class.getName());
         whitelist.add(Float.class.getName());
