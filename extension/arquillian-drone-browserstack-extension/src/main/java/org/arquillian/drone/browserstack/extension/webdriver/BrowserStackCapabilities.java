@@ -18,14 +18,14 @@ package org.arquillian.drone.browserstack.extension.webdriver;
 
 import java.util.Map;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 
 /**
- * An internal mapping between browser capabilities property, implementation class and DesiredCapabilities. This class
+ * An internal mapping between browser capabilities property, implementation class and Capabilities. This class
  * also
  * supports implementationClass property which is now legacy configuration value.
  *
- * @see DesiredCapabilities
+ * @see ImmutableCapabilities
  */
 public class BrowserStackCapabilities implements BrowserCapabilities {
 
@@ -44,7 +44,7 @@ public class BrowserStackCapabilities implements BrowserCapabilities {
     }
 
     public Map<String, ?> getRawCapabilities() {
-        return new DesiredCapabilities().asMap();
+        return new ImmutableCapabilities().asMap();
     }
 
     public String getReadableName() {

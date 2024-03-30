@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.SessionId;
 
 /**
@@ -31,7 +31,7 @@ import org.openqa.selenium.remote.SessionId;
  */
 public class ReusedSession implements Serializable {
 
-    private static final long serialVersionUID = -5332705183394774548L;
+    private static final long serialVersionUID = -5332705183394774545L;
 
     private static final Logger log = Logger.getLogger(RemoteWebDriverFactory.class.getName());
 
@@ -51,7 +51,7 @@ public class ReusedSession implements Serializable {
 
     public static ReusedSession createInstance(SessionId sessionId, Capabilities capabilities) {
         ReusableCapabilities reusableCapabilities = createReusableCapabilities(capabilities);
-        return new ReusedSession(sessionId, reusableCapabilities.getDesiredCapabilities());
+        return new ReusedSession(sessionId, new MutableCapabilities(reusableCapabilities.getCapabilities()));
     }
 
     static ReusableCapabilities createReusableCapabilities(Capabilities driverCapabilities) {
@@ -91,7 +91,7 @@ public class ReusedSession implements Serializable {
     }
 
     public Capabilities getCapabilities() {
-        return new DesiredCapabilities(capabilities.getCapabilities());
+        return new MutableCapabilities(capabilities.getCapabilities());
     }
 
     @Override

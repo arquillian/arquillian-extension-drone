@@ -29,6 +29,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import qualifier.Reusable;
@@ -57,8 +58,8 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
             .getCapabilities()));
         SessionId reusedSessionId = new SessionId(serializeDeserialize(driver.getSessionId().toString()));
 
-        RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities.getDesiredCapabilities(),
-            reusedSessionId);
+        RemoteWebDriver reusedDriver = ReusableRemoteWebDriver.fromReusedSession(HUB_URL,
+            new ImmutableCapabilities(reusedCapabilities.getCapabilities()), reusedSessionId);
         reusedDriver.navigate().to(HUB_URL.toString());
     }
 
@@ -74,7 +75,8 @@ public class TestReusableRemoteWebDriver extends AbstractInBrowserTest {
         driver.quit();
 
         try {
-            ReusableRemoteWebDriver.fromReusedSession(HUB_URL, reusedCapabilities.getDesiredCapabilities(), reusedSessionId);
+            ReusableRemoteWebDriver.fromReusedSession(HUB_URL, new ImmutableCapabilities(reusedCapabilities.getCapabilities()),
+                reusedSessionId);
             fail("Original driver had quited before, so session should not be reusable");
         } catch (UnableReuseSessionException e) {
             // exception should be thrown

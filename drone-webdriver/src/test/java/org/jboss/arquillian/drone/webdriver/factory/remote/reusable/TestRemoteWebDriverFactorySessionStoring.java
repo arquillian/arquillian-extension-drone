@@ -25,13 +25,13 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.drone.webdriver.binary.handler.SeleniumServerBinaryHandler;
 import org.jboss.arquillian.drone.webdriver.binary.process.SeleniumServerExecutor;
 import org.jboss.arquillian.drone.webdriver.binary.process.StartSeleniumServer;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
+import org.jboss.arquillian.drone.webdriver.factory.BrowserCapabilitiesList;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
 import org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil;
+import org.jboss.arquillian.drone.webdriver.utils.UrlUtils;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -43,7 +43,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
+import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.WEBDRIVER_REUSABLE_EXT;
@@ -70,7 +72,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     private Instance<ReusedSessionStore> sessionStore;
     @Inject
     private Instance<Injector> injector;
-    private Capabilities desiredCapabilities;
+    private Capabilities capabilities;
     private URL hubUrl;
     private MockReusedSessionPermanentStorage permanentStorage;
     private InitializationParameter initializationParameter;
@@ -91,7 +93,7 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         // set browser capabilities to be the same as defined in arquillian.xml - webdriver-reusable configuration
         MockBrowserCapabilitiesRegistry registry = MockBrowserCapabilitiesRegistry.createSingletonRegistry();
-        desiredCapabilities = new DesiredCapabilities(registry.getAllBrowserCapabilities().iterator().next()
+        capabilities = new ImmutableCapabilities(registry.getAllBrowserCapabilities().iterator().next()
             .getRawCapabilities());
 
         permanentStorage = new MockReusedSessionPermanentStorage();
@@ -106,37 +108,34 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
 
         runSeleniumServer();
 
-        initializationParameter = new InitializationParameter(hubUrl, desiredCapabilities);
-
         String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
-        if (browser.equals("chromeheadless")) {
-            when(configuration.getBrowser()).thenReturn("chromeheadless");
-            new ChromeDriverFactory().setChromeOptions(configuration, (DesiredCapabilities) desiredCapabilities);
-        }
-
-        when(configuration.getBrowser()).thenReturn("xyz");
+        when(configuration.getBrowserName()).thenReturn(browser);
         when(configuration.isRemoteReusable()).thenReturn(true);
-        when(configuration.getCapabilities()).thenReturn(desiredCapabilities);
+        when(configuration.getCapabilities()).thenReturn(capabilities);
         when(configuration.getRemoteAddress()).thenReturn(hubUrl);
         configuration.setSeleniumServerArgs("-debug true");
+        if (browser.equals(Browser.HTMLUNIT.browserName())) {
+            capabilities = capabilities.merge(new ImmutableCapabilities(
+                new BrowserCapabilitiesList.Firefox().getRawCapabilities()));
+        }
+        initializationParameter = new InitializationParameter(hubUrl, capabilities);
     }
 
     private void runSeleniumServer() {
         try {
-            String browser = (String) desiredCapabilities.getCapability("browserName");
-            DesiredCapabilities selServerCaps = new DesiredCapabilities(desiredCapabilities);
+            String browser = (String) capabilities.getCapability("browserName");
+            Capabilities selServerCaps = new ImmutableCapabilities(capabilities);
             String seleniumServerArgs = System.getProperty("seleniumServerArgs");
 
             // use selenium server version defined in arquillian.xml
             String selSerVersion = ArqDescPropertyUtil.getSeleniumServerVersionProperty(WEBDRIVER_REUSABLE_EXT);
             if (!Validate.empty(selSerVersion)) {
-                selServerCaps
-                    .setCapability(SeleniumServerBinaryHandler.SELENIUM_SERVER_VERSION_PROPERTY, selSerVersion);
+                MutableCapabilities caps = new MutableCapabilities();
+                selServerCaps = selServerCaps.merge(caps);
             }
-            String seleniumServerBinary =
-                new SeleniumServerBinaryHandler(selServerCaps).downloadAndPrepare().toString();
-
-            fire(new StartSeleniumServer(seleniumServerBinary, browser, selServerCaps, hubUrl, seleniumServerArgs));
+            if(!UrlUtils.isReachable(hubUrl)) {
+                fire(new StartSeleniumServer(browser, selServerCaps, hubUrl, seleniumServerArgs));
+            }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -236,8 +235,8 @@ public class TestRemoteWebDriverFactorySessionStoring extends AbstractTestTestBa
     public class MockRemoteWebDriverFactory extends RemoteWebDriverFactory {
 
         @Override
-        protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities desiredCapabilities) {
-            return new RemoteWebDriver(hubUrl, desiredCapabilities);
+        protected RemoteWebDriver createRemoteDriver(URL remoteAddress, Capabilities capabilities) {
+            return new RemoteWebDriver(hubUrl, capabilities);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 This is an Arquillian extension that enables you to use the Appium project with Drone and Graphene in your functional tests for mobile devices.
 
-NOTE: This extension only provides the integration of Appium WebDrivers with Drone, i.e. it only instantiates an Appium Driver and passes `DesiredCapabilities` to it. +
+NOTE: This extension only provides the integration of Appium WebDrivers with Drone, i.e. it only instantiates an Appium Driver and passes `Capabilities` to it. +
 For more instructions on how to install and configure Appium server and mobile physical and/or virtual devices please refer to: +
 https://github.com/appium/appium +
 https://github.com/appium/java-client +

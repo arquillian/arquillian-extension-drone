@@ -14,7 +14,7 @@
 
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-webdriver-depchain</artifactId>
-  <name>Arquillian Drone WebDriver 2.x Dependency Chain</name>
+  <name>Arquillian Drone WebDriver 3.x Dependency Chain</name>
   <packaging>pom</packaging>
 
   <developers>
@@ -99,13 +99,8 @@
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>htmlunit-driver</artifactId>
+      <artifactId>htmlunit3-driver</artifactId>
       <version>${version.htmlunit.driver}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-opera-driver</artifactId>
-      <version>${version.selenium}</version>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
@@ -116,11 +111,6 @@
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-edge-driver</artifactId>
       <version>${version.selenium}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.codeborne</groupId>
-      <artifactId>phantomjsdriver</artifactId>
-      <version>${phantomjs.driver.version}</version>
     </dependency>
   </dependencies>
 

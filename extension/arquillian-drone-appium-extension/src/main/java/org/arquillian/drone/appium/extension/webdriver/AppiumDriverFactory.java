@@ -39,8 +39,8 @@ import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilitiesRegistry;
 import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
 
@@ -129,7 +129,7 @@ public class AppiumDriverFactory implements
      * @return {@link Capabilities} instance
      */
     public Capabilities getCapabilities(WebDriverConfiguration configuration) {
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+        MutableCapabilities capabilities = new MutableCapabilities(configuration.getCapabilities());
 
         String browser = (String)capabilities.getCapability(MobileCapabilityType.BROWSER_NAME);
         if (browser != null) browser = browser.toLowerCase();
