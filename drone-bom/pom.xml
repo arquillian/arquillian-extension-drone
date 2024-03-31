@@ -96,65 +96,10 @@
       <!-- Selenium dependencies -->
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-api</artifactId>
+        <artifactId>selenium-bom</artifactId>
         <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-java</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-grid</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-support</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-leg-rc</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>lift</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-
-      <!-- Drivers -->
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-chrome-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-firefox-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-ie-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-edge-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-safari-driver</artifactId>
-        <version>${version.selenium}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-remote-driver</artifactId>
-        <version>${version.selenium}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <!-- HtmlUnit is kept externally from Selenium BOM -->
