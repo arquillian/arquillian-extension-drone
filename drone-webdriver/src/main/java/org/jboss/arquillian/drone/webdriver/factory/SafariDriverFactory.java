@@ -21,8 +21,9 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.service.DriverService;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariDriverService;
 import org.openqa.selenium.safari.SafariOptions;
 
 /**
@@ -50,11 +51,13 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
 
     @Override
     public SafariDriver createInstance(WebDriverConfiguration configuration) {
+        SafariDriverService service = new SafariDriverService.Builder()
+                .withLogOutput(System.out).build();
+        SafariOptions options = getOptions(configuration, true);
 
-        Capabilities capabilities = getCapabilities(configuration, true);
-
-        return SecurityActions.newInstance(configuration.getImplementationClass(), new Class<?>[] {Capabilities.class},
-            new Object[] {capabilities}, SafariDriver.class);
+        return SecurityActions.newInstance(configuration.getImplementationClass(),
+                new Class<?>[]{DriverService.class, SafariOptions.class},
+                new Object[]{service, options}, SafariDriver.class);
     }
 
     /**
@@ -69,13 +72,13 @@ public class SafariDriverFactory extends AbstractWebDriverFactory<SafariDriver> 
      *
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
-        DesiredCapabilities capabilities = new DesiredCapabilities(configuration.getCapabilities());
+    public SafariOptions getOptions(WebDriverConfiguration configuration, boolean performValidations) {
+        Capabilities capabilities = configuration.getCapabilities();
 
-        SafariOptions safariOptions = SafariOptions.fromCapabilities(capabilities);
+        SafariOptions safariOptions = new SafariOptions();
         CapabilitiesOptionsMapper.mapCapabilities(safariOptions, capabilities, BROWSER_CAPABILITIES);
 
-        return capabilities;
+        return safariOptions;
     }
 
     @Override

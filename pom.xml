@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>39</version>
+    <version>42</version>
     <relativePath />
   </parent>
 
@@ -36,25 +36,23 @@
 
   <properties>
     <!-- Versioning -->
-    <version.arquillian.core>1.7.1.Final</version.arquillian.core>
-    <version.selenium>4.3.0</version.selenium>
-    <version.selenium.server>4.0.0-alpha-2</version.selenium.server>
-    <version.htmlunit.driver>4.12.0</version.htmlunit.driver>
-    <phantomjs.driver.version>1.5.0</phantomjs.driver.version>
-    <version.appium.java.client>7.6.0</version.appium.java.client>
+    <version.arquillian.core>1.8.0.Final</version.arquillian.core>
+    <version.selenium>4.19.0</version.selenium>
+    <version.htmlunit.driver>4.17.0</version.htmlunit.driver>
+    <version.appium.java.client>8.6.0</version.appium.java.client>
 
     <!-- Test bits versions -->
     <version.junit>4.13.2</version.junit>
-    <version.assertj>3.24.2</version.assertj>
-    <version.mockito>4.8.1</version.mockito>
+    <version.assertj>3.25.0</version.assertj>
+    <version.mockito>5.8.0</version.mockito>
     <version.system.rules>1.19.0</version.system.rules>
     <version.hoverfly.java>0.15.0</version.hoverfly.java>
     <version.awaitility>4.2.0</version.awaitility>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-    <version.org.eclipse.jetty>11.0.13</version.org.eclipse.jetty>
-    <version.arquillian.jetty>1.0.0.Final</version.arquillian.jetty>
+    <version.org.eclipse.jetty>9.4.53.v20231009</version.org.eclipse.jetty>
+    <version.arquillian.jetty>2.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -62,8 +60,7 @@
 
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
-
-    <additionalparam>-Xdoclint:none</additionalparam>
+    <version.surefire.plugin>3.2.5</version.surefire.plugin>
   </properties>
 
   <build>
@@ -80,7 +77,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.22</version>
+        <version>1.23</version>
         <executions>
           <execution>
             <id>signature-check</id>
@@ -112,6 +109,14 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>3.3.2</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <!-- Modules -->
   <modules>

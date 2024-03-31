@@ -9,8 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.jboss.arquillian.drone.webdriver.utils.ArqDescPropertyUtil.assumeBrowserEqual;
 import static org.mockito.Mockito.when;
@@ -27,8 +28,8 @@ public class ChromeHeadlessDriverTest {
     public void testOpenSimplePageUsingChromeHeadlessBrowser() throws IOException {
         ChromeDriverFactory chromeDriverFactory = new ChromeDriverFactory();
 
-        DesiredCapabilities chromeCaps =
-            new DesiredCapabilities(new BrowserCapabilitiesList.ChromeHeadless().getRawCapabilities());
+        Capabilities chromeCaps =
+            new ImmutableCapabilities(new BrowserCapabilitiesList.ChromeHeadless().getRawCapabilities());
         WebDriverConfiguration configuration = getMockedConfiguration(chromeCaps);
 
         WebDriver driver = chromeDriverFactory.createInstance(configuration);
@@ -38,11 +39,11 @@ public class ChromeHeadlessDriverTest {
         driver.quit();
     }
 
-    private WebDriverConfiguration getMockedConfiguration(DesiredCapabilities capabilities) {
+    private WebDriverConfiguration getMockedConfiguration(Capabilities capabilities) {
         WebDriverConfiguration configuration = Mockito.mock(WebDriverConfiguration.class);
 
         when(configuration.getCapabilities()).thenReturn(capabilities);
-        when(configuration.getBrowser()).thenReturn("chromeheadless");
+        when(configuration.getBrowserName()).thenReturn("chromeheadless");
         when(configuration.getImplementationClass())
             .thenReturn(new BrowserCapabilitiesList.ChromeHeadless().getImplementationClassName());
         return configuration;

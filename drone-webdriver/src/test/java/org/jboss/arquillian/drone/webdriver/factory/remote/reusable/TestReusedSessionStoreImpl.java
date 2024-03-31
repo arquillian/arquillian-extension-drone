@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.remote.SessionId;
 
 import static org.junit.Assert.assertEquals;
@@ -47,8 +47,8 @@ public class TestReusedSessionStoreImpl {
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
-        DesiredCapabilities capabilities1 = new DesiredCapabilities();
-        DesiredCapabilities capabilities2 = new DesiredCapabilities();
+        ImmutableCapabilities capabilities1 = new ImmutableCapabilities();
+        ImmutableCapabilities capabilities2 = new ImmutableCapabilities();
         SessionId sessionId1 = new SessionId("1");
         SessionId sessionId2 = new SessionId("2");
 

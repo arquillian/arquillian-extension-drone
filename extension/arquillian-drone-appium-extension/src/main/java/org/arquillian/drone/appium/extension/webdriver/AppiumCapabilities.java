@@ -19,7 +19,7 @@ package org.arquillian.drone.appium.extension.webdriver;
 
 import io.appium.java_client.AppiumDriver;
 import org.jboss.arquillian.drone.webdriver.spi.BrowserCapabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class AppiumCapabilities implements BrowserCapabilities {
 
     @Override
     public Map<String, ?> getRawCapabilities() {
-        return new DesiredCapabilities().asMap();
+        return new ImmutableCapabilities().asMap();
     }
 
     @Override

@@ -166,28 +166,6 @@ Supported values: "Win32" and "x64"
 
 The architecture of the binary can be explicitly specified because the 64 bit version of the IE driver is having issues with `sendKeys` method at some specific conditions.
 
-===== PhantomJS
-|===
-
-|System property |phantomjs.binary.path
-
-|arquillian.xml property
-|phantomjsBinary
-
-|Resolution of latest version supported
-|yes
-
-|Version driver property
-|phantomjsBinaryVersion
-
-|Url driver property
-|phantomjsBinaryUrl
-
-|Cache subdirectory
-|phantomjs
-|===
-
-
 ===== Opera driver
 |===
 

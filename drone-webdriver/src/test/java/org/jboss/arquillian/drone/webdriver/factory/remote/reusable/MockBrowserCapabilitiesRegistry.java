@@ -20,9 +20,7 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
         this.cache = new HashMap<String, BrowserCapabilities>();
 
         String browser = getBrowserProperty(WEBDRIVER_REUSABLE_EXT);
-        if ("phantomjs".equals(browser)) {
-            registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.PhantomJS());
-        } else if ("chrome".equals(browser)) {
+        if ("chrome".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Chrome());
         } else if ("edge".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Edge());
@@ -32,8 +30,6 @@ public class MockBrowserCapabilitiesRegistry implements BrowserCapabilitiesRegis
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.HtmlUnit());
         } else if ("internetexplorer".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.InternetExplorer());
-        } else if ("opera".equals(browser)) {
-            registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Opera());
         } else if ("safari".equals(browser)) {
             registerBrowserCapabilitiesFor(browser, new BrowserCapabilitiesList.Safari());
         } else if ("chromeheadless".equals(browser)) {

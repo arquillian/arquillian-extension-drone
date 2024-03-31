@@ -46,7 +46,6 @@ import java.util.Map;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * The utility methods for serializing / deserializing objects
@@ -76,7 +75,6 @@ public class SerializationUtils {
 
         // webdriver
         whitelist.enableClass(MutableCapabilities.class.getName());
-        whitelist.enableClass(DesiredCapabilities.class.getName());
         whitelist.enableClass(Capabilities.class.getName());
         whitelist.enableClass(Platform.class.getName());
 

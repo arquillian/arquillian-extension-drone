@@ -27,7 +27,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 
 public class CapabilitiesDummyOptionsMapperTest {
 
@@ -37,9 +38,9 @@ public class CapabilitiesDummyOptionsMapperTest {
     public void testParseDummyOptions() throws IOException {
         DummyBrowserOptions dummyBrowserOptions = new DummyBrowserOptions();
         DummyBrowserOptions expectedDummyBrowserOptions = prepareDummyBrowserOptions();
-        DesiredCapabilities desiredCapabilities = prepareDesiredCapabilities(expectedDummyBrowserOptions);
+        Capabilities capabilities = prepareCapabilities(expectedDummyBrowserOptions);
 
-        CapabilitiesOptionsMapper.mapCapabilities(dummyBrowserOptions, desiredCapabilities, "dummy");
+        CapabilitiesOptionsMapper.mapCapabilities(dummyBrowserOptions, capabilities, "dummy");
 
         Assert.assertEquals(expectedDummyBrowserOptions, dummyBrowserOptions);
     }
@@ -50,7 +51,7 @@ public class CapabilitiesDummyOptionsMapperTest {
         dummyBrowserOptions.setLongParam("longParam".hashCode());
         dummyBrowserOptions.setDoubleParam("doubleParam".hashCode());
         dummyBrowserOptions.setIntParam("intParam".hashCode());
-        dummyBrowserOptions.setIntegerParam(new Integer("integerParam".hashCode()));
+        dummyBrowserOptions.setIntegerParam("integerParam".hashCode());
         dummyBrowserOptions.setBooleanParam(false);
         dummyBrowserOptions.setFileParam(new File("fileParam"));
 
@@ -65,8 +66,8 @@ public class CapabilitiesDummyOptionsMapperTest {
         dummyBrowserOptions.setListOfFilesParam(listOfFiles);
 
         ArrayList<Long> listOfLongs = new ArrayList<Long>();
-        listOfLongs.add(new Long("firstLongListParam".hashCode()));
-        listOfLongs.add(new Long("secondLongListParam".hashCode()));
+        listOfLongs.add(Long.valueOf("firstLongListParam".hashCode()));
+        listOfLongs.add(Long.valueOf("secondLongListParam".hashCode()));
         dummyBrowserOptions.setListOfLongsParam(listOfLongs);
 
         String[] arrayOfStrings = new String[] {"--firstString=ArrayParam", "--secondStringArrayParam"};
@@ -75,8 +76,8 @@ public class CapabilitiesDummyOptionsMapperTest {
         File[] arrayOfFiles = new File[] {new File("firstFileArrayParam"), new File("secondFileArrayParam")};
         dummyBrowserOptions.setArrayOfFilesParam(arrayOfFiles);
 
-        Double[] arrayOfDoubles = new Double[] {new Double("firstDoubleArrayParam".hashCode()),
-            new Double("secondDoubleArrayParam".hashCode())};
+        Double[] arrayOfDoubles = new Double[] { Double.valueOf("firstDoubleArrayParam".hashCode()),
+            Double.valueOf("secondDoubleArrayParam".hashCode())};
         dummyBrowserOptions.setArrayOfDoublesParam(arrayOfDoubles);
 
         dummyBrowserOptions.setMapOfMapOfStringsParam("mapOfStrings", getMapOfStrings());
@@ -108,59 +109,59 @@ public class CapabilitiesDummyOptionsMapperTest {
         return mapOfMapOfObjects;
     }
 
-    private DesiredCapabilities prepareDesiredCapabilities(DummyBrowserOptions dummyBrowserOptions) {
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+    private Capabilities prepareCapabilities(DummyBrowserOptions dummyBrowserOptions) {
+        MutableCapabilities capabilities = new MutableCapabilities();
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyStringParam", dummyBrowserOptions.getStringParam());
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyLongParam", String.valueOf(dummyBrowserOptions.getLongParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyDoubleParam", String.valueOf(dummyBrowserOptions.getDoubleParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyIntParam", String.valueOf(dummyBrowserOptions.getIntParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyIntegerParam", String.valueOf(dummyBrowserOptions.getIntegerParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyBooleanParam", String.valueOf(dummyBrowserOptions.isBooleanParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyFileParam", dummyBrowserOptions.getFileParam().toString());
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyListOfStringsParam",
                 getListOrArray(dummyBrowserOptions.getListOfStringsParam().toArray()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyListOfFilesParam",
                 getListOrArray(dummyBrowserOptions.getListOfFilesParam().toArray()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyListOfLongsParam",
                 getListOrArray(dummyBrowserOptions.getListOfLongsParam().toArray()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyArrayOfStringsParam", getListOrArray(dummyBrowserOptions.getArrayOfStringsParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyArrayOfFilesParam", getListOrArray(dummyBrowserOptions.getArrayOfFilesParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyArrayOfDoublesParam", getListOrArray(dummyBrowserOptions.getArrayOfDoublesParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyMapOfMapOfStringsParam",
                 getJsonString(dummyBrowserOptions.getMapOfMapOfStringsParam()));
 
-        desiredCapabilities
+        capabilities
             .setCapability("dummyMapOfObjectParam", getJsonString(getMapOfMapOfObjectsInMapOfStrings()));
 
-        return desiredCapabilities;
+        return capabilities;
     }
 
     private String getListOrArray(Object[] array) {
