@@ -15,7 +15,7 @@
   <!-- Artifact Configuration -->
   <groupId>org.jboss.arquillian.extension</groupId>
   <artifactId>arquillian-drone-aggregator</artifactId>
-  <version>3.0.0-alpha.8</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Drone Extension Agreggator</name>
   <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
