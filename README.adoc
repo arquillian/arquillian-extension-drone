@@ -22,7 +22,7 @@ Arquillian Drone 2 brings the power of WebDriver into the Arquillian framework.
 WebDriver serves as a language to communicate with the browser, by filling the forms, navigating the
 pages and validating their content.
 
-Compared with its predecessor Arquillian Drone 1, it offers
+Compared with its predecessor Arquillian DronXe 1, it offers
 http://github.com/arquillian/arquillian-extension-drone/wiki/SPI-changes-in-Drone-2[new
 features and tools] as part of the SPI as well as
 http://github.com/arquillian/arquillian-extension-drone/wiki/API-changes-in-Drone-2[multiple
