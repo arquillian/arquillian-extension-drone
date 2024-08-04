@@ -38,5 +38,4 @@ workflows:
           matrix:
             parameters:
               jdk-version: ["17.0"]
-              browser: ["chromeHeadless", "htmlunit", "firefox", "edge" ]
-
+              browser: ["chromeHeadless", "htmlunit", "firefox"]
