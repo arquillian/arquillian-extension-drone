@@ -60,7 +60,7 @@
 
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
-    <version.surefire.plugin>3.4.0</version.surefire.plugin>
+    <version.surefire.plugin>3.5.0</version.surefire.plugin>
   </properties>
 
   <build>
