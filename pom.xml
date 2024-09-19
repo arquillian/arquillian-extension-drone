@@ -51,7 +51,7 @@
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
 
     <!-- To avoid collisions with Jetty version we are using the same as packaged in Selenium Server -->
-    <version.org.eclipse.jetty>9.4.56.v20240826</version.org.eclipse.jetty>
+    <version.org.eclipse.jetty>10.0.0</version.org.eclipse.jetty>
     <version.arquillian.jetty>2.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
