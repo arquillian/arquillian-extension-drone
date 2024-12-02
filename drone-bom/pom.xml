@@ -40,7 +40,7 @@
 
   <properties>
     <version.selenium>4.27.0</version.selenium>
-    <version.htmlunit.driver>4.26.0</version.htmlunit.driver>
+    <version.htmlunit.driver>4.27.0</version.htmlunit.driver>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
