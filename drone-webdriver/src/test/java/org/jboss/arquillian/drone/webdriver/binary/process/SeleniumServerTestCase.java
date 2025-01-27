@@ -5,13 +5,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.LogManager;
 import java.util.regex.Pattern;
 import org.awaitility.Awaitility;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.openqa.selenium.MutableCapabilities;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SeleniumServerTestCase extends AbstractTestTestBase {
     @Rule
@@ -20,6 +24,18 @@ public class SeleniumServerTestCase extends AbstractTestTestBase {
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(SeleniumServerExecutor.class);
+    }
+
+    @Before
+    public void setup() {
+        LogManager.getLogManager().reset();
+        assertThat(LogManager.getLogManager().getProperty("handlers")).isNull();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        LogManager.getLogManager().readConfiguration();
+        assertThat(LogManager.getLogManager().getProperty("handlers")).isNotNull();
     }
 
     @Test
