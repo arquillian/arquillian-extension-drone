@@ -24,6 +24,7 @@ import org.jboss.arquillian.drone.webdriver.factory.remote.reusable.ReusableRemo
 import org.jboss.arquillian.drone.webdriver.spi.DroneAugmented;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.devtools.CdpEndpointFinder;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -80,7 +81,10 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
      */
     @Override
     public RemoteWebDriver enhance(RemoteWebDriver instance, Class<? extends Annotation> qualifier) {
-        return (RemoteWebDriver) augmenter.augment(instance);
+        if (CdpEndpointFinder.getReportedUri(instance.getCapabilities()).isPresent()) {
+            return (RemoteWebDriver) augmenter.augment(instance);
+        }
+        return instance;
     }
 
     /**
