@@ -64,6 +64,9 @@ public class EdgeDriverFactory extends AbstractWebDriverFactory<EdgeDriver> impl
     public EdgeOptions getEdgeOptions(WebDriverConfiguration configuration) {
         Capabilities capabilities = configuration.getCapabilities();
         EdgeOptions edgeOptions = new EdgeOptions();
+        if (configuration.isEnableBidi()) {
+            edgeOptions.enableBiDi();
+        }
         CapabilitiesOptionsMapper.mapCapabilities(edgeOptions, capabilities, BROWSER_CAPABILITIES);
 
         return edgeOptions;
