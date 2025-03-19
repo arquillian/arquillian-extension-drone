@@ -81,7 +81,6 @@ public class AugmentingEnhancer implements DroneInstanceEnhancer<RemoteWebDriver
      */
     @Override
     public RemoteWebDriver enhance(RemoteWebDriver instance, Class<? extends Annotation> qualifier) {
-        // workaround for https://github.com/SeleniumHQ/selenium/issues/15323
         if (CdpEndpointFinder.getReportedUri(instance.getCapabilities()).isPresent()) {
             return (RemoteWebDriver) augmenter.augment(instance);
         }
