@@ -31,7 +31,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.reflect.TypeToken;
 import org.jboss.arquillian.drone.configuration.ConfigurationMapper;
 import org.jboss.arquillian.drone.configuration.mapping.ValueMapper;
 import org.jboss.arquillian.drone.webdriver.utils.StringUtils;
@@ -106,14 +105,12 @@ public class CapabilitiesOptionsMapper {
         String trimmedCapability = StringUtils.trimMultiline(capability);
         JsonObject json = new JsonParser().parse(trimmedCapability).getAsJsonObject();
         Set<Map.Entry<String, JsonElement>> entries = json.entrySet();
-        final Type type = new TypeToken<Map<String, String>>() {
-        }.getType();
 
         for (Map.Entry<String, JsonElement> entry : entries) {
             String key = entry.getKey();
             Object value = null;
             if (entry.getValue().isJsonObject()) {
-                value = GSON.fromJson(entry.getValue(), type);
+                value = GSON.fromJson(entry.getValue(), Map.class);
 
             } else if (entry.getValue().isJsonPrimitive()) {
                 value = convertJsonPrimitive2Java((JsonPrimitive) entry.getValue());
