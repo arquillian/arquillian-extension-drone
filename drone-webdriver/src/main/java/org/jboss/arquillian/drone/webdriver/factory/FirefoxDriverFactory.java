@@ -108,6 +108,10 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         // using FirefoxOptions which is now the preferred way for configuring GeckoDriver
         FirefoxOptions firefoxOptions = new FirefoxOptions();
+        if (configuration.isEnableBidi()) {
+            firefoxOptions.enableBiDi();
+        }
+
         CapabilitiesOptionsMapper.mapCapabilities(firefoxOptions, capabilities, BROWSER_CAPABILITIES);
 
         FirefoxProfile firefoxProfile = getFirefoxProfile(capabilities, performValidations);

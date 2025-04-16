@@ -66,6 +66,8 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     private String dimensions;
 
+    private boolean enableBidi;
+
     private Map<String, Object> capabilityMap;
 
     // internal variables
@@ -194,5 +196,13 @@ public class WebDriverConfiguration implements DroneConfiguration<WebDriverConfi
 
     public void setReuseCookies(boolean reuseCookies) {
         this.reuseCookies = reuseCookies;
+    }
+
+    public boolean isEnableBidi() {
+        return enableBidi;
+    }
+
+    public void setEnableBidi(boolean enableBidi) {
+        this.enableBidi = enableBidi;
     }
 }

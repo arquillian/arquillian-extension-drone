@@ -102,6 +102,10 @@ public class ChromeDriverFactory extends AbstractWebDriverFactory<ChromeDriver> 
      */
     public ChromeOptions getChromeOptions(WebDriverConfiguration configuration, boolean performValidations) {
         ChromeOptions chromeOptions = new ChromeOptions();
+        if (configuration.isEnableBidi()) {
+            chromeOptions.enableBiDi();
+        }
+
         Capabilities capabilities = configuration.getCapabilities();
         final String binary = (String) capabilities.getCapability("chrome.binary");
         final String version = ChromeUtils.getChromeVersion(capabilities);

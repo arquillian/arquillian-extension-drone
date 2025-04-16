@@ -141,7 +141,7 @@ public class CapabilitiesOptionsMapper {
                     || method.getParameterTypes()[1].isAssignableFrom(Map.class));
     }
 
-    private static Object convert(Method method, String capability) {
+    private static <T extends Enum<T>> Object convert(Method method, String capability) {
         Class<?> parameterType = method.getParameterTypes()[0];
         Object converted;
 
@@ -151,6 +151,10 @@ public class CapabilitiesOptionsMapper {
             return handleArray(parameterType.getComponentType(), capability);
         } else if (parameterType.isAssignableFrom(List.class)) {
             return handleList(method, capability);
+        } else if (parameterType.isEnum()) {
+            @SuppressWarnings("unchecked")
+            Class<T> enumType = (Class<T>) parameterType;
+            return Enum.valueOf(enumType, capability.toUpperCase());
         }
 
         return null;
