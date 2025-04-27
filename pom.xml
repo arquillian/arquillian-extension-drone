@@ -108,6 +108,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.11.2</version>
+        <configuration>
+          <doclint>none</doclint>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -197,19 +201,6 @@
               <altSnapshotDeploymentRepository>${arquillian.snapshots.repo.id}::${arquillian.snapshots.repo.url}</altSnapshotDeploymentRepository>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.11.2</version>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
     </profile>
@@ -227,5 +218,6 @@
       <url>${arquillian.snapshots.repo.url}</url>
     </snapshotRepository>
   </distributionManagement>
+
 
 </project>
