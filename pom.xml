@@ -67,7 +67,7 @@
     <!-- Repository Deployment URLs -->
     <!-- ***************** -->
     <arquillian.releases.repo.id>arquillian-releases-repository</arquillian.releases.repo.id>
-    <arquillian.releases.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/releases/arquillian/</arquillian.releases.repo.url>
+    <arquillian.releases.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/arquillian</arquillian.releases.repo.url>
     <arquillian.snapshots.repo.id>arquillian-snapshots-repository</arquillian.snapshots.repo.id>
     <arquillian.snapshots.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/releases/snapshots/</arquillian.snapshots.repo.url>
 
