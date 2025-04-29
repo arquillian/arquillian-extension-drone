@@ -8,7 +8,7 @@
   <groupId>org.jboss.arquillian.extension</groupId>
   <artifactId>arquillian-drone-bom</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.0.Final-SNAPSHOT</version>
+  <version>3.0.1.Final-SNAPSHOT</version>
 
   <name>Arquillian Drone Extension BOM</name>
   <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
@@ -41,10 +41,9 @@
   <properties>
     <version.selenium>4.31.0</version.selenium>
     <version.htmlunit.driver>4.30.0</version.htmlunit.driver>
-    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
-    </jboss.releases.repo.url>
-    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
-    </jboss.snapshots.repo.url>
+    <arquillian.releases.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/arquillian</arquillian.releases.repo.url>
+    <arquillian.snapshots.repo.id>arquillian-snapshots-repository</arquillian.snapshots.repo.id>
+    <arquillian.snapshots.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/releases/snapshots/</arquillian.snapshots.repo.url>
   </properties>
 
   <dependencyManagement>
@@ -166,17 +165,17 @@
       </build>
     </profile>
   </profiles>
-  
+
   <distributionManagement>
     <repository>
-      <id>${jboss.releases.repo.id}</id>
-      <name>JBoss Releases Repository</name>
-      <url>${jboss.releases.repo.url}</url>
+      <id>${arquillian.releases.repo.id}</id>
+      <name>Arquillian Releases Repository</name>
+      <url>${arquillian.releases.repo.url}</url>
     </repository>
     <snapshotRepository>
-      <id>${jboss.snapshots.repo.id}</id>
-      <name>JBoss Snapshots Repository</name>
-      <url>${jboss.snapshots.repo.url}</url>
+      <id>${arquillian.snapshots.repo.id}</id>
+      <name>Arquillian Snapshots Repository</name>
+      <url>${arquillian.snapshots.repo.url}</url>
     </snapshotRepository>
   </distributionManagement>
 
