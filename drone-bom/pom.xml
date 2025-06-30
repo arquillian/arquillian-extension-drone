@@ -39,7 +39,7 @@
   </developers>
 
   <properties>
-    <version.selenium>4.33.0</version.selenium>
+    <version.selenium>4.34.0</version.selenium>
     <version.htmlunit.driver>4.33.0</version.htmlunit.driver>
     <arquillian.releases.repo.id>arquillian-releases-repository</arquillian.releases.repo.id>
     <arquillian.releases.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/arquillian</arquillian.releases.repo.url>
