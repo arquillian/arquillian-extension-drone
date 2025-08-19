@@ -39,7 +39,7 @@
     <!-- Versioning -->
     <version.arquillian.core>1.10.0.Final</version.arquillian.core>
     <version.selenium>4.35.0</version.selenium>
-    <version.htmlunit.driver>4.34.0</version.htmlunit.driver>
+    <version.htmlunit.driver>4.35.0</version.htmlunit.driver>
     <version.appium.java.client>8.6.0</version.appium.java.client>
 
     <!-- Test bits versions -->
