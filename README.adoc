@@ -1,4 +1,4 @@
-= Arquillian Drone image:https://travis-ci.org/arquillian/arquillian-extension-drone.svg["Build Status", link="https://travis-ci.org/arquillian/arquillian-extension-drone"]
+= Arquillian Drone
 :asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-extension-drone/master/docs
 :numbered:
 :sectlink:
