@@ -22,6 +22,10 @@ jobs:
           - 17
           - 21
           - 25
+        browser:
+          - chromeHeadless
+          - htmlunit
+          - firefox
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -32,7 +36,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
       - name: Build with Maven
-        run: ./mvnw --batch-mode --no-transfer-progress verify
+        run: ./mvnw --batch-mode --no-transfer-progress verify --define browser=${{ matrix.browser }}
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         if: failure()
