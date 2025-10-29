@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <!-- Parent
+  <!-- Parent -->
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
     <version>49</version>
     <relativePath />
   </parent>
-  -->
 
   <!-- Model Version -->
   <modelVersion>4.0.0</modelVersion>
@@ -62,15 +61,6 @@
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
     <version.surefire.plugin>3.5.4</version.surefire.plugin>
-
-    <!-- ***************** -->
-    <!-- Repository Deployment URLs -->
-    <!-- ***************** -->
-    <arquillian.releases.repo.id>arquillian-releases-repository</arquillian.releases.repo.id>
-    <arquillian.releases.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/arquillian</arquillian.releases.repo.url>
-    <arquillian.snapshots.repo.id>arquillian-snapshots-repository</arquillian.snapshots.repo.id>
-    <arquillian.snapshots.repo.url>https://origin-repository-nx3.stage.jboss.org/nexus3/repository/releases/snapshots/</arquillian.snapshots.repo.url>
-
   </properties>
 
   <build>
@@ -155,69 +145,5 @@
     <module>extension/arquillian-drone-browserstack-extension</module>
     <module>extension/arquillian-drone-appium-extension</module>
   </modules>
-
-  <profiles>
-    <profile>
-      <id>arquillian-release</id>
-      <build>
-        <plugins>
-          <!-- Create a source-release artifact that contains the fully buildable
-               project directory source structure.  This should be released to
-               the Maven repository for each JBoss project release. -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.8.0</version>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.apache.resources</groupId>
-                <artifactId>apache-source-release-assembly-descriptor</artifactId>
-                <version>1.7</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>source-release-assembly</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                  <descriptorRefs>
-                    <descriptorRef>source-release</descriptorRef>
-                  </descriptorRefs>
-                  <tarLongFileMode>gnu</tarLongFileMode>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <version>3.1.4</version>
-            <configuration>
-              <altReleaseDeploymentRepository>${arquillian.releases.repo.id}::${arquillian.releases.repo.url}</altReleaseDeploymentRepository>
-              <altSnapshotDeploymentRepository>${arquillian.snapshots.repo.id}::${arquillian.snapshots.repo.url}</altSnapshotDeploymentRepository>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
-  <distributionManagement>
-    <repository>
-      <id>${arquillian.releases.repo.id}</id>
-      <name>Arquillian Releases Repository</name>
-      <url>${arquillian.releases.repo.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>${arquillian.snapshots.repo.id}</id>
-      <name>Arquillian Snapshots Repository</name>
-      <url>${arquillian.snapshots.repo.url}</url>
-    </snapshotRepository>
-  </distributionManagement>
-
 
 </project>
