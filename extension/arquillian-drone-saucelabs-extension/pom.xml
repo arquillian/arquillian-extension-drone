@@ -11,6 +11,7 @@
 
   <artifactId>arquillian-drone-saucelabs-extension</artifactId>
   <name>Arquillian Drone Sauce Labs Extension</name>
+  <description>Sauce Labs integration for Arquillian Drone Extension</description>
 
   <developers>
     <developer>

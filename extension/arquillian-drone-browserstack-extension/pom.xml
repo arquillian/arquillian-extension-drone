@@ -11,6 +11,7 @@
 
   <artifactId>arquillian-drone-browserstack-extension</artifactId>
   <name>Arquillian Drone BrowserStack Extension</name>
+  <description>BrowserStack integration for Arquillian Drone Extension</description>
 
   <developers>
     <developer>

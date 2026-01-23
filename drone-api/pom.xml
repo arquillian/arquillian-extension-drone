@@ -15,6 +15,7 @@
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-api</artifactId>
   <name>Arquillian Drone Extension API</name>
+  <description>API for Arquillian Drone Extension</description>
 
   <developers>
     <developer>
@@ -22,12 +23,6 @@
       <email>kpiwko@redhat.com</email>
     </developer>
   </developers>
-
-  <profiles>
-  </profiles>
-
-  <dependencies>
-  </dependencies>
 
 </project>
 

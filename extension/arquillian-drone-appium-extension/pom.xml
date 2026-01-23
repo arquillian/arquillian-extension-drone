@@ -27,6 +27,7 @@
 
   <artifactId>arquillian-drone-appium-extension</artifactId>
   <name>Arquillian Drone Appium Extension</name>
+  <description>Appium integration for Arquillian Drone Extension</description>
 
   <dependencies>
     <dependency>

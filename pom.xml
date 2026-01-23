@@ -17,8 +17,16 @@
   <artifactId>arquillian-drone-aggregator</artifactId>
   <version>3.0.0.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Arquillian Drone Extension Agreggator</name>
+  <name>Arquillian Drone Extension Aggregator</name>
   <description>Extension for functional testing based on web view layer (Ajocado, Selenium, WebDriver)</description>
+  <url>https://arquillian.org/</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <developers>
     <developer>
@@ -28,10 +36,10 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-drone.git</connection>
-    <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-drone.git</developerConnection>
-    <url>git://github.com/arquillian/arquillian-extension-drone.git</url>
-    <tag>3.0.0-alpha.8</tag>
+    <connection>scm:git:https://github.com/arquillian/arquillian-extension-drone.git</connection>
+    <developerConnection>scm:git:git@github.com:arquillian/arquillian-extension-drone.git</developerConnection>
+    <url>https://github.com/arquillian/arquillian-extension-drone</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>

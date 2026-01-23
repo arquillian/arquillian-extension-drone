@@ -15,6 +15,7 @@
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-configuration</artifactId>
   <name>Arquillian Drone Extension Configuration Parser</name>
+  <description>Configuration parser for Arquillian Drone Extension</description>
 
   <developers>
     <developer>
