@@ -15,6 +15,7 @@
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-impl</artifactId>
   <name>Arquillian Drone Extension Implementation</name>
+  <description>Implementation of Arquillian Drone Extension</description>
 
   <developers>
     <developer>

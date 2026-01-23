@@ -15,6 +15,7 @@
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-spi</artifactId>
   <name>Arquillian Drone Extension SPI</name>
+  <description>SPI for Arquillian Drone Extension</description>
 
   <developers>
     <developer>

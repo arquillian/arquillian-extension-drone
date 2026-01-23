@@ -15,6 +15,7 @@
   <!-- Artifact Configuration -->
   <artifactId>arquillian-drone-webdriver-depchain</artifactId>
   <name>Arquillian Drone WebDriver 3.x Dependency Chain</name>
+  <description>Dependency chain for Arquillian Drone WebDriver integration</description>
   <packaging>pom</packaging>
 
   <developers>
@@ -59,7 +60,7 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Selenium dependecies -->
+    <!-- Selenium dependencies -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-api</artifactId>

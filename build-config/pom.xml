@@ -10,6 +10,7 @@
 
   <artifactId>arquillian-drone-build-config</artifactId>
   <name>Arquillian Drone Extension Build Configuration</name>
+  <description>Build configuration for Arquillian Drone Extension</description>
 
   <build>
     <extensions>
