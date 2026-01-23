@@ -65,22 +65,48 @@
     <!-- override from parent -->
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
-
     <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
     <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
     <version.surefire.plugin>3.5.4</version.surefire.plugin>
+
+    <!-- Downgrade to last compatible JDK 11 version -->
+    <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
+
+    <!-- Plugin versions -->
+    <version.central.publishing.maven.plugin>0.10.0</version.central.publishing.maven.plugin>
+
+    <!-- maven-release-plugin configuration -->
+    <autoVersionSubmodules>true</autoVersionSubmodules>
+    <releaseProfiles>release,gpg-sign</releaseProfiles>
+    <signTag>true</signTag>
+    <tagNameFormat>@{project.version}</tagNameFormat>
+    <arguments>-DskipTests</arguments>
+    <!-- Temporarily until we stabilize the release keep SCM pushes manual -->
+    <pushChanges>false</pushChanges>
+    <localCheckout>true</localCheckout>
+
+    <!-- Maven Central properties -->
+    <repo.sonatype.url>https://central.sonatype.com</repo.sonatype.url>
+    <sonatype.server.id>central</sonatype.server.id>
+    <!-- Temporarily until we stabilize the release keep central publishing manual -->
+    <autoPublish>false</autoPublish>
+    <waitUntil>validated</waitUntil>
+    <deploymentName>arquillian-extension-drone-${project.version}</deploymentName>
   </properties>
 
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <pushChanges>false</pushChanges>
-          <localCheckout>true</localCheckout>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <!-- The puppycrawl dependency is needed to override the version using JDK 11 from the parent -->
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${version.com.puppycrawl.checkstyle}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -103,24 +129,9 @@
           </signature>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.12.0</version>
-        <configuration>
-          <doclint>none</doclint>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -129,6 +140,73 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <!-- release profile for maven central -->
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+
+      <distributionManagement>
+        <snapshotRepository>
+          <id>${sonatype.server.id}</id>
+          <url>${repo.sonatype.url}</url>
+        </snapshotRepository>
+        <repository>
+          <id>${sonatype.server.id}</id>
+          <url>${repo.sonatype.url}</url>
+        </repository>
+      </distributionManagement>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <doclint>none</doclint>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${version.central.publishing.maven.plugin}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>${sonatype.server.id}</publishingServerId>
+              <autoPublish>${autoPublish}</autoPublish>
+              <waitUntil>${waitUntil}</waitUntil>
+              <deploymentName>${deploymentName}</deploymentName>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <!-- Modules -->
   <modules>
