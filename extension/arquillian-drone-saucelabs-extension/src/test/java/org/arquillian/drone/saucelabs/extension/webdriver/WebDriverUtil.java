@@ -88,7 +88,7 @@ public class WebDriverUtil {
         }
 
         @Override
-        public <V> V until(Function<? super WebDriver, V> isTrue) {
+        public <V> V until(Function<? super WebDriver, ? extends V> isTrue) {
             if (message == null) {
                 return super.until(isTrue);
             } else {
