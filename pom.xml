@@ -81,15 +81,11 @@
     <signTag>true</signTag>
     <tagNameFormat>@{project.version}</tagNameFormat>
     <arguments>-DskipTests</arguments>
-    <!-- Temporarily until we stabilize the release keep SCM pushes manual -->
-    <pushChanges>false</pushChanges>
-    <localCheckout>true</localCheckout>
 
     <!-- Maven Central properties -->
     <repo.sonatype.url>https://central.sonatype.com</repo.sonatype.url>
     <sonatype.server.id>central</sonatype.server.id>
-    <!-- Temporarily until we stabilize the release keep central publishing manual -->
-    <autoPublish>false</autoPublish>
+    <autoPublish>true</autoPublish>
     <waitUntil>validated</waitUntil>
     <deploymentName>arquillian-extension-drone-${project.version}</deploymentName>
   </properties>
