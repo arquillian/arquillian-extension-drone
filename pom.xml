@@ -63,10 +63,7 @@
     <version.arquillian.jetty>2.0.0.Final</version.arquillian.jetty>
 
     <!-- override from parent -->
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
-    <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
+    <maven.compiler.release>11</maven.compiler.release>
     <version.surefire.plugin>3.5.5</version.surefire.plugin>
 
     <!-- Downgrade to last compatible JDK 11 version -->
@@ -103,27 +100,6 @@
             <version>${version.com.puppycrawl.checkstyle}</version>
           </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.27</version>
-        <executions>
-          <execution>
-            <id>signature-check</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java18</artifactId>
-            <version>1.0</version>
-          </signature>
-        </configuration>
       </plugin>
     </plugins>
   </build>
