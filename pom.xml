@@ -70,7 +70,7 @@
     <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
 
     <!-- Plugin versions -->
-    <version.central.publishing.maven.plugin>0.10.0</version.central.publishing.maven.plugin>
+    <version.central.publishing.maven.plugin>0.11.0</version.central.publishing.maven.plugin>
 
     <!-- maven-release-plugin configuration -->
     <autoVersionSubmodules>true</autoVersionSubmodules>
