@@ -133,7 +133,7 @@ fi
 # Find the expected Server ID
 # We temporarily disable set -e here because mvn might fail if args are bad, and we want to capture that
 set +e
-SERVER_ID=$(mvn help:evaluate -Dexpression=sonatype.server.id -q -DforceStdout "${MAVEN_ARGS[@]}" | sed 's/^\[INFO\] \[stdout\] //')
+SERVER_ID=$(mvn help:evaluate -Dexpression=central.serverId -q -DforceStdout "${MAVEN_ARGS[@]}" | sed 's/^\[INFO\] \[stdout\] //')
 RET_CODE=$?
 set -e
 
