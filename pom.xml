@@ -69,7 +69,7 @@
     <version.surefire.plugin>3.5.6</version.surefire.plugin>
 
     <!-- Downgrade to last compatible JDK 11 version -->
-    <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
+    <version.com.puppycrawl.checkstyle>14.3.0</version.com.puppycrawl.checkstyle>
 
     <!-- Plugin versions -->
     <!-- Newer than jboss-parent:53's 0.10.0; drop this once the parent catches up -->
