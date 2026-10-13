@@ -43,7 +43,11 @@ import org.jboss.arquillian.drone.webdriver.utils.Validate;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.HasExtensions;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -133,13 +137,23 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
             }
         }
 
-        RemoteWebDriver driver = null;
+        RemoteWebDriver driver;
 
         if (configuration.isRemoteReusable()) {
             driver = createReusableDriver(remoteAddress, options);
         } else {
             driver = createRemoteDriver(remoteAddress, options);
         }
+        // extensions can't be part of the firefox profile anymore, install them into the running browser
+        if (options instanceof FirefoxOptions && FirefoxDriverFactory.hasExtensions(configuration.getCapabilities())) {
+            WebDriver augmented = new Augmenter().augment(driver);
+            if (augmented instanceof HasExtensions) {
+                FirefoxDriverFactory.installExtensions((HasExtensions) augmented, configuration.getCapabilities());
+            } else {
+                log.warning("Firefox extensions can't be installed, the remote browser doesn't support it.");
+            }
+        }
+
         // ARQ-1351
         // marks the driver instance for augmentation by AugmentingEnhancer
         ((MutableCapabilities) driver.getCapabilities()).setCapability(AugmentingEnhancer.DRONE_AUGMENTED, driver);
@@ -154,9 +168,9 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
     }
 
     private void downloadAndStartSeleniumServer(WebDriverConfiguration configuration, String browser,
-        URL remoteAddress) throws Exception {
+        URL remoteAddress) {
 
-        Capabilities capabilities = new ImmutableCapabilities(getCapabilities(configuration, true));
+        Capabilities capabilities = new ImmutableCapabilities(getCapabilities(configuration));
             String seleniumServerArgs = configuration.getSeleniumServerArgs();
 
             if (Validate.empty(seleniumServerArgs)) {
@@ -174,13 +188,10 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
      *
      * @param configuration
      *     A configuration object for Drone extension
-     * @param performValidations
-     *     Whether a potential validation should be performed;
-     *     if set to true an IllegalArgumentException (or other exception) can be thrown in case requirements are not met
      *
      * @return A {@link Capabilities} instance
      */
-    public Capabilities getCapabilities(WebDriverConfiguration configuration, boolean performValidations) {
+    public Capabilities getCapabilities(WebDriverConfiguration configuration) {
         return configuration.getCapabilities();
     }
 
@@ -248,8 +259,8 @@ public class RemoteWebDriverFactory extends AbstractWebDriverFactory<RemoteWebDr
 
         if (driver == null) {
             // if either browser session isn't stored or can't be reused
-            RemoteWebDriver newdriver = createRemoteDriver(remoteAddress, capabilities);
-            driver = ReusableRemoteWebDriver.fromRemoteWebDriver(newdriver);
+            RemoteWebDriver newDriver = createRemoteDriver(remoteAddress, capabilities);
+            driver = ReusableRemoteWebDriver.fromRemoteWebDriver(newDriver);
         }
 
         initParams.get().put(driver.getSessionId(), initParam);

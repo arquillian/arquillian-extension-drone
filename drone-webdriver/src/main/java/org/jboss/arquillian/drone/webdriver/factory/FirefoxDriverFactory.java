@@ -17,6 +17,7 @@
 package org.jboss.arquillian.drone.webdriver.factory;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Map;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
@@ -31,6 +32,7 @@ import org.openqa.selenium.firefox.FirefoxDriverService;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
+import org.openqa.selenium.firefox.HasExtensions;
 
 /**
  * Factory which combines {@link org.jboss.arquillian.drone.spi.Configurator},
@@ -42,6 +44,7 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
     Destructor<FirefoxDriver> {
 
     public static final String FIREFOX_DRIVER_BINARY_PROPERTY = "firefoxDriverBinary";
+    public static final String FIREFOX_EXTENSIONS_PROPERTY = "firefoxExtensions";
     private static final String BROWSER_CAPABILITIES = new BrowserCapabilitiesList.Firefox().getReadableName();
 
     /*
@@ -75,15 +78,39 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
 
         FirefoxDriverService firefoxDriverService = new GeckoDriverService.Builder()
                 .withLogOutput(System.out).build();
-        return SecurityActions.newInstance(configuration.getImplementationClass(),
+        FirefoxDriver driver = SecurityActions.newInstance(configuration.getImplementationClass(),
                 new Class<?>[]{FirefoxDriverService.class, FirefoxOptions.class},
                 new Object[]{firefoxDriverService, firefoxOptions}, FirefoxDriver.class);
+        installExtensions(driver, configuration.getCapabilities());
+        return driver;
+    }
+
+    /**
+     * Installs the extensions specified by the firefoxExtensions capability into the running Firefox instance.
+     * Selenium no longer supports adding extensions to a {@link FirefoxProfile},
+     * so they have to be installed once the driver is created.
+     *
+     * @param driver
+     *     A driver the extensions should be installed into
+     * @param capabilities
+     *     Capabilities containing the prospective firefoxExtensions property
+     */
+    static void installExtensions(HasExtensions driver, Capabilities capabilities) {
+        final String firefoxExtensions = (String) capabilities.getCapability(FIREFOX_EXTENSIONS_PROPERTY);
+        // no check is needed here, it will return empty array if null
+        for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
+            driver.installExtension(Paths.get(extensionPath));
+        }
+    }
+
+    static boolean hasExtensions(Capabilities capabilities) {
+        return Validate.nonEmpty((String) capabilities.getCapability(FIREFOX_EXTENSIONS_PROPERTY));
     }
 
     /**
      * Returns a {@link FirefoxOptions} instance with set all necessary properties.
      * It also validates whether the defined firefoxDriverBinary are executable binaries
-     * and creates/sets a prospective firefox profile as well as a firefox extension.
+     * and creates/sets a prospective firefox profile.
      * This validation can be set off/on by using variable performValidations; if set to true the IllegalArgumentException
      * can be thrown in case when requirements are not met
      *
@@ -130,32 +157,19 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
         if (profile == null) {
             profile = (String) capabilities.getCapability("firefoxProfile");
         }
-        FirefoxProfile firefoxProfile;
 
         // use the explicit profile only if absolutely necessary;
         // the new GeckoDriver otherwise handles the profile itself and this e.g. enables manipulation with some User Preferences
         // which are frozen if the profile is specified (e.g. extensions.logging.enabled)
-        boolean profileShouldBeSet = false;
+        if (Validate.empty(profile)) {
+            return null;
+        }
 
         // set firefox profile from path if specified
-        if (Validate.nonEmpty(profile)) {
-            if (performValidations) {
-                Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
-            }
-            firefoxProfile = new FirefoxProfile(new File(profile));
-            profileShouldBeSet = true;
-        } else {
-            firefoxProfile = new FirefoxProfile();
+        if (performValidations) {
+            Validate.isValidPath(profile, "Firefox profile does not point to a valid path " + profile);
         }
-
-        final String firefoxExtensions = (String) capabilities.getCapability("firefoxExtensions");
-        // no check is needed here, it will return empty array if null
-        for (String extensionPath : StringUtils.tokenize(firefoxExtensions)) {
-            firefoxProfile.addExtension(new File(extensionPath));
-            profileShouldBeSet = true;
-        }
-
-        return profileShouldBeSet ? firefoxProfile : null;
+        return new FirefoxProfile(new File(profile));
     }
 
     private void addUserPreferencesFromFile(Capabilities capabilities, FirefoxOptions firefoxOptions) {
@@ -169,11 +183,11 @@ public class FirefoxDriverFactory extends AbstractWebDriverFactory<FirefoxDriver
                 String key = preference.getKey();
                 Object value = preference.getValue();
                 if (value instanceof Boolean) {
-                    firefoxOptions.addPreference(key, (Boolean) value);
+                    firefoxOptions.addPreference(key, value);
                 } else if (value instanceof Integer) {
-                    firefoxOptions.addPreference(key, (Integer) value);
+                    firefoxOptions.addPreference(key, value);
                 } else if (value instanceof String) {
-                    firefoxOptions.addPreference(key, (String) value);
+                    firefoxOptions.addPreference(key, value);
                 }
             }
         }
