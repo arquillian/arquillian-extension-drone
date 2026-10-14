@@ -47,6 +47,8 @@
     <version.arquillian.core>1.10.2.Final</version.arquillian.core>
     <version.selenium>4.51.0</version.selenium>
     <version.htmlunit.driver>4.51.0</version.htmlunit.driver>
+    <!-- Last htmlunit3-driver compatible with JDK 11, see the htmlunit-jdk11 profile -->
+    <version.htmlunit.driver.jdk11>4.43.0</version.htmlunit.driver.jdk11>
     <version.appium.java.client>8.6.0</version.appium.java.client>
 
     <!-- Test bits versions -->
@@ -66,6 +68,8 @@
     <maven.compiler.release>11</maven.compiler.release>
     <!-- Since jboss-parent:52 jdk.min.version defaults to the latest LTS (25) -->
     <jdk.min.version>${maven.compiler.release}</jdk.min.version>
+    <!-- Releases must be built with this JDK or newer, see the central-release profile -->
+    <release.jdk.min.version>17</release.jdk.min.version>
     <version.surefire.plugin>3.5.6</version.surefire.plugin>
 
     <!-- Downgrade to last compatible JDK 11 version -->
@@ -80,7 +84,7 @@
     <releaseProfiles>central-release</releaseProfiles>
     <signTag>true</signTag>
     <tagNameFormat>@{project.version}</tagNameFormat>
-    <arguments>-DskipTests</arguments>
+    <arguments>-DskipTests -Djdk.min.version=${release.jdk.min.version}</arguments>
 
     <!-- Maven Central properties; the rest are jboss-parent's central-release defaults -->
     <central.deploymentName>arquillian-extension-drone-${project.version}</central.deploymentName>
@@ -111,6 +115,30 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <!-- Complements jboss-parent's central-release profile: releases can't be done on JDKs
+           that downgrade htmlunit3-driver, otherwise the published depchain would reference it.
+           maven-release-plugin also gets this via <arguments>,
+           so that release:prepare fails before anything is tagged -->
+      <id>central-release</id>
+      <properties>
+        <jdk.min.version>${release.jdk.min.version}</jdk.min.version>
+      </properties>
+    </profile>
+    <profile>
+      <!-- Newer htmlunit3-driver versions require Java 17+, so on older JDKs build and test against
+           the last JDK 11 compatible version -->
+      <id>htmlunit-jdk11</id>
+      <activation>
+        <jdk>(,17)</jdk>
+      </activation>
+      <properties>
+        <version.htmlunit.driver>${version.htmlunit.driver.jdk11}</version.htmlunit.driver>
+      </properties>
+    </profile>
+  </profiles>
 
   <!-- Modules -->
   <modules>
